@@ -1,0 +1,23 @@
+# Ignore build artifacts
+/backend/target/
+
+# Ignore compiled Java files
+*.class
+
+# Ignore IDE-specific files
+/.idea/
+/.vscode/
+/backend/.settings/
+/backend/.classpath
+/backend/.project
+
+# Ignore OS-specific files
+.DS_Store
+
+# Ignore Maven Wrapper binaries (optional)
+mvnw
+mvnw.cmd
+
+# Ignore logs
+logs/
+*.log

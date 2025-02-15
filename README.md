@@ -83,3 +83,9 @@ This application is perfect for individuals who want a simple yet effective way 
 Follow the project’s progress on GitHub and feel free to join the discussion on [Project Discussions](#) if you have any ideas or feedback!
 
 ---
+
+### **Run Me** 🤝
+
+In an IDE of your choice, I am using STS, right click on **BudgetMasterApplication.java** -> **Run As** -> **Spring Boot App**.
+
+---

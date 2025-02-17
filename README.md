@@ -86,8 +86,8 @@ Follow the project’s progress on GitHub and feel free to join the discussion o
 
 ### **Commands of Interest** 🤝
 
-To run: **mvn spring-boot:run** or **./mvnw spring-boot:run**
-To run tests: **mvn test** or **./mvnw test**
-To test API: **curl -X POST http://localhost:8080/api/budget -H "Content-Type: application/json" -d '{"income": <INCOME>, "expenses": <EXPENSES>}'**
+- To run: **mvn spring-boot:run** or **./mvnw spring-boot:run**
+- To run tests: **mvn test** or **./mvnw test**
+- To test API: **curl -X POST http://localhost:8080/api/budget -H "Content-Type: application/json" -d '{"income": <INCOME>, "expenses": <EXPENSES>}'**
 
 ---

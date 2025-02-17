@@ -84,8 +84,10 @@ Follow the project’s progress on GitHub and feel free to join the discussion o
 
 ---
 
-### **Run Me** 🤝
+### **Commands of Interest** 🤝
 
-In an IDE of your choice, I am using STS, right click on **BudgetMasterApplication.java** -> **Run As** -> **Spring Boot App**.
+- To run: **mvn spring-boot:run** or **./mvnw spring-boot:run**
+- To run tests: **mvn test** or **./mvnw test**
+- To test API: **curl -X POST http://localhost:8080/api/budget -H "Content-Type: application/json" -d '{"income": {{INCOME}}, "expenses": {{EXPENSES}}}'**
 
 ---

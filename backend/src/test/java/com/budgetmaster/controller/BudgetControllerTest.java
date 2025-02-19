@@ -12,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-//import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -35,7 +34,7 @@ public class BudgetControllerTest {
 		request.setIncome(3000);
 		request.setExpenses(1500);
 		
-        // Create the expected Budget response
+		// Create expected response
 		Budget expectedBudget = new Budget(3000, 1500);
 		Mockito.when(budgetService.calculateBudget(Mockito.any()))
 			.thenReturn(expectedBudget);

@@ -29,17 +29,18 @@ public class BudgetControllerTest {
     private BudgetService budgetService;
 	
 	@Test
-	void testCalculateBudget() throws Exception {
+	void shouldReturnBudgetWhenValidRequest() throws Exception {
 		// Create sample BudgetRequest
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(3000);
 		request.setExpenses(1500);
 		
         // Create the expected Budget response
+		Budget expectedBudget = new Budget(3000, 1500);
 		Mockito.when(budgetService.calculateBudget(Mockito.any()))
-			.thenAnswer(invocation -> new Budget(3000, 1500));
+			.thenReturn(expectedBudget);
 		
-		// POST request to /api/budget and assert response
+		// POST to /api/budget & Assert
 		mockMvc.perform(post("/api/budget")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -47,5 +48,8 @@ public class BudgetControllerTest {
 			.andExpect(jsonPath("$.income").value(3000))
 			.andExpect(jsonPath("$.expenses").value(1500))
 			.andExpect(jsonPath("$.savings").value(1500));
+		
+		Mockito.verify(budgetService, Mockito.times(1))
+			.calculateBudget(Mockito.any());
 	}
 }

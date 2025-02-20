@@ -1,6 +1,17 @@
 package com.budgetmaster.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Budget {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
+	
 	private double income;
 	private double expenses;
 	private double savings;
@@ -11,6 +22,14 @@ public class Budget {
 		this.income = income;
 		this.expenses = expenses;
 		this.savings = income - expenses;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 	public double getIncome() {

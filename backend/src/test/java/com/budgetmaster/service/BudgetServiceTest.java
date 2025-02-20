@@ -12,8 +12,8 @@ class BudgetServiceTest {
 	@Test
 	void testCalculateBudget() {
 		BudgetRequest request = new BudgetRequest();
-		request.setIncome(5000);
-		request.setExpenses(2000);
+		request.setIncome(5000.0);
+		request.setExpenses(2000.0);
 		
 		Budget budget = budgetService.calculateBudget(request);
 		

@@ -10,7 +10,7 @@ public class Budget {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	
 	private double income;
 	private double expenses;

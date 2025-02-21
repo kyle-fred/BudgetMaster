@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -36,7 +37,7 @@ public class BudgetControllerTest {
 		
 		// Create expected response
 		Budget expectedBudget = new Budget(3000, 1500);
-		Mockito.when(budgetService.calculateBudget(Mockito.any()))
+		Mockito.when(budgetService.calculateandSaveBudget(Mockito.any()))
 			.thenReturn(expectedBudget);
 		
 		// POST to /api/budget & Assert OK response
@@ -49,7 +50,7 @@ public class BudgetControllerTest {
 			.andExpect(jsonPath("$.savings").value(1500));
 		
 		Mockito.verify(budgetService, Mockito.times(1))
-			.calculateBudget(Mockito.any());
+			.calculateandSaveBudget(Mockito.any());
 	}
 	
 	@Test
@@ -66,7 +67,7 @@ public class BudgetControllerTest {
 			.andExpect(jsonPath("$.income").value("Income is required."));
 		
 		Mockito.verify(budgetService, Mockito.times(0))
-			.calculateBudget(Mockito.any());
+			.calculateandSaveBudget(Mockito.any());
 	}
 	
 	@Test
@@ -83,7 +84,7 @@ public class BudgetControllerTest {
 			.andExpect(jsonPath("$.expenses").value("Expenses are required."));
 		
 		Mockito.verify(budgetService, Mockito.times(0))
-			.calculateBudget(Mockito.any());
+			.calculateandSaveBudget(Mockito.any());
 	}
 	
 	@Test
@@ -101,7 +102,7 @@ public class BudgetControllerTest {
 			.andExpect(jsonPath("$.income").value("Income cannot be negative."));
 		
 		Mockito.verify(budgetService, Mockito.times(0))
-			.calculateBudget(Mockito.any());
+			.calculateandSaveBudget(Mockito.any());
 	}
 	
 	@Test
@@ -119,7 +120,7 @@ public class BudgetControllerTest {
 			.andExpect(jsonPath("$.expenses").value("Expenses cannot be negative."));
 		
 		Mockito.verify(budgetService, Mockito.times(0))
-			.calculateBudget(Mockito.any());
+			.calculateandSaveBudget(Mockito.any());
 	}
 	
 	@Test
@@ -130,7 +131,7 @@ public class BudgetControllerTest {
 	    request.setExpenses(1500.0);
 
 	    // Simulate service failure
-	    Mockito.when(budgetService.calculateBudget(Mockito.any()))
+	    Mockito.when(budgetService.calculateandSaveBudget(Mockito.any()))
 	            .thenThrow(new RuntimeException("Service failure"));
 
 	    // POST to /api/budget & Assert Internal Server Error
@@ -141,7 +142,28 @@ public class BudgetControllerTest {
 	            .andExpect(jsonPath("$").value("An unexpected error occurred."));
 
 	    Mockito.verify(budgetService, Mockito.times(1))
-	    	.calculateBudget(Mockito.any());
+	    	.calculateandSaveBudget(Mockito.any());
 	}
+	
+	@Test
+	void shouldReturnConflictWhenDataIntegrityViolationOccurs() throws Exception {
+	    // Create a valid sample BudgetRequest
+	    BudgetRequest request = new BudgetRequest();
+	    request.setIncome(3000.0);
+	    request.setExpenses(1500.0);
 
+	    // Simulate DataIntegrityViolationException
+	    Mockito.when(budgetService.calculateandSaveBudget(Mockito.any()))
+	            .thenThrow(new DataIntegrityViolationException("Database constraint violation"));
+
+	    // POST to /api/budget & Assert Conflict status
+	    mockMvc.perform(post("/api/budget")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(objectMapper.writeValueAsString(request)))
+	            .andExpect(status().isConflict())
+	            .andExpect(jsonPath("$").value("A database constraint was violated."));
+
+	    Mockito.verify(budgetService, Mockito.times(1))
+	            .calculateandSaveBudget(Mockito.any());
+	}
 }

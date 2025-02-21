@@ -22,7 +22,7 @@ public class BudgetController {
 	
 	@PostMapping
 	public ResponseEntity<Budget> calculateBudget(@Valid @RequestBody BudgetRequest request) {
-		Budget budget = budgetService.calculateBudget(request);
+		Budget budget = budgetService.calculateandSaveBudget(request);
 		return ResponseEntity.ok(budget);
 	}
 }

@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -143,5 +144,26 @@ public class BudgetControllerTest {
 	    Mockito.verify(budgetService, Mockito.times(1))
 	    	.calculateandSaveBudget(Mockito.any());
 	}
+	
+	@Test
+	void shouldReturnConflictWhenDataIntegrityViolationOccurs() throws Exception {
+	    // Create a valid sample BudgetRequest
+	    BudgetRequest request = new BudgetRequest();
+	    request.setIncome(3000.0);
+	    request.setExpenses(1500.0);
 
+	    // Simulate DataIntegrityViolationException
+	    Mockito.when(budgetService.calculateandSaveBudget(Mockito.any()))
+	            .thenThrow(new DataIntegrityViolationException("Database constraint violation"));
+
+	    // POST to /api/budget & Assert Conflict status
+	    mockMvc.perform(post("/api/budget")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(objectMapper.writeValueAsString(request)))
+	            .andExpect(status().isConflict())
+	            .andExpect(jsonPath("$").value("A database constraint was violated."));
+
+	    Mockito.verify(budgetService, Mockito.times(1))
+	            .calculateandSaveBudget(Mockito.any());
+	}
 }

@@ -88,6 +88,16 @@ Follow the project’s progress on GitHub and feel free to join the discussion o
 
 - To run: **mvn spring-boot:run** or **./mvnw spring-boot:run**
 - To run tests: **mvn test** or **./mvnw test**
-- To test API: **curl -X POST http://localhost:8080/api/budget -H "Content-Type: application/json" -d '{"income": {{INCOME}}, "expenses": {{EXPENSES}}}'**
+- To test API:
+    - **GET** request to retrieve a budget by ID:
+      ```bash
+      curl -X GET http://localhost:8080/api/budget/{{ID}}
+      ```
+    - **POST** request to create a budget:
+      ```bash
+      curl -X POST http://localhost:8080/api/budget \
+          -H "Content-Type: application/json" \
+          -d '{"income": {{INCOME}}, "expenses": {{EXPENSES}}}'
+      ```
 
 ---

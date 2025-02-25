@@ -30,7 +30,7 @@ class BudgetServiceTest {
         budgetRequest.setIncome(3000.0);
         budgetRequest.setExpenses(1500.0);
 
-        Budget savedBudget = budgetService.calculateAndSaveBudget(budgetRequest);
+        Budget savedBudget = budgetService.createBudget(budgetRequest);
 
         assertNotNull(savedBudget);
         assertEquals(1L, savedBudget.getId());
@@ -53,6 +53,6 @@ class BudgetServiceTest {
         budgetRequest.setExpenses(1500.0);
         
         assertThrows(DataIntegrityViolationException.class,
-            () -> budgetService.calculateAndSaveBudget(budgetRequest));
+            () -> budgetService.createBudget(budgetRequest));
     }
 }

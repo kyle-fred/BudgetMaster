@@ -23,6 +23,12 @@ public class BudgetController {
 		this.budgetService = budgetService;
 	}
 	
+	@PostMapping
+	public ResponseEntity<Budget> createBudget(@Valid @RequestBody BudgetRequest request) {
+		Budget budget = budgetService.createBudget(request);
+		return ResponseEntity.ok(budget);
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<Budget> getBudgetById(@PathVariable Long id) {
 		Optional<Budget> budget = budgetService.getBudgetById(id);
@@ -33,9 +39,12 @@ public class BudgetController {
 		}
 	}
 	
-	@PostMapping
-	public ResponseEntity<Budget> createBudget(@Valid @RequestBody BudgetRequest request) {
-		Budget budget = budgetService.calculateAndSaveBudget(request);
-		return ResponseEntity.ok(budget);
+	@PutMapping("/{id}")
+	public ResponseEntity<Budget> updateBudget(@PathVariable Long id, @RequestBody BudgetRequest request) {
+		Optional<Budget> updatedBudget = budgetService.updateBudget(id, request);
+		
+		return updatedBudget.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 	}
+		
+	
 }

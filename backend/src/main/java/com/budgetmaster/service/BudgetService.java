@@ -17,12 +17,27 @@ public class BudgetService {
 		this.budgetRepository = budgetRepository;
 	}
 	
+	public Budget createBudget(BudgetRequest request) {
+		Budget budget = new Budget(request.getIncome(), request.getExpenses());
+		return budgetRepository.save(budget);
+	}
+	
 	public Optional<Budget> getBudgetById(Long id) {
 		return budgetRepository.findById(id);
 	}
 	
-	public Budget calculateAndSaveBudget(BudgetRequest request) {
-		Budget budget = new Budget(request.getIncome(), request.getExpenses());
-		return budgetRepository.save(budget);
+	public Optional<Budget> updateBudget(Long id, BudgetRequest request) {
+		Optional<Budget> existingBudget = budgetRepository.findById(id);
+		
+		if (existingBudget.isPresent()) {
+			Budget budget = existingBudget.get();
+			budget.setIncome(request.getIncome());
+			budget.setExpenses(request.getExpenses());
+			budget.setSavings(request.getIncome() - request.getExpenses());
+			
+			return Optional.of(budgetRepository.save(budget));
+		} else {
+			return Optional.empty();
+		}
 	}
 }

@@ -4,7 +4,6 @@ import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.service.BudgetService;
 import com.budgetmaster.model.Budget;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

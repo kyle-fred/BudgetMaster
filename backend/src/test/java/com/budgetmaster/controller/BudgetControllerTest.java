@@ -13,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -34,13 +35,14 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnBudgetWhenValidRequest() throws Exception {
-		// Create a valid BudgetRequest
+		
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(3000.0);
 		request.setExpenses(1500.0);
 		
-		// Create expected response
 		Budget expectedBudget = new Budget(3000, 1500);
+		
+		// Mock successful create
 		Mockito.when(budgetService.createBudget(Mockito.any()))
 			.thenReturn(expectedBudget);
 		
@@ -59,11 +61,11 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnBadRequestWhenIncomeIsMissing() throws Exception {
-		// Create BudgetRequest with missing income
+		
 		BudgetRequest request = new BudgetRequest();
 		request.setExpenses(1500.0);
 		
-	    // POST to /api/budget & Assert BadRequest
+	    // POST to /api/budget & Assert bad request
 		mockMvc.perform(post("/api/budget")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -76,11 +78,11 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnBadRequestWhenExpensesAreMissing() throws Exception {
-		// Create BudgetRequest with missing expenses
+		
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(1500.0);
 		
-	    // POST to /api/budget & Assert BadRequest
+	    // POST to /api/budget & Assert bad request
 		mockMvc.perform(post("/api/budget")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -93,12 +95,12 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnBadRequestWhenIncomeIsNegative() throws Exception {
-		// Create BudgetRequest with negative income
+		
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(-1500.0);
 		request.setExpenses(1500.0);
 		
-		// POST to /api/budget & Assert BadRequest
+		// POST to /api/budget & Assert bad request
 		mockMvc.perform(post("/api/budget")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -111,12 +113,12 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnBadRequestWhenExpensesAreNegative() throws Exception {
-		// Create BudgetRequest with negative expenses
+		
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(1500.0);
 		request.setExpenses(-1500.0);
 		
-		// POST to /api/budget & Assert BadRequest
+		// POST to /api/budget & Assert bad request
 		mockMvc.perform(post("/api/budget")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -129,16 +131,16 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnInternalServerErrorWhenServiceFails() throws Exception {
-		// Create a valid BudgetRequest
+		
 	    BudgetRequest request = new BudgetRequest();
 	    request.setIncome(3000.0);
 	    request.setExpenses(1500.0);
 
-	    // Simulate service failure
+	    // Mock internal server error on create
 	    Mockito.when(budgetService.createBudget(Mockito.any()))
 	            .thenThrow(new RuntimeException("Service failure"));
 
-	    // POST to /api/budget & Assert Internal Server Error
+	    // POST to /api/budget & Assert internal server error
 	    mockMvc.perform(post("/api/budget")
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(objectMapper.writeValueAsString(request)))
@@ -151,16 +153,16 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnConflictWhenDataIntegrityViolationOccurs() throws Exception {
-	    // Create a valid BudgetRequest
+		
 	    BudgetRequest request = new BudgetRequest();
 	    request.setIncome(3000.0);
 	    request.setExpenses(1500.0);
 
-	    // Simulate DataIntegrityViolationException
+	    // Mock data integrity violation on create
 	    Mockito.when(budgetService.createBudget(Mockito.any()))
 	            .thenThrow(new DataIntegrityViolationException("Database constraint violation"));
 
-	    // POST to /api/budget & Assert Conflict status
+	    // POST to /api/budget & Assert conflict status
 	    mockMvc.perform(post("/api/budget")
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(objectMapper.writeValueAsString(request)))
@@ -172,11 +174,12 @@ public class BudgetControllerTest {
 	}
 	
 	@Test
-	void shouldReturnBudgetWhenValidId() throws Exception {
-		// Create a valid Budget
+	void shouldReturnBudgetWhenValidIdGet() throws Exception {
+		
 		Budget budget = new Budget(3000.0, 1500.0);
 		budget.setId(1L);
 		
+		// Mock successful read
 		Mockito.when(budgetService.getBudgetById(1L)).thenReturn(Optional.of(budget));
 		
 		// GET /api/budget & Assert OK response
@@ -194,10 +197,10 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnNotFoundWhenInvalidId() throws Exception {
-		// Simulate unfound budget ID
+		// Mock failed read
 		Mockito.when(budgetService.getBudgetById(99L)).thenReturn(Optional.empty());
 		
-		// GET /api/budget & NotFound response
+		// GET /api/budget & Assert not found response
 		mockMvc.perform(get("/api/budget/99")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
@@ -220,10 +223,11 @@ public class BudgetControllerTest {
 		updateRequest.setIncome(4000.0);
 		updateRequest.setExpenses(2000.0);
 		
-		// PUT /api/budget & Assert OK response
+		// Mock successful update
 		Mockito.when(budgetService.updateBudget(Mockito.eq(1L), Mockito.any(BudgetRequest.class)))
 				.thenReturn(Optional.of(updatedBudget));
 		
+		// PUT /api/budget & Assert OK response
 		mockMvc.perform(put("/api/budget/1")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(updateRequest)))
@@ -236,17 +240,42 @@ public class BudgetControllerTest {
 	
     @Test
     void shouldReturnNotFoundWhenInvalidIdPut() throws Exception {
-        // Arrange: Mock empty result for non-existent ID
+    	
         BudgetRequest updateRequest = new BudgetRequest();
         updateRequest.setIncome(3000.0);
         updateRequest.setExpenses(1500.0);
         
-        // Simulate unfound budget ID
+        // Mock failed update
         Mockito.when(budgetService.updateBudget(99L, updateRequest)).thenReturn(Optional.empty());
         
+        // PUT /api/budget & Assert not found response
         mockMvc.perform(put("/api/budget/99")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(updateRequest)))
             .andExpect(status().isNotFound());
+    }
+    
+    @Test
+    void shouldDeleteBudgetWhenValidId() throws Exception {
+    	// Mock successful deletion
+    	Mockito.when(budgetService.deleteBudget(1L)).thenReturn(true);
+    	
+    	// DELETE /api/budget & Assert OK response
+        mockMvc.perform(delete("/api/budget/1"))
+                .andExpect(status().isNoContent());
+        
+        Mockito.verify(budgetService, Mockito.times(1)).deleteBudget(1L);
+    }
+    
+    @Test
+    void shouldReturnNotFoundWhenInvalidIdDelete() throws Exception {
+    	// Mock failed deletion (ID does not exist)
+    	Mockito.when(budgetService.deleteBudget(1L)).thenReturn(false);
+    	
+    	// DELETE /api/budget & Assert not found response
+        mockMvc.perform(delete("/api/budget/1"))
+                .andExpect(status().isNotFound());
+        
+        Mockito.verify(budgetService, Mockito.times(1)).deleteBudget(1L);
     }
 }

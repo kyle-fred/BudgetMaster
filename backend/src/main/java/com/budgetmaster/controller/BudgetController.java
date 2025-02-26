@@ -40,11 +40,24 @@ public class BudgetController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Budget> updateBudget(@PathVariable Long id, @RequestBody BudgetRequest request) {
-		Optional<Budget> updatedBudget = budgetService.updateBudget(id, request);
+	public ResponseEntity<Budget> updateBudget(@PathVariable Long id, @Valid @RequestBody BudgetRequest request) {
+		Optional<Budget> budget = budgetService.updateBudget(id, request);
 		
-		return updatedBudget.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+		if (budget.isPresent()) {
+			return ResponseEntity.ok(budget.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
 	}
-		
 	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
+		boolean deleted = budgetService.deleteBudget(id);
+		
+		if (deleted) {
+			return ResponseEntity.noContent().build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 }

@@ -30,4 +30,20 @@ public class IncomeService {
 	public Optional<Income> getIncomeById(Long id) {
 		return incomeRepository.findById(id);
 	}
+	
+	public Optional<Income> updateIncome(Long id, IncomeRequest request) {
+		Optional<Income> existingIncome = incomeRepository.findById(id);
+		
+		if (existingIncome.isPresent()) {
+			Income income = existingIncome.get();
+			income.setName(request.getName());
+			income.setSource(request.getSource());
+			income.setAmount(request.getAmount());
+			income.setIncomeType(request.getIncomeType());
+			
+			return Optional.of(incomeRepository.save(income));
+		} else {
+			return Optional.empty();
+		}
+	}
 }

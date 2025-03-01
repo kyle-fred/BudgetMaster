@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -249,4 +250,62 @@ public class IncomeControllerTest {
 		Mockito.verify(incomeService, Mockito.times(1))
 				.getIncomeById(99L);
 	}
+	
+	@Test
+	void shouldUpdateIncomeWhenValidId() throws Exception {
+		
+		Income existingIncome= new Income();
+		existingIncome.setId(1L);
+		existingIncome.setName("Salary");
+		existingIncome.setSource("Company XYZ");
+		existingIncome.setAmount(2000.0);
+		existingIncome.setIncomeType(IncomeType.RECURRING);
+		
+		Income updatedIncome = new Income ();
+		updatedIncome.setId(1L);
+		updatedIncome.setName("Interest Income");
+		updatedIncome.setSource("Bank XYZ");
+		updatedIncome.setAmount(100.0);
+		updatedIncome.setIncomeType(IncomeType.ONE_TIME);
+		
+		IncomeRequest updateRequest = new IncomeRequest();
+		updateRequest.setName("Interest Income");
+		updateRequest.setSource("Bank XYZ");
+		updateRequest.setAmount(100.0);
+		updateRequest.setIncomeType(IncomeType.ONE_TIME);
+		
+		// Mock successful update
+		Mockito.when(incomeService.updateIncome(Mockito.eq(1L), Mockito.any(IncomeRequest.class)))
+				.thenReturn(Optional.of(updatedIncome));
+		
+		// PUT /api/income & Assert OK response
+		mockMvc.perform(put("/api/income/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(1L))
+				.andExpect(jsonPath("$.name").value("Interest Income"))
+				.andExpect(jsonPath("$.source").value("Bank XYZ"))
+				.andExpect(jsonPath("$.amount").value(100.0))
+				.andExpect(jsonPath("$.incomeType").value("ONE_TIME"));
+	}
+	
+    @Test
+    void shouldReturnNotFoundWhenInvalidIdPut() throws Exception {
+    	
+        IncomeRequest updateRequest = new IncomeRequest();
+		updateRequest.setName("Interest Income");
+		updateRequest.setSource("Bank XYZ");
+		updateRequest.setAmount(100.0);
+		updateRequest.setIncomeType(IncomeType.ONE_TIME);
+        
+        // Mock failed update
+        Mockito.when(incomeService.updateIncome(99L, updateRequest)).thenReturn(Optional.empty());
+        
+        // PUT /api/income & Assert not found response
+        mockMvc.perform(put("/api/income/99")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updateRequest)))
+            .andExpect(status().isNotFound());
+    }
 }

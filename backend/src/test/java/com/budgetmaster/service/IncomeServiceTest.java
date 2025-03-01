@@ -98,4 +98,52 @@ class IncomeServiceTest {
         
         assertFalse(retrievedIncome.isPresent());
     }
+    
+    @Test
+    void shouldUpdateIncomeWhenExists() {
+        Income existingIncome = new Income();
+        existingIncome.setId(1L);
+        existingIncome.setName("Salary");
+        existingIncome.setSource("Company XYZ");
+        existingIncome.setAmount(2000.0);
+        existingIncome.setIncomeType(IncomeType.RECURRING);
+
+        IncomeRequest updateRequest = new IncomeRequest();
+        updateRequest.setName("Interest Income");
+        updateRequest.setSource("Bank XYZ");
+        updateRequest.setAmount(100.0);
+        updateRequest.setIncomeType(IncomeType.ONE_TIME);
+
+        // Mock successful update
+        Mockito.when(incomeRepository.findById(1L)).thenReturn(Optional.of(existingIncome));
+        Mockito.when(incomeRepository.save(Mockito.any(Income.class))).thenReturn(existingIncome);
+
+        Optional<Income> updatedIncome = incomeService.updateIncome(1L, updateRequest);
+
+        assertTrue(updatedIncome.isPresent());
+        assertEquals(1L, updatedIncome.get().getId());
+        assertEquals("Interest Income", updatedIncome.get().getName());
+        assertEquals("Bank XYZ", updatedIncome.get().getSource());
+        assertEquals(100.0, updatedIncome.get().getAmount());
+        assertEquals(IncomeType.ONE_TIME, updatedIncome.get().getIncomeType());
+        
+        Mockito.verify(incomeRepository, Mockito.times(1)).save(existingIncome);
+    }
+    
+    @Test
+    void shouldReturnEmptyWhenUpdatingNonExistentIncome() {
+        IncomeRequest updateRequest = new IncomeRequest();
+        updateRequest.setName("Interest Income");
+        updateRequest.setSource("Bank XYZ");
+        updateRequest.setAmount(100.0);
+        updateRequest.setIncomeType(IncomeType.ONE_TIME);
+
+        // Mock unsuccessful update
+        Mockito.when(incomeRepository.findById(99L)).thenReturn(Optional.empty());
+
+        Optional<Income> updatedIncome = incomeService.updateIncome(99L, updateRequest);
+
+        assertFalse(updatedIncome.isPresent());
+        Mockito.verify(incomeRepository, Mockito.never()).save(Mockito.any(Income.class));
+    }
 }

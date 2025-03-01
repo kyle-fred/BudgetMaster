@@ -14,9 +14,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Optional;
 
 @WebMvcTest(IncomeController.class)
 public class IncomeControllerTest {
@@ -50,7 +53,7 @@ public class IncomeControllerTest {
 		Mockito.when(incomeService.createIncome(Mockito.any()))
 			.thenReturn(expectedIncome);
 		
-		// POST to /api/budget & Assert OK response
+		// POST to /api/income & Assert OK response
 		mockMvc.perform(post("/api/income")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -72,7 +75,7 @@ public class IncomeControllerTest {
         request.setAmount(2000.0);
         request.setIncomeType(IncomeType.RECURRING);
 		
-	    // POST to /api/budget & Assert bad request
+	    // POST to /api/income & Assert bad request
 		mockMvc.perform(post("/api/income")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -91,7 +94,7 @@ public class IncomeControllerTest {
         request.setAmount(2000.0);
         request.setIncomeType(IncomeType.RECURRING);
 		
-	    // POST to /api/budget & Assert bad request
+	    // POST to /api/income & Assert bad request
 		mockMvc.perform(post("/api/income")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -110,7 +113,7 @@ public class IncomeControllerTest {
         request.setSource("Company XYZ");
         request.setIncomeType(IncomeType.RECURRING);
 		
-	    // POST to /api/budget & Assert bad request
+	    // POST to /api/income & Assert bad request
 		mockMvc.perform(post("/api/income")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -130,7 +133,7 @@ public class IncomeControllerTest {
         request.setAmount(-2000.0);
         request.setIncomeType(IncomeType.RECURRING);
 		
-	    // POST to /api/budget & Assert bad request
+	    // POST to /api/income & Assert bad request
 		mockMvc.perform(post("/api/income")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -149,7 +152,7 @@ public class IncomeControllerTest {
         request.setSource("Company XYZ");
         request.setAmount(2000.0);
 		
-	    // POST to /api/budget & Assert bad request
+	    // POST to /api/income & Assert bad request
 		mockMvc.perform(post("/api/income")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
@@ -158,6 +161,30 @@ public class IncomeControllerTest {
 		
 		Mockito.verify(incomeService, Mockito.times(0))
 			.createIncome(Mockito.any());
+	}
+	
+	@Test
+	void shouldReturnInternalServerErrorWhenServiceFails() throws Exception {
+		
+		IncomeRequest request = new IncomeRequest();
+        request.setName("Salary");
+        request.setSource("Company XYZ");
+        request.setAmount(2000.0);
+        request.setIncomeType(IncomeType.RECURRING);
+
+	    // Mock internal server error on create
+	    Mockito.when(incomeService.createIncome(Mockito.any()))
+	            .thenThrow(new RuntimeException("Service failure"));
+
+	    // POST to /api/income & Assert internal server error
+	    mockMvc.perform(post("/api/income")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(objectMapper.writeValueAsString(request)))
+	            .andExpect(status().isInternalServerError())
+	            .andExpect(jsonPath("$").value("An unexpected error occurred."));
+
+	    Mockito.verify(incomeService, Mockito.times(1))
+	    	.createIncome(Mockito.any());
 	}
 	
 	@Test
@@ -173,7 +200,7 @@ public class IncomeControllerTest {
 	    Mockito.when(incomeService.createIncome(Mockito.any()))
 	            .thenThrow(new DataIntegrityViolationException("Database constraint violation"));
 
-	    // POST to /api/budget & Assert conflict status
+	    // POST to /api/income & Assert conflict status
 	    mockMvc.perform(post("/api/income")
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(objectMapper.writeValueAsString(request)))
@@ -182,5 +209,44 @@ public class IncomeControllerTest {
 	    
 	    Mockito.verify(incomeService, Mockito.times(1))
 	            .createIncome(Mockito.any());
+	}
+	
+	@Test
+	void shouldReturnIncomeWhenValidIdGet() throws Exception {
+		
+		Income income = new Income();
+		income.setName("Salary");
+        income.setSource("Company XYZ");
+        income.setAmount(2000.0);
+        income.setIncomeType(IncomeType.RECURRING);
+		
+		// Mock successful read
+		Mockito.when(incomeService.getIncomeById(1L)).thenReturn(Optional.of(income));
+		
+		// GET /api/income & Assert OK response
+		mockMvc.perform(get("/api/income/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("Salary"))
+				.andExpect(jsonPath("$.source").value("Company XYZ"))
+				.andExpect(jsonPath("$.amount").value(2000.0))
+				.andExpect(jsonPath("$.incomeType").value("RECURRING"));
+		
+		Mockito.verify(incomeService, Mockito.times(1))
+				.getIncomeById(1L);
+	}
+	
+	@Test
+	void shouldReturnNotFoundWhenInvalidId() throws Exception {
+		// Mock failed read
+		Mockito.when(incomeService.getIncomeById(99L)).thenReturn(Optional.empty());
+		
+		// GET /api/income & Assert not found response
+		mockMvc.perform(get("/api/income/99")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		
+		Mockito.verify(incomeService, Mockito.times(1))
+				.getIncomeById(99L);
 	}
 }

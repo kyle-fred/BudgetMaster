@@ -38,4 +38,15 @@ public class IncomeController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<Income> updateIncome(@PathVariable Long id, @Valid @RequestBody IncomeRequest request) {
+		Optional<Income> income = incomeService.updateIncome(id, request);
+		
+		if (income.isPresent()) {
+			return ResponseEntity.ok(income.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 }

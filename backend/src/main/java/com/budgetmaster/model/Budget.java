@@ -35,6 +35,7 @@ public class Budget {
 	public double getIncome() {
 		return income;
 	}
+	
 	public void setIncome(double income) {
 		this.income = income;
 	}
@@ -42,6 +43,7 @@ public class Budget {
 	public double getExpenses() {
 		return expenses;
 	}
+	
 	public void setExpenses(double expenses) {
 		this.expenses = expenses;
 	}
@@ -49,6 +51,7 @@ public class Budget {
 	public double getSavings() {
 		return savings;
 	}
+	
 	public void setSavings(double savings) {
 		this.savings = savings;
 	}

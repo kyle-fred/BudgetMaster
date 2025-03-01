@@ -4,6 +4,8 @@ import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.repository.IncomeRepository;
 import com.budgetmaster.model.Income;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,5 +25,9 @@ public class IncomeService {
 				request.getIncomeType()
 			);
 		return incomeRepository.save(income);
+	}
+	
+	public Optional<Income> getIncomeById(Long id) {
+		return incomeRepository.findById(id);
 	}
 }

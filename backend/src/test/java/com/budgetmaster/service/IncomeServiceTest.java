@@ -11,6 +11,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
+import java.util.Optional;
+
 class IncomeServiceTest {
 	
 	private final IncomeRepository incomeRepository = mock(IncomeRepository.class);
@@ -63,5 +65,37 @@ class IncomeServiceTest {
         
         assertThrows(DataIntegrityViolationException.class,
             () -> incomeService.createIncome(incomeRequest));
+    }
+    
+    @Test
+    void shouldReturnIncomeWhenExists() {
+    	Income income = new Income();
+    	income.setId(1L);
+    	income.setName("Salary");
+    	income.setSource("Company XYZ");
+    	income.setAmount(2000.0);
+    	income.setIncomeType(IncomeType.RECURRING);
+    	
+    	// Mock successful read
+    	Mockito.when(incomeRepository.findById(1L)).thenReturn(Optional.of(income));
+    	
+    	Optional<Income> retrievedIncome = incomeService.getIncomeById(1L);
+    	
+    	assertTrue(retrievedIncome.isPresent());
+    	assertEquals(1L, retrievedIncome.get().getId());    	
+        assertEquals("Salary", retrievedIncome.get().getName());
+        assertEquals("Company XYZ", retrievedIncome.get().getSource());
+        assertEquals(2000.0, retrievedIncome.get().getAmount());
+        assertEquals(IncomeType.RECURRING, retrievedIncome.get().getIncomeType());
+    }
+    
+    @Test
+    void shouldReturnEmptyWhenIncomeDoesNotExist() {
+    	// Mock unsuccessful read
+    	Mockito.when(incomeRepository.findById(99L)).thenReturn(Optional.empty());
+        
+        Optional<Income> retrievedIncome = incomeService.getIncomeById(99L);
+        
+        assertFalse(retrievedIncome.isPresent());
     }
 }

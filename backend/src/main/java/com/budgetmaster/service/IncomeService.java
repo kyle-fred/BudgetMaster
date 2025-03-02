@@ -7,6 +7,7 @@ import com.budgetmaster.model.Income;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class IncomeService {
@@ -45,5 +46,14 @@ public class IncomeService {
 		} else {
 			return Optional.empty();
 		}
+	}
+	
+	@Transactional
+	public boolean deleteIncome(Long id) {
+		if (incomeRepository.existsById(id)) {
+			incomeRepository.deleteById(id);
+			return true;
+		}
+		return false;
 	}
 }

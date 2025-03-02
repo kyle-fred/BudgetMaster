@@ -49,4 +49,15 @@ public class IncomeController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteIncome(@PathVariable Long id) {
+		boolean deleted = incomeService.deleteIncome(id);
+		
+		if (deleted) {
+			return ResponseEntity.noContent().build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 }

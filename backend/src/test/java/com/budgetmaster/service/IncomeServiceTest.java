@@ -146,4 +146,27 @@ class IncomeServiceTest {
         assertFalse(updatedIncome.isPresent());
         Mockito.verify(incomeRepository, Mockito.never()).save(Mockito.any(Income.class));
     }
+    
+    @Test
+    void shouldDeleteIncomeWhenExists() {
+    	// Mock successful delete
+    	Mockito.when(incomeRepository.existsById(1L)).thenReturn(true);
+    	Mockito.doNothing().when(incomeRepository).deleteById(1L);
+
+        boolean deleted = incomeService.deleteIncome(1L);
+
+        assertTrue(deleted);
+        Mockito.verify(incomeRepository, Mockito.times(1)).deleteById(1L);
+    }
+    
+    @Test
+    void shouldReturnFalseWhenDeletingNonExistentIncome() {
+    	// Mock unsuccessful delete
+    	Mockito.when(incomeRepository.existsById(99L)).thenReturn(false);
+
+        boolean deleted = incomeService.deleteIncome(99L);
+
+        assertFalse(deleted);
+        Mockito.verify(incomeRepository, Mockito.never()).deleteById(Mockito.anyLong());
+    }
 }

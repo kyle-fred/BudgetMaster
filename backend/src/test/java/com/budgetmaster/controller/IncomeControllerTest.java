@@ -14,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -307,5 +308,29 @@ public class IncomeControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(updateRequest)))
             .andExpect(status().isNotFound());
+    }
+    
+    @Test
+    void shouldDeleteIncomeWhenValidId() throws Exception {
+    	// Mock successful deletion
+    	Mockito.when(incomeService.deleteIncome(1L)).thenReturn(true);
+    	
+    	// DELETE /api/income & Assert OK response
+        mockMvc.perform(delete("/api/income/1"))
+                .andExpect(status().isNoContent());
+        
+        Mockito.verify(incomeService, Mockito.times(1)).deleteIncome(1L);
+    }
+    
+    @Test
+    void shouldReturnNotFoundWhenInvalidIdDelete() throws Exception {
+    	// Mock failed deletion (ID does not exist)
+    	Mockito.when(incomeService.deleteIncome(1L)).thenReturn(false);
+    	
+    	// DELETE /api/income & Assert not found response
+        mockMvc.perform(delete("/api/income/1"))
+                .andExpect(status().isNotFound());
+        
+        Mockito.verify(incomeService, Mockito.times(1)).deleteIncome(1L);
     }
 }

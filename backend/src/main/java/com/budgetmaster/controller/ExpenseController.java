@@ -1,0 +1,31 @@
+package com.budgetmaster.controller;
+
+import com.budgetmaster.dto.ExpenseRequest;
+import com.budgetmaster.model.Expense;
+import com.budgetmaster.service.ExpenseService;
+
+import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("api/expense")
+@Validated
+public class ExpenseController {
+	
+	private final ExpenseService expenseService;
+	
+	public ExpenseController(ExpenseService expenseService) {
+		this.expenseService = expenseService;
+	}
+	
+	@PostMapping
+	public ResponseEntity<Expense> createExpense(@Valid @RequestBody ExpenseRequest request) {
+		Expense expense = expenseService.createExpense(request);
+		return ResponseEntity.ok(expense);
+	}
+}

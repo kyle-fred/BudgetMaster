@@ -14,10 +14,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -211,5 +209,44 @@ public class ExpenseControllerTest {
 	    
 	    Mockito.verify(expenseService, Mockito.times(1))
 	            .createExpense(Mockito.any());
+	}
+	
+	@Test
+	void shouldReturnExpenseWhenValidIdGet() throws Exception {
+		
+		Expense expense = new Expense();
+		expense.setName("Rent");
+        expense.setTarget("Estate Agent XYZ");
+        expense.setAmount(1000.0);
+        expense.setExpenseType(ExpenseType.RECURRING);
+		
+		// Mock successful read
+		Mockito.when(expenseService.getExpenseById(1L)).thenReturn(Optional.of(expense));
+		
+		// GET /api/expense & Assert OK response
+		mockMvc.perform(get("/api/expense/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("Rent"))
+				.andExpect(jsonPath("$.target").value("Estate Agent XYZ"))
+				.andExpect(jsonPath("$.amount").value(1000.0))
+				.andExpect(jsonPath("$.expenseType").value("RECURRING"));
+		
+		Mockito.verify(expenseService, Mockito.times(1))
+				.getExpenseById(1L);
+	}
+	
+	@Test
+	void shouldReturnNotFoundWhenInvalidId() throws Exception {
+		// Mock failed read
+		Mockito.when(expenseService.getExpenseById(99L)).thenReturn(Optional.empty());
+		
+		// GET /api/expense & Assert not found response
+		mockMvc.perform(get("/api/expense/99")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		
+		Mockito.verify(expenseService, Mockito.times(1))
+				.getExpenseById(99L);
 	}
 }

@@ -26,4 +26,8 @@ public class ExpenseService {
 			);
 		return expenseRepository.save(expense);
 	}
+	
+	public Optional<Expense> getExpenseById(Long id) {
+		return expenseRepository.findById(id);
+	}
 }

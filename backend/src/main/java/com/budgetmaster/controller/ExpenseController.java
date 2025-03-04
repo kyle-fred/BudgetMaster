@@ -28,4 +28,14 @@ public class ExpenseController {
 		Expense expense = expenseService.createExpense(request);
 		return ResponseEntity.ok(expense);
 	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<Expense> getExpenseById(@PathVariable Long id) {
+		Optional<Expense> expense= expenseService.getExpenseById(id);
+		if (expense.isPresent()) {
+			return ResponseEntity.ok(expense.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 }

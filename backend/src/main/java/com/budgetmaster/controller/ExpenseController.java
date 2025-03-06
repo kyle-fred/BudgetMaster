@@ -38,4 +38,15 @@ public class ExpenseController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<Expense> updateExpense(@PathVariable Long id, @Valid @RequestBody ExpenseRequest request) {
+		Optional<Expense> expense = expenseService.updateExpense(id, request);
+		
+		if (expense.isPresent()) {
+			return ResponseEntity.ok(expense.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 }

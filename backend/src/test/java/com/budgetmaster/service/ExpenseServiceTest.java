@@ -99,4 +99,52 @@ class ExpenseServiceTest {
         
         assertFalse(retrievedExpense.isPresent());
     }
+    
+    @Test
+    void shouldUpdateExpenseWhenExists() {
+        Expense existingExpense = new Expense();
+        existingExpense.setId(1L);
+        existingExpense.setName("Rent");
+        existingExpense.setTarget("Estate Agent XYZ");
+        existingExpense.setAmount(1000.0);
+        existingExpense.setExpenseType(ExpenseType.RECURRING);
+
+        ExpenseRequest updateRequest = new ExpenseRequest();
+        updateRequest.setName("Debt Repayment");
+        updateRequest.setTarget("Bank XYZ");
+        updateRequest.setAmount(100.0);
+        updateRequest.setExpenseType(ExpenseType.ONE_TIME);
+
+        // Mock successful update
+        Mockito.when(expenseRepository.findById(1L)).thenReturn(Optional.of(existingExpense));
+        Mockito.when(expenseRepository.save(Mockito.any(Expense.class))).thenReturn(existingExpense);
+
+        Optional<Expense> updatedExpense = expenseService.updateExpense(1L, updateRequest);
+
+        assertTrue(updatedExpense.isPresent());
+        assertEquals(1L, updatedExpense.get().getId());
+        assertEquals("Debt Repayment", updatedExpense.get().getName());
+        assertEquals("Bank XYZ", updatedExpense.get().getTarget());
+        assertEquals(100.0, updatedExpense.get().getAmount());
+        assertEquals(ExpenseType.ONE_TIME, updatedExpense.get().getExpenseType());
+        
+        Mockito.verify(expenseRepository, Mockito.times(1)).save(existingExpense);
+    }
+    
+    @Test
+    void shouldReturnEmptyWhenUpdatingNonExistentExpense() {
+        ExpenseRequest updateRequest = new ExpenseRequest();
+        updateRequest.setName("Rent");
+        updateRequest.setTarget("Estate Agent XYZ");
+        updateRequest.setAmount(2000.0);
+        updateRequest.setExpenseType(ExpenseType.RECURRING);
+
+        // Mock unsuccessful update
+        Mockito.when(expenseRepository.findById(99L)).thenReturn(Optional.empty());
+
+        Optional<Expense> updatedExpense = expenseService.updateExpense(99L, updateRequest);
+
+        assertFalse(updatedExpense.isPresent());
+        Mockito.verify(expenseRepository, Mockito.never()).save(Mockito.any(Expense.class));
+    }
 }

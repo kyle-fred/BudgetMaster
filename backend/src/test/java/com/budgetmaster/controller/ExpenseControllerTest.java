@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -249,4 +250,62 @@ public class ExpenseControllerTest {
 		Mockito.verify(expenseService, Mockito.times(1))
 				.getExpenseById(99L);
 	}
+	
+	@Test
+	void shouldUpdateExpenseWhenValidId() throws Exception {
+		
+		Expense existingExpense= new Expense();
+		existingExpense.setId(1L);
+		existingExpense.setName("Rent");
+		existingExpense.setTarget("Estate Agent XYZ");
+		existingExpense.setAmount(1000.0);
+		existingExpense.setExpenseType(ExpenseType.RECURRING);
+		
+		Expense updatedExpense = new Expense ();
+		updatedExpense.setId(1L);
+		updatedExpense.setName("Debt Repayment");
+		updatedExpense.setTarget("Bank XYZ");
+		updatedExpense.setAmount(100.0);
+		updatedExpense.setExpenseType(ExpenseType.ONE_TIME);
+		
+		ExpenseRequest updateRequest = new ExpenseRequest();
+		updateRequest.setName("Debt Repayment");
+		updateRequest.setTarget("Bank XYZ");
+		updateRequest.setAmount(100.0);
+		updateRequest.setExpenseType(ExpenseType.ONE_TIME);
+		
+		// Mock successful update
+		Mockito.when(expenseService.updateExpense(Mockito.eq(1L), Mockito.any(ExpenseRequest.class)))
+				.thenReturn(Optional.of(updatedExpense));
+		
+		// PUT /api/expense & Assert OK response
+		mockMvc.perform(put("/api/expense/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(1L))
+				.andExpect(jsonPath("$.name").value("Debt Repayment"))
+				.andExpect(jsonPath("$.target").value("Bank XYZ"))
+				.andExpect(jsonPath("$.amount").value(100.0))
+				.andExpect(jsonPath("$.expenseType").value("ONE_TIME"));
+	}
+	
+    @Test
+    void shouldReturnNotFoundWhenInvalidIdPut() throws Exception {
+    	
+        ExpenseRequest updateRequest = new ExpenseRequest();
+		updateRequest.setName("Rent");
+		updateRequest.setTarget("Estate Agent XYZ");
+		updateRequest.setAmount(2000.0);
+		updateRequest.setExpenseType(ExpenseType.RECURRING);
+        
+        // Mock failed update
+        Mockito.when(expenseService.updateExpense(99L, updateRequest)).thenReturn(Optional.empty());
+        
+        // PUT /api/expense & Assert not found response
+        mockMvc.perform(put("/api/expense/99")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updateRequest)))
+            .andExpect(status().isNotFound());
+    }
 }

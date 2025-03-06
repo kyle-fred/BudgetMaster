@@ -7,6 +7,7 @@ import com.budgetmaster.model.Expense;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ExpenseService {
@@ -45,5 +46,14 @@ public class ExpenseService {
 		} else {
 			return Optional.empty();
 		}
+	}
+
+	@Transactional
+	public boolean deleteExpense(Long id) {
+		if (expenseRepository.existsById(id)) {
+			expenseRepository.deleteById(id);
+			return true;
+		}
+		return false;
 	}
 }

@@ -147,4 +147,27 @@ class ExpenseServiceTest {
         assertFalse(updatedExpense.isPresent());
         Mockito.verify(expenseRepository, Mockito.never()).save(Mockito.any(Expense.class));
     }
+
+    @Test
+    void shouldDeleteExpenseWhenExists() {
+    	// Mock successful delete
+    	Mockito.when(expenseRepository.existsById(1L)).thenReturn(true);
+    	Mockito.doNothing().when(expenseRepository).deleteById(1L);
+
+        boolean deleted = expenseService.deleteExpense(1L);
+
+        assertTrue(deleted);
+        Mockito.verify(expenseRepository, Mockito.times(1)).deleteById(1L);
+    }
+    
+    @Test
+    void shouldReturnFalseWhenDeletingNonExistentExpense() {
+    	// Mock unsuccessful delete
+    	Mockito.when(expenseRepository.existsById(99L)).thenReturn(false);
+
+        boolean deleted = expenseService.deleteExpense(99L);
+
+        assertFalse(deleted);
+        Mockito.verify(expenseRepository, Mockito.never()).deleteById(Mockito.anyLong());
+    }
 }

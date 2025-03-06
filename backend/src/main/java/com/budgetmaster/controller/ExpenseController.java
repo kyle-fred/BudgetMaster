@@ -49,4 +49,15 @@ public class ExpenseController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
+		boolean deleted = expenseService.deleteExpense(id);
+		
+		if (deleted) {
+			return ResponseEntity.noContent().build();
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 }

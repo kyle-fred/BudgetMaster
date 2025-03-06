@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -307,5 +308,29 @@ public class ExpenseControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(updateRequest)))
             .andExpect(status().isNotFound());
+    }
+
+	@Test
+    void shouldDeleteExpenseWhenValidId() throws Exception {
+    	// Mock successful deletion
+    	Mockito.when(expenseService.deleteExpense(1L)).thenReturn(true);
+    	
+    	// DELETE /api/expense & Assert OK response
+        mockMvc.perform(delete("/api/expense/1"))
+                .andExpect(status().isNoContent());
+        
+        Mockito.verify(expenseService, Mockito.times(1)).deleteExpense(1L);
+    }
+    
+    @Test
+    void shouldReturnNotFoundWhenInvalidIdDelete() throws Exception {
+    	// Mock failed deletion (ID does not exist)
+    	Mockito.when(expenseService.deleteExpense(1L)).thenReturn(false);
+    	
+    	// DELETE /api/expense & Assert not found response
+        mockMvc.perform(delete("/api/expense/1"))
+                .andExpect(status().isNotFound());
+        
+        Mockito.verify(expenseService, Mockito.times(1)).deleteExpense(1L);
     }
 }

@@ -18,7 +18,7 @@ This app enables users to **create budgets**, **categorize expenses/income**, an
 | **Backend** | Java, Spring Boot |
 | **Database** | PostgreSQL, JPA (Hibernate) |
 | **Testing** | JUnit, Mockito, SpringBootTest |
-| **API Docs** | SpringDoc OpenAPI (Swagger) |
+| **API Docs (Planned)** | SpringDoc OpenAPI (Swagger) |
 | **Frontend (Planned)** | React (Vite) |
 
 ---

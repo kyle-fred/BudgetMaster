@@ -76,6 +76,7 @@ curl -X DELETE http://localhost:8080/api/budget/1
 ### **📌 Model**
 ```json
 {
+    "id": 1,
     "name": "Salary",
     "source": "Company XYZ",
     "amount": 5000,
@@ -111,6 +112,7 @@ curl -X DELETE http://localhost:8080/api/income/1
 ### **📌 Model**
 ```json
 {
+    "id": 1,
     "name": "Rent",
     "source": "Landlord",
     "amount": 1000,

@@ -80,7 +80,7 @@ curl -X DELETE http://localhost:8080/api/budget/1
     "name": "Salary",
     "source": "Company XYZ",
     "amount": 5000,
-    "incomeType": "RECURRING"
+    "transactionType": "RECURRING"
 }
 ```
 
@@ -89,7 +89,7 @@ curl -X DELETE http://localhost:8080/api/budget/1
 ```bash
 curl -X POST http://localhost:8080/api/income \
      -H "Content-Type: application/json" \
-     -d '{"name": "Salary", "source": "Company XYZ", "amount": 5000, "incomeType": "RECURRING"}'
+     -d '{"name": "Salary", "source": "Company XYZ", "amount": 5000, "transactionType": "RECURRING"}'
 ```
 ### **✅ Get Income by ID (GET)**
 ```bash
@@ -99,7 +99,7 @@ curl -X GET http://localhost:8080/api/income/1
 ```bash
 curl -X PUT http://localhost:8080/api/income/1 \
      -H "Content-Type: application/json" \
-     -d '{"name": "Freelance Work", "source": "Client XYZ", "amount": 2000, "incomeType": "ONE_TIME"}'
+     -d '{"name": "Freelance Work", "source": "Client XYZ", "amount": 2000, "transactionType": "ONE_TIME"}'
 ```
 ### **✅ Delete Income (DELETE)**
 ```bash
@@ -116,7 +116,7 @@ curl -X DELETE http://localhost:8080/api/income/1
     "name": "Rent",
     "source": "Landlord",
     "amount": 1000,
-    "incomeType": "RECURRING"
+    "transactionType": "RECURRING"
 }
 ```
 
@@ -125,7 +125,7 @@ curl -X DELETE http://localhost:8080/api/income/1
 ```bash
 curl -X POST http://localhost:8080/api/expense \
      -H "Content-Type: application/json" \
-     -d '{"name": "Rent", "target": "Landlord", "amount": 1200, "expenseType": "RECURRING"}'
+     -d '{"name": "Rent", "target": "Landlord", "amount": 1200, "transactionType": "RECURRING"}'
 ```
 ### **✅ Get Expense by ID (GET)**
 ```bash
@@ -135,7 +135,7 @@ curl -X GET http://localhost:8080/api/expense/1
 ```bash
 curl -X PUT http://localhost:8080/api/expense/1 \
      -H "Content-Type: application/json" \
-     -d '{"name": "New Rent", "target": "New Landlord", "amount": 1500, "expenseType": "RECURRING"}'
+     -d '{"name": "New Rent", "target": "New Landlord", "amount": 1500, "transactionType": "RECURRING"}'
 ```
 ### **✅ Delete Expense (DELETE)**
 ```bash

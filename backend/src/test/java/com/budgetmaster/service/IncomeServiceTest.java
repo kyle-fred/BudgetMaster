@@ -1,7 +1,7 @@
 package com.budgetmaster.service;
 
 import com.budgetmaster.dto.IncomeRequest;
-import com.budgetmaster.enums.IncomeType;
+import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.repository.IncomeRepository;
 import com.budgetmaster.model.Income;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class IncomeServiceTest {
         expectedIncome.setName("Salary");
         expectedIncome.setSource("Company XYZ");
         expectedIncome.setAmount(2000.0);
-        expectedIncome.setIncomeType(IncomeType.RECURRING);
+        expectedIncome.setTransactionType(TransactionType.RECURRING);
     	
         // Mock successful creation
         Mockito.when(incomeRepository.save(Mockito.any(Income.class)))
@@ -36,7 +36,7 @@ class IncomeServiceTest {
         incomeRequest.setName("Salary");
         incomeRequest.setSource("Company XYZ");
         incomeRequest.setAmount(2000.0);
-        incomeRequest.setIncomeType(IncomeType.RECURRING);
+        incomeRequest.setTransactionType(TransactionType.RECURRING);
         
         Income savedIncome = incomeService.createIncome(incomeRequest);
 
@@ -45,7 +45,7 @@ class IncomeServiceTest {
         assertEquals("Salary", savedIncome.getName());
         assertEquals("Company XYZ", savedIncome.getSource());
         assertEquals(2000.0, savedIncome.getAmount());
-        assertEquals(IncomeType.RECURRING, savedIncome.getIncomeType());
+        assertEquals(TransactionType.RECURRING, savedIncome.getTransactionType());
 
         Mockito.verify(incomeRepository, Mockito.times(1))
         	.save(Mockito.any(Income.class));
@@ -61,7 +61,7 @@ class IncomeServiceTest {
         incomeRequest.setName("Salary");
         incomeRequest.setSource("Company XYZ");
         incomeRequest.setAmount(2000.0);
-        incomeRequest.setIncomeType(IncomeType.RECURRING);
+        incomeRequest.setTransactionType(TransactionType.RECURRING);
         
         assertThrows(DataIntegrityViolationException.class,
             () -> incomeService.createIncome(incomeRequest));
@@ -74,7 +74,7 @@ class IncomeServiceTest {
     	income.setName("Salary");
     	income.setSource("Company XYZ");
     	income.setAmount(2000.0);
-    	income.setIncomeType(IncomeType.RECURRING);
+    	income.setTransactionType(TransactionType.RECURRING);
     	
     	// Mock successful read
     	Mockito.when(incomeRepository.findById(1L)).thenReturn(Optional.of(income));
@@ -86,7 +86,7 @@ class IncomeServiceTest {
         assertEquals("Salary", retrievedIncome.get().getName());
         assertEquals("Company XYZ", retrievedIncome.get().getSource());
         assertEquals(2000.0, retrievedIncome.get().getAmount());
-        assertEquals(IncomeType.RECURRING, retrievedIncome.get().getIncomeType());
+        assertEquals(TransactionType.RECURRING, retrievedIncome.get().getTransactionType());
     }
     
     @Test
@@ -106,13 +106,13 @@ class IncomeServiceTest {
         existingIncome.setName("Salary");
         existingIncome.setSource("Company XYZ");
         existingIncome.setAmount(2000.0);
-        existingIncome.setIncomeType(IncomeType.RECURRING);
+        existingIncome.setTransactionType(TransactionType.RECURRING);
 
         IncomeRequest updateRequest = new IncomeRequest();
         updateRequest.setName("Interest Income");
         updateRequest.setSource("Bank XYZ");
         updateRequest.setAmount(100.0);
-        updateRequest.setIncomeType(IncomeType.ONE_TIME);
+        updateRequest.setTransactionType(TransactionType.ONE_TIME);
 
         // Mock successful update
         Mockito.when(incomeRepository.findById(1L)).thenReturn(Optional.of(existingIncome));
@@ -125,7 +125,7 @@ class IncomeServiceTest {
         assertEquals("Interest Income", updatedIncome.get().getName());
         assertEquals("Bank XYZ", updatedIncome.get().getSource());
         assertEquals(100.0, updatedIncome.get().getAmount());
-        assertEquals(IncomeType.ONE_TIME, updatedIncome.get().getIncomeType());
+        assertEquals(TransactionType.ONE_TIME, updatedIncome.get().getTransactionType());
         
         Mockito.verify(incomeRepository, Mockito.times(1)).save(existingIncome);
     }
@@ -136,7 +136,7 @@ class IncomeServiceTest {
         updateRequest.setName("Interest Income");
         updateRequest.setSource("Bank XYZ");
         updateRequest.setAmount(100.0);
-        updateRequest.setIncomeType(IncomeType.ONE_TIME);
+        updateRequest.setTransactionType(TransactionType.ONE_TIME);
 
         // Mock unsuccessful update
         Mockito.when(incomeRepository.findById(99L)).thenReturn(Optional.empty());

@@ -1,6 +1,6 @@
 package com.budgetmaster.dto;
 
-import com.budgetmaster.enums.ExpenseType;
+import com.budgetmaster.enums.TransactionType;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -18,8 +18,8 @@ public class ExpenseRequest {
 	@Min(value = 0, message = "Expense amount cannot be negative.")
 	private Double amount;
 	
-	@NotNull(message = "Expense type is required.")
-	private ExpenseType expenseType;
+	@NotNull(message = "Expense's transaction type is required.")
+	private TransactionType transactionType;
 	
 	public String getName() {
 		return name;
@@ -45,11 +45,11 @@ public class ExpenseRequest {
 		this.amount = amount;
 	}
 	
-	public ExpenseType getExpenseType() {
-		return expenseType;
+	public TransactionType getTransactionType() {
+		return transactionType;
 	}
 	
-	public void setExpenseType(ExpenseType expenseType) {
-		this.expenseType = expenseType;
+	public void setTransactionType(TransactionType transactionType) {
+		this.transactionType = transactionType;
 	}
 }

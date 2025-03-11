@@ -3,13 +3,13 @@ package com.budgetmaster.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ExpenseType {
+public enum TransactionType {
 	RECURRING,
 	ONE_TIME;
 	
 	@JsonCreator
-	public static ExpenseType fromString(String value) {
-		return ExpenseType.valueOf(value.toUpperCase());
+	public static TransactionType fromString(String value) {
+		return TransactionType.valueOf(value.toUpperCase());
 	}
 	
 	@JsonValue

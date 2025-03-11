@@ -23,7 +23,7 @@ public class ExpenseService {
 				request.getName(),
 				request.getTarget(),
 				request.getAmount(),
-				request.getExpenseType()
+				request.getTransactionType()
 			);
 		return expenseRepository.save(expense);
 	}
@@ -40,7 +40,7 @@ public class ExpenseService {
 			expense.setName(request.getName());
 			expense.setTarget(request.getTarget());
 			expense.setAmount(request.getAmount());
-			expense.setExpenseType(request.getExpenseType());
+			expense.setTransactionType(request.getTransactionType());
 			
 			return Optional.of(expenseRepository.save(expense));
 		} else {

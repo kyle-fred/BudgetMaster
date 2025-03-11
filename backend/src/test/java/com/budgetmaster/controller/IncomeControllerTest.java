@@ -1,7 +1,7 @@
 package com.budgetmaster.controller;
 
 import com.budgetmaster.dto.IncomeRequest;
-import com.budgetmaster.enums.IncomeType;
+import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.service.IncomeService;
 import com.budgetmaster.model.Income;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,14 +42,14 @@ public class IncomeControllerTest {
         request.setName("Salary");
         request.setSource("Company XYZ");
         request.setAmount(2000.0);
-        request.setIncomeType(IncomeType.RECURRING);
+        request.setTransactionType(TransactionType.RECURRING);
 		
 		Income expectedIncome = new Income();
         expectedIncome.setId(1L);
         expectedIncome.setName("Salary");
         expectedIncome.setSource("Company XYZ");
         expectedIncome.setAmount(2000.0);
-        expectedIncome.setIncomeType(IncomeType.RECURRING);
+        expectedIncome.setTransactionType(TransactionType.RECURRING);
 		
 		// Mock successful create
 		Mockito.when(incomeService.createIncome(Mockito.any()))
@@ -63,7 +63,7 @@ public class IncomeControllerTest {
 			.andExpect(jsonPath("$.name").value("Salary"))
 			.andExpect(jsonPath("$.source").value("Company XYZ"))
 			.andExpect(jsonPath("$.amount").value(2000.0))
-			.andExpect(jsonPath("$.incomeType").value("RECURRING"));
+			.andExpect(jsonPath("$.transactionType").value("RECURRING"));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 			.createIncome(Mockito.any());
@@ -75,7 +75,7 @@ public class IncomeControllerTest {
 		IncomeRequest request = new IncomeRequest();
         request.setSource("Company XYZ");
         request.setAmount(2000.0);
-        request.setIncomeType(IncomeType.RECURRING);
+        request.setTransactionType(TransactionType.RECURRING);
 		
 	    // POST to /api/income & Assert bad request
 		mockMvc.perform(post("/api/income")
@@ -94,7 +94,7 @@ public class IncomeControllerTest {
 		IncomeRequest request = new IncomeRequest();
 		request.setName("Salary");
         request.setAmount(2000.0);
-        request.setIncomeType(IncomeType.RECURRING);
+        request.setTransactionType(TransactionType.RECURRING);
 		
 	    // POST to /api/income & Assert bad request
 		mockMvc.perform(post("/api/income")
@@ -113,7 +113,7 @@ public class IncomeControllerTest {
 		IncomeRequest request = new IncomeRequest();
         request.setName("Salary");
         request.setSource("Company XYZ");
-        request.setIncomeType(IncomeType.RECURRING);
+        request.setTransactionType(TransactionType.RECURRING);
 		
 	    // POST to /api/income & Assert bad request
 		mockMvc.perform(post("/api/income")
@@ -133,7 +133,7 @@ public class IncomeControllerTest {
         request.setName("Salary");
         request.setSource("Company XYZ");
         request.setAmount(-2000.0);
-        request.setIncomeType(IncomeType.RECURRING);
+        request.setTransactionType(TransactionType.RECURRING);
 		
 	    // POST to /api/income & Assert bad request
 		mockMvc.perform(post("/api/income")
@@ -147,7 +147,7 @@ public class IncomeControllerTest {
 	}
 	
 	@Test
-	void shouldReturnBadRequestWhenIncomeTypeIsMissing() throws Exception {
+	void shouldReturnBadRequestWhenTransactionTypeIsMissing() throws Exception {
 		
 		IncomeRequest request = new IncomeRequest();
         request.setName("Salary");
@@ -159,7 +159,7 @@ public class IncomeControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.incomeType").value("Income type is required."));
+			.andExpect(jsonPath("$.transactionType").value("Income's transaction type is required."));
 		
 		Mockito.verify(incomeService, Mockito.times(0))
 			.createIncome(Mockito.any());
@@ -172,7 +172,7 @@ public class IncomeControllerTest {
         request.setName("Salary");
         request.setSource("Company XYZ");
         request.setAmount(2000.0);
-        request.setIncomeType(IncomeType.RECURRING);
+        request.setTransactionType(TransactionType.RECURRING);
 
 	    // Mock internal server error on create
 	    Mockito.when(incomeService.createIncome(Mockito.any()))
@@ -196,7 +196,7 @@ public class IncomeControllerTest {
         request.setName("Salary");
         request.setSource("Company XYZ");
         request.setAmount(2000.0);
-        request.setIncomeType(IncomeType.RECURRING);
+        request.setTransactionType(TransactionType.RECURRING);
 
 	    // Mock data integrity violation on create
 	    Mockito.when(incomeService.createIncome(Mockito.any()))
@@ -220,7 +220,7 @@ public class IncomeControllerTest {
 		income.setName("Salary");
         income.setSource("Company XYZ");
         income.setAmount(2000.0);
-        income.setIncomeType(IncomeType.RECURRING);
+        income.setTransactionType(TransactionType.RECURRING);
 		
 		// Mock successful read
 		Mockito.when(incomeService.getIncomeById(1L)).thenReturn(Optional.of(income));
@@ -232,7 +232,7 @@ public class IncomeControllerTest {
 				.andExpect(jsonPath("$.name").value("Salary"))
 				.andExpect(jsonPath("$.source").value("Company XYZ"))
 				.andExpect(jsonPath("$.amount").value(2000.0))
-				.andExpect(jsonPath("$.incomeType").value("RECURRING"));
+				.andExpect(jsonPath("$.transactionType").value("RECURRING"));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 				.getIncomeById(1L);
@@ -260,20 +260,20 @@ public class IncomeControllerTest {
 		existingIncome.setName("Salary");
 		existingIncome.setSource("Company XYZ");
 		existingIncome.setAmount(2000.0);
-		existingIncome.setIncomeType(IncomeType.RECURRING);
+		existingIncome.setTransactionType(TransactionType.RECURRING);
 		
 		Income updatedIncome = new Income ();
 		updatedIncome.setId(1L);
 		updatedIncome.setName("Interest Income");
 		updatedIncome.setSource("Bank XYZ");
 		updatedIncome.setAmount(100.0);
-		updatedIncome.setIncomeType(IncomeType.ONE_TIME);
+		updatedIncome.setTransactionType(TransactionType.ONE_TIME);
 		
 		IncomeRequest updateRequest = new IncomeRequest();
 		updateRequest.setName("Interest Income");
 		updateRequest.setSource("Bank XYZ");
 		updateRequest.setAmount(100.0);
-		updateRequest.setIncomeType(IncomeType.ONE_TIME);
+		updateRequest.setTransactionType(TransactionType.ONE_TIME);
 		
 		// Mock successful update
 		Mockito.when(incomeService.updateIncome(Mockito.eq(1L), Mockito.any(IncomeRequest.class)))
@@ -288,7 +288,7 @@ public class IncomeControllerTest {
 				.andExpect(jsonPath("$.name").value("Interest Income"))
 				.andExpect(jsonPath("$.source").value("Bank XYZ"))
 				.andExpect(jsonPath("$.amount").value(100.0))
-				.andExpect(jsonPath("$.incomeType").value("ONE_TIME"));
+				.andExpect(jsonPath("$.transactionType").value("ONE_TIME"));
 	}
 	
     @Test
@@ -298,7 +298,7 @@ public class IncomeControllerTest {
 		updateRequest.setName("Interest Income");
 		updateRequest.setSource("Bank XYZ");
 		updateRequest.setAmount(100.0);
-		updateRequest.setIncomeType(IncomeType.ONE_TIME);
+		updateRequest.setTransactionType(TransactionType.ONE_TIME);
         
         // Mock failed update
         Mockito.when(incomeService.updateIncome(99L, updateRequest)).thenReturn(Optional.empty());

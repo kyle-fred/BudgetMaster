@@ -1,6 +1,6 @@
 package com.budgetmaster.model;
 
-import com.budgetmaster.enums.IncomeType;
+import com.budgetmaster.enums.TransactionType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,14 +21,14 @@ public class Income {
 	private Double amount;
 	
 	@Enumerated(EnumType.STRING)
-	private IncomeType incomeType;
+	private TransactionType transactionType;
 	
 	public Income() {}
 	
-	public Income(String name, String source, Double amount, IncomeType incomeType) {
+	public Income(String name, String source, Double amount, TransactionType transactionType) {
 		this.name = name;
 		this.source = source;
-		this.incomeType = incomeType;
+		this.transactionType = transactionType;
 		this.amount = amount;
 	}
 	
@@ -64,11 +64,11 @@ public class Income {
 		this.amount = amount;
 	}
 	
-	public IncomeType getIncomeType() {
-		return incomeType;
+	public TransactionType getTransactionType() {
+		return transactionType;
 	}
 	
-	public void setIncomeType(IncomeType type) {
-		this.incomeType = type;
+	public void setTransactionType(TransactionType transactionType) {
+		this.transactionType = transactionType;
 	}
 }

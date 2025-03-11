@@ -1,6 +1,6 @@
 package com.budgetmaster.dto;
 
-import com.budgetmaster.enums.IncomeType;
+import com.budgetmaster.enums.TransactionType;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -18,8 +18,8 @@ public class IncomeRequest {
 	@Min(value = 0, message = "Income amount cannot be negative.")
 	private Double amount;
 	
-	@NotNull(message = "Income type is required.")
-	private IncomeType incomeType;
+	@NotNull(message = "Income's transaction type is required.")
+	private TransactionType transactionType;
 	
 	public String getName() {
 		return name;
@@ -45,11 +45,11 @@ public class IncomeRequest {
 		this.amount = amount;
 	}
 	
-	public IncomeType getIncomeType() {
-		return incomeType;
+	public TransactionType getTransactionType() {
+		return transactionType;
 	}
 	
-	public void setIncomeType(IncomeType incomeType) {
-		this.incomeType = incomeType;
+	public void setTransactionType(TransactionType transactionType) {
+		this.transactionType = transactionType;
 	}
 }

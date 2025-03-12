@@ -1,6 +1,7 @@
 package com.budgetmaster.controller;
 
 import com.budgetmaster.dto.ExpenseRequest;
+import com.budgetmaster.enums.ExpenseCategory;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.service.ExpenseService;
 import com.budgetmaster.model.Expense;
@@ -40,15 +41,15 @@ public class ExpenseControllerTest {
 
 		ExpenseRequest request = new ExpenseRequest();
         request.setName("Rent");
-        request.setTarget("Estate Agent XYZ");
         request.setAmount(1000.0);
+        request.setExpenseCategory(ExpenseCategory.HOUSING);
         request.setTransactionType(TransactionType.RECURRING);
 		
 		Expense expectedExpense = new Expense();
         expectedExpense.setId(1L);
         expectedExpense.setName("Rent");
-        expectedExpense.setTarget("Estate Agent XYZ");
         expectedExpense.setAmount(1000.0);
+        expectedExpense.setExpenseCategory(ExpenseCategory.HOUSING);
         expectedExpense.setTransactionType(TransactionType.RECURRING);
 		
 		// Mock successful create
@@ -61,8 +62,8 @@ public class ExpenseControllerTest {
 			.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.name").value("Rent"))
-			.andExpect(jsonPath("$.target").value("Estate Agent XYZ"))
 			.andExpect(jsonPath("$.amount").value(1000.0))
+			.andExpect(jsonPath("$.expenseCategory").value("HOUSING"))
 			.andExpect(jsonPath("$.transactionType").value("RECURRING"));
 		
 		Mockito.verify(expenseService, Mockito.times(1))
@@ -73,8 +74,8 @@ public class ExpenseControllerTest {
 	void shouldReturnBadRequestWhenNameIsMissing() throws Exception {
 		
 		ExpenseRequest request = new ExpenseRequest();
-        request.setTarget("Estate Agent XYZ");
         request.setAmount(1000.0);
+        request.setExpenseCategory(ExpenseCategory.HOUSING);
         request.setTransactionType(TransactionType.RECURRING);
 		
 	    // POST to /api/expense & Assert bad request
@@ -89,30 +90,11 @@ public class ExpenseControllerTest {
 	}
 	
 	@Test
-	void shouldReturnBadRequestWhenTargetIsMissing() throws Exception {
-		
-		ExpenseRequest request = new ExpenseRequest();
-		request.setName("Rent");
-        request.setAmount(1000.0);
-        request.setTransactionType(TransactionType.RECURRING);
-		
-	    // POST to /api/expense & Assert bad request
-		mockMvc.perform(post("/api/expense")
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(request)))
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.target").value("Expense target is required."));
-		
-		Mockito.verify(expenseService, Mockito.times(0))
-			.createExpense(Mockito.any());
-	}
-	
-	@Test
 	void shouldReturnBadRequestWhenAmountIsMissing() throws Exception {
 		
 		ExpenseRequest request = new ExpenseRequest();
         request.setName("Rent");
-        request.setTarget("Estate Agent XYZ");
+        request.setExpenseCategory(ExpenseCategory.HOUSING);
         request.setTransactionType(TransactionType.RECURRING);
 		
 	    // POST to /api/expense & Assert bad request
@@ -127,12 +109,31 @@ public class ExpenseControllerTest {
 	}
 	
 	@Test
+	void shouldReturnBadRequestWhenExpenseCategoryIsMissing() throws Exception {
+		
+		ExpenseRequest request = new ExpenseRequest();
+		request.setName("Rent");
+        request.setAmount(1000.0);
+        request.setTransactionType(TransactionType.RECURRING);
+		
+	    // POST to /api/expense & Assert bad request
+		mockMvc.perform(post("/api/expense")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(request)))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.expenseCategory").value("Expense category is required."));
+		
+		Mockito.verify(expenseService, Mockito.times(0))
+			.createExpense(Mockito.any());
+	}
+	
+	@Test
 	void shouldReturnBadRequestWhenExpenseAmountIsNegative() throws Exception {
 		
 		ExpenseRequest request = new ExpenseRequest();
         request.setName("Rent");
-        request.setTarget("Estate Agent XYZ");
         request.setAmount(-1000.0);
+        request.setExpenseCategory(ExpenseCategory.HOUSING);
         request.setTransactionType(TransactionType.RECURRING);
 		
 	    // POST to /api/expense & Assert bad request
@@ -151,8 +152,8 @@ public class ExpenseControllerTest {
 		
 		ExpenseRequest request = new ExpenseRequest();
         request.setName("Rent");
-        request.setTarget("Estate Agent XYZ");
         request.setAmount(1000.0);
+        request.setExpenseCategory(ExpenseCategory.HOUSING);
 		
 	    // POST to /api/expense & Assert bad request
 		mockMvc.perform(post("/api/expense")
@@ -170,8 +171,8 @@ public class ExpenseControllerTest {
 		
 		ExpenseRequest request = new ExpenseRequest();
         request.setName("Rent");
-        request.setTarget("Estate Agent XYZ");
         request.setAmount(1000.0);
+        request.setExpenseCategory(ExpenseCategory.HOUSING);
         request.setTransactionType(TransactionType.RECURRING);
 
 	    // Mock internal server error on create
@@ -194,8 +195,8 @@ public class ExpenseControllerTest {
 		
 	    ExpenseRequest request = new ExpenseRequest();
         request.setName("Rent");
-        request.setTarget("Estate Agent XYZ");
         request.setAmount(1000.0);
+        request.setExpenseCategory(ExpenseCategory.HOUSING);
         request.setTransactionType(TransactionType.RECURRING);
 
 	    // Mock data integrity violation on create
@@ -218,8 +219,8 @@ public class ExpenseControllerTest {
 		
 		Expense expense = new Expense();
 		expense.setName("Rent");
-        expense.setTarget("Estate Agent XYZ");
         expense.setAmount(1000.0);
+        expense.setExpenseCategory(ExpenseCategory.HOUSING);
         expense.setTransactionType(TransactionType.RECURRING);
 		
 		// Mock successful read
@@ -230,8 +231,8 @@ public class ExpenseControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value("Rent"))
-				.andExpect(jsonPath("$.target").value("Estate Agent XYZ"))
 				.andExpect(jsonPath("$.amount").value(1000.0))
+				.andExpect(jsonPath("$.expenseCategory").value("HOUSING"))
 				.andExpect(jsonPath("$.transactionType").value("RECURRING"));
 		
 		Mockito.verify(expenseService, Mockito.times(1))
@@ -258,22 +259,22 @@ public class ExpenseControllerTest {
 		Expense existingExpense= new Expense();
 		existingExpense.setId(1L);
 		existingExpense.setName("Rent");
-		existingExpense.setTarget("Estate Agent XYZ");
 		existingExpense.setAmount(1000.0);
+		existingExpense.setExpenseCategory(ExpenseCategory.HOUSING);
 		existingExpense.setTransactionType(TransactionType.RECURRING);
 		
 		Expense updatedExpense = new Expense ();
 		updatedExpense.setId(1L);
-		updatedExpense.setName("Debt Repayment");
-		updatedExpense.setTarget("Bank XYZ");
+		updatedExpense.setName("Gas Bill");
 		updatedExpense.setAmount(100.0);
-		updatedExpense.setTransactionType(TransactionType.ONE_TIME);
+		updatedExpense.setExpenseCategory(ExpenseCategory.UTILITIES);
+		updatedExpense.setTransactionType(TransactionType.RECURRING);
 		
 		ExpenseRequest updateRequest = new ExpenseRequest();
-		updateRequest.setName("Debt Repayment");
-		updateRequest.setTarget("Bank XYZ");
+		updateRequest.setName("Gas Bill");
 		updateRequest.setAmount(100.0);
-		updateRequest.setTransactionType(TransactionType.ONE_TIME);
+		updateRequest.setExpenseCategory(ExpenseCategory.UTILITIES);
+		updateRequest.setTransactionType(TransactionType.RECURRING);
 		
 		// Mock successful update
 		Mockito.when(expenseService.updateExpense(Mockito.eq(1L), Mockito.any(ExpenseRequest.class)))
@@ -285,10 +286,10 @@ public class ExpenseControllerTest {
 				.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(1L))
-				.andExpect(jsonPath("$.name").value("Debt Repayment"))
-				.andExpect(jsonPath("$.target").value("Bank XYZ"))
+				.andExpect(jsonPath("$.name").value("Gas Bill"))
 				.andExpect(jsonPath("$.amount").value(100.0))
-				.andExpect(jsonPath("$.transactionType").value("ONE_TIME"));
+				.andExpect(jsonPath("$.expenseCategory").value("UTILITIES"))
+				.andExpect(jsonPath("$.transactionType").value("RECURRING"));
 	}
 	
     @Test
@@ -296,8 +297,8 @@ public class ExpenseControllerTest {
     	
         ExpenseRequest updateRequest = new ExpenseRequest();
 		updateRequest.setName("Rent");
-		updateRequest.setTarget("Estate Agent XYZ");
 		updateRequest.setAmount(2000.0);
+		updateRequest.setExpenseCategory(ExpenseCategory.HOUSING);
 		updateRequest.setTransactionType(TransactionType.RECURRING);
         
         // Mock failed update

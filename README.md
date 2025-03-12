@@ -80,7 +80,7 @@ curl -X DELETE http://localhost:8080/api/budget/1
     "name": "Salary",
     "source": "Company XYZ",
     "amount": 5000,
-    "transactionType": "RECURRING"
+    "type": "RECURRING"
 }
 ```
 
@@ -89,7 +89,7 @@ curl -X DELETE http://localhost:8080/api/budget/1
 ```bash
 curl -X POST http://localhost:8080/api/income \
      -H "Content-Type: application/json" \
-     -d '{"name": "Salary", "source": "Company XYZ", "amount": 5000, "transactionType": "RECURRING"}'
+     -d '{"name": "Salary", "source": "Company XYZ", "amount": 5000, "type": "RECURRING"}'
 ```
 ### **✅ Get Income by ID (GET)**
 ```bash
@@ -99,7 +99,7 @@ curl -X GET http://localhost:8080/api/income/1
 ```bash
 curl -X PUT http://localhost:8080/api/income/1 \
      -H "Content-Type: application/json" \
-     -d '{"name": "Freelance Work", "source": "Client XYZ", "amount": 2000, "transactionType": "ONE_TIME"}'
+     -d '{"name": "Freelance Work", "source": "Client XYZ", "amount": 2000, "type": "ONE_TIME"}'
 ```
 ### **✅ Delete Income (DELETE)**
 ```bash
@@ -115,8 +115,8 @@ curl -X DELETE http://localhost:8080/api/income/1
     "id": 1,
     "name": "Rent",
     "amount": 1000,
-    "expenseCategory": "HOUSING",
-    "transactionType": "RECURRING"
+    "category": "HOUSING",
+    "type": "RECURRING"
 }
 ```
 
@@ -125,7 +125,7 @@ curl -X DELETE http://localhost:8080/api/income/1
 ```bash
 curl -X POST http://localhost:8080/api/expense \
      -H "Content-Type: application/json" \
-     -d '{"name": "Rent", "amount": 1000, "expenseCategory": "HOUSING", "transactionType": "RECURRING"}'
+     -d '{"name": "Rent", "amount": 1000, "category": "HOUSING", "type": "RECURRING"}'
 ```
 ### **✅ Get Expense by ID (GET)**
 ```bash
@@ -135,7 +135,7 @@ curl -X GET http://localhost:8080/api/expense/1
 ```bash
 curl -X PUT http://localhost:8080/api/expense/1 \
      -H "Content-Type: application/json" \
-     -d '{"name": "Gas & Electricity", "amount": 115, "expenseCategory": "UTILITIES", "transactionType": "RECURRING"}'
+     -d '{"name": "Gas & Electricity", "amount": 115, "category": "UTILITIES", "type": "RECURRING"}'
 ```
 ### **✅ Delete Expense (DELETE)**
 ```bash

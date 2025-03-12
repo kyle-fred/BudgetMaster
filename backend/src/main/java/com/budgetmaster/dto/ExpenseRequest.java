@@ -17,10 +17,10 @@ public class ExpenseRequest {
 	private Double amount;
 	
 	@NotNull(message = "Expense category is required.")
-	private ExpenseCategory expenseCategory;
+	private ExpenseCategory category;
 	
-	@NotNull(message = "Expense's transaction type is required.")
-	private TransactionType transactionType;
+	@NotNull(message = "Expense transaction type is required.")
+	private TransactionType type;
 	
 	public String getName() {
 		return name;
@@ -38,19 +38,19 @@ public class ExpenseRequest {
 		this.amount = amount;
 	}
 	
-	public ExpenseCategory getExpenseCategory() {
-		return expenseCategory;
+	public ExpenseCategory getCategory() {
+		return category;
 	}
 	
-	public void setExpenseCategory(ExpenseCategory expenseCategory) {
-		this.expenseCategory = expenseCategory;
+	public void setCategory(ExpenseCategory category) {
+		this.category = category;
 	}
 	
-	public TransactionType getTransactionType() {
-		return transactionType;
+	public TransactionType getType() {
+		return type;
 	}
 	
-	public void setTransactionType(TransactionType transactionType) {
-		this.transactionType = transactionType;
+	public void setType(TransactionType type) {
+		this.type = type;
 	}
 }

@@ -22,8 +22,8 @@ public class ExpenseService {
 		Expense expense = new Expense(
 				request.getName(),
 				request.getAmount(),
-				request.getExpenseCategory(),
-				request.getTransactionType()
+				request.getCategory(),
+				request.getType()
 			);
 		return expenseRepository.save(expense);
 	}
@@ -39,8 +39,8 @@ public class ExpenseService {
 			Expense expense = existingExpense.get();
 			expense.setName(request.getName());
 			expense.setAmount(request.getAmount());
-			expense.setExpenseCategory(request.getExpenseCategory());
-			expense.setTransactionType(request.getTransactionType());
+			expense.setCategory(request.getCategory());
+			expense.setType(request.getType());
 			
 			return Optional.of(expenseRepository.save(expense));
 		} else {

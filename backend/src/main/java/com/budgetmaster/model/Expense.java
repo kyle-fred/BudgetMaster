@@ -18,19 +18,20 @@ public class Expense {
 	private Long id;
 	
 	private String name;
+	
 	private Double amount;
 	
 	@Enumerated(EnumType.STRING)
 	private ExpenseCategory category;
 	
 	@Enumerated(EnumType.STRING)
-	private TransactionType transactionType;
+	private TransactionType type;
 	
 	public Expense() {}
 	
-	public Expense(String name, Double amount, ExpenseCategory category, TransactionType transactionType) {
+	public Expense(String name, Double amount, ExpenseCategory category, TransactionType type) {
 		this.name = name;
-		this.transactionType = transactionType;
+		this.type = type;
 		this.category = category;
 		this.amount = amount;
 	}
@@ -59,19 +60,19 @@ public class Expense {
 		this.amount = amount;
 	}
 	
-	public ExpenseCategory getExpenseCategory() {
+	public ExpenseCategory getCategory() {
 		return category;
 	}
 	
-	public void setExpenseCategory(ExpenseCategory category) {
+	public void setCategory(ExpenseCategory category) {
 		this.category = category;
 	}
 	
-	public TransactionType getTransactionType() {
-		return transactionType;
+	public TransactionType getType() {
+		return type;
 	}
 	
-	public void setTransactionType(TransactionType transactionType) {
-		this.transactionType = transactionType;
+	public void setType(TransactionType type) {
+		this.type = type;
 	}
 }

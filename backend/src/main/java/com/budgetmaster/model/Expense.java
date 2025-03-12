@@ -1,6 +1,7 @@
 package com.budgetmaster.model;
 
 import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.enums.ExpenseCategory;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,18 +18,20 @@ public class Expense {
 	private Long id;
 	
 	private String name;
-	private String target;
 	private Double amount;
+	
+	@Enumerated(EnumType.STRING)
+	private ExpenseCategory category;
 	
 	@Enumerated(EnumType.STRING)
 	private TransactionType transactionType;
 	
 	public Expense() {}
 	
-	public Expense(String name, String target, Double amount, TransactionType transactionType) {
+	public Expense(String name, Double amount, ExpenseCategory category, TransactionType transactionType) {
 		this.name = name;
-		this.target = target;
 		this.transactionType = transactionType;
+		this.category = category;
 		this.amount = amount;
 	}
 	
@@ -48,20 +51,20 @@ public class Expense {
 		this.name = name;
 	}
 	
-	public String getTarget() {
-		return target;
-	}
-	
-	public void setTarget(String target) {
-		this.target = target;
-	}
-	
 	public Double getAmount() {
 		return amount;
 	}
 	
 	public void setAmount(Double amount) {
 		this.amount = amount;
+	}
+	
+	public ExpenseCategory getExpenseCategory() {
+		return category;
+	}
+	
+	public void setExpenseCategory(ExpenseCategory category) {
+		this.category = category;
 	}
 	
 	public TransactionType getTransactionType() {

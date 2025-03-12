@@ -114,8 +114,8 @@ curl -X DELETE http://localhost:8080/api/income/1
 {
     "id": 1,
     "name": "Rent",
-    "source": "Landlord",
     "amount": 1000,
+    "expenseCategory": "HOUSING",
     "transactionType": "RECURRING"
 }
 ```
@@ -125,7 +125,7 @@ curl -X DELETE http://localhost:8080/api/income/1
 ```bash
 curl -X POST http://localhost:8080/api/expense \
      -H "Content-Type: application/json" \
-     -d '{"name": "Rent", "target": "Landlord", "amount": 1200, "transactionType": "RECURRING"}'
+     -d '{"name": "Rent", "amount": 1000, "expenseCategory": "HOUSING", "transactionType": "RECURRING"}'
 ```
 ### **✅ Get Expense by ID (GET)**
 ```bash
@@ -135,7 +135,7 @@ curl -X GET http://localhost:8080/api/expense/1
 ```bash
 curl -X PUT http://localhost:8080/api/expense/1 \
      -H "Content-Type: application/json" \
-     -d '{"name": "New Rent", "target": "New Landlord", "amount": 1500, "transactionType": "RECURRING"}'
+     -d '{"name": "Gas & Electricity", "amount": 115, "expenseCategory": "UTILITIES", "transactionType": "RECURRING"}'
 ```
 ### **✅ Delete Expense (DELETE)**
 ```bash

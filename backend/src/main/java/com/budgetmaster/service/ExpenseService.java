@@ -21,8 +21,8 @@ public class ExpenseService {
 	public Expense createExpense(ExpenseRequest request) {
 		Expense expense = new Expense(
 				request.getName(),
-				request.getTarget(),
 				request.getAmount(),
+				request.getExpenseCategory(),
 				request.getTransactionType()
 			);
 		return expenseRepository.save(expense);
@@ -31,15 +31,15 @@ public class ExpenseService {
 	public Optional<Expense> getExpenseById(Long id) {
 		return expenseRepository.findById(id);
 	}
-
-		public Optional<Expense> updateExpense(Long id, ExpenseRequest request) {
+	
+	public Optional<Expense> updateExpense(Long id, ExpenseRequest request) {
 		Optional<Expense> existingExpense = expenseRepository.findById(id);
 		
 		if (existingExpense.isPresent()) {
 			Expense expense = existingExpense.get();
 			expense.setName(request.getName());
-			expense.setTarget(request.getTarget());
 			expense.setAmount(request.getAmount());
+			expense.setExpenseCategory(request.getExpenseCategory());
 			expense.setTransactionType(request.getTransactionType());
 			
 			return Optional.of(expenseRepository.save(expense));

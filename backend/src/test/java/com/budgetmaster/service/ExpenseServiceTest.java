@@ -27,8 +27,8 @@ class ExpenseServiceTest {
         expectedExpense.setId(1L);
         expectedExpense.setName("Rent");
         expectedExpense.setAmount(1000.0);
-        expectedExpense.setExpenseCategory(ExpenseCategory.HOUSING);
-        expectedExpense.setTransactionType(TransactionType.RECURRING);
+        expectedExpense.setCategory(ExpenseCategory.HOUSING);
+        expectedExpense.setType(TransactionType.RECURRING);
     	
         // Mock successful creation
         Mockito.when(expenseRepository.save(Mockito.any(Expense.class)))
@@ -37,8 +37,8 @@ class ExpenseServiceTest {
         ExpenseRequest expenseRequest = new ExpenseRequest();
         expenseRequest.setName("Rent");
         expenseRequest.setAmount(1000.0);
-        expenseRequest.setExpenseCategory(ExpenseCategory.HOUSING);
-        expenseRequest.setTransactionType(TransactionType.RECURRING);
+        expenseRequest.setCategory(ExpenseCategory.HOUSING);
+        expenseRequest.setType(TransactionType.RECURRING);
         
         Expense savedExpense = expenseService.createExpense(expenseRequest);
 
@@ -46,8 +46,8 @@ class ExpenseServiceTest {
         assertEquals(1L, savedExpense.getId());
         assertEquals("Rent", savedExpense.getName());
         assertEquals(1000.0, savedExpense.getAmount());
-        assertEquals(ExpenseCategory.HOUSING, savedExpense.getExpenseCategory());
-        assertEquals(TransactionType.RECURRING, savedExpense.getTransactionType());
+        assertEquals(ExpenseCategory.HOUSING, savedExpense.getCategory());
+        assertEquals(TransactionType.RECURRING, savedExpense.getType());
 
         Mockito.verify(expenseRepository, Mockito.times(1))
         	.save(Mockito.any(Expense.class));
@@ -62,8 +62,8 @@ class ExpenseServiceTest {
         ExpenseRequest expenseRequest = new ExpenseRequest();
         expenseRequest.setName("Rent");
         expenseRequest.setAmount(1000.0);
-        expenseRequest.setExpenseCategory(ExpenseCategory.HOUSING);
-        expenseRequest.setTransactionType(TransactionType.RECURRING);
+        expenseRequest.setCategory(ExpenseCategory.HOUSING);
+        expenseRequest.setType(TransactionType.RECURRING);
         
         assertThrows(DataIntegrityViolationException.class,
             () -> expenseService.createExpense(expenseRequest));
@@ -75,8 +75,8 @@ class ExpenseServiceTest {
     	expense.setId(1L);
     	expense.setName("Rent");
     	expense.setAmount(1000.0);
-    	expense.setExpenseCategory(ExpenseCategory.HOUSING);
-    	expense.setTransactionType(TransactionType.RECURRING);
+    	expense.setCategory(ExpenseCategory.HOUSING);
+    	expense.setType(TransactionType.RECURRING);
     	
     	// Mock successful read
     	Mockito.when(expenseRepository.findById(1L)).thenReturn(Optional.of(expense));
@@ -87,8 +87,8 @@ class ExpenseServiceTest {
     	assertEquals(1L, retrievedExpense.get().getId());    	
         assertEquals("Rent", retrievedExpense.get().getName());
         assertEquals(1000.0, retrievedExpense.get().getAmount());
-        assertEquals(ExpenseCategory.HOUSING, retrievedExpense.get().getExpenseCategory());
-        assertEquals(TransactionType.RECURRING, retrievedExpense.get().getTransactionType());
+        assertEquals(ExpenseCategory.HOUSING, retrievedExpense.get().getCategory());
+        assertEquals(TransactionType.RECURRING, retrievedExpense.get().getType());
     }
     
     @Test
@@ -107,14 +107,14 @@ class ExpenseServiceTest {
         existingExpense.setId(1L);
         existingExpense.setName("Rent");
         existingExpense.setAmount(1000.0);
-        existingExpense.setExpenseCategory(ExpenseCategory.HOUSING);
-        existingExpense.setTransactionType(TransactionType.RECURRING);
+        existingExpense.setCategory(ExpenseCategory.HOUSING);
+        existingExpense.setType(TransactionType.RECURRING);
 
         ExpenseRequest updateRequest = new ExpenseRequest();
         updateRequest.setName("Gas Bill");
         updateRequest.setAmount(100.0);
-        updateRequest.setExpenseCategory(ExpenseCategory.UTILITIES);
-        updateRequest.setTransactionType(TransactionType.ONE_TIME);
+        updateRequest.setCategory(ExpenseCategory.UTILITIES);
+        updateRequest.setType(TransactionType.ONE_TIME);
 
         // Mock successful update
         Mockito.when(expenseRepository.findById(1L)).thenReturn(Optional.of(existingExpense));
@@ -126,8 +126,8 @@ class ExpenseServiceTest {
         assertEquals(1L, updatedExpense.get().getId());
         assertEquals("Gas Bill", updatedExpense.get().getName());
         assertEquals(100.0, updatedExpense.get().getAmount());
-        assertEquals(ExpenseCategory.UTILITIES, updatedExpense.get().getExpenseCategory());
-        assertEquals(TransactionType.ONE_TIME, updatedExpense.get().getTransactionType());
+        assertEquals(ExpenseCategory.UTILITIES, updatedExpense.get().getCategory());
+        assertEquals(TransactionType.ONE_TIME, updatedExpense.get().getType());
         
         Mockito.verify(expenseRepository, Mockito.times(1)).save(existingExpense);
     }
@@ -137,8 +137,8 @@ class ExpenseServiceTest {
         ExpenseRequest updateRequest = new ExpenseRequest();
         updateRequest.setName("Rent");
         updateRequest.setAmount(2000.0);
-        updateRequest.setExpenseCategory(ExpenseCategory.HOUSING);
-        updateRequest.setTransactionType(TransactionType.RECURRING);
+        updateRequest.setCategory(ExpenseCategory.HOUSING);
+        updateRequest.setType(TransactionType.RECURRING);
 
         // Mock unsuccessful update
         Mockito.when(expenseRepository.findById(99L)).thenReturn(Optional.empty());

@@ -18,8 +18,8 @@ public class IncomeRequest {
 	@Min(value = 0, message = "Income amount cannot be negative.")
 	private Double amount;
 	
-	@NotNull(message = "Income's transaction type is required.")
-	private TransactionType transactionType;
+	@NotNull(message = "Income transaction type is required.")
+	private TransactionType type;
 	
 	public String getName() {
 		return name;
@@ -45,11 +45,11 @@ public class IncomeRequest {
 		this.amount = amount;
 	}
 	
-	public TransactionType getTransactionType() {
-		return transactionType;
+	public TransactionType getType() {
+		return type;
 	}
 	
-	public void setTransactionType(TransactionType transactionType) {
-		this.transactionType = transactionType;
+	public void setType(TransactionType type) {
+		this.type = type;
 	}
 }

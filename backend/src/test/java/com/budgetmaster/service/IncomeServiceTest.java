@@ -26,7 +26,7 @@ class IncomeServiceTest {
         expectedIncome.setName("Salary");
         expectedIncome.setSource("Company XYZ");
         expectedIncome.setAmount(2000.0);
-        expectedIncome.setTransactionType(TransactionType.RECURRING);
+        expectedIncome.setType(TransactionType.RECURRING);
     	
         // Mock successful creation
         Mockito.when(incomeRepository.save(Mockito.any(Income.class)))
@@ -36,7 +36,7 @@ class IncomeServiceTest {
         incomeRequest.setName("Salary");
         incomeRequest.setSource("Company XYZ");
         incomeRequest.setAmount(2000.0);
-        incomeRequest.setTransactionType(TransactionType.RECURRING);
+        incomeRequest.setType(TransactionType.RECURRING);
         
         Income savedIncome = incomeService.createIncome(incomeRequest);
 
@@ -45,7 +45,7 @@ class IncomeServiceTest {
         assertEquals("Salary", savedIncome.getName());
         assertEquals("Company XYZ", savedIncome.getSource());
         assertEquals(2000.0, savedIncome.getAmount());
-        assertEquals(TransactionType.RECURRING, savedIncome.getTransactionType());
+        assertEquals(TransactionType.RECURRING, savedIncome.getType());
 
         Mockito.verify(incomeRepository, Mockito.times(1))
         	.save(Mockito.any(Income.class));
@@ -61,7 +61,7 @@ class IncomeServiceTest {
         incomeRequest.setName("Salary");
         incomeRequest.setSource("Company XYZ");
         incomeRequest.setAmount(2000.0);
-        incomeRequest.setTransactionType(TransactionType.RECURRING);
+        incomeRequest.setType(TransactionType.RECURRING);
         
         assertThrows(DataIntegrityViolationException.class,
             () -> incomeService.createIncome(incomeRequest));
@@ -74,7 +74,7 @@ class IncomeServiceTest {
     	income.setName("Salary");
     	income.setSource("Company XYZ");
     	income.setAmount(2000.0);
-    	income.setTransactionType(TransactionType.RECURRING);
+    	income.setType(TransactionType.RECURRING);
     	
     	// Mock successful read
     	Mockito.when(incomeRepository.findById(1L)).thenReturn(Optional.of(income));
@@ -86,7 +86,7 @@ class IncomeServiceTest {
         assertEquals("Salary", retrievedIncome.get().getName());
         assertEquals("Company XYZ", retrievedIncome.get().getSource());
         assertEquals(2000.0, retrievedIncome.get().getAmount());
-        assertEquals(TransactionType.RECURRING, retrievedIncome.get().getTransactionType());
+        assertEquals(TransactionType.RECURRING, retrievedIncome.get().getType());
     }
     
     @Test
@@ -106,13 +106,13 @@ class IncomeServiceTest {
         existingIncome.setName("Salary");
         existingIncome.setSource("Company XYZ");
         existingIncome.setAmount(2000.0);
-        existingIncome.setTransactionType(TransactionType.RECURRING);
+        existingIncome.setType(TransactionType.RECURRING);
 
         IncomeRequest updateRequest = new IncomeRequest();
         updateRequest.setName("Interest Income");
         updateRequest.setSource("Bank XYZ");
         updateRequest.setAmount(100.0);
-        updateRequest.setTransactionType(TransactionType.ONE_TIME);
+        updateRequest.setType(TransactionType.ONE_TIME);
 
         // Mock successful update
         Mockito.when(incomeRepository.findById(1L)).thenReturn(Optional.of(existingIncome));
@@ -125,7 +125,7 @@ class IncomeServiceTest {
         assertEquals("Interest Income", updatedIncome.get().getName());
         assertEquals("Bank XYZ", updatedIncome.get().getSource());
         assertEquals(100.0, updatedIncome.get().getAmount());
-        assertEquals(TransactionType.ONE_TIME, updatedIncome.get().getTransactionType());
+        assertEquals(TransactionType.ONE_TIME, updatedIncome.get().getType());
         
         Mockito.verify(incomeRepository, Mockito.times(1)).save(existingIncome);
     }
@@ -136,7 +136,7 @@ class IncomeServiceTest {
         updateRequest.setName("Interest Income");
         updateRequest.setSource("Bank XYZ");
         updateRequest.setAmount(100.0);
-        updateRequest.setTransactionType(TransactionType.ONE_TIME);
+        updateRequest.setType(TransactionType.ONE_TIME);
 
         // Mock unsuccessful update
         Mockito.when(incomeRepository.findById(99L)).thenReturn(Optional.empty());

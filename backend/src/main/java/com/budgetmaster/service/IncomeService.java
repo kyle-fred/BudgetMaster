@@ -23,7 +23,7 @@ public class IncomeService {
 				request.getName(),
 				request.getSource(),
 				request.getAmount(),
-				request.getTransactionType()
+				request.getType()
 			);
 		return incomeRepository.save(income);
 	}
@@ -40,7 +40,7 @@ public class IncomeService {
 			income.setName(request.getName());
 			income.setSource(request.getSource());
 			income.setAmount(request.getAmount());
-			income.setTransactionType(request.getTransactionType());
+			income.setType(request.getType());
 			
 			return Optional.of(incomeRepository.save(income));
 		} else {

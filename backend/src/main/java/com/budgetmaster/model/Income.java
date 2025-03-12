@@ -21,14 +21,14 @@ public class Income {
 	private Double amount;
 	
 	@Enumerated(EnumType.STRING)
-	private TransactionType transactionType;
+	private TransactionType type;
 	
 	public Income() {}
 	
-	public Income(String name, String source, Double amount, TransactionType transactionType) {
+	public Income(String name, String source, Double amount, TransactionType type) {
 		this.name = name;
 		this.source = source;
-		this.transactionType = transactionType;
+		this.type = type;
 		this.amount = amount;
 	}
 	
@@ -64,11 +64,11 @@ public class Income {
 		this.amount = amount;
 	}
 	
-	public TransactionType getTransactionType() {
-		return transactionType;
+	public TransactionType getType() {
+		return type;
 	}
 	
-	public void setTransactionType(TransactionType transactionType) {
-		this.transactionType = transactionType;
+	public void setType(TransactionType type) {
+		this.type = type;
 	}
 }

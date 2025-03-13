@@ -21,7 +21,7 @@ class ExpenseServiceTest {
 	private final ExpenseService expenseService = new ExpenseService(expenseRepository);
 	
     @Test
-    void shouldCreateAndSaveExpenseToDbSuccessfully() {
+    void shouldCreateAndSaveExpenseSuccessfully() {
         
     	Expense expectedExpense = new Expense();
         expectedExpense.setId(1L);
@@ -54,22 +54,6 @@ class ExpenseServiceTest {
     }
     
     @Test
-    void shouldThrowExceptionWhenSaveFails() {
-    	// Mock unsuccessful creation
-        Mockito.when(expenseRepository.save(Mockito.any(Expense.class)))
-               .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
-
-        ExpenseRequest expenseRequest = new ExpenseRequest();
-        expenseRequest.setName("Rent");
-        expenseRequest.setAmount(1000.0);
-        expenseRequest.setCategory(ExpenseCategory.HOUSING);
-        expenseRequest.setType(TransactionType.RECURRING);
-        
-        assertThrows(DataIntegrityViolationException.class,
-            () -> expenseService.createExpense(expenseRequest));
-    }
-    
-    @Test
     void shouldReturnExpenseWhenExists() {
     	Expense expense = new Expense();
     	expense.setId(1L);
@@ -89,16 +73,6 @@ class ExpenseServiceTest {
         assertEquals(1000.0, retrievedExpense.get().getAmount());
         assertEquals(ExpenseCategory.HOUSING, retrievedExpense.get().getCategory());
         assertEquals(TransactionType.RECURRING, retrievedExpense.get().getType());
-    }
-    
-    @Test
-    void shouldReturnEmptyWhenExpenseDoesNotExist() {
-    	// Mock unsuccessful read
-    	Mockito.when(expenseRepository.findById(99L)).thenReturn(Optional.empty());
-        
-        Optional<Expense> retrievedExpense = expenseService.getExpenseById(99L);
-        
-        assertFalse(retrievedExpense.isPresent());
     }
     
     @Test
@@ -133,6 +107,44 @@ class ExpenseServiceTest {
     }
     
     @Test
+    void shouldDeleteExpenseWhenExists() {
+    	// Mock successful delete
+    	Mockito.when(expenseRepository.existsById(1L)).thenReturn(true);
+    	Mockito.doNothing().when(expenseRepository).deleteById(1L);
+
+        boolean deleted = expenseService.deleteExpense(1L);
+
+        assertTrue(deleted);
+        Mockito.verify(expenseRepository, Mockito.times(1)).deleteById(1L);
+    }
+    
+    @Test
+    void shouldThrowExceptionWhenSaveFails() {
+    	// Mock unsuccessful creation
+        Mockito.when(expenseRepository.save(Mockito.any(Expense.class)))
+               .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
+
+        ExpenseRequest expenseRequest = new ExpenseRequest();
+        expenseRequest.setName("Rent");
+        expenseRequest.setAmount(1000.0);
+        expenseRequest.setCategory(ExpenseCategory.HOUSING);
+        expenseRequest.setType(TransactionType.RECURRING);
+        
+        assertThrows(DataIntegrityViolationException.class,
+            () -> expenseService.createExpense(expenseRequest));
+    }
+    
+    @Test
+    void shouldReturnEmptyWhenExpenseDoesNotExist() {
+    	// Mock unsuccessful read
+    	Mockito.when(expenseRepository.findById(99L)).thenReturn(Optional.empty());
+        
+        Optional<Expense> retrievedExpense = expenseService.getExpenseById(99L);
+        
+        assertFalse(retrievedExpense.isPresent());
+    }
+    
+    @Test
     void shouldReturnEmptyWhenUpdatingNonExistentExpense() {
         ExpenseRequest updateRequest = new ExpenseRequest();
         updateRequest.setName("Rent");
@@ -147,18 +159,6 @@ class ExpenseServiceTest {
 
         assertFalse(updatedExpense.isPresent());
         Mockito.verify(expenseRepository, Mockito.never()).save(Mockito.any(Expense.class));
-    }
-
-    @Test
-    void shouldDeleteExpenseWhenExists() {
-    	// Mock successful delete
-    	Mockito.when(expenseRepository.existsById(1L)).thenReturn(true);
-    	Mockito.doNothing().when(expenseRepository).deleteById(1L);
-
-        boolean deleted = expenseService.deleteExpense(1L);
-
-        assertTrue(deleted);
-        Mockito.verify(expenseRepository, Mockito.times(1)).deleteById(1L);
     }
     
     @Test

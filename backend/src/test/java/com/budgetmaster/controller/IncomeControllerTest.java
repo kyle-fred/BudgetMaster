@@ -36,7 +36,7 @@ public class IncomeControllerTest {
     private IncomeService incomeService;
 	
 	@Test
-	void shouldReturnIncomeWhenValidRequest() throws Exception {
+	void shouldCreateIncomeWhenValidRequest() throws Exception {
 
 		IncomeRequest request = new IncomeRequest();
         request.setName("Salary");
@@ -68,6 +68,82 @@ public class IncomeControllerTest {
 		Mockito.verify(incomeService, Mockito.times(1))
 			.createIncome(Mockito.any());
 	}
+	
+	@Test
+	void shouldGetIncomeWhenValidId() throws Exception {
+		
+		Income income = new Income();
+		income.setName("Salary");
+        income.setSource("Company XYZ");
+        income.setAmount(2000.0);
+        income.setType(TransactionType.RECURRING);
+		
+		// Mock successful read
+		Mockito.when(incomeService.getIncomeById(1L)).thenReturn(Optional.of(income));
+		
+		// GET /api/income & Assert OK response
+		mockMvc.perform(get("/api/income/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("Salary"))
+				.andExpect(jsonPath("$.source").value("Company XYZ"))
+				.andExpect(jsonPath("$.amount").value(2000.0))
+				.andExpect(jsonPath("$.type").value("RECURRING"));
+		
+		Mockito.verify(incomeService, Mockito.times(1))
+				.getIncomeById(1L);
+	}
+	
+	@Test
+	void shouldUpdateIncomeWhenValidId() throws Exception {
+		
+		Income existingIncome= new Income();
+		existingIncome.setId(1L);
+		existingIncome.setName("Salary");
+		existingIncome.setSource("Company XYZ");
+		existingIncome.setAmount(2000.0);
+		existingIncome.setType(TransactionType.RECURRING);
+		
+		Income updatedIncome = new Income ();
+		updatedIncome.setId(1L);
+		updatedIncome.setName("Interest Income");
+		updatedIncome.setSource("Bank XYZ");
+		updatedIncome.setAmount(100.0);
+		updatedIncome.setType(TransactionType.ONE_TIME);
+		
+		IncomeRequest updateRequest = new IncomeRequest();
+		updateRequest.setName("Interest Income");
+		updateRequest.setSource("Bank XYZ");
+		updateRequest.setAmount(100.0);
+		updateRequest.setType(TransactionType.ONE_TIME);
+		
+		// Mock successful update
+		Mockito.when(incomeService.updateIncome(Mockito.eq(1L), Mockito.any(IncomeRequest.class)))
+				.thenReturn(Optional.of(updatedIncome));
+		
+		// PUT /api/income & Assert OK response
+		mockMvc.perform(put("/api/income/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(1L))
+				.andExpect(jsonPath("$.name").value("Interest Income"))
+				.andExpect(jsonPath("$.source").value("Bank XYZ"))
+				.andExpect(jsonPath("$.amount").value(100.0))
+				.andExpect(jsonPath("$.type").value("ONE_TIME"));
+	}
+	
+    @Test
+    void shouldDeleteIncomeWhenValidId() throws Exception {
+    	// Mock successful deletion
+    	Mockito.when(incomeService.deleteIncome(1L)).thenReturn(true);
+    	
+    	// DELETE /api/income & Assert OK response
+        mockMvc.perform(delete("/api/income/1"))
+                .andExpect(status().isNoContent());
+        
+        Mockito.verify(incomeService, Mockito.times(1)).deleteIncome(1L);
+    }
 	
 	@Test
 	void shouldReturnBadRequestWhenNameIsMissing() throws Exception {
@@ -166,6 +242,23 @@ public class IncomeControllerTest {
 	}
 	
 	@Test
+	void shouldReturnBadRequestForMalformedJsonIncome() throws Exception {
+	    String malformedJson = """
+	        {
+	            "name": "Bonus",
+	            "amount": 200.0,
+	            "type": 
+	        }
+	        """;
+
+	    mockMvc.perform(post("/api/income")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(malformedJson))
+	        .andExpect(status().isBadRequest())
+	        .andExpect(jsonPath("$.error").value("Invalid request format."));
+	}
+	
+	@Test
 	void shouldReturnBadRequestWhenIncomeTypeIsInvalid() throws Exception {
 	    String invalidRequest = """
 	        {
@@ -181,8 +274,86 @@ public class IncomeControllerTest {
 	        .andExpect(status().isBadRequest())
 	        .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
 	}
-
 	
+	@Test
+	void shouldReturnNotFoundWhenIncomeDoesNotExist() throws Exception {
+		// Mock failed read
+		Mockito.when(incomeService.getIncomeById(99L)).thenReturn(Optional.empty());
+		
+		// GET /api/income & Assert not found response
+		mockMvc.perform(get("/api/income/99")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		
+		Mockito.verify(incomeService, Mockito.times(1))
+				.getIncomeById(99L);
+	}
+	
+    @Test
+    void shouldReturnNotFoundWhenUpdatingNonExistentIncome() throws Exception {
+    	
+        IncomeRequest updateRequest = new IncomeRequest();
+		updateRequest.setName("Interest Income");
+		updateRequest.setSource("Bank XYZ");
+		updateRequest.setAmount(100.0);
+		updateRequest.setType(TransactionType.ONE_TIME);
+        
+        // Mock failed update
+        Mockito.when(incomeService.updateIncome(99L, updateRequest)).thenReturn(Optional.empty());
+        
+        // PUT /api/income & Assert not found response
+        mockMvc.perform(put("/api/income/99")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updateRequest)))
+            .andExpect(status().isNotFound());
+    }
+    
+	@Test
+	void shouldReturnBadRequestWhenUpdatingWithMalformedRequest() throws Exception {
+	    String malformedJson = """
+	        {
+	            "name": "Rent",
+	            "amount": 1000.0,
+	            "category": 
+	        }
+	        """;
+
+	    mockMvc.perform(put("/api/income/{id}", 1)
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(malformedJson))
+	        .andExpect(status().isBadRequest())
+	        .andExpect(jsonPath("$.error").value("Invalid request format."));
+	}
+    
+    @Test
+    void shouldReturnBadRequestWhenUpdatingIncomeWithInvalidType() throws Exception {
+        String invalidRequest = """
+            {
+                "name": "Freelance Work",
+                "amount": 500.0,
+                "type": "INVALID_TYPE"
+            }
+            """;
+
+        mockMvc.perform(put("/api/income/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidRequest))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
+    }
+    
+    @Test
+    void shouldReturnNotFoundWhenDeletingNonExistentIncome() throws Exception {
+    	// Mock failed deletion (ID does not exist)
+    	Mockito.when(incomeService.deleteIncome(1L)).thenReturn(false);
+    	
+    	// DELETE /api/income & Assert not found response
+        mockMvc.perform(delete("/api/income/1"))
+                .andExpect(status().isNotFound());
+        
+        Mockito.verify(incomeService, Mockito.times(1)).deleteIncome(1L);
+    }
+    
 	@Test
 	void shouldReturnInternalServerErrorWhenServiceFails() throws Exception {
 		
@@ -230,161 +401,4 @@ public class IncomeControllerTest {
 	    Mockito.verify(incomeService, Mockito.times(1))
 	            .createIncome(Mockito.any());
 	}
-	
-	@Test
-	void shouldReturnBadRequestForMalformedJsonIncome() throws Exception {
-	    String malformedJson = """
-	        {
-	            "name": "Bonus",
-	            "amount": 200.0,
-	            "type": 
-	        }
-	        """;
-
-	    mockMvc.perform(post("/api/income")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(malformedJson))
-	        .andExpect(status().isBadRequest())
-	        .andExpect(jsonPath("$.error").value("Invalid request format."));
-	}
-
-	
-	@Test
-	void shouldReturnIncomeWhenValidIdGet() throws Exception {
-		
-		Income income = new Income();
-		income.setName("Salary");
-        income.setSource("Company XYZ");
-        income.setAmount(2000.0);
-        income.setType(TransactionType.RECURRING);
-		
-		// Mock successful read
-		Mockito.when(incomeService.getIncomeById(1L)).thenReturn(Optional.of(income));
-		
-		// GET /api/income & Assert OK response
-		mockMvc.perform(get("/api/income/1")
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Salary"))
-				.andExpect(jsonPath("$.source").value("Company XYZ"))
-				.andExpect(jsonPath("$.amount").value(2000.0))
-				.andExpect(jsonPath("$.type").value("RECURRING"));
-		
-		Mockito.verify(incomeService, Mockito.times(1))
-				.getIncomeById(1L);
-	}
-	
-	@Test
-	void shouldReturnNotFoundWhenInvalidId() throws Exception {
-		// Mock failed read
-		Mockito.when(incomeService.getIncomeById(99L)).thenReturn(Optional.empty());
-		
-		// GET /api/income & Assert not found response
-		mockMvc.perform(get("/api/income/99")
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
-		
-		Mockito.verify(incomeService, Mockito.times(1))
-				.getIncomeById(99L);
-	}
-	
-	@Test
-	void shouldUpdateIncomeWhenValidId() throws Exception {
-		
-		Income existingIncome= new Income();
-		existingIncome.setId(1L);
-		existingIncome.setName("Salary");
-		existingIncome.setSource("Company XYZ");
-		existingIncome.setAmount(2000.0);
-		existingIncome.setType(TransactionType.RECURRING);
-		
-		Income updatedIncome = new Income ();
-		updatedIncome.setId(1L);
-		updatedIncome.setName("Interest Income");
-		updatedIncome.setSource("Bank XYZ");
-		updatedIncome.setAmount(100.0);
-		updatedIncome.setType(TransactionType.ONE_TIME);
-		
-		IncomeRequest updateRequest = new IncomeRequest();
-		updateRequest.setName("Interest Income");
-		updateRequest.setSource("Bank XYZ");
-		updateRequest.setAmount(100.0);
-		updateRequest.setType(TransactionType.ONE_TIME);
-		
-		// Mock successful update
-		Mockito.when(incomeService.updateIncome(Mockito.eq(1L), Mockito.any(IncomeRequest.class)))
-				.thenReturn(Optional.of(updatedIncome));
-		
-		// PUT /api/income & Assert OK response
-		mockMvc.perform(put("/api/income/1")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(updateRequest)))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(1L))
-				.andExpect(jsonPath("$.name").value("Interest Income"))
-				.andExpect(jsonPath("$.source").value("Bank XYZ"))
-				.andExpect(jsonPath("$.amount").value(100.0))
-				.andExpect(jsonPath("$.type").value("ONE_TIME"));
-	}
-	
-    @Test
-    void shouldReturnNotFoundWhenInvalidIdPut() throws Exception {
-    	
-        IncomeRequest updateRequest = new IncomeRequest();
-		updateRequest.setName("Interest Income");
-		updateRequest.setSource("Bank XYZ");
-		updateRequest.setAmount(100.0);
-		updateRequest.setType(TransactionType.ONE_TIME);
-        
-        // Mock failed update
-        Mockito.when(incomeService.updateIncome(99L, updateRequest)).thenReturn(Optional.empty());
-        
-        // PUT /api/income & Assert not found response
-        mockMvc.perform(put("/api/income/99")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(updateRequest)))
-            .andExpect(status().isNotFound());
-    }
-    
-    @Test
-    void shouldReturnBadRequestWhenUpdatingIncomeWithInvalidType() throws Exception {
-        String invalidRequest = """
-            {
-                "name": "Freelance Work",
-                "amount": 500.0,
-                "type": "INVALID_TYPE"
-            }
-            """;
-
-        mockMvc.perform(put("/api/income/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidRequest))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
-    }
-
-    
-    @Test
-    void shouldDeleteIncomeWhenValidId() throws Exception {
-    	// Mock successful deletion
-    	Mockito.when(incomeService.deleteIncome(1L)).thenReturn(true);
-    	
-    	// DELETE /api/income & Assert OK response
-        mockMvc.perform(delete("/api/income/1"))
-                .andExpect(status().isNoContent());
-        
-        Mockito.verify(incomeService, Mockito.times(1)).deleteIncome(1L);
-    }
-    
-    @Test
-    void shouldReturnNotFoundWhenInvalidIdDelete() throws Exception {
-    	// Mock failed deletion (ID does not exist)
-    	Mockito.when(incomeService.deleteIncome(1L)).thenReturn(false);
-    	
-    	// DELETE /api/income & Assert not found response
-        mockMvc.perform(delete("/api/income/1"))
-                .andExpect(status().isNotFound());
-        
-        Mockito.verify(incomeService, Mockito.times(1)).deleteIncome(1L);
-    }
 }

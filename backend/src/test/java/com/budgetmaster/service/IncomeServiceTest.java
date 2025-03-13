@@ -19,7 +19,7 @@ class IncomeServiceTest {
 	private final IncomeService incomeService = new IncomeService(incomeRepository);
 	
     @Test
-    void shouldCreateAndSaveIncomeToDbSuccessfully() {
+    void shouldCreateAndSaveIncomeSuccessfully() {
         
     	Income expectedIncome = new Income();
         expectedIncome.setId(1L);
@@ -52,22 +52,6 @@ class IncomeServiceTest {
     }
     
     @Test
-    void shouldThrowExceptionWhenSaveFails() {
-    	// Mock unsuccessful creation
-        Mockito.when(incomeRepository.save(Mockito.any(Income.class)))
-               .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
-
-        IncomeRequest incomeRequest = new IncomeRequest();
-        incomeRequest.setName("Salary");
-        incomeRequest.setSource("Company XYZ");
-        incomeRequest.setAmount(2000.0);
-        incomeRequest.setType(TransactionType.RECURRING);
-        
-        assertThrows(DataIntegrityViolationException.class,
-            () -> incomeService.createIncome(incomeRequest));
-    }
-    
-    @Test
     void shouldReturnIncomeWhenExists() {
     	Income income = new Income();
     	income.setId(1L);
@@ -87,16 +71,6 @@ class IncomeServiceTest {
         assertEquals("Company XYZ", retrievedIncome.get().getSource());
         assertEquals(2000.0, retrievedIncome.get().getAmount());
         assertEquals(TransactionType.RECURRING, retrievedIncome.get().getType());
-    }
-    
-    @Test
-    void shouldReturnEmptyWhenIncomeDoesNotExist() {
-    	// Mock unsuccessful read
-    	Mockito.when(incomeRepository.findById(99L)).thenReturn(Optional.empty());
-        
-        Optional<Income> retrievedIncome = incomeService.getIncomeById(99L);
-        
-        assertFalse(retrievedIncome.isPresent());
     }
     
     @Test
@@ -131,6 +105,44 @@ class IncomeServiceTest {
     }
     
     @Test
+    void shouldDeleteIncomeWhenExists() {
+    	// Mock successful delete
+    	Mockito.when(incomeRepository.existsById(1L)).thenReturn(true);
+    	Mockito.doNothing().when(incomeRepository).deleteById(1L);
+
+        boolean deleted = incomeService.deleteIncome(1L);
+
+        assertTrue(deleted);
+        Mockito.verify(incomeRepository, Mockito.times(1)).deleteById(1L);
+    }
+    
+    @Test
+    void shouldThrowExceptionWhenSaveFails() {
+    	// Mock unsuccessful creation
+        Mockito.when(incomeRepository.save(Mockito.any(Income.class)))
+               .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
+
+        IncomeRequest incomeRequest = new IncomeRequest();
+        incomeRequest.setName("Salary");
+        incomeRequest.setSource("Company XYZ");
+        incomeRequest.setAmount(2000.0);
+        incomeRequest.setType(TransactionType.RECURRING);
+        
+        assertThrows(DataIntegrityViolationException.class,
+            () -> incomeService.createIncome(incomeRequest));
+    }
+    
+    @Test
+    void shouldReturnEmptyWhenIncomeDoesNotExist() {
+    	// Mock unsuccessful read
+    	Mockito.when(incomeRepository.findById(99L)).thenReturn(Optional.empty());
+        
+        Optional<Income> retrievedIncome = incomeService.getIncomeById(99L);
+        
+        assertFalse(retrievedIncome.isPresent());
+    }
+    
+    @Test
     void shouldReturnEmptyWhenUpdatingNonExistentIncome() {
         IncomeRequest updateRequest = new IncomeRequest();
         updateRequest.setName("Interest Income");
@@ -145,18 +157,6 @@ class IncomeServiceTest {
 
         assertFalse(updatedIncome.isPresent());
         Mockito.verify(incomeRepository, Mockito.never()).save(Mockito.any(Income.class));
-    }
-    
-    @Test
-    void shouldDeleteIncomeWhenExists() {
-    	// Mock successful delete
-    	Mockito.when(incomeRepository.existsById(1L)).thenReturn(true);
-    	Mockito.doNothing().when(incomeRepository).deleteById(1L);
-
-        boolean deleted = incomeService.deleteIncome(1L);
-
-        assertTrue(deleted);
-        Mockito.verify(incomeRepository, Mockito.times(1)).deleteById(1L);
     }
     
     @Test

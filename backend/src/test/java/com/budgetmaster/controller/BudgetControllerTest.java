@@ -34,7 +34,7 @@ public class BudgetControllerTest {
     private BudgetService budgetService;
 	
 	@Test
-	void shouldReturnBudgetWhenValidRequest() throws Exception {
+	void shouldCreateBudgetWhenValidRequest() throws Exception {
 		
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(3000.0);
@@ -58,6 +58,69 @@ public class BudgetControllerTest {
 		Mockito.verify(budgetService, Mockito.times(1))
 			.createBudget(Mockito.any());
 	}
+	
+	@Test
+	void shouldGetBudgetWhenValidId() throws Exception {
+		
+		Budget budget = new Budget(3000.0, 1500.0);
+		budget.setId(1L);
+		
+		// Mock successful read
+		Mockito.when(budgetService.getBudgetById(1L)).thenReturn(Optional.of(budget));
+		
+		// GET /api/budget & Assert OK response
+		mockMvc.perform(get("/api/budget/1")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.income").value(3000.0))
+				.andExpect(jsonPath("$.expenses").value(1500.0))
+				.andExpect(jsonPath("$.savings").value(1500.0));
+		
+		Mockito.verify(budgetService, Mockito.times(1))
+				.getBudgetById(1L);
+	}
+	
+	@Test
+	void shouldUpdateBudgetWhenValidId() throws Exception {
+		
+		Budget existingBudget = new Budget(3000.0, 1500.0);
+		existingBudget.setId(1L);
+		
+		Budget updatedBudget = new Budget (4000.0, 2000.0);
+		updatedBudget.setId(1L);
+		updatedBudget.setSavings(2000.0);
+		
+		BudgetRequest updateRequest = new BudgetRequest();
+		updateRequest.setIncome(4000.0);
+		updateRequest.setExpenses(2000.0);
+		
+		// Mock successful update
+		Mockito.when(budgetService.updateBudget(Mockito.eq(1L), Mockito.any(BudgetRequest.class)))
+				.thenReturn(Optional.of(updatedBudget));
+		
+		// PUT /api/budget & Assert OK response
+		mockMvc.perform(put("/api/budget/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(updateRequest)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.income").value(4000.0))
+				.andExpect(jsonPath("$.expenses").value(2000.0))
+				.andExpect(jsonPath("$.savings").value(2000.0));
+	}
+	
+    @Test
+    void shouldDeleteBudgetWhenValidId() throws Exception {
+    	// Mock successful deletion
+    	Mockito.when(budgetService.deleteBudget(1L)).thenReturn(true);
+    	
+    	// DELETE /api/budget & Assert OK response
+        mockMvc.perform(delete("/api/budget/1"))
+                .andExpect(status().isNoContent());
+        
+        Mockito.verify(budgetService, Mockito.times(1)).deleteBudget(1L);
+    }
 	
 	@Test
 	void shouldReturnBadRequestWhenIncomeIsMissing() throws Exception {
@@ -130,27 +193,48 @@ public class BudgetControllerTest {
 	}
 	
 	@Test
-	void shouldReturnInternalServerErrorWhenServiceFails() throws Exception {
+	void shouldReturnNotFoundWhenBudgetDoesNotExist() throws Exception {
+		// Mock failed read
+		Mockito.when(budgetService.getBudgetById(99L)).thenReturn(Optional.empty());
 		
-	    BudgetRequest request = new BudgetRequest();
-	    request.setIncome(3000.0);
-	    request.setExpenses(1500.0);
-
-	    // Mock internal server error on create
-	    Mockito.when(budgetService.createBudget(Mockito.any()))
-	            .thenThrow(new RuntimeException("Service failure"));
-
-	    // POST to /api/budget & Assert internal server error
-	    mockMvc.perform(post("/api/budget")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(objectMapper.writeValueAsString(request)))
-	            .andExpect(status().isInternalServerError())
-	            .andExpect(jsonPath("$").value("An unexpected error occurred."));
-
-	    Mockito.verify(budgetService, Mockito.times(1))
-	    	.createBudget(Mockito.any());
+		// GET /api/budget & Assert not found response
+		mockMvc.perform(get("/api/budget/99")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+		
+		Mockito.verify(budgetService, Mockito.times(1))
+				.getBudgetById(99L);
 	}
 	
+    @Test
+    void shouldReturnNotFoundWhenUpdatingNonExistentBudget() throws Exception {
+    	
+        BudgetRequest updateRequest = new BudgetRequest();
+        updateRequest.setIncome(3000.0);
+        updateRequest.setExpenses(1500.0);
+        
+        // Mock failed update
+        Mockito.when(budgetService.updateBudget(99L, updateRequest)).thenReturn(Optional.empty());
+        
+        // PUT /api/budget & Assert not found response
+        mockMvc.perform(put("/api/budget/99")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updateRequest)))
+            .andExpect(status().isNotFound());
+    }
+    
+    @Test
+    void shouldReturnNotFoundWhenDeletingNonExistentBudget() throws Exception {
+    	// Mock failed deletion (ID does not exist)
+    	Mockito.when(budgetService.deleteBudget(1L)).thenReturn(false);
+    	
+    	// DELETE /api/budget & Assert not found response
+        mockMvc.perform(delete("/api/budget/1"))
+                .andExpect(status().isNotFound());
+        
+        Mockito.verify(budgetService, Mockito.times(1)).deleteBudget(1L);
+    }
+    
 	@Test
 	void shouldReturnConflictWhenDataIntegrityViolationOccurs() throws Exception {
 		
@@ -174,108 +258,24 @@ public class BudgetControllerTest {
 	}
 	
 	@Test
-	void shouldReturnBudgetWhenValidIdGet() throws Exception {
+	void shouldReturnInternalServerErrorWhenServiceFails() throws Exception {
 		
-		Budget budget = new Budget(3000.0, 1500.0);
-		budget.setId(1L);
-		
-		// Mock successful read
-		Mockito.when(budgetService.getBudgetById(1L)).thenReturn(Optional.of(budget));
-		
-		// GET /api/budget & Assert OK response
-		mockMvc.perform(get("/api/budget/1")
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(1))
-				.andExpect(jsonPath("$.income").value(3000.0))
-				.andExpect(jsonPath("$.expenses").value(1500.0))
-				.andExpect(jsonPath("$.savings").value(1500.0));
-		
-		Mockito.verify(budgetService, Mockito.times(1))
-				.getBudgetById(1L);
+	    BudgetRequest request = new BudgetRequest();
+	    request.setIncome(3000.0);
+	    request.setExpenses(1500.0);
+
+	    // Mock internal server error on create
+	    Mockito.when(budgetService.createBudget(Mockito.any()))
+	            .thenThrow(new RuntimeException("Service failure"));
+
+	    // POST to /api/budget & Assert internal server error
+	    mockMvc.perform(post("/api/budget")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(objectMapper.writeValueAsString(request)))
+	            .andExpect(status().isInternalServerError())
+	            .andExpect(jsonPath("$").value("An unexpected error occurred."));
+
+	    Mockito.verify(budgetService, Mockito.times(1))
+	    	.createBudget(Mockito.any());
 	}
-	
-	@Test
-	void shouldReturnNotFoundWhenInvalidId() throws Exception {
-		// Mock failed read
-		Mockito.when(budgetService.getBudgetById(99L)).thenReturn(Optional.empty());
-		
-		// GET /api/budget & Assert not found response
-		mockMvc.perform(get("/api/budget/99")
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
-		
-		Mockito.verify(budgetService, Mockito.times(1))
-				.getBudgetById(99L);
-	}
-	
-	@Test
-	void shouldUpdateBudgetWhenValidId() throws Exception {
-		
-		Budget existingBudget = new Budget(3000.0, 1500.0);
-		existingBudget.setId(1L);
-		
-		Budget updatedBudget = new Budget (4000.0, 2000.0);
-		updatedBudget.setId(1L);
-		updatedBudget.setSavings(2000.0);
-		
-		BudgetRequest updateRequest = new BudgetRequest();
-		updateRequest.setIncome(4000.0);
-		updateRequest.setExpenses(2000.0);
-		
-		// Mock successful update
-		Mockito.when(budgetService.updateBudget(Mockito.eq(1L), Mockito.any(BudgetRequest.class)))
-				.thenReturn(Optional.of(updatedBudget));
-		
-		// PUT /api/budget & Assert OK response
-		mockMvc.perform(put("/api/budget/1")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(updateRequest)))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(1))
-				.andExpect(jsonPath("$.income").value(4000.0))
-				.andExpect(jsonPath("$.expenses").value(2000.0))
-				.andExpect(jsonPath("$.savings").value(2000.0));
-	}
-	
-    @Test
-    void shouldReturnNotFoundWhenInvalidIdPut() throws Exception {
-    	
-        BudgetRequest updateRequest = new BudgetRequest();
-        updateRequest.setIncome(3000.0);
-        updateRequest.setExpenses(1500.0);
-        
-        // Mock failed update
-        Mockito.when(budgetService.updateBudget(99L, updateRequest)).thenReturn(Optional.empty());
-        
-        // PUT /api/budget & Assert not found response
-        mockMvc.perform(put("/api/budget/99")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(updateRequest)))
-            .andExpect(status().isNotFound());
-    }
-    
-    @Test
-    void shouldDeleteBudgetWhenValidId() throws Exception {
-    	// Mock successful deletion
-    	Mockito.when(budgetService.deleteBudget(1L)).thenReturn(true);
-    	
-    	// DELETE /api/budget & Assert OK response
-        mockMvc.perform(delete("/api/budget/1"))
-                .andExpect(status().isNoContent());
-        
-        Mockito.verify(budgetService, Mockito.times(1)).deleteBudget(1L);
-    }
-    
-    @Test
-    void shouldReturnNotFoundWhenInvalidIdDelete() throws Exception {
-    	// Mock failed deletion (ID does not exist)
-    	Mockito.when(budgetService.deleteBudget(1L)).thenReturn(false);
-    	
-    	// DELETE /api/budget & Assert not found response
-        mockMvc.perform(delete("/api/budget/1"))
-                .andExpect(status().isNotFound());
-        
-        Mockito.verify(budgetService, Mockito.times(1)).deleteBudget(1L);
-    }
 }

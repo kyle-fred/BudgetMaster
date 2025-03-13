@@ -166,6 +166,24 @@ public class IncomeControllerTest {
 	}
 	
 	@Test
+	void shouldReturnBadRequestWhenIncomeTypeIsInvalid() throws Exception {
+	    String invalidRequest = """
+	        {
+	            "name": "Salary",
+	            "amount": 3000.0,
+	            "type": "INVALID_TYPE"
+	        }
+	        """;
+
+	    mockMvc.perform(post("/api/income")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(invalidRequest))
+	        .andExpect(status().isBadRequest())
+	        .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
+	}
+
+	
+	@Test
 	void shouldReturnInternalServerErrorWhenServiceFails() throws Exception {
 		
 		IncomeRequest request = new IncomeRequest();
@@ -212,6 +230,24 @@ public class IncomeControllerTest {
 	    Mockito.verify(incomeService, Mockito.times(1))
 	            .createIncome(Mockito.any());
 	}
+	
+	@Test
+	void shouldReturnBadRequestForMalformedJsonIncome() throws Exception {
+	    String malformedJson = """
+	        {
+	            "name": "Bonus",
+	            "amount": 200.0,
+	            "type": 
+	        }
+	        """;
+
+	    mockMvc.perform(post("/api/income")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(malformedJson))
+	        .andExpect(status().isBadRequest())
+	        .andExpect(jsonPath("$.error").value("Invalid request format."));
+	}
+
 	
 	@Test
 	void shouldReturnIncomeWhenValidIdGet() throws Exception {
@@ -309,6 +345,24 @@ public class IncomeControllerTest {
             .content(objectMapper.writeValueAsString(updateRequest)))
             .andExpect(status().isNotFound());
     }
+    
+    @Test
+    void shouldReturnBadRequestWhenUpdatingIncomeWithInvalidType() throws Exception {
+        String invalidRequest = """
+            {
+                "name": "Freelance Work",
+                "amount": 500.0,
+                "type": "INVALID_TYPE"
+            }
+            """;
+
+        mockMvc.perform(put("/api/income/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidRequest))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
+    }
+
     
     @Test
     void shouldDeleteIncomeWhenValidId() throws Exception {

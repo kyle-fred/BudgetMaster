@@ -215,6 +215,60 @@ public class ExpenseControllerTest {
 	}
 	
 	@Test
+	void shouldReturnBadRequestForMalformedJsonExpense() throws Exception {
+	    String malformedJson = """
+	        {
+	            "name": "Rent",
+	            "amount": 1000.0,
+	            "category": 
+	        }
+	        """;
+
+	    mockMvc.perform(post("/api/expense")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(malformedJson))
+	        .andExpect(status().isBadRequest())
+	        .andExpect(jsonPath("$.error").value("Invalid request format."));
+	}
+
+	
+	@Test
+	void shouldReturnBadRequestWhenExpenseCategoryIsInvalid() throws Exception {
+	    String invalidRequest = """
+	        {
+	            "name": "Rent",
+	            "amount": 1000.0,
+	            "category": "INVALID_CATEGORY",
+	            "type": "RECURRING"
+	        }
+	        """;
+
+	    mockMvc.perform(post("/api/expense")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(invalidRequest))
+	        .andExpect(status().isBadRequest())
+	        .andExpect(jsonPath("$.category").value("Invalid value 'INVALID_CATEGORY' for 'category'. Allowed values: [HOUSING, UTILITIES, TAXES, MOBILE_PHONE, GROCERIES, DINING_OUT, TRANSPORT, HEALTH, FITNESS, DEBT_REPAYMENT, SUBSCIPTIONS, HOBBIES, EVENTS, CLOTHING_AND_ACCESSORIES, ELECTRONICS, HOME_AND_DECOR, EDUCATION, GIFTS_AND_DONATIONS, PETS, MISCELLANEOUS]"));
+	}
+	
+	@Test
+	void shouldReturnBadRequestWhenExpenseTypeIsInvalid() throws Exception {
+	    String invalidRequest = """
+	        {
+	            "name": "Subscription",
+	            "amount": 15.0,
+	            "category": "TRANSPORT",
+	            "type": "INVALID_TYPE"
+	        }
+	        """;
+
+	    mockMvc.perform(post("/api/expense")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(invalidRequest))
+	        .andExpect(status().isBadRequest())
+	        .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
+	}
+	
+	@Test
 	void shouldReturnExpenseWhenValidIdGet() throws Exception {
 		
 		Expense expense = new Expense();
@@ -309,6 +363,42 @@ public class ExpenseControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(updateRequest)))
             .andExpect(status().isNotFound());
+    }
+    
+    @Test
+    void shouldReturnBadRequestWhenUpdatingExpenseWithInvalidCategory() throws Exception {
+        String invalidRequest = """
+            {
+                "name": "Groceries",
+                "amount": 200.0,
+                "category": "INVALID_CATEGORY",
+                "type": "ONE_TIME"
+            }
+            """;
+
+        mockMvc.perform(put("/api/expense/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidRequest))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.category").value("Invalid value 'INVALID_CATEGORY' for 'category'. Allowed values: [HOUSING, UTILITIES, TAXES, MOBILE_PHONE, GROCERIES, DINING_OUT, TRANSPORT, HEALTH, FITNESS, DEBT_REPAYMENT, SUBSCIPTIONS, HOBBIES, EVENTS, CLOTHING_AND_ACCESSORIES, ELECTRONICS, HOME_AND_DECOR, EDUCATION, GIFTS_AND_DONATIONS, PETS, MISCELLANEOUS]"));
+    }
+    
+    @Test
+    void shouldReturnBadRequestWhenUpdatingExpenseWithInvalidType() throws Exception {
+        String invalidRequest = """
+            {
+                "name": "Car Insurance",
+                "amount": 500.0,
+                "category": "TRANSPORT",
+                "type": "INVALID_TYPE"
+            }
+            """;
+
+        mockMvc.perform(put("/api/expense/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidRequest))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
     }
 
 	@Test

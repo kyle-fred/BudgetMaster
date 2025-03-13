@@ -8,14 +8,18 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	
-	// Handles validation errors
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -26,14 +30,26 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body(errors);
 	}
 	
-	// Handles IllegalArgumentExceptions
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<Map<String, Object>> handleInvalidRequest(HttpMessageNotReadableException ex) {
+	    Throwable cause = ex.getCause();
+	    
+	    if (cause instanceof ValueInstantiationException valueEx) {
+	        return handleInvalidEnumValue(valueEx);
+	    }
+	    
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("error", "Invalid request format.");
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	}
+	
 	@ExceptionHandler(IllegalArgumentException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
 		return ResponseEntity.badRequest().body("Invalid input " + ex.getMessage());
 	}
 	
-	// Handles unexpected errors
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseEntity<String> handleGenericException(Exception ex) {
@@ -46,4 +62,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body("A database constraint was violated.");
     }
+    
+    /**
+     * Handles cases where an invalid enum value is provided in a request. 
+     * Extracts the field name and invalid value, then returns a response 
+     * listing allowed values if the enum type is found, or a fallback error otherwise.
+     */
+	private ResponseEntity<Map<String, Object>> handleInvalidEnumValue(ValueInstantiationException ex) {
+	    JsonMappingException.Reference reference = ex.getPath().get(0);
+	    String fieldName = reference.getFieldName();
+	    String invalidValue = EnumExceptionUtils.extractInvalidEnumValue(ex.getMessage());
+
+	    Class<?> fieldType = reference.getFrom().getClass();
+	    Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(fieldType, fieldName);
+
+	    if (enumType.isPresent()) {
+	    	Map<String, Object> errorResponse = EnumExceptionUtils.createErrorResonse(invalidValue, fieldName, enumType.get());
+
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	    }
+	    
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(EnumExceptionUtils.createFallbackResponse());
+	}
 }

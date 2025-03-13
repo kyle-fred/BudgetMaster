@@ -18,7 +18,7 @@ class BudgetServiceTest {
 	private final BudgetService budgetService = new BudgetService(budgetRepository);
 	
     @Test
-    void shouldCreateAndSaveBudgetToDbSuccessfully() {
+    void shouldCreateAndSaveBudgetSuccessfully() {
         
     	Budget expectedBudget = new Budget();
         expectedBudget.setId(1L);
@@ -47,20 +47,6 @@ class BudgetServiceTest {
     }
     
     @Test
-    void shouldThrowExceptionWhenSaveFails() {
-    	// Mock unsuccessful creation
-        Mockito.when(budgetRepository.save(Mockito.any(Budget.class)))
-               .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
-
-        BudgetRequest budgetRequest = new BudgetRequest();
-        budgetRequest.setIncome(3000.0);
-        budgetRequest.setExpenses(1500.0);
-        
-        assertThrows(DataIntegrityViolationException.class,
-            () -> budgetService.createBudget(budgetRequest));
-    }
-    
-    @Test
     void shouldReturnBudgetWhenExists() {
     	Budget budget = new Budget(3000.0, 1500.0);
     	budget.setId(1L);
@@ -75,16 +61,6 @@ class BudgetServiceTest {
     	assertEquals(3000.0, retrievedBudget.get().getIncome());
     	assertEquals(1500.0, retrievedBudget.get().getExpenses());
     	assertEquals(1500.0, retrievedBudget.get().getSavings());
-    }
-    
-    @Test
-    void shouldReturnEmptyWhenBudgetDoesNotExist() {
-    	// Mock unsuccessful read
-    	Mockito.when(budgetRepository.findById(99L)).thenReturn(Optional.empty());
-        
-        Optional<Budget> retrievedBudget = budgetService.getBudgetById(99L);
-        
-        assertFalse(retrievedBudget.isPresent());
     }
     
     @Test
@@ -111,6 +87,42 @@ class BudgetServiceTest {
     }
     
     @Test
+    void shouldDeleteBudgetWhenExists() {
+    	// Mock successful delete
+    	Mockito.when(budgetRepository.existsById(1L)).thenReturn(true);
+    	Mockito.doNothing().when(budgetRepository).deleteById(1L);
+
+        boolean deleted = budgetService.deleteBudget(1L);
+
+        assertTrue(deleted);
+        Mockito.verify(budgetRepository, Mockito.times(1)).deleteById(1L);
+    }
+    
+    @Test
+    void shouldThrowExceptionWhenSaveFails() {
+    	// Mock unsuccessful creation
+        Mockito.when(budgetRepository.save(Mockito.any(Budget.class)))
+               .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
+
+        BudgetRequest budgetRequest = new BudgetRequest();
+        budgetRequest.setIncome(3000.0);
+        budgetRequest.setExpenses(1500.0);
+        
+        assertThrows(DataIntegrityViolationException.class,
+            () -> budgetService.createBudget(budgetRequest));
+    }
+    
+    @Test
+    void shouldReturnEmptyWhenBudgetDoesNotExist() {
+    	// Mock unsuccessful read
+    	Mockito.when(budgetRepository.findById(99L)).thenReturn(Optional.empty());
+        
+        Optional<Budget> retrievedBudget = budgetService.getBudgetById(99L);
+        
+        assertFalse(retrievedBudget.isPresent());
+    }
+    
+    @Test
     void shouldReturnEmptyWhenUpdatingNonExistentBudget() {
         BudgetRequest updateRequest = new BudgetRequest();
         updateRequest.setIncome(6000.0);
@@ -123,18 +135,6 @@ class BudgetServiceTest {
 
         assertFalse(updatedBudget.isPresent());
         Mockito.verify(budgetRepository, Mockito.never()).save(Mockito.any(Budget.class));
-    }
-    
-    @Test
-    void shouldDeleteBudgetWhenExists() {
-    	// Mock successful delete
-    	Mockito.when(budgetRepository.existsById(1L)).thenReturn(true);
-    	Mockito.doNothing().when(budgetRepository).deleteById(1L);
-
-        boolean deleted = budgetService.deleteBudget(1L);
-
-        assertTrue(deleted);
-        Mockito.verify(budgetRepository, Mockito.times(1)).deleteById(1L);
     }
     
     @Test

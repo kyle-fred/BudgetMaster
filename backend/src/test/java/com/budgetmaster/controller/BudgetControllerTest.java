@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.YearMonth;
 import java.util.Optional;
 
 @WebMvcTest(BudgetController.class)
@@ -39,8 +40,10 @@ public class BudgetControllerTest {
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(3000.0);
 		request.setExpenses(1500.0);
+		request.setMonthYear("2023-05");
 		
-		Budget expectedBudget = new Budget(3000, 1500);
+		YearMonth testYearMonth = YearMonth.of(2023, 5);
+	    Budget expectedBudget = new Budget(3000, 1500, testYearMonth);
 		
 		// Mock successful create
 		Mockito.when(budgetService.createBudget(Mockito.any()))
@@ -62,7 +65,8 @@ public class BudgetControllerTest {
 	@Test
 	void shouldGetBudgetWhenValidId() throws Exception {
 		
-		Budget budget = new Budget(3000.0, 1500.0);
+	    YearMonth testYearMonth = YearMonth.of(2023, 5);
+	    Budget budget = new Budget(3000.0, 1500.0, testYearMonth);
 		budget.setId(1L);
 		
 		// Mock successful read
@@ -84,10 +88,11 @@ public class BudgetControllerTest {
 	@Test
 	void shouldUpdateBudgetWhenValidId() throws Exception {
 		
-		Budget existingBudget = new Budget(3000.0, 1500.0);
+	    YearMonth testYearMonth = YearMonth.of(2023, 5);
+	    Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
 		existingBudget.setId(1L);
 		
-		Budget updatedBudget = new Budget (4000.0, 2000.0);
+		Budget updatedBudget = new Budget (4000.0, 2000.0, testYearMonth);
 		updatedBudget.setId(1L);
 		updatedBudget.setSavings(2000.0);
 		

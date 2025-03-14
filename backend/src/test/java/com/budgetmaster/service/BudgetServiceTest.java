@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
+import java.time.YearMonth;
 import java.util.Optional;
 
 class BudgetServiceTest {
@@ -48,7 +49,9 @@ class BudgetServiceTest {
     
     @Test
     void shouldReturnBudgetWhenExists() {
-    	Budget budget = new Budget(3000.0, 1500.0);
+    	
+        YearMonth testYearMonth = YearMonth.of(2023, 5);
+        Budget budget = new Budget(3000.0, 1500.0, testYearMonth);
     	budget.setId(1L);
     	
     	// Mock successful read
@@ -65,7 +68,9 @@ class BudgetServiceTest {
     
     @Test
     void shouldUpdateBudgetWhenExists() {
-        Budget existingBudget = new Budget(3000.0, 1500.0);
+        
+    	YearMonth testYearMonth = YearMonth.of(2023, 5);
+        Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
         existingBudget.setId(1L);
 
         BudgetRequest updateRequest = new BudgetRequest();

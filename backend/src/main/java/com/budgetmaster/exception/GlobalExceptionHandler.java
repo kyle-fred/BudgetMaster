@@ -63,6 +63,13 @@ public class GlobalExceptionHandler {
                 .body("A database constraint was violated.");
     }
     
+    @ExceptionHandler(InvalidMonthYearException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidMonthYear(InvalidMonthYearException ex) {
+    	Map<String, String> errors = new HashMap<>();
+    	errors.put("monthYear", ex.getMessage());
+    	return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+    
     /**
      * Handles cases where an invalid enum value is provided in a request. 
      * Extracts the field name and invalid value, then returns a response 

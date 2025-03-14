@@ -3,7 +3,9 @@ package com.budgetmaster.service;
 import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.repository.BudgetRepository;
 import com.budgetmaster.model.Budget;
+import com.budgetmaster.utils.BudgetUtils;
 
+import java.time.YearMonth;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ public class BudgetService {
 	}
 	
 	public Budget createBudget(BudgetRequest request) {
-		Budget budget = new Budget(request.getIncome(), request.getExpenses());
+		Budget budget = BudgetUtils.buildBudget(request);
 		return budgetRepository.save(budget);
 	}
 	
@@ -35,6 +37,11 @@ public class BudgetService {
 			budget.setIncome(request.getIncome());
 			budget.setExpenses(request.getExpenses());
 			budget.setSavings(request.getIncome() - request.getExpenses());
+			
+			if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
+				YearMonth monthYear = BudgetUtils.getValidYearMonth(request.getMonthYear());
+				budget.setMonthYear(monthYear);
+			}
 			
 			return Optional.of(budgetRepository.save(budget));
 		} else {

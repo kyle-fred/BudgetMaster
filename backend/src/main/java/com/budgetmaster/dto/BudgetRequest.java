@@ -2,6 +2,7 @@ package com.budgetmaster.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 public class BudgetRequest {
 	
@@ -13,9 +14,13 @@ public class BudgetRequest {
 	@Min(value = 0, message = "Expenses cannot be negative.")
 	private Double expenses;
 	
+	@Pattern(regexp = "^\\d{4}-\\d{2}$", message = "Invalid monthYear value. Expected format: YYYY-MM.")
+	private String monthYear;
+	
 	public Double getIncome() {
 		return income;
 	}
+	
 	public void setIncome(Double income) {
 		this.income = income;
 	}
@@ -23,7 +28,16 @@ public class BudgetRequest {
 	public Double getExpenses() {
 		return expenses;
 	}
+	
 	public void setExpenses(Double expenses) {
 		this.expenses = expenses;
+	}
+	
+	public String getMonthYear() {
+		return monthYear;
+	}
+	
+	public void setMonthYear(String monthYear) {
+		this.monthYear = monthYear;
 	}
 }

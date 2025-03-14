@@ -1,9 +1,9 @@
-package com.budgetmaster.utils;
+package com.budgetmaster.utils.budget;
 
 import java.time.YearMonth;
 
 import com.budgetmaster.dto.BudgetRequest;
-import com.budgetmaster.exception.InvalidMonthYearException;
+import com.budgetmaster.exception.InvalidMonthYearExceptionHandler;
 import com.budgetmaster.model.Budget;
 
 public class BudgetUtils {
@@ -18,7 +18,7 @@ public class BudgetUtils {
         try {
         	return parseYearMonth(monthYearString);
         } catch (IllegalArgumentException e) {
-        	throw new InvalidMonthYearException("Invalid month value. Month must be between 01 and 12. Expected format: YYYY-MM.");
+        	throw new InvalidMonthYearExceptionHandler("Invalid month value. Month must be between 01 and 12. Expected format: YYYY-MM.");
         }
     }
 	

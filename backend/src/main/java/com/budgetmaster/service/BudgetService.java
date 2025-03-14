@@ -2,8 +2,8 @@ package com.budgetmaster.service;
 
 import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.repository.BudgetRepository;
+import com.budgetmaster.utils.budget.BudgetUtils;
 import com.budgetmaster.model.Budget;
-import com.budgetmaster.utils.BudgetUtils;
 
 import java.time.YearMonth;
 import java.util.Optional;

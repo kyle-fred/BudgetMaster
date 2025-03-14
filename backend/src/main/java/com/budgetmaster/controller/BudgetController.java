@@ -3,7 +3,7 @@ package com.budgetmaster.controller;
 import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.model.Budget;
 import com.budgetmaster.service.BudgetService;
-import com.budgetmaster.utils.BudgetUtils;
+import com.budgetmaster.utils.budget.BudgetUtils;
 
 import java.util.Optional;
 

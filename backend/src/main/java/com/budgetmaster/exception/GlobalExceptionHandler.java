@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
+import com.budgetmaster.utils.exception.EnumExceptionUtils;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.util.HashMap;
@@ -63,8 +64,8 @@ public class GlobalExceptionHandler {
                 .body("A database constraint was violated.");
     }
     
-    @ExceptionHandler(InvalidMonthYearException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidMonthYear(InvalidMonthYearException ex) {
+    @ExceptionHandler(InvalidMonthYearExceptionHandler.class)
+    public ResponseEntity<Map<String, String>> handleInvalidMonthYear(InvalidMonthYearExceptionHandler ex) {
     	Map<String, String> errors = new HashMap<>();
     	errors.put("monthYear", ex.getMessage());
     	return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);

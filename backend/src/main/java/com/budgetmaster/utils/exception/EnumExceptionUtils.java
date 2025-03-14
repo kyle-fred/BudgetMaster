@@ -1,4 +1,4 @@
-package com.budgetmaster.exception;
+package com.budgetmaster.utils.exception;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -51,4 +51,17 @@ public class BudgetUtils {
 	    		getValidYearMonth(request.getMonthYear())
 	    	);
 	}
+	
+    /**
+     * Modifies an existing Budget object with values from BudgetRequest.
+     */
+    public static void modifyBudget(Budget budget, BudgetRequest request) {
+        budget.setIncome(request.getIncome());
+        budget.setExpenses(request.getExpenses());
+        budget.setSavings(request.getIncome() - request.getExpenses());
+
+        if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
+            budget.setMonthYear(getValidYearMonth(request.getMonthYear()));
+        }
+    }
 }

@@ -57,6 +57,31 @@ class BudgetServiceTest {
 	    Mockito.verify(budgetRepository, Mockito.times(1))
 	        .save(Mockito.any(Budget.class));
 	}
+	
+	@Test 
+	void shouldSetCreatedAtOnSave() {
+		YearMonth expectedMonthYear = YearMonth.of(2025, 3);
+		LocalDateTime now = LocalDateTime.now();
+		
+		BudgetRequest budgetRequest = new BudgetRequest();
+	    budgetRequest.setIncome(3000.0);
+	    budgetRequest.setExpenses(1500.0);
+	    budgetRequest.setMonthYear(expectedMonthYear.toString());
+	    
+	    Budget expectedBudget = new Budget(3000.0, 1500.0, expectedMonthYear);
+	    expectedBudget.setId(1L);
+	    expectedBudget.setCreatedAt(now);
+	    expectedBudget.setLastUpdatedAt(now);
+	    
+	    // Mock successful creation
+	    Mockito.when(budgetRepository.save(Mockito.any(Budget.class)))
+	        .thenReturn(expectedBudget);
+	    
+	    Budget savedBudget = budgetService.createBudget(budgetRequest);
+	    
+	    assertNotNull(savedBudget.getCreatedAt());
+	    assertNotNull(savedBudget.getLastUpdatedAt());
+	}
     
 	@Test
 	void shouldReturnBudgetWhenExists() {
@@ -115,6 +140,36 @@ class BudgetServiceTest {
         assertNotNull(updatedBudget.get().getLastUpdatedAt());
 
         Mockito.verify(budgetRepository, Mockito.times(1)).save(existingBudget);
+    }
+    
+    @Test
+    void shouldUpdateLastUpdatedAtOnModification() {
+        YearMonth testYearMonth = YearMonth.of(2025, 5);
+        LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
+        LocalDateTime updatedAt = LocalDateTime.now();
+
+        Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
+        existingBudget.setId(1L);
+        existingBudget.setCreatedAt(createdAt);
+        existingBudget.setLastUpdatedAt(createdAt);
+
+        BudgetRequest updateRequest = new BudgetRequest();
+        updateRequest.setIncome(5000.0);
+        updateRequest.setExpenses(2500.0);
+
+        Budget updatedBudget = new Budget(5000.0, 2500.0, testYearMonth);
+        updatedBudget.setId(1L);
+        updatedBudget.setCreatedAt(createdAt);
+        updatedBudget.setLastUpdatedAt(updatedAt);
+
+        Mockito.when(budgetRepository.findById(1L)).thenReturn(Optional.of(existingBudget));
+        Mockito.when(budgetRepository.save(Mockito.any(Budget.class))).thenReturn(updatedBudget);
+
+        Optional<Budget> result = budgetService.updateBudget(1L, updateRequest);
+
+        assertTrue(result.isPresent());
+        assertEquals(updatedAt, result.get().getLastUpdatedAt());
+        assertEquals(createdAt, result.get().getCreatedAt());
     }
 
     

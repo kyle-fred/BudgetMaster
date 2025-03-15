@@ -72,6 +72,37 @@ public class BudgetControllerTest {
 		Mockito.verify(budgetService, Mockito.times(1))
 			.createBudget(Mockito.any());
 	}
+	
+	@Test
+	void shouldCreateBudgetWhenMonthYearIsNotProvided() throws Exception {
+		BudgetRequest request = new BudgetRequest();
+		request.setIncome(3000.0);
+		request.setExpenses(1500.0);
+		request.setMonthYear(null);
+		
+		YearMonth defaultYearMonth = YearMonth.now();
+		LocalDateTime now = LocalDateTime.now();
+		Budget expectedBudget = new Budget(3000, 1500, defaultYearMonth);
+		expectedBudget.setCreatedAt(now);
+		expectedBudget.setLastUpdatedAt(now);
+		
+		Mockito.when(budgetService.createBudget(Mockito.any()))
+			.thenReturn(expectedBudget);
+		
+		mockMvc.perform(post("/api/budget")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.income").value(3000))
+				.andExpect(jsonPath("$.expenses").value(1500))
+				.andExpect(jsonPath("$.savings").value(1500))
+				.andExpect(jsonPath("$.monthYear").value(defaultYearMonth.toString()))
+				.andExpect(jsonPath("$.createdAt").value(now.toString()))
+				.andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
+		
+		Mockito.verify(budgetService, Mockito.times(1))
+			.createBudget(Mockito.any());
+	}
 
 	
 	@Test
@@ -227,6 +258,22 @@ public class BudgetControllerTest {
 		Mockito.verify(budgetService, Mockito.times(0))
 			.createBudget(Mockito.any());
 	}
+	
+    @Test
+    void shouldReturnBadRequestWhenMonthYearFormatIsInvalid() throws Exception {
+        BudgetRequest request = new BudgetRequest();
+        request.setIncome(3000.0);
+        request.setExpenses(1500.0);
+        request.setMonthYear("2023/05");
+
+        mockMvc.perform(post("/api/budget")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.monthYear").value("Invalid monthYear value. Expected format: YYYY-MM."));
+
+        Mockito.verify(budgetService, Mockito.times(0)).createBudget(Mockito.any());
+    }
 	
 	@Test
 	void shouldReturnNotFoundWhenBudgetDoesNotExist() throws Exception {

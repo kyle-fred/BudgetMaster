@@ -5,7 +5,6 @@ import com.budgetmaster.repository.BudgetRepository;
 import com.budgetmaster.utils.budget.BudgetUtils;
 import com.budgetmaster.model.Budget;
 
-import java.time.YearMonth;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -34,14 +33,7 @@ public class BudgetService {
 		
 		if (existingBudget.isPresent()) {
 			Budget budget = existingBudget.get();
-			budget.setIncome(request.getIncome());
-			budget.setExpenses(request.getExpenses());
-			budget.setSavings(request.getIncome() - request.getExpenses());
-			
-			if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
-				YearMonth monthYear = BudgetUtils.getValidYearMonth(request.getMonthYear());
-				budget.setMonthYear(monthYear);
-			}
+			BudgetUtils.modifyBudget(budget, request);
 			
 			return Optional.of(budgetRepository.save(budget));
 		} else {

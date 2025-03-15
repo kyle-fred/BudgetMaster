@@ -97,4 +97,48 @@ public class BudgetUtilsTest {
         assertEquals(2000, budget.getExpenses(), "Expenses should match");
         assertEquals(YearMonth.of(2025, 4), budget.getMonthYear(), "MonthYear should be correctly set");
     }
+    
+    @Test
+    void testModifyBudget_ValidRequest_ModifiesBudgetCorrectly() {
+        Budget budget = new Budget(3000.0, 1500.0, YearMonth.of(2023, 5));
+        BudgetRequest request = new BudgetRequest();
+        request.setIncome(4000.0);
+        request.setExpenses(2000.0);
+        request.setMonthYear("2024-06");
+
+        BudgetUtils.modifyBudget(budget, request);
+
+        assertEquals(4000.0, budget.getIncome(), "Income should be updated");
+        assertEquals(2000.0, budget.getExpenses(), "Expenses should be updated");
+        assertEquals(2000.0, budget.getSavings(), "Savings should be recalculated");
+        assertEquals(YearMonth.of(2024, 6), budget.getMonthYear(), "MonthYear should be updated");
+    }
+
+    @Test
+    void testModifyBudget_NullMonthYear_DoesNotChangeMonthYear() {
+        YearMonth originalMonthYear = YearMonth.of(2023, 5);
+        Budget budget = new Budget(3000.0, 1500.0, originalMonthYear);
+        BudgetRequest request = new BudgetRequest();
+        request.setIncome(4000.0);
+        request.setExpenses(2000.0);
+        request.setMonthYear(null);
+
+        BudgetUtils.modifyBudget(budget, request);
+
+        assertEquals(originalMonthYear, budget.getMonthYear(), "MonthYear should remain unchanged");
+    }
+
+    @Test
+    void testModifyBudget_EmptyMonthYear_DoesNotChangeMonthYear() {
+        YearMonth originalMonthYear = YearMonth.of(2023, 5);
+        Budget budget = new Budget(3000.0, 1500.0, originalMonthYear);
+        BudgetRequest request = new BudgetRequest();
+        request.setIncome(4000.0);
+        request.setExpenses(2000.0);
+        request.setMonthYear("");
+
+        BudgetUtils.modifyBudget(budget, request);
+
+        assertEquals(originalMonthYear, budget.getMonthYear(), "MonthYear should remain unchanged when empty");
+    }
 }

@@ -23,11 +23,9 @@ public class BudgetRepositoryTest {
     @Transactional
     public void testBudgetCreationTimestampOnSave() {
     	
-        Budget initialBudget = new Budget();
-        initialBudget.setIncome(5000.0);
-        initialBudget.setExpenses(3000.0);
-        initialBudget.setSavings(initialBudget.getIncome() - initialBudget.getExpenses());
-        initialBudget.setMonthYear(YearMonth.now());
+    	YearMonth testYearMonth = YearMonth.now();
+    	
+        Budget initialBudget = new Budget(5000.0, 3000.0, testYearMonth);
         Budget persistedBudget = budgetRepository.save(initialBudget);
 
         assertNotNull(persistedBudget.getCreatedAt());
@@ -39,11 +37,9 @@ public class BudgetRepositoryTest {
     @Transactional
     public void testBudgetUpdateTimestampOnModification() throws InterruptedException {
     	
-        Budget initialBudget = new Budget();
-        initialBudget.setIncome(5000.0);
-        initialBudget.setExpenses(3000.0);
-        initialBudget.setSavings(initialBudget.getIncome() - initialBudget.getExpenses());
-        initialBudget.setMonthYear(YearMonth.now());
+    	YearMonth testYearMonth = YearMonth.now();
+    	
+        Budget initialBudget = new Budget(5000.0, 3000.0, testYearMonth);
         Budget persistedBudget = budgetRepository.save(initialBudget);
 
         LocalDateTime initialLastUpdatedAt = persistedBudget.getLastUpdatedAt();

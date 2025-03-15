@@ -88,35 +88,38 @@ public class BudgetUtilsTest {
         BudgetRequest request = new BudgetRequest();
         request.setIncome(5000D);
         request.setExpenses(2000D);
-        request.setMonthYear("2025-04");
+        request.setMonthYear("2000-01");
         
         Budget budget = BudgetUtils.buildBudget(request);
         
         assertNotNull(budget, "Budget object should not be null");
         assertEquals(5000, budget.getIncome(), "Income should match");
         assertEquals(2000, budget.getExpenses(), "Expenses should match");
-        assertEquals(YearMonth.of(2025, 4), budget.getMonthYear(), "MonthYear should be correctly set");
+        assertEquals(YearMonth.of(2000, 1), budget.getMonthYear(), "MonthYear should be correctly set");
     }
     
     @Test
     void testModifyBudget_ValidRequest_ModifiesBudgetCorrectly() {
-        Budget budget = new Budget(3000.0, 1500.0, YearMonth.of(2023, 5));
+        
+    	Budget budget = new Budget(3000.0, 1500.0, YearMonth.of(2000, 1));
         BudgetRequest request = new BudgetRequest();
         request.setIncome(4000.0);
         request.setExpenses(2000.0);
-        request.setMonthYear("2024-06");
+        request.setMonthYear("2020-01");
 
         BudgetUtils.modifyBudget(budget, request);
 
         assertEquals(4000.0, budget.getIncome(), "Income should be updated");
         assertEquals(2000.0, budget.getExpenses(), "Expenses should be updated");
         assertEquals(2000.0, budget.getSavings(), "Savings should be recalculated");
-        assertEquals(YearMonth.of(2024, 6), budget.getMonthYear(), "MonthYear should be updated");
+        assertEquals(YearMonth.of(2020, 1), budget.getMonthYear(), "MonthYear should be updated");
     }
 
     @Test
     void testModifyBudget_NullMonthYear_DoesNotChangeMonthYear() {
-        YearMonth originalMonthYear = YearMonth.of(2023, 5);
+    	
+        YearMonth originalMonthYear = YearMonth.of(2000, 1);
+        
         Budget budget = new Budget(3000.0, 1500.0, originalMonthYear);
         BudgetRequest request = new BudgetRequest();
         request.setIncome(4000.0);
@@ -130,7 +133,8 @@ public class BudgetUtilsTest {
 
     @Test
     void testModifyBudget_EmptyMonthYear_DoesNotChangeMonthYear() {
-        YearMonth originalMonthYear = YearMonth.of(2023, 5);
+        
+    	YearMonth originalMonthYear = YearMonth.of(2023, 5);
         Budget budget = new Budget(3000.0, 1500.0, originalMonthYear);
         BudgetRequest request = new BudgetRequest();
         request.setIncome(4000.0);

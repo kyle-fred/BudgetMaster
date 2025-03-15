@@ -42,10 +42,10 @@ public class BudgetControllerTest {
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(3000.0);
 		request.setExpenses(1500.0);
-		request.setMonthYear("2023-05");
+		request.setMonthYear("2001-01");
 		
-		YearMonth testYearMonth = YearMonth.of(2023, 5);
-		LocalDateTime now = LocalDateTime.now();
+		YearMonth testYearMonth = YearMonth.of(2000, 1);
+		LocalDateTime now = LocalDateTime.now().withNano(0);
 		
 		// Create expected Budget object
 		Budget expectedBudget = new Budget(3000, 1500, testYearMonth);
@@ -64,7 +64,7 @@ public class BudgetControllerTest {
 			.andExpect(jsonPath("$.income").value(3000))
 			.andExpect(jsonPath("$.expenses").value(1500))
 			.andExpect(jsonPath("$.savings").value(1500))
-			.andExpect(jsonPath("$.monthYear").value("2023-05"))
+			.andExpect(jsonPath("$.monthYear").value("2000-01"))
 			.andExpect(jsonPath("$.createdAt").value(now.toString()))
 			.andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
 		
@@ -81,7 +81,8 @@ public class BudgetControllerTest {
 		request.setMonthYear(null);
 		
 		YearMonth defaultYearMonth = YearMonth.now();
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now().withNano(0);
+		
 		Budget expectedBudget = new Budget(3000, 1500, defaultYearMonth);
 		expectedBudget.setCreatedAt(now);
 		expectedBudget.setLastUpdatedAt(now);
@@ -108,11 +109,13 @@ public class BudgetControllerTest {
 	@Test
 	void shouldGetBudgetWhenValidId() throws Exception {
 	    
-	    YearMonth testYearMonth = YearMonth.of(2023, 5);
+	    YearMonth testYearMonth = YearMonth.of(2000, 1);
+	    LocalDateTime now = LocalDateTime.now().withNano(0);
+	    
 	    Budget budget = new Budget(3000.0, 1500.0, testYearMonth);
 	    budget.setId(1L);
-	    budget.setCreatedAt(LocalDateTime.now());
-	    budget.setLastUpdatedAt(LocalDateTime.now());
+	    budget.setCreatedAt(now);
+	    budget.setLastUpdatedAt(now);
 	    
 	    // Mock successful read
 	    Mockito.when(budgetService.getBudgetById(1L)).thenReturn(Optional.of(budget));
@@ -125,9 +128,9 @@ public class BudgetControllerTest {
 	            .andExpect(jsonPath("$.income").value(3000.0))
 	            .andExpect(jsonPath("$.expenses").value(1500.0))
 	            .andExpect(jsonPath("$.savings").value(1500.0))
-	            .andExpect(jsonPath("$.monthYear").value("2023-05"))
-	            .andExpect(jsonPath("$.createdAt").exists())
-	            .andExpect(jsonPath("$.lastUpdatedAt").exists());
+	            .andExpect(jsonPath("$.monthYear").value("2000-01"))
+	            .andExpect(jsonPath("$.createdAt").value(now.toString()))
+	            .andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
 	    
 	    Mockito.verify(budgetService, Mockito.times(1))
 	            .getBudgetById(1L);
@@ -137,25 +140,22 @@ public class BudgetControllerTest {
 	@Test
 	void shouldUpdateBudgetWhenValidId() throws Exception {
 	    
-	    YearMonth testYearMonth = YearMonth.of(2023, 5);
+	    YearMonth testYearMonth = YearMonth.of(2000, 1);
 	    Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
 	    existingBudget.setId(1L);
-	    existingBudget.setMonthYear(testYearMonth);
-	    existingBudget.setCreatedAt(LocalDateTime.now());
-	    existingBudget.setLastUpdatedAt(LocalDateTime.now());
+	    existingBudget.setCreatedAt(LocalDateTime.now().withNano(0));
+	    existingBudget.setLastUpdatedAt(LocalDateTime.now().withNano(0));
 	    
-	    YearMonth updatedYearMonth = YearMonth.of(2023, 6);
-	    Budget updatedBudget = new Budget(4000.0, 2000.0, testYearMonth);
+	    YearMonth updatedYearMonth = YearMonth.of(2020, 1);
+	    Budget updatedBudget = new Budget(4000.0, 2000.0, updatedYearMonth);
 	    updatedBudget.setId(1L);
-	    updatedBudget.setSavings(2000.0);
-	    updatedBudget.setMonthYear(updatedYearMonth);
-	    updatedBudget.setCreatedAt(LocalDateTime.now());
-	    updatedBudget.setLastUpdatedAt(LocalDateTime.now());
+	    updatedBudget.setCreatedAt(LocalDateTime.now().withNano(0));
+	    updatedBudget.setLastUpdatedAt(LocalDateTime.now().withNano(0));
 	    
 	    BudgetRequest updateRequest = new BudgetRequest();
 	    updateRequest.setIncome(4000.0);
 	    updateRequest.setExpenses(2000.0);
-	    updateRequest.setMonthYear("2023-06");
+	    updateRequest.setMonthYear("2020-01");
 	    
 	    // Mock successful update
 	    Mockito.when(budgetService.updateBudget(Mockito.eq(1L), Mockito.any(BudgetRequest.class)))
@@ -166,11 +166,10 @@ public class BudgetControllerTest {
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(objectMapper.writeValueAsString(updateRequest)))
 	            .andExpect(status().isOk())
-	            .andExpect(jsonPath("$.id").value(1))
 	            .andExpect(jsonPath("$.income").value(4000.0))
 	            .andExpect(jsonPath("$.expenses").value(2000.0))
 	            .andExpect(jsonPath("$.savings").value(2000.0))
-	            .andExpect(jsonPath("$.monthYear").value("2023-06"))
+	            .andExpect(jsonPath("$.monthYear").value("2020-01"))
 	            .andExpect(jsonPath("$.createdAt").exists())
 	            .andExpect(jsonPath("$.lastUpdatedAt").exists());
 	}

@@ -2,8 +2,11 @@ package com.budgetmaster.service;
 
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.repository.IncomeRepository;
+import com.budgetmaster.utils.budget.BudgetUtils;
+import com.budgetmaster.utils.income.IncomeUtils;
 import com.budgetmaster.model.Income;
 
+import java.time.YearMonth;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -19,12 +22,7 @@ public class IncomeService {
 	}
 	
 	public Income createIncome(IncomeRequest request) {
-		Income income = new Income(
-				request.getName(),
-				request.getSource(),
-				request.getAmount(),
-				request.getType()
-			);
+		Income income = IncomeUtils.buildIncome(request);
 		return incomeRepository.save(income);
 	}
 	
@@ -37,10 +35,7 @@ public class IncomeService {
 		
 		if (existingIncome.isPresent()) {
 			Income income = existingIncome.get();
-			income.setName(request.getName());
-			income.setSource(request.getSource());
-			income.setAmount(request.getAmount());
-			income.setType(request.getType());
+			IncomeUtils.modifyIncome(income, request);
 			
 			return Optional.of(incomeRepository.save(income));
 		} else {

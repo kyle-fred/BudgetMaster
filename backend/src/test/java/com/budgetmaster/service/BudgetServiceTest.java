@@ -22,15 +22,11 @@ class BudgetServiceTest {
 	@Test
 	void shouldCreateAndSaveBudgetSuccessfully() {
 	    
-	    YearMonth expectedMonthYear = YearMonth.of(2025, 3);
+	    YearMonth expectedMonthYear = YearMonth.of(2000, 1);
 	    LocalDateTime now = LocalDateTime.now().withNano(0);
 
-	    Budget expectedBudget = new Budget();
+	    Budget expectedBudget = new Budget(3000.0, 1500.0, expectedMonthYear);
 	    expectedBudget.setId(1L);
-	    expectedBudget.setIncome(3000.0);
-	    expectedBudget.setExpenses(1500.0);
-	    expectedBudget.setSavings(1500.0);
-	    expectedBudget.setMonthYear(expectedMonthYear);
 	    expectedBudget.setCreatedAt(now);
 	    expectedBudget.setLastUpdatedAt(now);
 	    
@@ -60,7 +56,7 @@ class BudgetServiceTest {
 	
 	@Test 
 	void shouldSetCreatedAtOnSave() {
-		YearMonth expectedMonthYear = YearMonth.of(2025, 3);
+		YearMonth expectedMonthYear = YearMonth.of(2000, 1);
 		LocalDateTime now = LocalDateTime.now().withNano(0);
 		
 		BudgetRequest budgetRequest = new BudgetRequest();
@@ -86,7 +82,7 @@ class BudgetServiceTest {
 	@Test
 	void shouldReturnBudgetWhenExists() {
 
-	    YearMonth testYearMonth = YearMonth.of(2023, 5);
+	    YearMonth testYearMonth = YearMonth.of(2000, 1);
 	    LocalDateTime now = LocalDateTime.now().withNano(0);
 	    
 	    Budget budget = new Budget(3000.0, 1500.0, testYearMonth);
@@ -113,7 +109,7 @@ class BudgetServiceTest {
     @Test
     void shouldUpdateBudgetWhenExists() {
 
-        YearMonth testYearMonth = YearMonth.of(2023, 5);
+        YearMonth testYearMonth = YearMonth.of(2000, 1);
         LocalDateTime now = LocalDateTime.now().withNano(0);
 
         Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
@@ -144,7 +140,7 @@ class BudgetServiceTest {
     
     @Test
     void shouldUpdateLastUpdatedAtOnModification() {
-        YearMonth testYearMonth = YearMonth.of(2025, 5);
+        YearMonth testYearMonth = YearMonth.of(2000, 1);
         LocalDateTime createdAt = LocalDateTime.now().withNano(0).minusDays(1);
         LocalDateTime updatedAt = LocalDateTime.now().withNano(0);
 

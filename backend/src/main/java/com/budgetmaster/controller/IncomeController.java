@@ -3,6 +3,7 @@ package com.budgetmaster.controller;
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.model.Income;
 import com.budgetmaster.service.IncomeService;
+import com.budgetmaster.utils.income.IncomeUtils;
 
 import java.util.Optional;
 
@@ -25,7 +26,8 @@ public class IncomeController {
 	
 	@PostMapping
 	public ResponseEntity<Income> createIncome(@Valid @RequestBody IncomeRequest request) {
-		Income income = incomeService.createIncome(request);
+		IncomeRequest builtRequest = IncomeUtils.buildIncomeRequest(request);
+		Income income = incomeService.createIncome(builtRequest);
 		return ResponseEntity.ok(income);
 	}
 	

@@ -23,7 +23,7 @@ class BudgetServiceTest {
 	void shouldCreateAndSaveBudgetSuccessfully() {
 	    
 	    YearMonth expectedMonthYear = YearMonth.of(2025, 3);
-	    LocalDateTime now = LocalDateTime.now();
+	    LocalDateTime now = LocalDateTime.now().withNano(0);
 
 	    Budget expectedBudget = new Budget();
 	    expectedBudget.setId(1L);
@@ -61,7 +61,7 @@ class BudgetServiceTest {
 	@Test 
 	void shouldSetCreatedAtOnSave() {
 		YearMonth expectedMonthYear = YearMonth.of(2025, 3);
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now().withNano(0);
 		
 		BudgetRequest budgetRequest = new BudgetRequest();
 	    budgetRequest.setIncome(3000.0);
@@ -87,7 +87,7 @@ class BudgetServiceTest {
 	void shouldReturnBudgetWhenExists() {
 
 	    YearMonth testYearMonth = YearMonth.of(2023, 5);
-	    LocalDateTime now = LocalDateTime.now();
+	    LocalDateTime now = LocalDateTime.now().withNano(0);
 	    
 	    Budget budget = new Budget(3000.0, 1500.0, testYearMonth);
 	    budget.setId(1L);
@@ -114,7 +114,7 @@ class BudgetServiceTest {
     void shouldUpdateBudgetWhenExists() {
 
         YearMonth testYearMonth = YearMonth.of(2023, 5);
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().withNano(0);
 
         Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
         existingBudget.setId(1L);
@@ -145,8 +145,8 @@ class BudgetServiceTest {
     @Test
     void shouldUpdateLastUpdatedAtOnModification() {
         YearMonth testYearMonth = YearMonth.of(2025, 5);
-        LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
-        LocalDateTime updatedAt = LocalDateTime.now();
+        LocalDateTime createdAt = LocalDateTime.now().withNano(0).minusDays(1);
+        LocalDateTime updatedAt = LocalDateTime.now().withNano(0);
 
         Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
         existingBudget.setId(1L);

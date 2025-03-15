@@ -45,7 +45,7 @@ public class BudgetControllerTest {
 		request.setMonthYear("2023-05");
 		
 		YearMonth testYearMonth = YearMonth.of(2023, 5);
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now().withNano(0);
 		
 		// Create expected Budget object
 		Budget expectedBudget = new Budget(3000, 1500, testYearMonth);
@@ -81,7 +81,7 @@ public class BudgetControllerTest {
 		request.setMonthYear(null);
 		
 		YearMonth defaultYearMonth = YearMonth.now();
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now().withNano(0);;
 		Budget expectedBudget = new Budget(3000, 1500, defaultYearMonth);
 		expectedBudget.setCreatedAt(now);
 		expectedBudget.setLastUpdatedAt(now);
@@ -111,8 +111,8 @@ public class BudgetControllerTest {
 	    YearMonth testYearMonth = YearMonth.of(2023, 5);
 	    Budget budget = new Budget(3000.0, 1500.0, testYearMonth);
 	    budget.setId(1L);
-	    budget.setCreatedAt(LocalDateTime.now());
-	    budget.setLastUpdatedAt(LocalDateTime.now());
+	    budget.setCreatedAt(LocalDateTime.now().withNano(0));
+	    budget.setLastUpdatedAt(LocalDateTime.now().withNano(0));
 	    
 	    // Mock successful read
 	    Mockito.when(budgetService.getBudgetById(1L)).thenReturn(Optional.of(budget));
@@ -141,16 +141,16 @@ public class BudgetControllerTest {
 	    Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
 	    existingBudget.setId(1L);
 	    existingBudget.setMonthYear(testYearMonth);
-	    existingBudget.setCreatedAt(LocalDateTime.now());
-	    existingBudget.setLastUpdatedAt(LocalDateTime.now());
+	    existingBudget.setCreatedAt(LocalDateTime.now().withNano(0));
+	    existingBudget.setLastUpdatedAt(LocalDateTime.now().withNano(0));
 	    
 	    YearMonth updatedYearMonth = YearMonth.of(2023, 6);
 	    Budget updatedBudget = new Budget(4000.0, 2000.0, testYearMonth);
 	    updatedBudget.setId(1L);
 	    updatedBudget.setSavings(2000.0);
 	    updatedBudget.setMonthYear(updatedYearMonth);
-	    updatedBudget.setCreatedAt(LocalDateTime.now());
-	    updatedBudget.setLastUpdatedAt(LocalDateTime.now());
+	    updatedBudget.setCreatedAt(LocalDateTime.now().withNano(0));
+	    updatedBudget.setLastUpdatedAt(LocalDateTime.now().withNano(0));
 	    
 	    BudgetRequest updateRequest = new BudgetRequest();
 	    updateRequest.setIncome(4000.0);

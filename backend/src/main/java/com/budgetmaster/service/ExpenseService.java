@@ -2,7 +2,7 @@ package com.budgetmaster.service;
 
 import com.budgetmaster.dto.ExpenseRequest;
 import com.budgetmaster.repository.ExpenseRepository;
-import com.budgetmaster.utils.expense.ExpenseUtils;
+import com.budgetmaster.utils.model.FinancialModelUtils;
 import com.budgetmaster.model.Expense;
 
 import java.util.Optional;
@@ -20,7 +20,7 @@ public class ExpenseService {
 	}
 	
 	public Expense createExpense(ExpenseRequest request) {
-		Expense expense = ExpenseUtils.buildExpense(request);
+		Expense expense = FinancialModelUtils.buildExpense(request);
 		return expenseRepository.save(expense);
 	}
 	
@@ -33,7 +33,7 @@ public class ExpenseService {
 		
 		if (existingExpense.isPresent()) {
 			Expense expense = existingExpense.get();
-			ExpenseUtils.modifyExpense(expense, request);
+			FinancialModelUtils.modifyExpense(expense, request);
 			
 			return Optional.of(expenseRepository.save(expense));
 		} else {

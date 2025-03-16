@@ -3,7 +3,7 @@ package com.budgetmaster.controller;
 import com.budgetmaster.dto.ExpenseRequest;
 import com.budgetmaster.model.Expense;
 import com.budgetmaster.service.ExpenseService;
-import com.budgetmaster.utils.expense.ExpenseUtils;
+import com.budgetmaster.utils.model.FinancialModelUtils;
 
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ public class ExpenseController {
 	
 	@PostMapping
 	public ResponseEntity<Expense> createExpense(@Valid @RequestBody ExpenseRequest request) {
-		ExpenseRequest builtRequest = ExpenseUtils.buildExpenseRequest(request);
+		ExpenseRequest builtRequest = FinancialModelUtils.buildExpenseRequest(request);
  		Expense expense = expenseService.createExpense(builtRequest);
 		return ResponseEntity.ok(expense);
 	}

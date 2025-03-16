@@ -2,7 +2,7 @@ package com.budgetmaster.service;
 
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.repository.IncomeRepository;
-import com.budgetmaster.utils.income.IncomeUtils;
+import com.budgetmaster.utils.model.FinancialModelUtils;
 import com.budgetmaster.model.Income;
 
 import java.util.Optional;
@@ -20,7 +20,7 @@ public class IncomeService {
 	}
 	
 	public Income createIncome(IncomeRequest request) {
-		Income income = IncomeUtils.buildIncome(request);
+		Income income = FinancialModelUtils.buildIncome(request);
 		return incomeRepository.save(income);
 	}
 	
@@ -33,7 +33,7 @@ public class IncomeService {
 		
 		if (existingIncome.isPresent()) {
 			Income income = existingIncome.get();
-			IncomeUtils.modifyIncome(income, request);
+			FinancialModelUtils.modifyIncome(income, request);
 			
 			return Optional.of(incomeRepository.save(income));
 		} else {

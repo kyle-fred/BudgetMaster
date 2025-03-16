@@ -3,7 +3,7 @@ package com.budgetmaster.controller;
 import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.model.Budget;
 import com.budgetmaster.service.BudgetService;
-import com.budgetmaster.utils.budget.BudgetUtils;
+import com.budgetmaster.utils.model.FinancialModelUtils;
 
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ public class BudgetController {
 	
 	@PostMapping
 	public ResponseEntity<Budget> createBudget(@Valid @RequestBody BudgetRequest request) {
-		BudgetRequest builtRequest = BudgetUtils.buildBudgetRequest(request);
+		BudgetRequest builtRequest = FinancialModelUtils.buildBudgetRequest(request);
 		Budget budget = budgetService.createBudget(builtRequest);
 		return ResponseEntity.ok(budget);
 	}

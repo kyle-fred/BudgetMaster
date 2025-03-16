@@ -2,7 +2,7 @@ package com.budgetmaster.service;
 
 import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.repository.BudgetRepository;
-import com.budgetmaster.utils.budget.BudgetUtils;
+import com.budgetmaster.utils.model.FinancialModelUtils;
 import com.budgetmaster.model.Budget;
 
 import java.util.Optional;
@@ -20,7 +20,7 @@ public class BudgetService {
 	}
 	
 	public Budget createBudget(BudgetRequest request) {
-		Budget budget = BudgetUtils.buildBudget(request);
+		Budget budget = FinancialModelUtils.buildBudget(request);
 		return budgetRepository.save(budget);
 	}
 	
@@ -33,7 +33,7 @@ public class BudgetService {
 		
 		if (existingBudget.isPresent()) {
 			Budget budget = existingBudget.get();
-			BudgetUtils.modifyBudget(budget, request);
+			FinancialModelUtils.modifyBudget(budget, request);
 			
 			return Optional.of(budgetRepository.save(budget));
 		} else {

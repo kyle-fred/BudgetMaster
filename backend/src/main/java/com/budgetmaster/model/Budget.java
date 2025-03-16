@@ -19,7 +19,9 @@ public class Budget {
 	private Long id;
 	
 	private double income;
+	
 	private double expenses;
+	
 	private double savings;
 	
 	@Column(nullable = false)

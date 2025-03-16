@@ -13,6 +13,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.Optional;
 
 class ExpenseServiceTest {
@@ -23,12 +25,13 @@ class ExpenseServiceTest {
     @Test
     void shouldCreateAndSaveExpenseSuccessfully() {
         
-    	Expense expectedExpense = new Expense();
+	    YearMonth expectedMonthYear = YearMonth.of(2000, 1);
+ 	    LocalDateTime now = LocalDateTime.now().withNano(0);
+    	
+    	Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, expectedMonthYear);
         expectedExpense.setId(1L);
-        expectedExpense.setName("Rent");
-        expectedExpense.setAmount(1000.0);
-        expectedExpense.setCategory(ExpenseCategory.HOUSING);
-        expectedExpense.setType(TransactionType.RECURRING);
+        expectedExpense.setCreatedAt(now);
+        expectedExpense.setLastUpdatedAt(now);
     	
         // Mock successful creation
         Mockito.when(expenseRepository.save(Mockito.any(Expense.class)))
@@ -39,6 +42,7 @@ class ExpenseServiceTest {
         expenseRequest.setAmount(1000.0);
         expenseRequest.setCategory(ExpenseCategory.HOUSING);
         expenseRequest.setType(TransactionType.RECURRING);
+        expenseRequest.setMonthYear(expectedMonthYear.toString());
         
         Expense savedExpense = expenseService.createExpense(expenseRequest);
 
@@ -48,22 +52,55 @@ class ExpenseServiceTest {
         assertEquals(1000.0, savedExpense.getAmount());
         assertEquals(ExpenseCategory.HOUSING, savedExpense.getCategory());
         assertEquals(TransactionType.RECURRING, savedExpense.getType());
+	    assertEquals(expectedMonthYear, savedExpense.getMonthYear());
+ 	    assertNotNull(savedExpense.getCreatedAt());
+ 	    assertNotNull(savedExpense.getLastUpdatedAt());
 
         Mockito.verify(expenseRepository, Mockito.times(1))
         	.save(Mockito.any(Expense.class));
     }
     
+	@Test 
+ 	void shouldSetCreatedAtOnSave() {
+ 		
+ 		YearMonth expectedMonthYear = YearMonth.of(2000, 1);
+ 		LocalDateTime now = LocalDateTime.now().withNano(0);
+ 		
+ 		ExpenseRequest expenseRequest = new ExpenseRequest();
+ 		expenseRequest.setName("Rent");
+ 		expenseRequest.setAmount(1000.0);
+ 		expenseRequest.setCategory(ExpenseCategory.HOUSING);
+ 		expenseRequest.setType(TransactionType.RECURRING);
+		expenseRequest.setMonthYear(expectedMonthYear.toString());
+ 	    
+		Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, expectedMonthYear);
+		expectedExpense.setId(1L);
+		expectedExpense.setCreatedAt(now);
+		expectedExpense.setLastUpdatedAt(now);
+ 	    
+ 	    // Mock successful creation
+ 	    Mockito.when(expenseRepository.save(Mockito.any(Expense.class)))
+ 	        .thenReturn(expectedExpense);
+ 	    
+ 	    Expense savedExpense = expenseService.createExpense(expenseRequest);
+ 	    
+ 	    assertNotNull(savedExpense.getCreatedAt());
+ 	    assertNotNull(savedExpense.getLastUpdatedAt());
+ 	}
+    
     @Test
     void shouldReturnExpenseWhenExists() {
-    	Expense expense = new Expense();
-    	expense.setId(1L);
-    	expense.setName("Rent");
-    	expense.setAmount(1000.0);
-    	expense.setCategory(ExpenseCategory.HOUSING);
-    	expense.setType(TransactionType.RECURRING);
+    	
+	    YearMonth testYearMonth = YearMonth.of(2000, 1);
+ 	    LocalDateTime now = LocalDateTime.now().withNano(0);
+    	
+    	Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
+    	expectedExpense.setId(1L);
+    	expectedExpense.setCreatedAt(now);
+    	expectedExpense.setLastUpdatedAt(now);
     	
     	// Mock successful read
-    	Mockito.when(expenseRepository.findById(1L)).thenReturn(Optional.of(expense));
+    	Mockito.when(expenseRepository.findById(1L)).thenReturn(Optional.of(expectedExpense));
     	
     	Optional<Expense> retrievedExpense = expenseService.getExpenseById(1L);
     	
@@ -73,16 +110,21 @@ class ExpenseServiceTest {
         assertEquals(1000.0, retrievedExpense.get().getAmount());
         assertEquals(ExpenseCategory.HOUSING, retrievedExpense.get().getCategory());
         assertEquals(TransactionType.RECURRING, retrievedExpense.get().getType());
+	    assertEquals(testYearMonth, retrievedExpense.get().getMonthYear());
+ 	    assertNotNull(retrievedExpense.get().getCreatedAt());
+ 	    assertNotNull(retrievedExpense.get().getLastUpdatedAt());
     }
     
     @Test
     void shouldUpdateExpenseWhenExists() {
-        Expense existingExpense = new Expense();
-        existingExpense.setId(1L);
-        existingExpense.setName("Rent");
-        existingExpense.setAmount(1000.0);
-        existingExpense.setCategory(ExpenseCategory.HOUSING);
-        existingExpense.setType(TransactionType.RECURRING);
+	    
+    	YearMonth testYearMonth = YearMonth.of(2000, 1);
+    	LocalDateTime now = LocalDateTime.now().withNano(0);
+ 	    
+    	Expense existingExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
+    	existingExpense.setId(1L);
+    	existingExpense.setCreatedAt(now);
+    	existingExpense.setLastUpdatedAt(now);
 
         ExpenseRequest updateRequest = new ExpenseRequest();
         updateRequest.setName("Gas Bill");
@@ -107,7 +149,41 @@ class ExpenseServiceTest {
     }
     
     @Test
+    void shouldUpdateLastUpdatedAtOnModification() {
+        
+    	YearMonth testYearMonth = YearMonth.of(2000, 1);
+        LocalDateTime createdAt = LocalDateTime.now().withNano(0).minusDays(1);
+        LocalDateTime updatedAt = LocalDateTime.now().withNano(0);
+
+    	Expense existingExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
+    	existingExpense.setId(1L);
+        existingExpense.setCreatedAt(createdAt);
+        existingExpense.setLastUpdatedAt(createdAt);
+
+        ExpenseRequest updateRequest = new ExpenseRequest();
+        updateRequest.setName("Bonus");
+        updateRequest.setAmount(3000.0);
+        updateRequest.setCategory(ExpenseCategory.HOUSING);
+        updateRequest.setType(TransactionType.ONE_TIME);
+        
+        Expense updatedExpense = new Expense("Gas Bill", 100.0, ExpenseCategory.UTILITIES, TransactionType.RECURRING, testYearMonth);
+        updatedExpense.setId(1L);
+    	updatedExpense.setCreatedAt(createdAt);
+    	updatedExpense.setLastUpdatedAt(updatedAt);
+
+        Mockito.when(expenseRepository.findById(1L)).thenReturn(Optional.of(existingExpense));
+        Mockito.when(expenseRepository.save(Mockito.any(Expense.class))).thenReturn(updatedExpense);
+
+        Optional<Expense> result = expenseService.updateExpense(1L, updateRequest);
+
+        assertTrue(result.isPresent());
+        assertEquals(updatedAt, result.get().getLastUpdatedAt());
+        assertEquals(createdAt, result.get().getCreatedAt());
+    }
+    
+    @Test
     void shouldDeleteExpenseWhenExists() {
+    	
     	// Mock successful delete
     	Mockito.when(expenseRepository.existsById(1L)).thenReturn(true);
     	Mockito.doNothing().when(expenseRepository).deleteById(1L);
@@ -120,6 +196,7 @@ class ExpenseServiceTest {
     
     @Test
     void shouldThrowExceptionWhenSaveFails() {
+    	
     	// Mock unsuccessful creation
         Mockito.when(expenseRepository.save(Mockito.any(Expense.class)))
                .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
@@ -136,6 +213,7 @@ class ExpenseServiceTest {
     
     @Test
     void shouldReturnEmptyWhenExpenseDoesNotExist() {
+    	
     	// Mock unsuccessful read
     	Mockito.when(expenseRepository.findById(99L)).thenReturn(Optional.empty());
         
@@ -146,7 +224,8 @@ class ExpenseServiceTest {
     
     @Test
     void shouldReturnEmptyWhenUpdatingNonExistentExpense() {
-        ExpenseRequest updateRequest = new ExpenseRequest();
+        
+    	ExpenseRequest updateRequest = new ExpenseRequest();
         updateRequest.setName("Rent");
         updateRequest.setAmount(2000.0);
         updateRequest.setCategory(ExpenseCategory.HOUSING);
@@ -163,6 +242,7 @@ class ExpenseServiceTest {
     
     @Test
     void shouldReturnFalseWhenDeletingNonExistentExpense() {
+    	
     	// Mock unsuccessful delete
     	Mockito.when(expenseRepository.existsById(99L)).thenReturn(false);
 

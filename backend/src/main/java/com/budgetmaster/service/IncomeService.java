@@ -2,11 +2,9 @@ package com.budgetmaster.service;
 
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.repository.IncomeRepository;
-import com.budgetmaster.utils.budget.BudgetUtils;
 import com.budgetmaster.utils.income.IncomeUtils;
 import com.budgetmaster.model.Income;
 
-import java.time.YearMonth;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;

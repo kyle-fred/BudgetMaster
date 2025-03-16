@@ -23,7 +23,9 @@ public class Income {
 	private Long id;
 	
 	private String name;
+	
 	private String source;
+	
 	private Double amount;
 	
 	@Enumerated(EnumType.STRING)

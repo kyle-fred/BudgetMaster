@@ -1,17 +1,15 @@
 package com.budgetmaster.controller;
 
-import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.model.Budget;
 import com.budgetmaster.service.BudgetService;
-import com.budgetmaster.utils.model.FinancialModelUtils;
+import com.budgetmaster.utils.date.DateUtils;
 
+import java.time.YearMonth;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("api/budget")
@@ -24,27 +22,11 @@ public class BudgetController {
 		this.budgetService = budgetService;
 	}
 	
-	@PostMapping
-	public ResponseEntity<Budget> createBudget(@Valid @RequestBody BudgetRequest request) {
-		BudgetRequest builtRequest = FinancialModelUtils.buildBudgetRequest(request);
-		Budget budget = budgetService.createBudget(builtRequest);
-		return ResponseEntity.ok(budget);
-	}
-	
-	@GetMapping("/{id}")
-	public ResponseEntity<Budget> getBudgetById(@PathVariable Long id) {
-		Optional<Budget> budget = budgetService.getBudgetById(id);
-		if (budget.isPresent()) {
-			return ResponseEntity.ok(budget.get());
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
-	
-	@PutMapping("/{id}")
-	public ResponseEntity<Budget> updateBudget(@PathVariable Long id, @Valid @RequestBody BudgetRequest request) {
-		Optional<Budget> budget = budgetService.updateBudget(id, request);
+	@GetMapping("/{monthYear}")
+	public ResponseEntity<Budget> getBudgetById(@PathVariable String monthYear) {
+		YearMonth yearMonth = DateUtils.parseYearMonth(monthYear);
 		
+		Optional<Budget> budget = budgetService.getBudgetByMonthYear(yearMonth);
 		if (budget.isPresent()) {
 			return ResponseEntity.ok(budget.get());
 		} else {
@@ -52,9 +34,10 @@ public class BudgetController {
 		}
 	}
 	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
-		boolean deleted = budgetService.deleteBudget(id);
+	@DeleteMapping("/{monthYear}")
+	public ResponseEntity<Void> deleteBudget(@PathVariable String monthYear) {
+		YearMonth yearMonth = DateUtils.parseYearMonth(monthYear); 
+		boolean deleted = budgetService.deleteBudgetByMonthYear(yearMonth);
 		
 		if (deleted) {
 			return ResponseEntity.noContent().build();

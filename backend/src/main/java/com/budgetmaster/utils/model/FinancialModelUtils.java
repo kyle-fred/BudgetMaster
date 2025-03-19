@@ -1,46 +1,44 @@
 package com.budgetmaster.utils.model;
 
-import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.dto.ExpenseRequest;
-import com.budgetmaster.model.Budget;
 import com.budgetmaster.model.Income;
 import com.budgetmaster.model.Expense;
 import com.budgetmaster.utils.date.DateUtils;
 
 public class FinancialModelUtils {
 
-    /**
-     * Builds the BudgetRequest by setting the proper monthYear format.
-     */
-    public static BudgetRequest buildBudgetRequest(BudgetRequest request) {
-        request.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()).toString());
-        return request;
-    }
-
-    /**
-     * Builds the Budget object from BudgetRequest.
-     */
-    public static Budget buildBudget(BudgetRequest request) {
-        return new Budget(
-                request.getIncome(),
-                request.getExpenses(),
-                DateUtils.getValidYearMonth(request.getMonthYear())
-        );
-    }
-
-    /**
-     * Modifies an existing Budget object with values from BudgetRequest.
-     */
-    public static void modifyBudget(Budget budget, BudgetRequest request) {
-        budget.setIncome(request.getIncome());
-        budget.setExpenses(request.getExpenses());
-        budget.setSavings(request.getIncome() - request.getExpenses());
-
-        if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
-            budget.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()));
-        }
-    }
+//    /**
+//     * Builds the BudgetRequest by setting the proper monthYear format.
+//     */
+//    public static BudgetRequest buildBudgetRequest(BudgetRequest request) {
+//        request.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()).toString());
+//        return request;
+//    }
+//
+//    /**
+//     * Builds the Budget object from BudgetRequest.
+//     */
+//    public static Budget buildBudget(BudgetRequest request) {
+//        return new Budget(
+//                request.getIncome(),
+//                request.getExpenses(),
+//                DateUtils.getValidYearMonth(request.getMonthYear())
+//        );
+//    }
+//
+//    /**
+//     * Modifies an existing Budget object with values from BudgetRequest.
+//     */
+//    public static void modifyBudget(Budget budget, BudgetRequest request) {
+//        budget.setIncome(request.getIncome());
+//        budget.setExpenses(request.getExpenses());
+//        budget.setSavings(request.getIncome() - request.getExpenses());
+//
+//        if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
+//            budget.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()));
+//        }
+//    }
 
     /**
      * Builds the IncomeRequest by setting the proper monthYear format.

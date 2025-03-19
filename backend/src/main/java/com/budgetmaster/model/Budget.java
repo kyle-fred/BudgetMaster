@@ -3,6 +3,11 @@ package com.budgetmaster.model;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.budgetmaster.repository.ExpenseRepository;
+import com.budgetmaster.repository.IncomeRepository;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,33 +19,32 @@ import jakarta.persistence.PreUpdate;
 @Entity
 public class Budget {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	private double income;
-	
-	private double expenses;
-	
-	private double savings;
-	
-	@Column(nullable = false)
-	private YearMonth monthYear;
-	
-	@Column(nullable = false, updatable = false)
-	private LocalDateTime createdAt;
-	
-	@Column(nullable = false)
-	private LocalDateTime lastUpdatedAt;
-	
-	public Budget() {}
-	
-	public Budget(double income, double expenses, YearMonth monthYear) {
-		this.income = income;
-		this.expenses = expenses;
-		this.savings = income - expenses;
-		this.monthYear = monthYear;
-	}
+    @Autowired
+    private IncomeRepository incomeRepository;
+
+    @Autowired
+    private ExpenseRepository expenseRepository;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private double income;
+    private double expenses;
+    private double savings;
+
+    @Column(nullable = false)
+    private YearMonth monthYear;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime lastUpdatedAt;
+
+    public Budget(YearMonth monthYear) {
+        this.monthYear = monthYear;
+    }
 	
 	public Long getId() {
 		return id;
@@ -51,27 +55,15 @@ public class Budget {
 	}
 	
 	public double getIncome() {
-		return income;
-	}
-	
-	public void setIncome(double income) {
-		this.income = income;
+		return incomeRepository.sumByMonthYear(this.monthYear);
 	}
 	
 	public double getExpenses() {
-		return expenses;
-	}
-	
-	public void setExpenses(double expenses) {
-		this.expenses = expenses;
+		return expenseRepository.sumByMonthYear(this.monthYear);
 	}
 	
 	public double getSavings() {
-		return savings;
-	}
-	
-	public void setSavings(double savings) {
-		this.savings = savings;
+		return getIncome() - getExpenses();
 	}
 	
 	public YearMonth getMonthYear() {

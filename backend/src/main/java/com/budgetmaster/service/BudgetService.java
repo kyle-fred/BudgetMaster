@@ -5,6 +5,7 @@ import com.budgetmaster.repository.BudgetRepository;
 import com.budgetmaster.utils.model.FinancialModelUtils;
 import com.budgetmaster.model.Budget;
 
+import java.time.YearMonth;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -24,8 +25,8 @@ public class BudgetService {
 		return budgetRepository.save(budget);
 	}
 	
-	public Optional<Budget> getBudgetById(Long id) {
-		return budgetRepository.findById(id);
+	public Optional<Budget> getBudgetByMonthYear(YearMonth monthYear) {
+		return budgetRepository.findByMonthYear(monthYear);
 	}
 	
 	public Optional<Budget> updateBudget(Long id, BudgetRequest request) {

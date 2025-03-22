@@ -5,6 +5,7 @@ import com.budgetmaster.model.Budget;
 import com.budgetmaster.service.BudgetService;
 import com.budgetmaster.utils.model.FinancialModelUtils;
 
+import java.time.YearMonth;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,11 @@ public class BudgetController {
 		return ResponseEntity.ok(budget);
 	}
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<Budget> getBudgetById(@PathVariable Long id) {
-		Optional<Budget> budget = budgetService.getBudgetById(id);
+	@GetMapping("/{year}/{month}")
+	public ResponseEntity<Budget> getBudgetById(@PathVariable int year, int month) {
+		YearMonth monthYear = YearMonth.of(year, month);
+		
+		Optional<Budget> budget = budgetService.getBudgetByMonthYear(monthYear);
 		if (budget.isPresent()) {
 			return ResponseEntity.ok(budget.get());
 		} else {

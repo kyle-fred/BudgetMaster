@@ -31,9 +31,10 @@ public class BudgetController {
 		return ResponseEntity.ok(budget);
 	}
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<Budget> getBudgetById(@PathVariable Long id) {
-		Optional<Budget> budget = budgetService.getBudgetById(id);
+	@GetMapping("/{monthYear}")
+	public ResponseEntity<Budget> getBudgetByMonthYear(@PathVariable String monthYear) {
+		
+		Optional<Budget> budget = budgetService.getBudgetByMonthYear(monthYear);
 		if (budget.isPresent()) {
 			return ResponseEntity.ok(budget.get());
 		} else {
@@ -41,9 +42,9 @@ public class BudgetController {
 		}
 	}
 	
-	@PutMapping("/{id}")
-	public ResponseEntity<Budget> updateBudget(@PathVariable Long id, @Valid @RequestBody BudgetRequest request) {
-		Optional<Budget> budget = budgetService.updateBudget(id, request);
+	@PutMapping("/{monthYear}")
+	public ResponseEntity<Budget> updateBudget(@PathVariable String monthYear, @Valid @RequestBody BudgetRequest request) {
+		Optional<Budget> budget = budgetService.updateBudget(monthYear, request);
 		
 		if (budget.isPresent()) {
 			return ResponseEntity.ok(budget.get());
@@ -52,9 +53,9 @@ public class BudgetController {
 		}
 	}
 	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
-		boolean deleted = budgetService.deleteBudget(id);
+	@DeleteMapping("/{monthYear}")
+	public ResponseEntity<Void> deleteBudget(@PathVariable String monthYear) {
+		boolean deleted = budgetService.deleteBudget(monthYear);
 		
 		if (deleted) {
 			return ResponseEntity.noContent().build();

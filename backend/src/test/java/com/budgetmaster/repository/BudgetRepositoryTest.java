@@ -2,6 +2,7 @@ package com.budgetmaster.repository;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +60,34 @@ public class BudgetRepositoryTest {
         Budget updatedBudget = budgetRepository.findById(persistedBudget.getId()).orElseThrow();
 
         assertNotEquals(initialLastUpdatedAt, updatedBudget.getLastUpdatedAt());
+    }
+    
+    @Test
+    @Transactional
+    public void testFindByMonthYear() {
+        YearMonth testYearMonth = YearMonth.of(2000, 1);
+        Budget budget = new Budget(6000.0, 2500.0, testYearMonth);
+        budgetRepository.save(budget);
+        
+        Optional<Budget> foundBudget = budgetRepository.findByMonthYear(testYearMonth);
+        
+        assertTrue(foundBudget.isPresent());
+        assertEquals(6000.0, foundBudget.get().getIncome());
+        assertEquals(2500.0, foundBudget.get().getExpenses());
+        assertEquals(testYearMonth, foundBudget.get().getMonthYear());
+    }
+
+    @Test
+    @Transactional
+    public void testDeleteByMonthYear() {
+        YearMonth testYearMonth = YearMonth.of(2000, 1);
+        Budget budget = new Budget(7000.0, 3000.0, testYearMonth);
+        budgetRepository.save(budget);
+        
+        assertTrue(budgetRepository.findByMonthYear(testYearMonth).isPresent());
+        
+        budgetRepository.deleteByMonthYear(testYearMonth);
+        
+        assertFalse(budgetRepository.findByMonthYear(testYearMonth).isPresent());
     }
 }

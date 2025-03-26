@@ -54,6 +54,28 @@ class BudgetServiceTest {
 	        .save(Mockito.any(Budget.class));
 	}
 	
+    @Test
+    void shouldReturnExistingBudgetWhenDuplicateMonthYear() {
+        YearMonth existingMonthYear = YearMonth.of(2000, 1);
+        
+        Budget existingBudget = new Budget(3000.0, 1500.0, existingMonthYear);
+        
+        BudgetRequest duplicateRequest = new BudgetRequest();
+        duplicateRequest.setIncome(4000.0);
+        duplicateRequest.setExpenses(2000.0);
+        duplicateRequest.setMonthYear(existingMonthYear.toString());
+
+        Mockito.when(budgetRepository.findByMonthYear(existingMonthYear))
+               .thenReturn(Optional.of(existingBudget));
+        
+        Budget shouldBeExistingBudget = budgetService.createBudget(duplicateRequest);
+        
+	    assertEquals(existingBudget, shouldBeExistingBudget);
+
+	    Mockito.verify(budgetRepository, Mockito.times(0))
+	        .save(Mockito.any(Budget.class));
+    }
+	
 	@Test 
 	void shouldSetCreatedAtOnSave() {
 		YearMonth expectedMonthYear = YearMonth.of(2000, 1);

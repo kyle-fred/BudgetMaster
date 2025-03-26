@@ -31,8 +31,18 @@ public class BudgetController {
 		return ResponseEntity.ok(budget);
 	}
 	
+	@GetMapping
+	public ResponseEntity<Budget> getCurrentMonthBudget() {
+		Optional<Budget> budget = budgetService.getBudgetByMonthYear(null);
+		if (budget.isPresent()) {
+			return ResponseEntity.ok(budget.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
 	@GetMapping("/{monthYear}")
-	public ResponseEntity<Budget> getBudgetByMonthYear(@PathVariable String monthYear) {
+	public ResponseEntity<Budget> getBudgetByMonth(@PathVariable String monthYear) {
 		
 		Optional<Budget> budget = budgetService.getBudgetByMonthYear(monthYear);
 		if (budget.isPresent()) {

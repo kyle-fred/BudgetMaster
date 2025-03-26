@@ -22,6 +22,13 @@ public class BudgetService {
 	}
 	
 	public Budget createBudget(BudgetRequest request) {
+		YearMonth monthYear = DateUtils.getValidYearMonth(request.getMonthYear());
+		Optional<Budget> existingBudget = budgetRepository.findByMonthYear(monthYear);
+		
+		if (existingBudget.isPresent()) {
+			return existingBudget.get();
+		}
+		
 		Budget budget = FinancialModelUtils.buildBudget(request);
 		return budgetRepository.save(budget);
 	}

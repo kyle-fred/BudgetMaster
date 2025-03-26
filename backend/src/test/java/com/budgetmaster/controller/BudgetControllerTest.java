@@ -133,7 +133,34 @@ public class BudgetControllerTest {
 	    Mockito.verify(budgetService, Mockito.times(1))
 	            .getBudgetByMonthYear(testYearMonth);
 	}
-
+	
+	@Test
+	void shouldGetCurrentMonthsBudgetWhenNotSpecified() throws Exception {
+	    
+	    YearMonth currentMonth = YearMonth.now();
+	    LocalDateTime now = LocalDateTime.now().withNano(0);
+	    
+	    Budget budget = new Budget(3000.0, 1500.0, currentMonth);
+	    budget.setCreatedAt(now);
+	    budget.setLastUpdatedAt(now);
+	    
+	    // Mock successful read
+	    Mockito.when(budgetService.getBudgetByMonthYear(null)).thenReturn(Optional.of(budget));
+	    
+	    // GET /api/budget & Assert OK response
+	    mockMvc.perform(get("/api/budget")
+	            .contentType(MediaType.APPLICATION_JSON))
+	            .andExpect(status().isOk())
+	            .andExpect(jsonPath("$.income").value(3000.0))
+	            .andExpect(jsonPath("$.expenses").value(1500.0))
+	            .andExpect(jsonPath("$.savings").value(1500.0))
+	            .andExpect(jsonPath("$.monthYear").value(currentMonth.toString()))
+	            .andExpect(jsonPath("$.createdAt").exists())
+	            .andExpect(jsonPath("$.lastUpdatedAt").exists());
+	    
+	    Mockito.verify(budgetService, Mockito.times(1))
+	            .getBudgetByMonthYear(null);
+	}
 	
 	@Test
 	void shouldUpdateBudgetWhenValidMonthYear() throws Exception {

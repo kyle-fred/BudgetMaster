@@ -24,7 +24,7 @@ public class Budget {
 	
 	private double savings;
 	
-	@Column(nullable = false)
+	@Column(nullable = false, unique=true)
 	private YearMonth monthYear;
 	
 	@Column(nullable = false, updatable = false)

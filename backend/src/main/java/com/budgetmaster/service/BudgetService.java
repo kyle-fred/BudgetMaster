@@ -2,6 +2,7 @@ package com.budgetmaster.service;
 
 import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.repository.BudgetRepository;
+import com.budgetmaster.utils.date.DateUtils;
 import com.budgetmaster.utils.model.FinancialModelUtils;
 import com.budgetmaster.model.Budget;
 
@@ -25,12 +26,14 @@ public class BudgetService {
 		return budgetRepository.save(budget);
 	}
 	
-	public Optional<Budget> getBudgetByMonthYear(YearMonth monthYear) {
+	public Optional<Budget> getBudgetByMonthYear(String monthYearString) {
+		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
 		return budgetRepository.findByMonthYear(monthYear);
 	}
 	
-	public Optional<Budget> updateBudget(Long id, BudgetRequest request) {
-		Optional<Budget> existingBudget = budgetRepository.findById(id);
+	public Optional<Budget> updateBudget(String monthYearString, BudgetRequest request) {
+		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
+		Optional<Budget> existingBudget = budgetRepository.findByMonthYear(monthYear);
 		
 		if (existingBudget.isPresent()) {
 			Budget budget = existingBudget.get();
@@ -43,9 +46,12 @@ public class BudgetService {
 	}
 	
 	@Transactional
-	public boolean deleteBudget(Long id) {
-		if (budgetRepository.existsById(id)) {
-			budgetRepository.deleteById(id);
+	public boolean deleteBudget(String monthYearString) {
+		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
+		Optional<Budget> budget = budgetRepository.findByMonthYear(monthYear);
+		
+		if (budget.isPresent()) {
+			budgetRepository.deleteByMonthYear(monthYear);
 			return true;
 		}
 		return false;

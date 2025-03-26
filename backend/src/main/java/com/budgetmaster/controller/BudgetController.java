@@ -5,7 +5,6 @@ import com.budgetmaster.model.Budget;
 import com.budgetmaster.service.BudgetService;
 import com.budgetmaster.utils.model.FinancialModelUtils;
 
-import java.time.YearMonth;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -32,9 +31,8 @@ public class BudgetController {
 		return ResponseEntity.ok(budget);
 	}
 	
-	@GetMapping("/{year}/{month}")
-	public ResponseEntity<Budget> getBudgetById(@PathVariable int year, int month) {
-		YearMonth monthYear = YearMonth.of(year, month);
+	@GetMapping("/{monthYear}")
+	public ResponseEntity<Budget> getBudgetByMonthYear(@PathVariable String monthYear) {
 		
 		Optional<Budget> budget = budgetService.getBudgetByMonthYear(monthYear);
 		if (budget.isPresent()) {
@@ -44,9 +42,9 @@ public class BudgetController {
 		}
 	}
 	
-	@PutMapping("/{id}")
-	public ResponseEntity<Budget> updateBudget(@PathVariable Long id, @Valid @RequestBody BudgetRequest request) {
-		Optional<Budget> budget = budgetService.updateBudget(id, request);
+	@PutMapping("/{monthYear}")
+	public ResponseEntity<Budget> updateBudget(@PathVariable String monthYear, @Valid @RequestBody BudgetRequest request) {
+		Optional<Budget> budget = budgetService.updateBudget(monthYear, request);
 		
 		if (budget.isPresent()) {
 			return ResponseEntity.ok(budget.get());
@@ -55,9 +53,9 @@ public class BudgetController {
 		}
 	}
 	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
-		boolean deleted = budgetService.deleteBudget(id);
+	@DeleteMapping("/{monthYear}")
+	public ResponseEntity<Void> deleteBudget(@PathVariable String monthYear) {
+		boolean deleted = budgetService.deleteBudget(monthYear);
 		
 		if (deleted) {
 			return ResponseEntity.noContent().build();

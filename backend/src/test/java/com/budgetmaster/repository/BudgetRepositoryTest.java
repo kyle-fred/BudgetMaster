@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.budgetmaster.model.Budget;
@@ -89,5 +90,19 @@ public class BudgetRepositoryTest {
         budgetRepository.deleteByMonthYear(testYearMonth);
         
         assertFalse(budgetRepository.findByMonthYear(testYearMonth).isPresent());
+    }
+    
+    @Test
+    void shouldNotAllowDuplicateMonthYear() {
+    	
+        YearMonth monthYear = YearMonth.of(2000, 1);
+        Budget budget = new Budget(5000.0, 2000.0, monthYear);
+        budgetRepository.save(budget);
+
+        Budget duplicateMonthBudget = new Budget(6000.0, 2500.0, monthYear);
+
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            budgetRepository.saveAndFlush(duplicateMonthBudget);
+        });
     }
 }

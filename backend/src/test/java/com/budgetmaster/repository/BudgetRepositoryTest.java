@@ -3,6 +3,7 @@ package com.budgetmaster.repository;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,14 @@ public class BudgetRepositoryTest {
 
     @Autowired
     private BudgetRepository budgetRepository;
+    
+    private static final AtomicInteger counter = new AtomicInteger(0);
 
     @Test
     @Transactional
     public void testBudgetCreationTimestampOnSave() {
     	
-    	YearMonth testYearMonth = YearMonth.now();
+    	YearMonth testYearMonth = YearMonth.of(2000, 1).plusMonths(counter.incrementAndGet());
     	
         Budget initialBudget = new Budget(5000.0, 3000.0, testYearMonth);
         Budget persistedBudget = budgetRepository.save(initialBudget);
@@ -39,7 +42,7 @@ public class BudgetRepositoryTest {
     @Transactional
     public void testBudgetUpdateTimestampOnModification() throws InterruptedException {
     	
-    	YearMonth testYearMonth = YearMonth.now();
+    	YearMonth testYearMonth = YearMonth.of(2000, 1).plusMonths(counter.incrementAndGet());
     	
         Budget initialBudget = new Budget(5000.0, 3000.0, testYearMonth);
         Budget persistedBudget = budgetRepository.save(initialBudget);
@@ -66,7 +69,7 @@ public class BudgetRepositoryTest {
     @Test
     @Transactional
     public void testFindByMonthYear() {
-        YearMonth testYearMonth = YearMonth.of(2000, 1);
+    	YearMonth testYearMonth = YearMonth.of(2000, 1).plusMonths(counter.incrementAndGet());
         Budget budget = new Budget(6000.0, 2500.0, testYearMonth);
         budgetRepository.save(budget);
         
@@ -81,7 +84,7 @@ public class BudgetRepositoryTest {
     @Test
     @Transactional
     public void testDeleteByMonthYear() {
-        YearMonth testYearMonth = YearMonth.of(2000, 1);
+    	YearMonth testYearMonth = YearMonth.of(2000, 1).plusMonths(counter.incrementAndGet());
         Budget budget = new Budget(7000.0, 3000.0, testYearMonth);
         budgetRepository.save(budget);
         
@@ -95,11 +98,11 @@ public class BudgetRepositoryTest {
     @Test
     void shouldNotAllowDuplicateMonthYear() {
     	
-        YearMonth monthYear = YearMonth.of(2000, 1);
-        Budget budget = new Budget(5000.0, 2000.0, monthYear);
+    	YearMonth testYearMonth = YearMonth.of(2000, 1).plusMonths(counter.incrementAndGet());
+        Budget budget = new Budget(5000.0, 2000.0, testYearMonth);
         budgetRepository.save(budget);
 
-        Budget duplicateMonthBudget = new Budget(6000.0, 2500.0, monthYear);
+        Budget duplicateMonthBudget = new Budget(6000.0, 2500.0, testYearMonth);
 
         assertThrows(DataIntegrityViolationException.class, () -> {
             budgetRepository.saveAndFlush(duplicateMonthBudget);

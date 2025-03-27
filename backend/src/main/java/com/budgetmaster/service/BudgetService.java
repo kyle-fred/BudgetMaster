@@ -1,6 +1,7 @@
 package com.budgetmaster.service;
 
 import com.budgetmaster.dto.BudgetRequest;
+import com.budgetmaster.exception.BudgetNotFoundException;
 import com.budgetmaster.repository.BudgetRepository;
 import com.budgetmaster.utils.date.DateUtils;
 import com.budgetmaster.utils.model.FinancialModelUtils;
@@ -33,34 +34,30 @@ public class BudgetService {
 		return budgetRepository.save(budget);
 	}
 	
-	public Optional<Budget> getBudgetByMonthYear(String monthYearString) {
-		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
-		return budgetRepository.findByMonthYear(monthYear);
+	public Budget getBudgetByMonthYear(String monthYearString) {
+		return findBudgetOrThrow(monthYearString);
 	}
 	
-	public Optional<Budget> updateBudget(String monthYearString, BudgetRequest request) {
-		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
-		Optional<Budget> existingBudget = budgetRepository.findByMonthYear(monthYear);
+	public Budget updateBudget(String monthYearString, BudgetRequest request) {
+		Budget budget = findBudgetOrThrow(monthYearString);
+		FinancialModelUtils.modifyBudget(budget, request);
 		
-		if (existingBudget.isPresent()) {
-			Budget budget = existingBudget.get();
-			FinancialModelUtils.modifyBudget(budget, request);
-			
-			return Optional.of(budgetRepository.save(budget));
-		} else {
-			return Optional.empty();
-		}
+		return budgetRepository.save(budget);
 	}
 	
 	@Transactional
-	public boolean deleteBudget(String monthYearString) {
+	public void deleteBudget(String monthYearString) {
+		Budget budget = findBudgetOrThrow(monthYearString);
+		budgetRepository.deleteByMonthYear(budget.getMonthYear());
+	}
+	
+	private Budget findBudgetOrThrow(String monthYearString) {
 		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
-		Optional<Budget> budget = budgetRepository.findByMonthYear(monthYear);
+		Optional<Budget> budgetOptional = budgetRepository.findByMonthYear(monthYear);
 		
-		if (budget.isPresent()) {
-			budgetRepository.deleteByMonthYear(monthYear);
-			return true;
+		if (budgetOptional.isEmpty()) {
+			throw new BudgetNotFoundException("Budget not found for month: " + monthYear);
 		}
-		return false;
+		return budgetOptional.get();
 	}
 }

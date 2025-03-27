@@ -65,10 +65,19 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler(InvalidMonthYearExceptionHandler.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleInvalidMonthYear(InvalidMonthYearExceptionHandler ex) {
     	Map<String, String> errors = new HashMap<>();
     	errors.put("monthYear", ex.getMessage());
     	return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(BudgetNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Map<String, String>> handleBudgetNotFound(BudgetNotFoundException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
     
     /**

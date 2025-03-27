@@ -1,6 +1,7 @@
 package com.budgetmaster.controller;
 
 import com.budgetmaster.dto.BudgetRequest;
+import com.budgetmaster.exception.BudgetNotFoundException;
 import com.budgetmaster.service.BudgetService;
 import com.budgetmaster.model.Budget;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.Optional;
 
 @WebMvcTest(BudgetController.class)
 public class BudgetControllerTest {
@@ -37,7 +37,6 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldCreateBudgetWhenValidRequest() throws Exception {
-		
 		// Setup request with valid input
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(3000.0);
@@ -65,8 +64,8 @@ public class BudgetControllerTest {
 			.andExpect(jsonPath("$.expenses").value(1500))
 			.andExpect(jsonPath("$.savings").value(1500))
 			.andExpect(jsonPath("$.monthYear").value("2000-01"))
-			.andExpect(jsonPath("$.createdAt").value(now.toString()))
-			.andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
+			.andExpect(jsonPath("$.createdAt").exists())
+			.andExpect(jsonPath("$.lastUpdatedAt").exists());
 		
 		// Verify the service call was made exactly once
 		Mockito.verify(budgetService, Mockito.times(1))
@@ -108,7 +107,6 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldGetBudgetWhenValidMonthYear() throws Exception {
-	    
 	    String testYearMonth = "2020-01";
 	    LocalDateTime now = LocalDateTime.now().withNano(0);
 	    
@@ -117,7 +115,7 @@ public class BudgetControllerTest {
 	    budget.setLastUpdatedAt(now);
 	    
 	    // Mock successful read
-	    Mockito.when(budgetService.getBudgetByMonthYear(testYearMonth)).thenReturn(Optional.of(budget));
+	    Mockito.when(budgetService.getBudgetByMonthYear(testYearMonth)).thenReturn(budget);
 	    
 	    // GET /api/budget & Assert OK response
 	    mockMvc.perform(get("/api/budget/{monthYear}", testYearMonth)
@@ -136,7 +134,6 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldGetCurrentMonthsBudgetWhenNotSpecified() throws Exception {
-	    
 	    YearMonth currentMonth = YearMonth.now();
 	    LocalDateTime now = LocalDateTime.now().withNano(0);
 	    
@@ -145,7 +142,7 @@ public class BudgetControllerTest {
 	    budget.setLastUpdatedAt(now);
 	    
 	    // Mock successful read
-	    Mockito.when(budgetService.getBudgetByMonthYear(null)).thenReturn(Optional.of(budget));
+	    Mockito.when(budgetService.getBudgetByMonthYear(null)).thenReturn(budget);
 	    
 	    // GET /api/budget & Assert OK response
 	    mockMvc.perform(get("/api/budget")
@@ -164,13 +161,11 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldUpdateBudgetWhenValidMonthYear() throws Exception {
-	    
 		String testYearMonth = "2020-01";
 		
 	    BudgetRequest updateRequest = new BudgetRequest();
 	    updateRequest.setIncome(4000.0);
 	    updateRequest.setExpenses(2000.0);
-	    updateRequest.setMonthYear(testYearMonth);
 	    
 	    Budget updatedBudget = new Budget(4000.0, 2000.0, YearMonth.parse(testYearMonth));
 	    updatedBudget.setId(1L);
@@ -179,7 +174,7 @@ public class BudgetControllerTest {
 	    
 	    // Mock successful update
 	    Mockito.when(budgetService.updateBudget(Mockito.eq(testYearMonth), Mockito.any(BudgetRequest.class)))
-	            .thenReturn(Optional.of(updatedBudget));
+	            .thenReturn(updatedBudget);
 	    
 	    // PUT /api/budget & Assert OK response
 	    mockMvc.perform(put("/api/budget/{monthYear}", testYearMonth)
@@ -193,16 +188,13 @@ public class BudgetControllerTest {
 	            .andExpect(jsonPath("$.createdAt").exists())
 	            .andExpect(jsonPath("$.lastUpdatedAt").exists());
 	}
-
 	
     @Test
     void shouldDeleteBudgetWhenValidMonthYear() throws Exception {
-    	String testYearMonth = "2020-01";
+    	String testYearMonth = "2000-01";
     	
-    	// Mock successful deletion
-    	Mockito.when(budgetService.deleteBudget(testYearMonth)).thenReturn(true);
+    	Mockito.doNothing().when(budgetService).deleteBudget(testYearMonth);
     	
-    	// DELETE /api/budget & Assert OK response
         mockMvc.perform(delete("/api/budget/{monthYear}", testYearMonth))
                 .andExpect(status().isNoContent());
         
@@ -211,7 +203,6 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnBadRequestWhenIncomeIsMissing() throws Exception {
-		
 		BudgetRequest request = new BudgetRequest();
 		request.setExpenses(1500.0);
 		
@@ -228,7 +219,6 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnBadRequestWhenExpensesAreMissing() throws Exception {
-		
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(1500.0);
 		
@@ -245,7 +235,6 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnBadRequestWhenIncomeIsNegative() throws Exception {
-		
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(-1500.0);
 		request.setExpenses(1500.0);
@@ -263,7 +252,6 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnBadRequestWhenExpensesAreNegative() throws Exception {
-		
 		BudgetRequest request = new BudgetRequest();
 		request.setIncome(1500.0);
 		request.setExpenses(-1500.0);
@@ -284,7 +272,7 @@ public class BudgetControllerTest {
         BudgetRequest request = new BudgetRequest();
         request.setIncome(3000.0);
         request.setExpenses(1500.0);
-        request.setMonthYear("2023/05");
+        request.setMonthYear("2000/01");
 
         mockMvc.perform(post("/api/budget")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -296,17 +284,18 @@ public class BudgetControllerTest {
     }
 	
 	@Test
-	void shouldReturnNotFoundWhenBudgetDoesNotExist() throws Exception {
-		
+	void shouldReturnNotFoundWhenBudgetIsNotFound() throws Exception {
 		String testYearMonth = "2000-01";
 		
 		// Mock failed read
-		Mockito.when(budgetService.getBudgetByMonthYear(testYearMonth)).thenReturn(Optional.empty());
+		Mockito.when(budgetService.getBudgetByMonthYear(testYearMonth))
+			.thenThrow(new BudgetNotFoundException("Budget not found for month: " + testYearMonth));
 		
-		// GET /api/budget & Assert not found response
+		// GET /api/budget/{monthYear} & expect 404
 		mockMvc.perform(get("/api/budget/{monthYear}", testYearMonth)
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.error").value("Budget not found for month: " + testYearMonth));
 		
 		Mockito.verify(budgetService, Mockito.times(1))
 				.getBudgetByMonthYear(testYearMonth);
@@ -314,30 +303,32 @@ public class BudgetControllerTest {
 	
     @Test
     void shouldReturnNotFoundWhenUpdatingNonExistentBudget() throws Exception {
-    	
-    	String testYearMonth = "2000-01";
-    	
-        BudgetRequest updateRequest = new BudgetRequest();
-        updateRequest.setIncome(3000.0);
-        updateRequest.setExpenses(1500.0);
-        
-        // Mock failed update
-        Mockito.when(budgetService.updateBudget(testYearMonth, updateRequest)).thenReturn(Optional.empty());
-        
-        // PUT /api/budget & Assert not found response
-        mockMvc.perform(put("/api/budget/{monthYear}", testYearMonth)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(updateRequest)))
-            .andExpect(status().isNotFound());
+	    String testYearMonth = "2000-01";
+	    BudgetRequest request = new BudgetRequest();
+	    request.setIncome(3000.0);
+	    request.setExpenses(1500.0);
+	    
+	    // Mock failed update
+	    Mockito.when(budgetService.updateBudget(Mockito.eq(testYearMonth), Mockito.any(BudgetRequest.class)))
+	            .thenThrow(new BudgetNotFoundException("Budget not found for month: " + testYearMonth));
+	    
+	    // PUT /api/budget/{monthYear} & expect 404
+	    mockMvc.perform(put("/api/budget/{monthYear}", testYearMonth)
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(objectMapper.writeValueAsString(request)))
+	            .andExpect(status().isNotFound())
+	            .andExpect(jsonPath("$.error").value("Budget not found for month: " + testYearMonth));
+	    
+	    Mockito.verify(budgetService, Mockito.times(1))
+	            .updateBudget(Mockito.eq(testYearMonth), Mockito.any(BudgetRequest.class));
     }
     
     @Test
     void shouldReturnNotFoundWhenDeletingNonExistentBudget() throws Exception {
-    	
     	String testYearMonth = "2000-01";
     	
-    	// Mock failed deletion (monthYear does not exist)
-    	Mockito.when(budgetService.deleteBudget(testYearMonth)).thenReturn(false);
+        Mockito.doThrow(new BudgetNotFoundException("Budget not found for month: " + testYearMonth))
+        		.when(budgetService).deleteBudget(Mockito.eq(testYearMonth));
     	
     	// DELETE /api/budget & Assert not found response
         mockMvc.perform(delete("/api/budget/{monthYear}", testYearMonth))

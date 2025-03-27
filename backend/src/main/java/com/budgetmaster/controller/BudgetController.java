@@ -5,8 +5,6 @@ import com.budgetmaster.model.Budget;
 import com.budgetmaster.service.BudgetService;
 import com.budgetmaster.utils.model.FinancialModelUtils;
 
-import java.util.Optional;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,44 +31,25 @@ public class BudgetController {
 	
 	@GetMapping
 	public ResponseEntity<Budget> getCurrentMonthBudget() {
-		Optional<Budget> budget = budgetService.getBudgetByMonthYear(null);
-		if (budget.isPresent()) {
-			return ResponseEntity.ok(budget.get());
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		Budget budget = budgetService.getBudgetByMonthYear(null);
+		return ResponseEntity.ok(budget);
 	}
 	
 	@GetMapping("/{monthYear}")
 	public ResponseEntity<Budget> getBudgetByMonth(@PathVariable String monthYear) {
-		
-		Optional<Budget> budget = budgetService.getBudgetByMonthYear(monthYear);
-		if (budget.isPresent()) {
-			return ResponseEntity.ok(budget.get());
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		Budget budget = budgetService.getBudgetByMonthYear(monthYear);
+		return ResponseEntity.ok(budget);
 	}
 	
 	@PutMapping("/{monthYear}")
 	public ResponseEntity<Budget> updateBudget(@PathVariable String monthYear, @Valid @RequestBody BudgetRequest request) {
-		Optional<Budget> budget = budgetService.updateBudget(monthYear, request);
-		
-		if (budget.isPresent()) {
-			return ResponseEntity.ok(budget.get());
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		Budget budget = budgetService.updateBudget(monthYear, request);
+		return ResponseEntity.ok(budget);
 	}
 	
 	@DeleteMapping("/{monthYear}")
 	public ResponseEntity<Void> deleteBudget(@PathVariable String monthYear) {
-		boolean deleted = budgetService.deleteBudget(monthYear);
-		
-		if (deleted) {
-			return ResponseEntity.noContent().build();
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		budgetService.deleteBudget(monthYear);
+		return ResponseEntity.noContent().build();
 	}
 }

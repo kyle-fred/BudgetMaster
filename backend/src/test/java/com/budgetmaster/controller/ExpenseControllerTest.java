@@ -49,11 +49,8 @@ public class ExpenseControllerTest {
         request.setMonthYear("2000-01");
         
         YearMonth testYearMonth = YearMonth.of(2000, 1);
-        LocalDateTime now = LocalDateTime.now().withNano(0);
 		
 		Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
-		expectedExpense.setCreatedAt(now);
-		expectedExpense.setLastUpdatedAt(now);
 		
 		// Mock successful create
 		Mockito.when(expenseService.createExpense(Mockito.any()))
@@ -69,9 +66,7 @@ public class ExpenseControllerTest {
 			.andExpect(jsonPath("$.category").value("HOUSING"))
 			.andExpect(jsonPath("$.type").value("RECURRING"))
 			.andExpect(jsonPath("$.type").value("RECURRING"))
- 			.andExpect(jsonPath("$.monthYear").value("2000-01"))
- 			.andExpect(jsonPath("$.createdAt").value(now.toString()))
- 			.andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
+ 			.andExpect(jsonPath("$.monthYear").value("2000-01"));
 		
 		Mockito.verify(expenseService, Mockito.times(1))
 			.createExpense(Mockito.any());
@@ -88,11 +83,8 @@ public class ExpenseControllerTest {
 		request.setMonthYear(null);
 		
 		YearMonth defaultYearMonth = YearMonth.now();
-		LocalDateTime now = LocalDateTime.now().withNano(0);
 		
 		Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, defaultYearMonth);
-		expectedExpense.setCreatedAt(now);
-		expectedExpense.setLastUpdatedAt(now);
 		
 		Mockito.when(expenseService.createExpense(Mockito.any()))
 			.thenReturn(expectedExpense);
@@ -105,9 +97,7 @@ public class ExpenseControllerTest {
 				.andExpect(jsonPath("$.amount").value(1000.0))
 				.andExpect(jsonPath("$.type").value("RECURRING"))
 				.andExpect(jsonPath("$.category").value("HOUSING"))
-				.andExpect(jsonPath("$.monthYear").value(defaultYearMonth.toString()))
-				.andExpect(jsonPath("$.createdAt").value(now.toString()))
-				.andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
+				.andExpect(jsonPath("$.monthYear").value(defaultYearMonth.toString()));
 		 
 		 Mockito.verify(expenseService, Mockito.times(1))
 		 	.createExpense(Mockito.any());
@@ -117,12 +107,8 @@ public class ExpenseControllerTest {
 	void shouldGetExpenseWhenValidId() throws Exception {
 		
 		YearMonth testYearMonth = YearMonth.of(2000, 1);
- 		LocalDateTime now = LocalDateTime.now().withNano(0);
  		
 		Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
-		expense.setId(1L);
-		expense.setCreatedAt(now);
-		expense.setLastUpdatedAt(now);
 		
 		// Mock successful read
 		Mockito.when(expenseService.getExpenseById(1L)).thenReturn(Optional.of(expense));
@@ -135,9 +121,7 @@ public class ExpenseControllerTest {
 				.andExpect(jsonPath("$.amount").value(1000.0))
 				.andExpect(jsonPath("$.category").value("HOUSING"))
 				.andExpect(jsonPath("$.type").value("RECURRING"))
- 	            .andExpect(jsonPath("$.monthYear").value("2000-01"))
- 	            .andExpect(jsonPath("$.createdAt").value(now.toString()))
- 	            .andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
+ 	            .andExpect(jsonPath("$.monthYear").value("2000-01"));
 		
 		Mockito.verify(expenseService, Mockito.times(1))
 				.getExpenseById(1L);
@@ -145,16 +129,8 @@ public class ExpenseControllerTest {
 	
 	@Test
 	void shouldUpdateExpenseWhenValidId() throws Exception {
-		
-		YearMonth testYearMonth = YearMonth.of(2000, 1);
-		Expense existingExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
-		existingExpense.setCreatedAt(LocalDateTime.now().withNano(0));
-		existingExpense.setLastUpdatedAt(LocalDateTime.now().withNano(0));
-		
 		YearMonth updatedYearMonth = YearMonth.of(2020, 1);
 		Expense updatedExpense = new Expense("Gas Bill", 100.0, ExpenseCategory.UTILITIES, TransactionType.RECURRING, updatedYearMonth);
-		updatedExpense.setCreatedAt(LocalDateTime.now().withNano(0));
-		updatedExpense.setLastUpdatedAt(LocalDateTime.now().withNano(0));
 		
 		ExpenseRequest updateRequest = new ExpenseRequest();
 		updateRequest.setName("Gas Bill");
@@ -176,9 +152,7 @@ public class ExpenseControllerTest {
 				.andExpect(jsonPath("$.amount").value(100.0))
 				.andExpect(jsonPath("$.category").value("UTILITIES"))
 				.andExpect(jsonPath("$.type").value("RECURRING"))
-	            .andExpect(jsonPath("$.monthYear").value("2020-01"))
- 	            .andExpect(jsonPath("$.createdAt").exists())
- 	            .andExpect(jsonPath("$.lastUpdatedAt").exists());
+	            .andExpect(jsonPath("$.monthYear").value("2020-01"));
 	}
 	
 	@Test

@@ -21,7 +21,7 @@ public class IncomeService {
 	
 	public Income createIncome(IncomeRequest request) {
 		Income income = FinancialModelUtils.buildIncome(request);
-		return incomeRepository.save(income);
+		return incomeRepository.saveAndFlush(income);
 	}
 	
 	public Optional<Income> getIncomeById(Long id) {
@@ -35,7 +35,7 @@ public class IncomeService {
 			Income income = existingIncome.get();
 			FinancialModelUtils.modifyIncome(income, request);
 			
-			return Optional.of(incomeRepository.save(income));
+			return Optional.of(incomeRepository.saveAndFlush(income));
 		} else {
 			return Optional.empty();
 		}

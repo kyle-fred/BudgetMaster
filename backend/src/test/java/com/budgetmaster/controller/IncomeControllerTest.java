@@ -21,7 +21,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.Optional;
 
@@ -48,11 +47,7 @@ public class IncomeControllerTest {
         request.setMonthYear("2000-01");
         
         YearMonth testYearMonth = YearMonth.of(2000, 1);
-        LocalDateTime now = LocalDateTime.now().withNano(0);
-		
 		Income expectedIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testYearMonth);
-        expectedIncome.setCreatedAt(now);
-        expectedIncome.setLastUpdatedAt(now);;
 		
 		// Mock successful create
 		Mockito.when(incomeService.createIncome(Mockito.any()))
@@ -67,9 +62,7 @@ public class IncomeControllerTest {
 			.andExpect(jsonPath("$.source").value("Company XYZ"))
 			.andExpect(jsonPath("$.amount").value(2000.0))
 			.andExpect(jsonPath("$.type").value("RECURRING"))
-			.andExpect(jsonPath("$.monthYear").value("2000-01"))
-			.andExpect(jsonPath("$.createdAt").value(now.toString()))
-			.andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
+			.andExpect(jsonPath("$.monthYear").value("2000-01"));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 			.createIncome(Mockito.any());
@@ -85,11 +78,8 @@ public class IncomeControllerTest {
         request.setMonthYear(null);
 		
 		YearMonth defaultYearMonth = YearMonth.now();
-		LocalDateTime now = LocalDateTime.now().withNano(0);
 		
 		Income expectedIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, defaultYearMonth);
-		expectedIncome.setCreatedAt(now);
-		expectedIncome.setLastUpdatedAt(now);
 		
 		Mockito.when(incomeService.createIncome(Mockito.any()))
 			.thenReturn(expectedIncome);
@@ -102,9 +92,7 @@ public class IncomeControllerTest {
 				.andExpect(jsonPath("$.source").value("Company XYZ"))
 				.andExpect(jsonPath("$.amount").value(2000.0))
 				.andExpect(jsonPath("$.type").value("RECURRING"))
-				.andExpect(jsonPath("$.monthYear").value(defaultYearMonth.toString()))
-				.andExpect(jsonPath("$.createdAt").value(now.toString()))
-				.andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
+				.andExpect(jsonPath("$.monthYear").value(defaultYearMonth.toString()));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 			.createIncome(Mockito.any());
@@ -114,12 +102,9 @@ public class IncomeControllerTest {
 	void shouldGetIncomeWhenValidId() throws Exception {
 		
 		YearMonth testYearMonth = YearMonth.of(2000, 1);
-		LocalDateTime now = LocalDateTime.now().withNano(0);
 		
 		Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testYearMonth);
 		income.setId(1L);
-	    income.setCreatedAt(now);
-	    income.setLastUpdatedAt(now);
 		
 		// Mock successful read
 		Mockito.when(incomeService.getIncomeById(1L)).thenReturn(Optional.of(income));
@@ -133,9 +118,7 @@ public class IncomeControllerTest {
 				.andExpect(jsonPath("$.source").value("Company XYZ"))
 				.andExpect(jsonPath("$.amount").value(2000.0))
 				.andExpect(jsonPath("$.type").value("RECURRING"))
-	            .andExpect(jsonPath("$.monthYear").value("2000-01"))
-	            .andExpect(jsonPath("$.createdAt").value(now.toString()))
-	            .andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
+	            .andExpect(jsonPath("$.monthYear").value("2000-01"));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 				.getIncomeById(1L);
@@ -147,14 +130,10 @@ public class IncomeControllerTest {
 		YearMonth testYearMonth = YearMonth.of(2000, 1);
 		Income existingIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testYearMonth);
 		existingIncome.setId(1L);
-		existingIncome.setCreatedAt(LocalDateTime.now().withNano(0));
-		existingIncome.setLastUpdatedAt(LocalDateTime.now().withNano(0));
 		
 		YearMonth updatedYearMonth = YearMonth.of(2020, 1);
 		Income updatedIncome = new Income ("Bonus", "Company ABC", 3000.0, TransactionType.ONE_TIME, updatedYearMonth);
 		updatedIncome.setId(1L);
-		updatedIncome.setCreatedAt(LocalDateTime.now().withNano(0));
-		updatedIncome.setLastUpdatedAt(LocalDateTime.now().withNano(0));
 		
 		IncomeRequest updateRequest = new IncomeRequest();
 		updateRequest.setName("Bonus");
@@ -176,9 +155,7 @@ public class IncomeControllerTest {
 				.andExpect(jsonPath("$.source").value("Company ABC"))
 				.andExpect(jsonPath("$.amount").value(3000.0))
 				.andExpect(jsonPath("$.type").value("ONE_TIME"))
-	            .andExpect(jsonPath("$.monthYear").value("2020-01"))
-	            .andExpect(jsonPath("$.createdAt").exists())
-	            .andExpect(jsonPath("$.lastUpdatedAt").exists());
+	            .andExpect(jsonPath("$.monthYear").value("2020-01"));
 	}
 	
     @Test

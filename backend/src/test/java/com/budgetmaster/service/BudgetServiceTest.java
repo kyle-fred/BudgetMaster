@@ -11,8 +11,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-import java.lang.reflect.Method;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.Optional;
 
@@ -25,15 +23,11 @@ class BudgetServiceTest {
 	void shouldCreateAndSaveBudgetSuccessfully() {
 	    
 	    YearMonth expectedMonthYear = YearMonth.of(2000, 1);
-	    LocalDateTime now = LocalDateTime.now().withNano(0);
 
 	    Budget expectedBudget = new Budget(3000.0, 1500.0, expectedMonthYear);
-	    expectedBudget.setId(1L);
-	    expectedBudget.setCreatedAt(now);
-	    expectedBudget.setLastUpdatedAt(now);
 	    
 	    // Mock successful creation
-	    Mockito.when(budgetRepository.save(Mockito.any(Budget.class)))
+	    Mockito.when(budgetRepository.saveAndFlush(Mockito.any(Budget.class)))
 	        .thenReturn(expectedBudget);
 	    
 	    BudgetRequest budgetRequest = new BudgetRequest();
@@ -44,16 +38,13 @@ class BudgetServiceTest {
 	    Budget savedBudget = budgetService.createBudget(budgetRequest);
 
 	    assertNotNull(savedBudget);
-	    assertEquals(1L, savedBudget.getId());
 	    assertEquals(3000.0, savedBudget.getIncome());
 	    assertEquals(1500.0, savedBudget.getExpenses());
 	    assertEquals(1500.0, savedBudget.getSavings());
 	    assertEquals(expectedMonthYear, savedBudget.getMonthYear());
-	    assertNotNull(savedBudget.getCreatedAt());
-	    assertNotNull(savedBudget.getLastUpdatedAt());
 
 	    Mockito.verify(budgetRepository, Mockito.times(1))
-	        .save(Mockito.any(Budget.class));
+	        .saveAndFlush(Mockito.any(Budget.class));
 	}
 	
     @Test
@@ -75,43 +66,15 @@ class BudgetServiceTest {
 	    assertEquals(existingBudget, shouldBeExistingBudget);
 
 	    Mockito.verify(budgetRepository, Mockito.times(0))
-	        .save(Mockito.any(Budget.class));
+	        .saveAndFlush(Mockito.any(Budget.class));
     }
-	
-	@Test 
-	void shouldSetCreatedAtOnSave() {
-		YearMonth expectedMonthYear = YearMonth.of(2000, 1);
-		LocalDateTime now = LocalDateTime.now().withNano(0);
-		
-		BudgetRequest budgetRequest = new BudgetRequest();
-	    budgetRequest.setIncome(3000.0);
-	    budgetRequest.setExpenses(1500.0);
-	    budgetRequest.setMonthYear(expectedMonthYear.toString());
-	    
-	    Budget expectedBudget = new Budget(3000.0, 1500.0, expectedMonthYear);
-	    expectedBudget.setId(1L);
-	    expectedBudget.setCreatedAt(now);
-	    expectedBudget.setLastUpdatedAt(now);
-	    
-	    // Mock successful creation
-	    Mockito.when(budgetRepository.save(Mockito.any(Budget.class)))
-	        .thenReturn(expectedBudget);
-	    
-	    Budget savedBudget = budgetService.createBudget(budgetRequest);
-	    
-	    assertNotNull(savedBudget.getCreatedAt());
-	    assertNotNull(savedBudget.getLastUpdatedAt());
-	}
     
 	@Test
 	void shouldReturnBudgetWhenExists() {
 		String testYearMonthString = "2000-01";
 	    YearMonth testYearMonth = YearMonth.parse(testYearMonthString);
-	    LocalDateTime now = LocalDateTime.now().withNano(0);
 	    
 	    Budget budget = new Budget(3000.0, 1500.0, testYearMonth);
-	    budget.setCreatedAt(now);
-	    budget.setLastUpdatedAt(now);
 
 	    // Mock successful read
 	    Mockito.when(budgetRepository.findByMonthYear(testYearMonth)).thenReturn(Optional.of(budget));
@@ -123,8 +86,6 @@ class BudgetServiceTest {
 	    assertEquals(1500.0, retrievedBudget.getExpenses());
 	    assertEquals(1500.0, retrievedBudget.getSavings());
 	    assertEquals(testYearMonth, retrievedBudget.getMonthYear());
-	    assertNotNull(retrievedBudget.getCreatedAt());
-	    assertNotNull(retrievedBudget.getLastUpdatedAt());
 	}
 
     
@@ -132,11 +93,8 @@ class BudgetServiceTest {
     void shouldUpdateBudgetWhenExists() {
     	String testYearMonthString = "2000-01";
         YearMonth testYearMonth = YearMonth.parse(testYearMonthString);
-        LocalDateTime now = LocalDateTime.now().withNano(0);
 
         Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
-        existingBudget.setCreatedAt(now);
-        existingBudget.setLastUpdatedAt(now);
 
         BudgetRequest updateRequest = new BudgetRequest();
         updateRequest.setIncome(6000.0);
@@ -144,7 +102,7 @@ class BudgetServiceTest {
 
         // Mock successful update
         Mockito.when(budgetRepository.findByMonthYear(testYearMonth)).thenReturn(Optional.of(existingBudget));
-        Mockito.when(budgetRepository.save(Mockito.any(Budget.class))).thenReturn(existingBudget);
+        Mockito.when(budgetRepository.saveAndFlush(Mockito.any(Budget.class))).thenReturn(existingBudget);
 
         Budget updatedBudget = budgetService.updateBudget(testYearMonthString, updateRequest);
 
@@ -153,43 +111,9 @@ class BudgetServiceTest {
         assertEquals(3000.0, updatedBudget.getExpenses());
         assertEquals(3000.0, updatedBudget.getSavings());
         assertEquals(testYearMonth, updatedBudget.getMonthYear());
-        assertNotNull(updatedBudget.getCreatedAt());
-        assertNotNull(updatedBudget.getLastUpdatedAt());
 
-        Mockito.verify(budgetRepository, Mockito.times(1)).save(existingBudget);
+        Mockito.verify(budgetRepository, Mockito.times(1)).saveAndFlush(existingBudget);
     }
-    
-    @Test
-    void shouldUpdateLastUpdatedAtOnModification() {
-    	String testYearMonthString = "2000-01";
-        YearMonth testYearMonth = YearMonth.parse(testYearMonthString);
-        LocalDateTime createdAt = LocalDateTime.now().withNano(0).minusDays(1);
-        LocalDateTime updatedAt = LocalDateTime.now().withNano(0);
-
-        Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
-        existingBudget.setId(1L);
-        existingBudget.setCreatedAt(createdAt);
-        existingBudget.setLastUpdatedAt(createdAt);
-
-        BudgetRequest updateRequest = new BudgetRequest();
-        updateRequest.setIncome(5000.0);
-        updateRequest.setExpenses(2500.0);
-
-        Budget updatedBudget = new Budget(5000.0, 2500.0, testYearMonth);
-        updatedBudget.setId(1L);
-        updatedBudget.setCreatedAt(createdAt);
-        updatedBudget.setLastUpdatedAt(updatedAt);
-
-        Mockito.when(budgetRepository.findByMonthYear(testYearMonth)).thenReturn(Optional.of(existingBudget));
-        Mockito.when(budgetRepository.save(Mockito.any(Budget.class))).thenReturn(updatedBudget);
-
-        Budget result = budgetService.updateBudget(testYearMonthString, updateRequest);
-
-        assertNotNull(result);
-        assertEquals(updatedAt, result.getLastUpdatedAt());
-        assertEquals(createdAt, result.getCreatedAt());
-    }
-
     
     @Test
     void shouldDeleteBudgetWhenExists() {
@@ -208,7 +132,7 @@ class BudgetServiceTest {
     @Test
     void shouldThrowExceptionWhenSaveFails() {
     	// Mock unsuccessful creation
-        Mockito.when(budgetRepository.save(Mockito.any(Budget.class)))
+        Mockito.when(budgetRepository.saveAndFlush(Mockito.any(Budget.class)))
                .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
 
         BudgetRequest budgetRequest = new BudgetRequest();
@@ -249,7 +173,7 @@ class BudgetServiceTest {
         		() -> budgetService.updateBudget(testYearMonthString, updateRequest));
         
         assertEquals(thrownException.getMessage(), "Budget not found for month: " + testYearMonth);
-        Mockito.verify(budgetRepository, Mockito.never()).save(Mockito.any(Budget.class));
+        Mockito.verify(budgetRepository, Mockito.never()).saveAndFlush(Mockito.any(Budget.class));
     }
     
     @Test

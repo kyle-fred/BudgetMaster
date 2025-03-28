@@ -21,7 +21,7 @@ public class ExpenseService {
 	
 	public Expense createExpense(ExpenseRequest request) {
 		Expense expense = FinancialModelUtils.buildExpense(request);
-		return expenseRepository.save(expense);
+		return expenseRepository.saveAndFlush(expense);
 	}
 	
 	public Optional<Expense> getExpenseById(Long id) {
@@ -35,7 +35,7 @@ public class ExpenseService {
 			Expense expense = existingExpense.get();
 			FinancialModelUtils.modifyExpense(expense, request);
 			
-			return Optional.of(expenseRepository.save(expense));
+			return Optional.of(expenseRepository.saveAndFlush(expense));
 		} else {
 			return Optional.empty();
 		}

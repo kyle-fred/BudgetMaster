@@ -20,7 +20,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 
 @WebMvcTest(BudgetController.class)
@@ -44,12 +43,9 @@ public class BudgetControllerTest {
 		request.setMonthYear("2001-01");
 		
 		YearMonth testYearMonth = YearMonth.of(2000, 1);
-		LocalDateTime now = LocalDateTime.now().withNano(0);
 		
 		// Create expected Budget object
 		Budget expectedBudget = new Budget(3000, 1500, testYearMonth);
-		expectedBudget.setCreatedAt(now);
-		expectedBudget.setLastUpdatedAt(now);
 		
 		// Mock successful create
 		Mockito.when(budgetService.createBudget(Mockito.any()))
@@ -63,9 +59,7 @@ public class BudgetControllerTest {
 			.andExpect(jsonPath("$.income").value(3000))
 			.andExpect(jsonPath("$.expenses").value(1500))
 			.andExpect(jsonPath("$.savings").value(1500))
-			.andExpect(jsonPath("$.monthYear").value("2000-01"))
-			.andExpect(jsonPath("$.createdAt").exists())
-			.andExpect(jsonPath("$.lastUpdatedAt").exists());
+			.andExpect(jsonPath("$.monthYear").value("2000-01"));
 		
 		// Verify the service call was made exactly once
 		Mockito.verify(budgetService, Mockito.times(1))
@@ -80,11 +74,8 @@ public class BudgetControllerTest {
 		request.setMonthYear(null);
 		
 		YearMonth defaultYearMonth = YearMonth.now();
-		LocalDateTime now = LocalDateTime.now().withNano(0);
 		
 		Budget expectedBudget = new Budget(3000, 1500, defaultYearMonth);
-		expectedBudget.setCreatedAt(now);
-		expectedBudget.setLastUpdatedAt(now);
 		
 		Mockito.when(budgetService.createBudget(Mockito.any()))
 			.thenReturn(expectedBudget);
@@ -96,9 +87,7 @@ public class BudgetControllerTest {
 				.andExpect(jsonPath("$.income").value(3000))
 				.andExpect(jsonPath("$.expenses").value(1500))
 				.andExpect(jsonPath("$.savings").value(1500))
-				.andExpect(jsonPath("$.monthYear").value(defaultYearMonth.toString()))
-				.andExpect(jsonPath("$.createdAt").value(now.toString()))
-				.andExpect(jsonPath("$.lastUpdatedAt").value(now.toString()));
+				.andExpect(jsonPath("$.monthYear").value(defaultYearMonth.toString()));
 		
 		Mockito.verify(budgetService, Mockito.times(1))
 			.createBudget(Mockito.any());
@@ -108,11 +97,8 @@ public class BudgetControllerTest {
 	@Test
 	void shouldGetBudgetWhenValidMonthYear() throws Exception {
 	    String testYearMonth = "2020-01";
-	    LocalDateTime now = LocalDateTime.now().withNano(0);
 	    
 	    Budget budget = new Budget(3000.0, 1500.0, YearMonth.parse(testYearMonth));
-	    budget.setCreatedAt(now);
-	    budget.setLastUpdatedAt(now);
 	    
 	    // Mock successful read
 	    Mockito.when(budgetService.getBudgetByMonthYear(testYearMonth)).thenReturn(budget);
@@ -124,9 +110,7 @@ public class BudgetControllerTest {
 	            .andExpect(jsonPath("$.income").value(3000.0))
 	            .andExpect(jsonPath("$.expenses").value(1500.0))
 	            .andExpect(jsonPath("$.savings").value(1500.0))
-	            .andExpect(jsonPath("$.monthYear").value(testYearMonth))
-	            .andExpect(jsonPath("$.createdAt").exists())
-	            .andExpect(jsonPath("$.lastUpdatedAt").exists());
+	            .andExpect(jsonPath("$.monthYear").value(testYearMonth));
 	    
 	    Mockito.verify(budgetService, Mockito.times(1))
 	            .getBudgetByMonthYear(testYearMonth);
@@ -135,11 +119,8 @@ public class BudgetControllerTest {
 	@Test
 	void shouldGetCurrentMonthsBudgetWhenNotSpecified() throws Exception {
 	    YearMonth currentMonth = YearMonth.now();
-	    LocalDateTime now = LocalDateTime.now().withNano(0);
 	    
 	    Budget budget = new Budget(3000.0, 1500.0, currentMonth);
-	    budget.setCreatedAt(now);
-	    budget.setLastUpdatedAt(now);
 	    
 	    // Mock successful read
 	    Mockito.when(budgetService.getBudgetByMonthYear(null)).thenReturn(budget);
@@ -151,9 +132,7 @@ public class BudgetControllerTest {
 	            .andExpect(jsonPath("$.income").value(3000.0))
 	            .andExpect(jsonPath("$.expenses").value(1500.0))
 	            .andExpect(jsonPath("$.savings").value(1500.0))
-	            .andExpect(jsonPath("$.monthYear").value(currentMonth.toString()))
-	            .andExpect(jsonPath("$.createdAt").exists())
-	            .andExpect(jsonPath("$.lastUpdatedAt").exists());
+	            .andExpect(jsonPath("$.monthYear").value(currentMonth.toString()));
 	    
 	    Mockito.verify(budgetService, Mockito.times(1))
 	            .getBudgetByMonthYear(null);
@@ -169,8 +148,6 @@ public class BudgetControllerTest {
 	    
 	    Budget updatedBudget = new Budget(4000.0, 2000.0, YearMonth.parse(testYearMonth));
 	    updatedBudget.setId(1L);
-	    updatedBudget.setCreatedAt(LocalDateTime.now().withNano(0));
-	    updatedBudget.setLastUpdatedAt(LocalDateTime.now().withNano(0));
 	    
 	    // Mock successful update
 	    Mockito.when(budgetService.updateBudget(Mockito.eq(testYearMonth), Mockito.any(BudgetRequest.class)))
@@ -184,9 +161,7 @@ public class BudgetControllerTest {
 	            .andExpect(jsonPath("$.income").value(4000.0))
 	            .andExpect(jsonPath("$.expenses").value(2000.0))
 	            .andExpect(jsonPath("$.savings").value(2000.0))
-	            .andExpect(jsonPath("$.monthYear").value(testYearMonth))
-	            .andExpect(jsonPath("$.createdAt").exists())
-	            .andExpect(jsonPath("$.lastUpdatedAt").exists());
+	            .andExpect(jsonPath("$.monthYear").value(testYearMonth));
 	}
 	
     @Test

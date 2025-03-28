@@ -31,14 +31,14 @@ class BudgetServiceTest {
 	        .thenReturn(expectedBudget);
 	    
 	    BudgetRequest budgetRequest = new BudgetRequest();
-	    budgetRequest.setIncome(3000.0);
+	    budgetRequest.setTotalIncome(3000.0);
 	    budgetRequest.setExpenses(1500.0);
 	    budgetRequest.setMonthYear(expectedMonthYear.toString());
 
 	    Budget savedBudget = budgetService.createBudget(budgetRequest);
 
 	    assertNotNull(savedBudget);
-	    assertEquals(3000.0, savedBudget.getIncome());
+	    assertEquals(3000.0, savedBudget.getTotalIncome());
 	    assertEquals(1500.0, savedBudget.getExpenses());
 	    assertEquals(1500.0, savedBudget.getSavings());
 	    assertEquals(expectedMonthYear, savedBudget.getMonthYear());
@@ -54,7 +54,7 @@ class BudgetServiceTest {
         Budget existingBudget = new Budget(3000.0, 1500.0, existingMonthYear);
         
         BudgetRequest duplicateRequest = new BudgetRequest();
-        duplicateRequest.setIncome(4000.0);
+        duplicateRequest.setTotalIncome(4000.0);
         duplicateRequest.setExpenses(2000.0);
         duplicateRequest.setMonthYear(existingMonthYear.toString());
 
@@ -82,7 +82,7 @@ class BudgetServiceTest {
 	    Budget retrievedBudget = budgetService.getBudgetByMonthYear(testYearMonthString);
 
 	    assertNotNull(retrievedBudget);
-	    assertEquals(3000.0, retrievedBudget.getIncome());
+	    assertEquals(3000.0, retrievedBudget.getTotalIncome());
 	    assertEquals(1500.0, retrievedBudget.getExpenses());
 	    assertEquals(1500.0, retrievedBudget.getSavings());
 	    assertEquals(testYearMonth, retrievedBudget.getMonthYear());
@@ -97,7 +97,7 @@ class BudgetServiceTest {
         Budget existingBudget = new Budget(3000.0, 1500.0, testYearMonth);
 
         BudgetRequest updateRequest = new BudgetRequest();
-        updateRequest.setIncome(6000.0);
+        updateRequest.setTotalIncome(6000.0);
         updateRequest.setExpenses(3000.0);
 
         // Mock successful update
@@ -107,7 +107,7 @@ class BudgetServiceTest {
         Budget updatedBudget = budgetService.updateBudget(testYearMonthString, updateRequest);
 
         assertNotNull(updatedBudget);
-        assertEquals(6000.0, updatedBudget.getIncome());
+        assertEquals(6000.0, updatedBudget.getTotalIncome());
         assertEquals(3000.0, updatedBudget.getExpenses());
         assertEquals(3000.0, updatedBudget.getSavings());
         assertEquals(testYearMonth, updatedBudget.getMonthYear());
@@ -136,7 +136,7 @@ class BudgetServiceTest {
                .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
 
         BudgetRequest budgetRequest = new BudgetRequest();
-        budgetRequest.setIncome(3000.0);
+        budgetRequest.setTotalIncome(3000.0);
         budgetRequest.setExpenses(1500.0);
         
         assertThrows(DataIntegrityViolationException.class,
@@ -163,7 +163,7 @@ class BudgetServiceTest {
     	YearMonth testYearMonth = YearMonth.parse(testYearMonthString);
     	
         BudgetRequest updateRequest = new BudgetRequest();
-        updateRequest.setIncome(6000.0);
+        updateRequest.setTotalIncome(6000.0);
         updateRequest.setExpenses(3000.0);
 
         // Mock unsuccessful update

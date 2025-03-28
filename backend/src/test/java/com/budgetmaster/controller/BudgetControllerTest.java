@@ -38,7 +38,7 @@ public class BudgetControllerTest {
 	void shouldCreateBudgetWhenValidRequest() throws Exception {
 		// Setup request with valid input
 		BudgetRequest request = new BudgetRequest();
-		request.setIncome(3000.0);
+		request.setTotalIncome(3000.0);
 		request.setExpenses(1500.0);
 		request.setMonthYear("2001-01");
 		
@@ -56,7 +56,7 @@ public class BudgetControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.income").value(3000))
+			.andExpect(jsonPath("$.totalIncome").value(3000))
 			.andExpect(jsonPath("$.expenses").value(1500))
 			.andExpect(jsonPath("$.savings").value(1500))
 			.andExpect(jsonPath("$.monthYear").value("2000-01"));
@@ -69,7 +69,7 @@ public class BudgetControllerTest {
 	@Test
 	void shouldCreateBudgetWhenMonthYearIsNotProvided() throws Exception {
 		BudgetRequest request = new BudgetRequest();
-		request.setIncome(3000.0);
+		request.setTotalIncome(3000.0);
 		request.setExpenses(1500.0);
 		request.setMonthYear(null);
 		
@@ -84,7 +84,7 @@ public class BudgetControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.income").value(3000))
+				.andExpect(jsonPath("$.totalIncome").value(3000))
 				.andExpect(jsonPath("$.expenses").value(1500))
 				.andExpect(jsonPath("$.savings").value(1500))
 				.andExpect(jsonPath("$.monthYear").value(defaultYearMonth.toString()));
@@ -107,7 +107,7 @@ public class BudgetControllerTest {
 	    mockMvc.perform(get("/api/budget/{monthYear}", testYearMonth)
 	            .contentType(MediaType.APPLICATION_JSON))
 	            .andExpect(status().isOk())
-	            .andExpect(jsonPath("$.income").value(3000.0))
+	            .andExpect(jsonPath("$.totalIncome").value(3000.0))
 	            .andExpect(jsonPath("$.expenses").value(1500.0))
 	            .andExpect(jsonPath("$.savings").value(1500.0))
 	            .andExpect(jsonPath("$.monthYear").value(testYearMonth));
@@ -129,7 +129,7 @@ public class BudgetControllerTest {
 	    mockMvc.perform(get("/api/budget")
 	            .contentType(MediaType.APPLICATION_JSON))
 	            .andExpect(status().isOk())
-	            .andExpect(jsonPath("$.income").value(3000.0))
+	            .andExpect(jsonPath("$.totalIncome").value(3000.0))
 	            .andExpect(jsonPath("$.expenses").value(1500.0))
 	            .andExpect(jsonPath("$.savings").value(1500.0))
 	            .andExpect(jsonPath("$.monthYear").value(currentMonth.toString()));
@@ -143,7 +143,7 @@ public class BudgetControllerTest {
 		String testYearMonth = "2020-01";
 		
 	    BudgetRequest updateRequest = new BudgetRequest();
-	    updateRequest.setIncome(4000.0);
+	    updateRequest.setTotalIncome(4000.0);
 	    updateRequest.setExpenses(2000.0);
 	    
 	    Budget updatedBudget = new Budget(4000.0, 2000.0, YearMonth.parse(testYearMonth));
@@ -158,7 +158,7 @@ public class BudgetControllerTest {
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(objectMapper.writeValueAsString(updateRequest)))
 	            .andExpect(status().isOk())
-	            .andExpect(jsonPath("$.income").value(4000.0))
+	            .andExpect(jsonPath("$.totalIncome").value(4000.0))
 	            .andExpect(jsonPath("$.expenses").value(2000.0))
 	            .andExpect(jsonPath("$.savings").value(2000.0))
 	            .andExpect(jsonPath("$.monthYear").value(testYearMonth));
@@ -186,7 +186,7 @@ public class BudgetControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.income").value("Income is required."));
+			.andExpect(jsonPath("$.totalIncome").value("Income is required."));
 		
 		Mockito.verify(budgetService, Mockito.times(0))
 			.createBudget(Mockito.any());
@@ -195,7 +195,7 @@ public class BudgetControllerTest {
 	@Test
 	void shouldReturnBadRequestWhenExpensesAreMissing() throws Exception {
 		BudgetRequest request = new BudgetRequest();
-		request.setIncome(1500.0);
+		request.setTotalIncome(1500.0);
 		
 	    // POST to /api/budget & Assert bad request
 		mockMvc.perform(post("/api/budget")
@@ -211,7 +211,7 @@ public class BudgetControllerTest {
 	@Test
 	void shouldReturnBadRequestWhenIncomeIsNegative() throws Exception {
 		BudgetRequest request = new BudgetRequest();
-		request.setIncome(-1500.0);
+		request.setTotalIncome(-1500.0);
 		request.setExpenses(1500.0);
 		
 		// POST to /api/budget & Assert bad request
@@ -219,7 +219,7 @@ public class BudgetControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.income").value("Income cannot be negative."));
+			.andExpect(jsonPath("$.totalIncome").value("Income cannot be negative."));
 		
 		Mockito.verify(budgetService, Mockito.times(0))
 			.createBudget(Mockito.any());
@@ -228,7 +228,7 @@ public class BudgetControllerTest {
 	@Test
 	void shouldReturnBadRequestWhenExpensesAreNegative() throws Exception {
 		BudgetRequest request = new BudgetRequest();
-		request.setIncome(1500.0);
+		request.setTotalIncome(1500.0);
 		request.setExpenses(-1500.0);
 		
 		// POST to /api/budget & Assert bad request
@@ -245,7 +245,7 @@ public class BudgetControllerTest {
     @Test
     void shouldReturnBadRequestWhenMonthYearFormatIsInvalid() throws Exception {
         BudgetRequest request = new BudgetRequest();
-        request.setIncome(3000.0);
+        request.setTotalIncome(3000.0);
         request.setExpenses(1500.0);
         request.setMonthYear("2000/01");
 
@@ -280,7 +280,7 @@ public class BudgetControllerTest {
     void shouldReturnNotFoundWhenUpdatingNonExistentBudget() throws Exception {
 	    String testYearMonth = "2000-01";
 	    BudgetRequest request = new BudgetRequest();
-	    request.setIncome(3000.0);
+	    request.setTotalIncome(3000.0);
 	    request.setExpenses(1500.0);
 	    
 	    // Mock failed update
@@ -316,7 +316,7 @@ public class BudgetControllerTest {
 	void shouldReturnConflictWhenDataIntegrityViolationOccurs() throws Exception {
 		
 	    BudgetRequest request = new BudgetRequest();
-	    request.setIncome(3000.0);
+	    request.setTotalIncome(3000.0);
 	    request.setExpenses(1500.0);
 
 	    // Mock data integrity violation on create
@@ -338,7 +338,7 @@ public class BudgetControllerTest {
 	void shouldReturnInternalServerErrorWhenServiceFails() throws Exception {
 		
 	    BudgetRequest request = new BudgetRequest();
-	    request.setIncome(3000.0);
+	    request.setTotalIncome(3000.0);
 	    request.setExpenses(1500.0);
 
 	    // Mock internal server error on create

@@ -1,7 +1,7 @@
 -- Create Budget Table
 CREATE TABLE public.budget (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    income DOUBLE PRECISION NOT NULL,
+    total_income DOUBLE PRECISION NOT NULL,
     expenses DOUBLE PRECISION NOT NULL,
     savings DOUBLE PRECISION NOT NULL,
     month_year VARCHAR(255) NOT NULL UNIQUE,
@@ -58,3 +58,58 @@ CREATE TRIGGER set_last_updated_at_on_expense
 BEFORE UPDATE ON expense
 FOR EACH ROW
 EXECUTE FUNCTION update_last_updated_at_column();
+
+-- Create a function to update the budget table whenever income is modified
+CREATE OR REPLACE FUNCTION update_budget_total_income()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Ensure the budget entry exists for the new month if needed
+    IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.month_year <> OLD.month_year) THEN
+        IF NOT EXISTS (SELECT 1 FROM budget WHERE month_year = NEW.month_year) THEN
+            INSERT INTO budget (month_year, total_income, expenses, savings, created_at, last_updated_at)
+            VALUES (
+                NEW.month_year,
+                0, -- Initially set to 0, will be updated immediately after
+                0,
+                0,
+                NOW(),
+                NOW()
+            );
+        END IF;
+    END IF;
+
+    -- Handle INSERT and UPDATE (when amount or month_year changes)
+    IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+        -- If month_year is being changed, update old budget first
+        IF TG_OP = 'UPDATE' AND OLD.month_year <> NEW.month_year THEN
+            -- Deduct old amount from the previous month's budget
+            UPDATE budget
+            SET total_income = (SELECT COALESCE(SUM(amount), 0) FROM income WHERE month_year = OLD.month_year),
+                last_updated_at = NOW()
+            WHERE month_year = OLD.month_year;
+        END IF;
+
+        -- Update the budget for the new month
+        UPDATE budget
+        SET total_income = (SELECT COALESCE(SUM(amount), 0) FROM income WHERE month_year = NEW.month_year),
+            last_updated_at = NOW()
+        WHERE month_year = NEW.month_year;
+    END IF;
+
+    -- Handle DELETE: subtract the deleted amount from total_income
+    IF TG_OP = 'DELETE' THEN
+        UPDATE budget
+        SET total_income = (SELECT COALESCE(SUM(amount), 0) FROM income WHERE month_year = OLD.month_year),
+            last_updated_at = NOW()
+        WHERE month_year = OLD.month_year;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger for INSERT, UPDATE, DELETE
+CREATE TRIGGER sync_budget_total_income
+AFTER INSERT OR UPDATE OR DELETE ON income
+FOR EACH ROW
+EXECUTE FUNCTION update_budget_total_income();

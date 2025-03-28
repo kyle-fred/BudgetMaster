@@ -21,7 +21,7 @@ public class Budget {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private double income;
+	private double totalIncome;
 	
 	private double expenses;
 	
@@ -42,10 +42,10 @@ public class Budget {
 	
 	public Budget() {}
 	
-	public Budget(double income, double expenses, YearMonth monthYear) {
-		this.income = income;
+	public Budget(double totalIncome, double expenses, YearMonth monthYear) {
+		this.totalIncome = totalIncome;
 		this.expenses = expenses;
-		this.savings = income - expenses;
+		this.savings = totalIncome - expenses;
 		this.monthYear = monthYear;
 	}
 	
@@ -57,12 +57,12 @@ public class Budget {
 		this.id = id;
 	}
 	
-	public double getIncome() {
-		return income;
+	public double getTotalIncome() {
+		return totalIncome;
 	}
 	
-	public void setIncome(double income) {
-		this.income = income;
+	public void setTotalIncome(double totalIncome) {
+		this.totalIncome = totalIncome;
 	}
 	
 	public double getExpenses() {

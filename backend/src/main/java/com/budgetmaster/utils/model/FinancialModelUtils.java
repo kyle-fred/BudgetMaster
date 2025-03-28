@@ -23,7 +23,7 @@ public class FinancialModelUtils {
      */
     public static Budget buildBudget(BudgetRequest request) {
         return new Budget(
-                request.getIncome(),
+                request.getTotalIncome(),
                 request.getExpenses(),
                 DateUtils.getValidYearMonth(request.getMonthYear())
         );
@@ -33,9 +33,9 @@ public class FinancialModelUtils {
      * Modifies an existing Budget object with values from BudgetRequest.
      */
     public static void modifyBudget(Budget budget, BudgetRequest request) {
-        budget.setIncome(request.getIncome());
+        budget.setTotalIncome(request.getTotalIncome());
         budget.setExpenses(request.getExpenses());
-        budget.setSavings(request.getIncome() - request.getExpenses());
+        budget.setSavings(request.getTotalIncome() - request.getExpenses());
 
         if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
             budget.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()));

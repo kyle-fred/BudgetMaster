@@ -31,7 +31,7 @@ public class BudgetService {
 		}
 		
 		Budget budget = FinancialModelUtils.buildBudget(request);
-		return budgetRepository.save(budget);
+		return budgetRepository.saveAndFlush(budget);
 	}
 	
 	public Budget getBudgetByMonthYear(String monthYearString) {
@@ -42,7 +42,7 @@ public class BudgetService {
 		Budget budget = findBudgetOrThrow(monthYearString);
 		FinancialModelUtils.modifyBudget(budget, request);
 		
-		return budgetRepository.save(budget);
+		return budgetRepository.saveAndFlush(budget);
 	}
 	
 	@Transactional

@@ -24,7 +24,7 @@ public class FinancialModelUtils {
     public static Budget buildBudget(BudgetRequest request) {
         return new Budget(
                 request.getTotalIncome(),
-                request.getExpenses(),
+                request.getTotalExpenses(),
                 DateUtils.getValidYearMonth(request.getMonthYear())
         );
     }
@@ -34,8 +34,8 @@ public class FinancialModelUtils {
      */
     public static void modifyBudget(Budget budget, BudgetRequest request) {
         budget.setTotalIncome(request.getTotalIncome());
-        budget.setExpenses(request.getExpenses());
-        budget.setSavings(request.getTotalIncome() - request.getExpenses());
+        budget.setTotalExpenses(request.getTotalExpenses());
+        budget.setSavings(request.getTotalIncome() - request.getTotalExpenses());
 
         if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
             budget.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()));

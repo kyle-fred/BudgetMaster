@@ -23,7 +23,7 @@ public class Budget {
 	
 	private double totalIncome;
 	
-	private double expenses;
+	private double totalExpenses;
 	
 	private double savings;
 	
@@ -42,10 +42,10 @@ public class Budget {
 	
 	public Budget() {}
 	
-	public Budget(double totalIncome, double expenses, YearMonth monthYear) {
+	public Budget(double totalIncome, double totalExpenses, YearMonth monthYear) {
 		this.totalIncome = totalIncome;
-		this.expenses = expenses;
-		this.savings = totalIncome - expenses;
+		this.totalExpenses = totalExpenses;
+		this.savings = totalIncome - totalExpenses;
 		this.monthYear = monthYear;
 	}
 	
@@ -65,12 +65,12 @@ public class Budget {
 		this.totalIncome = totalIncome;
 	}
 	
-	public double getExpenses() {
-		return expenses;
+	public double getTotalExpenses() {
+		return totalExpenses;
 	}
 	
-	public void setExpenses(double expenses) {
-		this.expenses = expenses;
+	public void setTotalExpenses(double totalExpenses) {
+		this.totalExpenses = totalExpenses;
 	}
 	
 	public double getSavings() {

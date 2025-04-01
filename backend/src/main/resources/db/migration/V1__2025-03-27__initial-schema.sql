@@ -2,7 +2,7 @@
 CREATE TABLE public.budget (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     total_income DOUBLE PRECISION NOT NULL,
-    expenses DOUBLE PRECISION NOT NULL,
+    total_expense DOUBLE PRECISION NOT NULL,
     savings DOUBLE PRECISION NOT NULL,
     month_year VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -65,15 +65,8 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.month_year <> OLD.month_year) THEN
         IF NOT EXISTS (SELECT 1 FROM budget WHERE month_year = NEW.month_year) THEN
-            INSERT INTO budget (month_year, total_income, expenses, savings, created_at, last_updated_at)
-            VALUES (
-                NEW.month_year,
-                0,
-                0,
-                0,
-                NOW(),
-                NOW()
-            );
+            INSERT INTO budget (month_year, total_income, total_expense, savings, created_at, last_updated_at)
+            VALUES (NEW.month_year, 0, 0, 0, NOW(), NOW());
         END IF;
     END IF;
 
@@ -102,8 +95,50 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create trigger for INSERT, UPDATE, DELETE
+-- Create triggers for INSERT, UPDATE, DELETE for income table
 CREATE TRIGGER sync_budget_total_income
 AFTER INSERT OR UPDATE OR DELETE ON income
 FOR EACH ROW
 EXECUTE FUNCTION update_budget_total_income();
+
+-- Create a function to update the budget table whenever expense is modified
+CREATE OR REPLACE FUNCTION update_budget_total_expense()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.month_year <> OLD.month_year) THEN
+        IF NOT EXISTS (SELECT 1 FROM budget WHERE month_year = NEW.month_year) THEN
+            INSERT INTO budget (month_year, total_income, total_expense, savings, created_at, last_updated_at)
+            VALUES (NEW.month_year, 0, 0, 0, NOW(), NOW());
+        END IF;
+    END IF;
+
+    IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+        IF TG_OP = 'UPDATE' AND OLD.month_year <> NEW.month_year THEN
+            UPDATE budget
+            SET total_expense = (SELECT COALESCE(SUM(amount), 0) FROM expense WHERE month_year = OLD.month_year),
+                last_updated_at = NOW()
+            WHERE month_year = OLD.month_year;
+        END IF;
+
+        UPDATE budget
+        SET total_expense = (SELECT COALESCE(SUM(amount), 0) FROM expense WHERE month_year = NEW.month_year),
+            last_updated_at = NOW()
+        WHERE month_year = NEW.month_year;
+    END IF;
+
+    IF TG_OP = 'DELETE' THEN
+        UPDATE budget
+        SET total_expense = (SELECT COALESCE(SUM(amount), 0) FROM expense WHERE month_year = OLD.month_year),
+            last_updated_at = NOW()
+        WHERE month_year = OLD.month_year;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create triggers for INSERT, UPDATE, DELETE for expense table
+CREATE TRIGGER sync_budget_total_expense
+AFTER INSERT OR UPDATE OR DELETE ON expense
+FOR EACH ROW
+EXECUTE FUNCTION update_budget_total_expense();

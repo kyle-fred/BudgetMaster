@@ -12,7 +12,7 @@ public class BudgetRequest {
 	
 	@NotNull(message = "Expenses are required.")
 	@Min(value = 0, message = "Expenses cannot be negative.")
-	private Double expenses;
+	private Double totalExpenses;
 	
 	@Pattern(regexp = "^\\d{4}-\\d{2}$", message = "Invalid monthYear value. Expected format: YYYY-MM.")
 	private String monthYear;
@@ -25,12 +25,12 @@ public class BudgetRequest {
 		this.totalIncome = totalIncome;
 	}
 	
-	public Double getExpenses() {
-		return expenses;
+	public Double getTotalExpenses() {
+		return totalExpenses;
 	}
 	
-	public void setExpenses(Double expenses) {
-		this.expenses = expenses;
+	public void setTotalExpenses(Double totalExpenses) {
+		this.totalExpenses = totalExpenses;
 	}
 	
 	public String getMonthYear() {

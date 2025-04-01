@@ -1,9 +1,9 @@
--- Create Budget Table
+-- Create Budget Table with savings as a generated column
 CREATE TABLE public.budget (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     total_income DOUBLE PRECISION NOT NULL,
     total_expense DOUBLE PRECISION NOT NULL,
-    savings DOUBLE PRECISION NOT NULL,
+    savings DOUBLE PRECISION GENERATED ALWAYS AS (ROUND((total_income - total_expense)::NUMERIC, 2)::DOUBLE PRECISION) STORED,
     month_year VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     last_updated_at TIMESTAMP NOT NULL DEFAULT NOW()
@@ -65,8 +65,8 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.month_year <> OLD.month_year) THEN
         IF NOT EXISTS (SELECT 1 FROM budget WHERE month_year = NEW.month_year) THEN
-            INSERT INTO budget (month_year, total_income, total_expense, savings, created_at, last_updated_at)
-            VALUES (NEW.month_year, 0, 0, 0, NOW(), NOW());
+            INSERT INTO budget (month_year, total_income, total_expense, created_at, last_updated_at)
+            VALUES (NEW.month_year, 0, 0, NOW(), NOW());
         END IF;
     END IF;
 
@@ -107,8 +107,8 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.month_year <> OLD.month_year) THEN
         IF NOT EXISTS (SELECT 1 FROM budget WHERE month_year = NEW.month_year) THEN
-            INSERT INTO budget (month_year, total_income, total_expense, savings, created_at, last_updated_at)
-            VALUES (NEW.month_year, 0, 0, 0, NOW(), NOW());
+            INSERT INTO budget (month_year, total_income, total_expense, created_at, last_updated_at)
+            VALUES (NEW.month_year, 0, 0, NOW(), NOW());
         END IF;
     END IF;
 

@@ -59,8 +59,8 @@ BEFORE UPDATE ON expense
 FOR EACH ROW
 EXECUTE FUNCTION update_last_updated_at_column();
 
--- Create a function to update the budget table whenever income is modified
-CREATE OR REPLACE FUNCTION update_budget_total_income()
+-- Create a function to update the budget table for income and expense changes
+CREATE OR REPLACE FUNCTION update_budget_totals()
 RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.month_year <> OLD.month_year) THEN
@@ -69,24 +69,20 @@ BEGIN
             VALUES (NEW.month_year, 0, 0, NOW(), NOW());
         END IF;
     END IF;
+    
+    UPDATE budget
+    SET 
+        total_income = (SELECT COALESCE(SUM(amount), 0) FROM income WHERE month_year = NEW.month_year),
+        total_expense = (SELECT COALESCE(SUM(amount), 0) FROM expense WHERE month_year = NEW.month_year),
+        last_updated_at = NOW()
+    WHERE month_year = NEW.month_year;
 
-    IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-        IF TG_OP = 'UPDATE' AND OLD.month_year <> NEW.month_year THEN
-            UPDATE budget
-            SET total_income = (SELECT COALESCE(SUM(amount), 0) FROM income WHERE month_year = OLD.month_year),
-                last_updated_at = NOW()
-            WHERE month_year = OLD.month_year;
-        END IF;
-
-        UPDATE budget
-        SET total_income = (SELECT COALESCE(SUM(amount), 0) FROM income WHERE month_year = NEW.month_year),
-            last_updated_at = NOW()
-        WHERE month_year = NEW.month_year;
-    END IF;
-
+    -- Handle DELETE case
     IF TG_OP = 'DELETE' THEN
         UPDATE budget
-        SET total_income = (SELECT COALESCE(SUM(amount), 0) FROM income WHERE month_year = OLD.month_year),
+        SET 
+            total_income = (SELECT COALESCE(SUM(amount), 0) FROM income WHERE month_year = OLD.month_year),
+            total_expense = (SELECT COALESCE(SUM(amount), 0) FROM expense WHERE month_year = OLD.month_year)
             last_updated_at = NOW()
         WHERE month_year = OLD.month_year;
     END IF;
@@ -96,49 +92,13 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create triggers for INSERT, UPDATE, DELETE for income table
-CREATE TRIGGER sync_budget_total_income
+CREATE TRIGGER sync_budget_totals_income
 AFTER INSERT OR UPDATE OR DELETE ON income
 FOR EACH ROW
-EXECUTE FUNCTION update_budget_total_income();
-
--- Create a function to update the budget table whenever expense is modified
-CREATE OR REPLACE FUNCTION update_budget_total_expense()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF TG_OP = 'INSERT' OR (TG_OP = 'UPDATE' AND NEW.month_year <> OLD.month_year) THEN
-        IF NOT EXISTS (SELECT 1 FROM budget WHERE month_year = NEW.month_year) THEN
-            INSERT INTO budget (month_year, total_income, total_expense, created_at, last_updated_at)
-            VALUES (NEW.month_year, 0, 0, NOW(), NOW());
-        END IF;
-    END IF;
-
-    IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-        IF TG_OP = 'UPDATE' AND OLD.month_year <> NEW.month_year THEN
-            UPDATE budget
-            SET total_expense = (SELECT COALESCE(SUM(amount), 0) FROM expense WHERE month_year = OLD.month_year),
-                last_updated_at = NOW()
-            WHERE month_year = OLD.month_year;
-        END IF;
-
-        UPDATE budget
-        SET total_expense = (SELECT COALESCE(SUM(amount), 0) FROM expense WHERE month_year = NEW.month_year),
-            last_updated_at = NOW()
-        WHERE month_year = NEW.month_year;
-    END IF;
-
-    IF TG_OP = 'DELETE' THEN
-        UPDATE budget
-        SET total_expense = (SELECT COALESCE(SUM(amount), 0) FROM expense WHERE month_year = OLD.month_year),
-            last_updated_at = NOW()
-        WHERE month_year = OLD.month_year;
-    END IF;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+EXECUTE FUNCTION update_budget_totals();
 
 -- Create triggers for INSERT, UPDATE, DELETE for expense table
-CREATE TRIGGER sync_budget_total_expense
+CREATE TRIGGER sync_budget_totals_expense
 AFTER INSERT OR UPDATE OR DELETE ON expense
 FOR EACH ROW
-EXECUTE FUNCTION update_budget_total_expense();
+EXECUTE FUNCTION update_budget_totals();

@@ -32,14 +32,14 @@ class BudgetServiceTest {
 	    
 	    BudgetRequest budgetRequest = new BudgetRequest();
 	    budgetRequest.setTotalIncome(3000.0);
-	    budgetRequest.setExpenses(1500.0);
+	    budgetRequest.setTotalExpenses(1500.0);
 	    budgetRequest.setMonthYear(expectedMonthYear.toString());
 
 	    Budget savedBudget = budgetService.createBudget(budgetRequest);
 
 	    assertNotNull(savedBudget);
 	    assertEquals(3000.0, savedBudget.getTotalIncome());
-	    assertEquals(1500.0, savedBudget.getExpenses());
+	    assertEquals(1500.0, savedBudget.getTotalExpenses());
 	    assertEquals(1500.0, savedBudget.getSavings());
 	    assertEquals(expectedMonthYear, savedBudget.getMonthYear());
 
@@ -55,7 +55,7 @@ class BudgetServiceTest {
         
         BudgetRequest duplicateRequest = new BudgetRequest();
         duplicateRequest.setTotalIncome(4000.0);
-        duplicateRequest.setExpenses(2000.0);
+        duplicateRequest.setTotalExpenses(2000.0);
         duplicateRequest.setMonthYear(existingMonthYear.toString());
 
         Mockito.when(budgetRepository.findByMonthYear(existingMonthYear))
@@ -83,7 +83,7 @@ class BudgetServiceTest {
 
 	    assertNotNull(retrievedBudget);
 	    assertEquals(3000.0, retrievedBudget.getTotalIncome());
-	    assertEquals(1500.0, retrievedBudget.getExpenses());
+	    assertEquals(1500.0, retrievedBudget.getTotalExpenses());
 	    assertEquals(1500.0, retrievedBudget.getSavings());
 	    assertEquals(testYearMonth, retrievedBudget.getMonthYear());
 	}
@@ -98,7 +98,7 @@ class BudgetServiceTest {
 
         BudgetRequest updateRequest = new BudgetRequest();
         updateRequest.setTotalIncome(6000.0);
-        updateRequest.setExpenses(3000.0);
+        updateRequest.setTotalExpenses(3000.0);
 
         // Mock successful update
         Mockito.when(budgetRepository.findByMonthYear(testYearMonth)).thenReturn(Optional.of(existingBudget));
@@ -108,7 +108,7 @@ class BudgetServiceTest {
 
         assertNotNull(updatedBudget);
         assertEquals(6000.0, updatedBudget.getTotalIncome());
-        assertEquals(3000.0, updatedBudget.getExpenses());
+        assertEquals(3000.0, updatedBudget.getTotalExpenses());
         assertEquals(3000.0, updatedBudget.getSavings());
         assertEquals(testYearMonth, updatedBudget.getMonthYear());
 
@@ -137,7 +137,7 @@ class BudgetServiceTest {
 
         BudgetRequest budgetRequest = new BudgetRequest();
         budgetRequest.setTotalIncome(3000.0);
-        budgetRequest.setExpenses(1500.0);
+        budgetRequest.setTotalExpenses(1500.0);
         
         assertThrows(DataIntegrityViolationException.class,
             () -> budgetService.createBudget(budgetRequest));
@@ -164,7 +164,7 @@ class BudgetServiceTest {
     	
         BudgetRequest updateRequest = new BudgetRequest();
         updateRequest.setTotalIncome(6000.0);
-        updateRequest.setExpenses(3000.0);
+        updateRequest.setTotalExpenses(3000.0);
 
         // Mock unsuccessful update
         Mockito.when(budgetRepository.findByMonthYear(testYearMonth)).thenReturn(Optional.empty());

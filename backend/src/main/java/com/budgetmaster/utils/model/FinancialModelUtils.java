@@ -1,5 +1,7 @@
 package com.budgetmaster.utils.model;
 
+import java.time.YearMonth;
+
 import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.dto.ExpenseRequest;
@@ -43,38 +45,27 @@ public class FinancialModelUtils {
     }
 
     /**
-     * Builds the IncomeRequest by setting the proper monthYear format.
-     */
-    public static IncomeRequest buildIncomeRequest(IncomeRequest request) {
-        request.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()).toString());
-        return request;
-    }
-
-    /**
      * Builds the Income object from IncomeRequest.
      */
-    public static Income buildIncome(IncomeRequest request) {
+    public static Income buildIncome(IncomeRequest request, String monthYear) {
         return new Income(
                 request.getName(),
                 request.getSource(),
                 request.getAmount(),
                 request.getType(),
-                DateUtils.getValidYearMonth(request.getMonthYear())
+                DateUtils.getValidYearMonth(monthYear)
         );
     }
 
     /**
      * Modifies an existing Income object with values from IncomeRequest.
      */
-    public static void modifyIncome(Income income, IncomeRequest request) {
+    public static void modifyIncome(Income income, YearMonth monthYear, IncomeRequest request) {
         income.setName(request.getName());
         income.setSource(request.getSource());
         income.setAmount(request.getAmount());
         income.setType(request.getType());
-
-        if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
-            income.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()));
-        }
+        income.setMonthYear(monthYear);
     }
 
     /**

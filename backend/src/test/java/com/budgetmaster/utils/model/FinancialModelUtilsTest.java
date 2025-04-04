@@ -40,7 +40,6 @@ public class FinancialModelUtilsTest {
         expenseRequest.setAmount(1000.0);
         expenseRequest.setCategory(ExpenseCategory.HOUSING);
         expenseRequest.setType(TransactionType.RECURRING);
-        expenseRequest.setMonthYear("2000-01");
     }
 
     // ----- Budget Tests -----
@@ -144,15 +143,9 @@ public class FinancialModelUtilsTest {
 
     // ----- Expense Tests -----
     @Test
-    void testBuildExpenseRequest_SetsValidMonthYear() {
-        ExpenseRequest result = FinancialModelUtils.buildExpenseRequest(expenseRequest);
-        
-        assertEquals("2000-01", result.getMonthYear(), "Should correctly set the monthYear");
-    }
-
-    @Test
     void testBuildExpense_CreatesExpenseWithValidValues() {
-        Expense expense = FinancialModelUtils.buildExpense(expenseRequest);
+    	YearMonth testMonthYear = YearMonth.of(2000, 1);
+        Expense expense = FinancialModelUtils.buildExpense(expenseRequest, testMonthYear.toString());
         
         assertNotNull(expense, "Expense object should not be null");
         assertEquals("Rent", expense.getName(), "Name should match");
@@ -164,50 +157,21 @@ public class FinancialModelUtilsTest {
     
     @Test
     void testModifyExpense_ValidRequest_ModifiesExpenseCorrectly() {
-    	Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, YearMonth.of(2000, 1));
+    	YearMonth testMonthYear = YearMonth.of(2000, 1);
+    	Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testMonthYear);
     	
     	ExpenseRequest updateRequest = new ExpenseRequest();
     	updateRequest.setName("Gas Bill");
     	updateRequest.setAmount(100.0);
     	updateRequest.setCategory(ExpenseCategory.UTILITIES);
     	updateRequest.setType(TransactionType.RECURRING);
-    	updateRequest.setMonthYear("2020-01");
     	
-        FinancialModelUtils.modifyExpense(expense, updateRequest);
+        FinancialModelUtils.modifyExpense(expense, YearMonth.of(2020, 1), updateRequest);
         
         assertEquals("Gas Bill", expense.getName(), "Name should match");
         assertEquals(100.0, expense.getAmount(), "Amount should match");
         assertEquals(ExpenseCategory.UTILITIES, expense.getCategory(), "Expense category should match");
         assertEquals(TransactionType.RECURRING, expense.getType(), "Transaction type should match");
         assertEquals(YearMonth.of(2020, 1), expense.getMonthYear(), "MonthYear should be correctly set");
-    }
-
-    @Test
-    void testModifyExpense_NullMonthYear_DoesNotChangeMonthYear() {
-        YearMonth originalMonthYear = YearMonth.of(2000, 1);
-        
-        Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, YearMonth.of(2000, 1));
-
-        FinancialModelUtils.modifyExpense(expense, expenseRequest);
-
-        assertEquals(originalMonthYear, expense.getMonthYear(), "MonthYear should remain unchanged");
-    }
-
-    @Test
-    void testModifyExpense_EmptyMonthYear_DoesNotChangeMonthYear() {
-    	YearMonth originalMonthYear = YearMonth.of(2000, 1);
-        
-    	Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, YearMonth.of(2000, 1));
-        
-    	ExpenseRequest request = new ExpenseRequest();
-        request.setName("Gas Bill");
-        request.setAmount(100.0);
-        request.setCategory(ExpenseCategory.UTILITIES);
-        request.setType(TransactionType.ONE_TIME);
-        request.setMonthYear("");
-
-        FinancialModelUtils.modifyExpense(expense, request);
-
-        assertEquals(originalMonthYear, expense.getMonthYear(), "MonthYear should remain unchanged");
     }
 }

@@ -69,37 +69,26 @@ public class FinancialModelUtils {
     }
 
     /**
-     * Builds the ExpenseRequest by setting the proper monthYear format.
-     */
-    public static ExpenseRequest buildExpenseRequest(ExpenseRequest request) {
-        request.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()).toString());
-        return request;
-    }
-
-    /**
      * Builds the Expense object from ExpenseRequest.
      */
-    public static Expense buildExpense(ExpenseRequest request) {
+    public static Expense buildExpense(ExpenseRequest request, String monthYear) {
         return new Expense(
                 request.getName(),
                 request.getAmount(),
                 request.getCategory(),
                 request.getType(),
-                DateUtils.getValidYearMonth(request.getMonthYear())
+                DateUtils.getValidYearMonth(monthYear)
         );
     }
 
     /**
      * Modifies an existing Expense object with values from ExpenseRequest.
      */
-    public static void modifyExpense(Expense expense, ExpenseRequest request) {
+    public static void modifyExpense(Expense expense, YearMonth monthYear, ExpenseRequest request) {
         expense.setName(request.getName());
         expense.setAmount(request.getAmount());
         expense.setCategory(request.getCategory());
         expense.setType(request.getType());
-
-        if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
-            expense.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()));
-        }
+        expense.setMonthYear(monthYear);
     }
 }

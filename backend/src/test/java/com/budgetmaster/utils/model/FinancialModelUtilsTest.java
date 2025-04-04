@@ -34,7 +34,6 @@ public class FinancialModelUtilsTest {
         incomeRequest.setSource("Company XYZ");
         incomeRequest.setAmount(2000.0);
         incomeRequest.setType(TransactionType.RECURRING);
-        incomeRequest.setMonthYear("2000-01");
 
         expenseRequest = new ExpenseRequest();
         expenseRequest.setName("Rent");
@@ -47,7 +46,6 @@ public class FinancialModelUtilsTest {
     // ----- Budget Tests -----
     @Test
     void testBuildBudgetRequest_SetsValidMonthYear() {
-        
         BudgetRequest result = FinancialModelUtils.buildBudgetRequest(budgetRequest);
         
         assertEquals("2000-01", result.getMonthYear(), "Should correctly set the monthYear");
@@ -55,7 +53,6 @@ public class FinancialModelUtilsTest {
 
     @Test
     void testBuildBudget_CreatesBudgetWithValidValues() {
-        
         Budget budget = FinancialModelUtils.buildBudget(budgetRequest);
         
         assertNotNull(budget, "Budget object should not be null");
@@ -66,7 +63,6 @@ public class FinancialModelUtilsTest {
     
     @Test
     void testModifyBudget_ValidRequest_ModifiesBudgetCorrectly() {
-        
     	Budget budget = new Budget(3000.0, 1500.0, YearMonth.of(2000, 1));
     	
         BudgetRequest request = new BudgetRequest();
@@ -84,7 +80,6 @@ public class FinancialModelUtilsTest {
 
     @Test
     void testModifyBudget_NullMonthYear_DoesNotChangeMonthYear() {
-    	
         YearMonth originalMonthYear = YearMonth.of(2000, 1);
         
         Budget budget = new Budget(3000.0, 1500.0, originalMonthYear);
@@ -100,7 +95,6 @@ public class FinancialModelUtilsTest {
 
     @Test
     void testModifyBudget_EmptyMonthYear_DoesNotChangeMonthYear() {
-        
     	YearMonth originalMonthYear = YearMonth.of(2023, 5);
     	
         Budget budget = new Budget(3000.0, 1500.0, originalMonthYear);
@@ -116,17 +110,9 @@ public class FinancialModelUtilsTest {
 
     // ----- Income Tests -----
     @Test
-    void testBuildIncomeRequest_SetsValidMonthYear() {
-        
-        IncomeRequest result = FinancialModelUtils.buildIncomeRequest(incomeRequest);
-        
-        assertEquals("2000-01", result.getMonthYear(), "Should correctly set the monthYear");
-    }
-
-    @Test
     void testBuildIncome_CreatesIncomeWithValidValues() {
-        
-        Income income = FinancialModelUtils.buildIncome(incomeRequest);
+    	YearMonth testMonthYear = YearMonth.of(2000, 1);
+        Income income = FinancialModelUtils.buildIncome(incomeRequest, testMonthYear.toString());
         
         assertNotNull(income, "Income object should not be null");
         assertEquals("Salary", income.getName(), "Name should match");
@@ -138,17 +124,16 @@ public class FinancialModelUtilsTest {
     
     @Test
     void testModifyIncome_ValidRequest_ModifiesIncomeCorrectly() {
-    	
-    	Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, YearMonth.of(2000, 1));
+    	YearMonth testMonthYear = YearMonth.of(2000, 1);
+    	Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonthYear);
         
     	IncomeRequest updateRequest = new IncomeRequest();
     	updateRequest.setName("Bonus");
         updateRequest.setSource("Company ABC");
         updateRequest.setAmount(3000.0);
         updateRequest.setType(TransactionType.ONE_TIME);
-        updateRequest.setMonthYear("2020-01");
 
-        FinancialModelUtils.modifyIncome(income, updateRequest);
+        FinancialModelUtils.modifyIncome(income, YearMonth.of(2020, 1), updateRequest);
         
         assertEquals("Bonus", income.getName(), "Name should match");
         assertEquals("Company ABC", income.getSource(), "Source should match");
@@ -157,47 +142,9 @@ public class FinancialModelUtilsTest {
         assertEquals(YearMonth.of(2020, 1), income.getMonthYear(), "MonthYear should be correctly set");
     }
 
-    @Test
-    void testModifyIncome_NullMonthYear_DoesNotChangeMonthYear() {
-    	
-        YearMonth originalMonthYear = YearMonth.of(2000, 1);
-        
-        Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, originalMonthYear);
-        IncomeRequest updateRequest = new IncomeRequest();
-        updateRequest.setName("Bonus");
-        updateRequest.setSource("Company ABC");
-        updateRequest.setAmount(3000.0);
-        updateRequest.setType(TransactionType.ONE_TIME);
-        updateRequest.setMonthYear(null);
-
-        FinancialModelUtils.modifyIncome(income, updateRequest);
-
-        assertEquals(originalMonthYear, income.getMonthYear(), "MonthYear should remain unchanged");
-    }
-
-    @Test
-    void testModifyIncome_EmptyMonthYear_DoesNotChangeMonthYear() {
-        
-    	YearMonth originalMonthYear = YearMonth.of(2000, 1);
-        
-        Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, originalMonthYear);
-        IncomeRequest updateRequest = new IncomeRequest();
-        updateRequest.setName("Bonus");
-        updateRequest.setSource("Company ABC");
-        updateRequest.setAmount(3000.0);
-        updateRequest.setType(TransactionType.ONE_TIME);
-        updateRequest.setMonthYear("");
-
-        FinancialModelUtils.modifyIncome(income, updateRequest);
-
-        assertEquals(originalMonthYear, income.getMonthYear(), "MonthYear should remain unchanged");
-    }
-
     // ----- Expense Tests -----
-    
     @Test
     void testBuildExpenseRequest_SetsValidMonthYear() {
-        
         ExpenseRequest result = FinancialModelUtils.buildExpenseRequest(expenseRequest);
         
         assertEquals("2000-01", result.getMonthYear(), "Should correctly set the monthYear");
@@ -205,7 +152,6 @@ public class FinancialModelUtilsTest {
 
     @Test
     void testBuildExpense_CreatesExpenseWithValidValues() {
-        
         Expense expense = FinancialModelUtils.buildExpense(expenseRequest);
         
         assertNotNull(expense, "Expense object should not be null");
@@ -218,7 +164,6 @@ public class FinancialModelUtilsTest {
     
     @Test
     void testModifyExpense_ValidRequest_ModifiesExpenseCorrectly() {
-    	
     	Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, YearMonth.of(2000, 1));
     	
     	ExpenseRequest updateRequest = new ExpenseRequest();
@@ -239,7 +184,6 @@ public class FinancialModelUtilsTest {
 
     @Test
     void testModifyExpense_NullMonthYear_DoesNotChangeMonthYear() {
-    	
         YearMonth originalMonthYear = YearMonth.of(2000, 1);
         
         Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, YearMonth.of(2000, 1));
@@ -251,7 +195,6 @@ public class FinancialModelUtilsTest {
 
     @Test
     void testModifyExpense_EmptyMonthYear_DoesNotChangeMonthYear() {
-        
     	YearMonth originalMonthYear = YearMonth.of(2000, 1);
         
     	Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, YearMonth.of(2000, 1));

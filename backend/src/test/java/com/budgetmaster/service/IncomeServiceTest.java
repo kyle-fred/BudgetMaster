@@ -3,15 +3,20 @@ package com.budgetmaster.service;
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.repository.IncomeRepository;
+import com.budgetmaster.utils.date.DateUtils;
 import com.budgetmaster.model.Income;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 
 import java.time.YearMonth;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 class IncomeServiceTest {
@@ -44,6 +49,32 @@ class IncomeServiceTest {
 
         Mockito.verify(incomeRepository, Mockito.times(1))
         		.saveAndFlush(Mockito.any(Income.class));
+    }
+    
+    @Test
+    void shouldReturnListOfIncomesWhenMonthHasIncomes() {
+        YearMonth monthYear = YearMonth.of(2000, 1);
+
+        List<Income> incomes = List.of(
+            new Income("Salary", "Company XYZ", 3000.0, TransactionType.RECURRING, monthYear),
+            new Income("Bonus", "Company ABC", 500.0, TransactionType.ONE_TIME, monthYear)
+        );
+
+        try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
+            mockedDateUtils.when(() -> DateUtils.getValidYearMonth(monthYear.toString()))
+            		.thenReturn(monthYear);
+            Mockito.when(incomeRepository.findByMonthYear(monthYear))
+            		.thenReturn(incomes);
+
+            List<Income> result = incomeService.getAllIncomesForMonth(monthYear.toString());
+
+            assertNotNull(result);
+            assertEquals(2, result.size());
+            assertEquals("Salary", result.get(0).getName());
+            assertEquals("Bonus", result.get(1).getName());
+
+            Mockito.verify(incomeRepository, Mockito.times(1)).findByMonthYear(monthYear);
+        }
     }
     
     @Test
@@ -141,6 +172,25 @@ class IncomeServiceTest {
         Optional<Income> retrievedIncome = incomeService.getIncomeById(testYearMonth.toString(), 99L);
         
         assertFalse(retrievedIncome.isPresent());
+    }
+    
+    @Test
+    void shouldReturnEmptyListWhenNoIncomesExistForMonth() {
+        YearMonth monthYear = YearMonth.of(2000, 1);
+        
+        try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
+            mockedDateUtils.when(() -> DateUtils.getValidYearMonth(monthYear.toString()))
+            		.thenReturn(monthYear);
+            Mockito.when(incomeRepository.findByMonthYear(monthYear))
+            		.thenReturn(Collections.emptyList());
+            
+            List<Income> result = incomeService.getAllIncomesForMonth(monthYear.toString());
+
+            assertNotNull(result);
+            assertTrue(result.isEmpty());
+
+            Mockito.verify(incomeRepository, Mockito.times(1)).findByMonthYear(monthYear);
+        }
     }
     
     @Test

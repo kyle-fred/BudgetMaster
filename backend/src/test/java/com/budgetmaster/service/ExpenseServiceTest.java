@@ -4,16 +4,21 @@ import com.budgetmaster.dto.ExpenseRequest;
 import com.budgetmaster.enums.ExpenseCategory;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.repository.ExpenseRepository;
+import com.budgetmaster.utils.date.DateUtils;
 import com.budgetmaster.model.Expense;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 
 import java.time.YearMonth;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 class ExpenseServiceTest {
@@ -46,6 +51,32 @@ class ExpenseServiceTest {
 
         Mockito.verify(expenseRepository, Mockito.times(1))
         		.saveAndFlush(Mockito.any(Expense.class));
+    }
+    
+    @Test
+    void shouldReturnListOfExpensesWhenMonthHasExpenses() {
+        YearMonth monthYear = YearMonth.of(2000, 1);
+
+ 		List<Expense> expenseList = List.of(
+ 				new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, monthYear),
+ 				new Expense("Gas", 100.0, ExpenseCategory.UTILITIES, TransactionType.RECURRING, monthYear)
+ 		);
+
+        try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
+            mockedDateUtils.when(() -> DateUtils.getValidYearMonth(monthYear.toString()))
+            		.thenReturn(monthYear);
+            Mockito.when(expenseRepository.findByMonthYear(monthYear))
+            		.thenReturn(expenseList);
+
+            List<Expense> result = expenseService.getAllExpensesForMonth(monthYear.toString());
+
+            assertNotNull(result);
+            assertEquals(2, result.size());
+            assertEquals("Rent", result.get(0).getName());
+            assertEquals("Gas", result.get(1).getName());
+
+            Mockito.verify(expenseRepository, Mockito.times(1)).findByMonthYear(monthYear);
+        }
     }
     
     @Test
@@ -140,6 +171,25 @@ class ExpenseServiceTest {
     	Optional<Expense> retrievedExpense = expenseService.getExpenseById(testYearMonth.toString(), 99L);
         
         assertFalse(retrievedExpense.isPresent());
+    }
+    
+    @Test
+    void shouldReturnEmptyListWhenNoExpensesExistForMonth() {
+        YearMonth monthYear = YearMonth.of(2000, 1);
+        
+        try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
+            mockedDateUtils.when(() -> DateUtils.getValidYearMonth(monthYear.toString()))
+            		.thenReturn(monthYear);
+            Mockito.when(expenseRepository.findByMonthYear(monthYear))
+            		.thenReturn(Collections.emptyList());
+            
+            List<Expense> result = expenseService.getAllExpensesForMonth(monthYear.toString());
+
+            assertNotNull(result);
+            assertTrue(result.isEmpty());
+
+            Mockito.verify(expenseRepository, Mockito.times(1)).findByMonthYear(monthYear);
+        }
     }
     
     @Test

@@ -1,7 +1,6 @@
 package com.budgetmaster.controller;
 
 import com.budgetmaster.dto.ExpenseRequest;
-import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.enums.ExpenseCategory;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.exception.GlobalExceptionHandler;
@@ -27,6 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.YearMonth;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @WebMvcTest(ExpenseController.class)
@@ -121,6 +122,53 @@ public class ExpenseControllerTest {
 		Mockito.verify(expenseService, Mockito.times(1))
 				.getExpenseById(testYearMonth.toString(), 1L);
 	}
+	
+	@Test
+ 	void shouldGetAllExpensesForValidMonth() throws Exception {
+ 		YearMonth testYearMonth = YearMonth.of(2000, 1);
+ 		
+ 		List<Expense> expenseList = List.of(
+ 				new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth),
+ 				new Expense("Gas", 100.0, ExpenseCategory.UTILITIES, TransactionType.RECURRING, testYearMonth)
+ 		);
+ 		
+ 		Mockito.when(expenseService.getAllExpensesForMonth(Mockito.eq(testYearMonth.toString())))
+ 				.thenReturn(expenseList);
+ 		
+ 		mockMvc.perform(get("/api/expense/{monthYear}", testYearMonth)
+ 				.contentType(MediaType.APPLICATION_JSON))
+ 				.andExpect(status().isOk())
+ 	            .andExpect(jsonPath("$[0].name").value("Rent"))
+ 	            .andExpect(jsonPath("$[0].amount").value(1000.0))
+ 	            .andExpect(jsonPath("$[0].category").value("HOUSING"))
+ 	            .andExpect(jsonPath("$[0].type").value("RECURRING"))
+ 	            .andExpect(jsonPath("$[0].monthYear").value("2000-01"))
+ 	            .andExpect(jsonPath("$[1].name").value("Gas"))
+ 	            .andExpect(jsonPath("$[1].amount").value(100.0))
+ 	            .andExpect(jsonPath("$[1].category").value("UTILITIES"))
+ 	            .andExpect(jsonPath("$[1].type").value("RECURRING"))
+ 	            .andExpect(jsonPath("$[1].monthYear").value("2000-01"));
+ 		
+ 		Mockito.verify(expenseService, Mockito.times(1))
+ 				.getAllExpensesForMonth(testYearMonth.toString());
+ 	}
+ 	
+ 	@Test
+ 	void shouldReturnEmptyListWhenNoExpensesExist() throws Exception {
+ 	    YearMonth testYearMonth = YearMonth.of(2000, 1);
+ 
+ 	    Mockito.when(expenseService.getAllExpensesForMonth(Mockito.eq(testYearMonth.toString())))
+ 	           .thenReturn(Collections.emptyList());
+ 
+ 	    mockMvc.perform(get("/api/expense/{monthYear}", testYearMonth.toString())
+ 	            .contentType(MediaType.APPLICATION_JSON))
+ 	            .andExpect(status().isOk())
+ 	            .andExpect(jsonPath("$").isArray())
+ 	            .andExpect(jsonPath("$.length()").value(0));
+ 
+ 	    Mockito.verify(expenseService, Mockito.times(1))
+ 	           .getAllExpensesForMonth(Mockito.eq(testYearMonth.toString()));
+ 	}
 	
 	@Test
 	void shouldUpdateExpenseWhenValidMonthAndId() throws Exception {
@@ -338,6 +386,38 @@ public class ExpenseControllerTest {
 		Mockito.verify(expenseService, Mockito.times(1))
 				.getExpenseById(Mockito.eq(monthYear.toString()), Mockito.eq(99L));
 	}
+	
+	@Test
+ 	void shouldReturnNotFoundWhenExpenseIdDoesNotExistForValidMonthYear() throws Exception {
+ 	    YearMonth validMonthYear = YearMonth.of(2000, 1);
+ 	    Long nonExistentId = 99L;
+ 
+ 	    Mockito.when(expenseService.getExpenseById(Mockito.eq(validMonthYear.toString()), Mockito.eq(nonExistentId)))
+ 	           .thenReturn(Optional.empty());
+ 
+ 	    mockMvc.perform(get("/api/expense/{monthYear}/{id}", validMonthYear.toString(), nonExistentId)
+ 	            .contentType(MediaType.APPLICATION_JSON))
+ 	            .andExpect(status().isNotFound());
+ 
+ 	    Mockito.verify(expenseService, Mockito.times(1))
+ 	    		.getExpenseById(validMonthYear.toString(), nonExistentId);
+ 	}
+ 	
+ 	@Test
+ 	void shouldReturnNotFoundWhenMonthYearDoesNotExistButExpenseIdIsValid() throws Exception {
+ 	    String nonExistentMonthYear = "2100-01";
+ 	    Long validExpenseId = 1L;
+ 
+ 	    Mockito.when(expenseService.getExpenseById(Mockito.eq(nonExistentMonthYear.toString()), Mockito.eq(validExpenseId)))
+ 	           .thenReturn(Optional.empty());
+ 
+ 	    mockMvc.perform(get("/api/expense/{monthYear}/{id}", nonExistentMonthYear, validExpenseId)
+ 	            .contentType(MediaType.APPLICATION_JSON))
+ 	            .andExpect(status().isNotFound());
+ 
+ 	    Mockito.verify(expenseService, Mockito.times(1))
+ 	    		.getExpenseById(nonExistentMonthYear, validExpenseId);
+ 	}
 	
     @Test
     void shouldReturnNotFoundWhenUpdatingNonExistentExpense() throws Exception {

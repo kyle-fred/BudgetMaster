@@ -6,6 +6,7 @@ import com.budgetmaster.enums.ExpenseCategory;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 public class ExpenseRequest {
 	
@@ -21,6 +22,9 @@ public class ExpenseRequest {
 	
 	@NotNull(message = "Expense transaction type is required.")
 	private TransactionType type;
+	
+	@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month year must be in format YYYY-MM")
+	private String monthYear;
 	
 	public String getName() {
 		return name;
@@ -52,5 +56,13 @@ public class ExpenseRequest {
 	
 	public void setType(TransactionType type) {
 		this.type = type;
+	}
+	
+	public String getMonthYear() {
+		return monthYear;
+	}
+	
+	public void setMonthYear(String monthYear) {
+		this.monthYear = monthYear;
 	}
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("api/expense")
+@RequestMapping("api/expenses")
 @Validated
 public class ExpenseController {
 	
@@ -26,25 +26,19 @@ public class ExpenseController {
 	
 	@PostMapping
 	public ResponseEntity<Expense> createExpense(@Valid @RequestBody ExpenseRequest request) {
- 		Expense expense = expenseService.createExpense(request, null);
+ 		Expense expense = expenseService.createExpense(request);
 		return ResponseEntity.ok(expense);
 	}
-	
-    @PostMapping("/{monthYear}")
-    public ResponseEntity<Expense> createExpenseForMonth(@PathVariable String monthYear, @Valid @RequestBody ExpenseRequest request) {
-        Expense expense = expenseService.createExpense(request, monthYear);
-        return ResponseEntity.ok(expense);
-    }
     
-    @GetMapping("/{monthYear}")
-    public ResponseEntity<List<Expense>> getAllExpensesForMonth(@PathVariable String monthYear) {
+    @GetMapping
+    public ResponseEntity<List<Expense>> getAllExpensesForMonth(@RequestParam String monthYear) {
         List<Expense> expenses = expenseService.getAllExpensesForMonth(monthYear);
         return ResponseEntity.ok(expenses);
     }
     
-    @GetMapping("/{monthYear}/{id}")
-    public ResponseEntity<Expense> getExpenseById(@PathVariable String monthYear, @PathVariable Long id) {
-        Optional<Expense> expense = expenseService.getExpenseById(monthYear, id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Expense> getExpenseById(@PathVariable Long id) {
+        Optional<Expense> expense = expenseService.getExpenseById(id);
         if (expense.isPresent()) {
         	return ResponseEntity.ok(expense.get());
         } else {
@@ -52,9 +46,9 @@ public class ExpenseController {
         }
     }
 	
-    @PutMapping("/{monthYear}/{id}")
-    public ResponseEntity<Expense> updateExpense(@PathVariable String monthYear, @PathVariable Long id, @Valid @RequestBody ExpenseRequest request) {
-        Optional<Expense> expense = expenseService.updateExpense(monthYear, id, request);
+    @PutMapping("/{id}")
+    public ResponseEntity<Expense> updateExpense(@PathVariable Long id, @Valid @RequestBody ExpenseRequest request) {
+        Optional<Expense> expense = expenseService.updateExpense(id, request);
         if (expense.isPresent()) {
         	return ResponseEntity.ok(expense.get());
         } else {
@@ -62,9 +56,9 @@ public class ExpenseController {
         }
     }
 	
-    @DeleteMapping("/{monthYear}/{id}")
-    public ResponseEntity<Void> deleteExpense(@PathVariable String monthYear, @PathVariable Long id) {
-        boolean deleted = expenseService.deleteExpense(monthYear, id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
+        boolean deleted = expenseService.deleteExpense(id);
         
 		if (deleted) {
 			return ResponseEntity.noContent().build();

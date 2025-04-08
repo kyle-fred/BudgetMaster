@@ -22,8 +22,8 @@ public class ExpenseService {
 		this.expenseRepository = expenseRepository;
 	}
 	
-	public Expense createExpense(ExpenseRequest request, String monthYearString) {
-		Expense expense = FinancialModelUtils.buildExpense(request, monthYearString);
+	public Expense createExpense(ExpenseRequest request) {
+		Expense expense = FinancialModelUtils.buildExpense(request);
 		return expenseRepository.saveAndFlush(expense);
 	}
 	
@@ -32,27 +32,24 @@ public class ExpenseService {
  		return expenseRepository.findByMonthYear(monthYear);
  	}
 	
-	public Optional<Expense> getExpenseById(String monthYearString, Long id) {
- 		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
- 		return expenseRepository.findByMonthYearAndId(monthYear, id);
+	public Optional<Expense> getExpenseById(Long id) {
+ 		return expenseRepository.findById(id);
  	}
 	
-	public Optional<Expense> updateExpense(String monthYearString, Long id, ExpenseRequest request) {
- 		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
- 		Optional<Expense> existingExpense = expenseRepository.findByMonthYearAndId(monthYear, id);
+	public Optional<Expense> updateExpense(Long id, ExpenseRequest request) {
+ 		Optional<Expense> existingExpense = expenseRepository.findById(id);
 		
 		if (existingExpense.isPresent()) {
 			Expense expense = existingExpense.get();
-			FinancialModelUtils.modifyExpense(expense, monthYear, request);
+			FinancialModelUtils.modifyExpense(expense, request);
 			
 			return Optional.of(expenseRepository.saveAndFlush(expense));
-		} else {
-			return Optional.empty();
 		}
+		return Optional.empty();
 	}
 
 	@Transactional
-	public boolean deleteExpense(String monthYearString, Long id) {
+	public boolean deleteExpense(Long id) {
 		if (expenseRepository.existsById(id)) {
 			expenseRepository.deleteById(id);
 			return true;

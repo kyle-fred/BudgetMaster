@@ -34,12 +34,14 @@ public class FinancialModelUtilsTest {
         incomeRequest.setSource("Company XYZ");
         incomeRequest.setAmount(2000.0);
         incomeRequest.setType(TransactionType.RECURRING);
-
+        incomeRequest.setMonthYear("2000-01");
+        
         expenseRequest = new ExpenseRequest();
         expenseRequest.setName("Rent");
         expenseRequest.setAmount(1000.0);
         expenseRequest.setCategory(ExpenseCategory.HOUSING);
         expenseRequest.setType(TransactionType.RECURRING);
+        expenseRequest.setMonthYear("2000-01");
     }
 
     // ----- Budget Tests -----
@@ -110,8 +112,7 @@ public class FinancialModelUtilsTest {
     // ----- Income Tests -----
     @Test
     void testBuildIncome_CreatesIncomeWithValidValues() {
-        YearMonth testMonthYear = YearMonth.of(2000, 1);
-        Income income = FinancialModelUtils.buildIncome(incomeRequest, testMonthYear.toString());
+        Income income = FinancialModelUtils.buildIncome(incomeRequest);
         
         assertNotNull(income, "Income object should not be null");
         assertEquals("Salary", income.getName(), "Name should match");
@@ -145,8 +146,7 @@ public class FinancialModelUtilsTest {
     // ----- Expense Tests -----
     @Test
     void testBuildExpense_CreatesExpenseWithValidValues() {
-        YearMonth testMonthYear = YearMonth.of(2000, 1);
-        Expense expense = FinancialModelUtils.buildExpense(expenseRequest, testMonthYear.toString());
+        Expense expense = FinancialModelUtils.buildExpense(expenseRequest);
         
         assertNotNull(expense, "Expense object should not be null");
         assertEquals("Rent", expense.getName(), "Name should match");

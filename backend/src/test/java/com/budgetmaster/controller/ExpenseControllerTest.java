@@ -446,8 +446,7 @@ public class ExpenseControllerTest {
                 "type": "INVALID_TYPE"
             }
             """;
-
-        YearMonth monthYear = YearMonth.of(2000, 1);
+			
         mockMvc.perform(put("/api/expenses/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidRequest))

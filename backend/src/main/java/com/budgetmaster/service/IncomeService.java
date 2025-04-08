@@ -23,7 +23,7 @@ public class IncomeService {
 	}
 	
 	public Income createIncome(IncomeRequest request) {
-		Income income = FinancialModelUtils.buildIncome(request, request.getMonthYear());
+		Income income = FinancialModelUtils.buildIncome(request);
 		return incomeRepository.saveAndFlush(income);
 	}
 	

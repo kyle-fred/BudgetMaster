@@ -45,13 +45,13 @@ public class FinancialModelUtils {
     /**
      * Builds the Income object from IncomeRequest.
      */
-    public static Income buildIncome(IncomeRequest request, String monthYear) {
+    public static Income buildIncome(IncomeRequest request) {
         return new Income(
                 request.getName(),
                 request.getSource(),
                 request.getAmount(),
                 request.getType(),
-                DateUtils.getValidYearMonth(monthYear)
+                DateUtils.getValidYearMonth(request.getMonthYear())
         );
     }
 
@@ -71,13 +71,13 @@ public class FinancialModelUtils {
     /**
      * Builds the Expense object from ExpenseRequest.
      */
-    public static Expense buildExpense(ExpenseRequest request, String monthYear) {
+    public static Expense buildExpense(ExpenseRequest request) {
         return new Expense(
                 request.getName(),
                 request.getAmount(),
                 request.getCategory(),
                 request.getType(),
-                DateUtils.getValidYearMonth(monthYear)
+                DateUtils.getValidYearMonth(request.getMonthYear())
         );
     }
 

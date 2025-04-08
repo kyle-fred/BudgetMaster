@@ -23,7 +23,7 @@ public class ExpenseService {
 	}
 	
 	public Expense createExpense(ExpenseRequest request) {
-		Expense expense = FinancialModelUtils.buildExpense(request, request.getMonthYear());
+		Expense expense = FinancialModelUtils.buildExpense(request);
 		return expenseRepository.saveAndFlush(expense);
 	}
 	

@@ -167,7 +167,7 @@ public class FinancialModelUtilsTest {
         updateRequest.setCategory(ExpenseCategory.UTILITIES);
         updateRequest.setType(TransactionType.RECURRING);
         
-        FinancialModelUtils.modifyExpense(expense, YearMonth.of(2000, 1), updateRequest);
+        FinancialModelUtils.modifyExpense(expense, updateRequest);
         
         assertEquals("Gas Bill", expense.getName(), "Name should match");
         assertEquals(100.0, expense.getAmount(), "Amount should match");

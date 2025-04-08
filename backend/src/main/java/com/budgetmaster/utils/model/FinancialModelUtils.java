@@ -1,7 +1,5 @@
 package com.budgetmaster.utils.model;
 
-import java.time.YearMonth;
-
 import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.dto.ExpenseRequest;
@@ -86,11 +84,13 @@ public class FinancialModelUtils {
     /**
      * Modifies an existing Expense object with values from ExpenseRequest.
      */
-    public static void modifyExpense(Expense expense, YearMonth monthYear, ExpenseRequest request) {
+    public static void modifyExpense(Expense expense, ExpenseRequest request) {
         expense.setName(request.getName());
         expense.setAmount(request.getAmount());
         expense.setCategory(request.getCategory());
         expense.setType(request.getType());
-        expense.setMonthYear(monthYear);
+        if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
+            expense.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()));
+        }
     }
 }

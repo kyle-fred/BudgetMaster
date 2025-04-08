@@ -39,8 +39,9 @@ class ExpenseServiceTest {
         expenseRequest.setAmount(1000.0);
         expenseRequest.setCategory(ExpenseCategory.HOUSING);
         expenseRequest.setType(TransactionType.RECURRING);
+        expenseRequest.setMonthYear(expectedMonthYear.toString());
         
-        Expense savedExpense = expenseService.createExpense(expenseRequest, expectedMonthYear.toString());
+        Expense savedExpense = expenseService.createExpense(expenseRequest);
 
         assertNotNull(savedExpense);
         assertEquals("Rent", savedExpense.getName());
@@ -84,10 +85,10 @@ class ExpenseServiceTest {
 	    YearMonth testYearMonth = YearMonth.of(2000, 1);
     	Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
     	
-    	Mockito.when(expenseRepository.findByMonthYearAndId(Mockito.eq(testYearMonth), Mockito.eq(1L)))
+    	Mockito.when(expenseRepository.findById(Mockito.eq(1L)))
     			.thenReturn(Optional.of(expectedExpense));
     	
-    	Optional<Expense> retrievedExpense = expenseService.getExpenseById(testYearMonth.toString(), 1L);
+    	Optional<Expense> retrievedExpense = expenseService.getExpenseById(1L);
     	
     	assertTrue(retrievedExpense.isPresent());   	
         assertEquals("Rent", retrievedExpense.get().getName());
@@ -97,7 +98,7 @@ class ExpenseServiceTest {
 	    assertEquals(testYearMonth, retrievedExpense.get().getMonthYear());
 	    
         Mockito.verify(expenseRepository, Mockito.times(1))
-				.findByMonthYearAndId(Mockito.eq(testYearMonth), Mockito.eq(1L));
+				.findById(Mockito.eq(1L));
     }
     
     @Test
@@ -111,12 +112,12 @@ class ExpenseServiceTest {
         updateRequest.setCategory(ExpenseCategory.UTILITIES);
         updateRequest.setType(TransactionType.ONE_TIME);
         
-        Mockito.when(expenseRepository.findByMonthYearAndId(Mockito.eq(testYearMonth), Mockito.eq(1L)))
+        Mockito.when(expenseRepository.findById(Mockito.eq(1L)))
  				.thenReturn(Optional.of(existingExpense));
          Mockito.when(expenseRepository.saveAndFlush(Mockito.any(Expense.class)))
          		.thenReturn(existingExpense);
 
-         Optional<Expense> updatedExpense = expenseService.updateExpense(testYearMonth.toString(), 1L, updateRequest);
+         Optional<Expense> updatedExpense = expenseService.updateExpense(1L, updateRequest);
 
         assertTrue(updatedExpense.isPresent());
         assertEquals("Gas Bill", updatedExpense.get().getName());
@@ -137,8 +138,7 @@ class ExpenseServiceTest {
 				.when(expenseRepository)
 				.deleteById(1L);
     	
-    	YearMonth testYearMonth = YearMonth.of(2000, 1);
-        boolean deleted = expenseService.deleteExpense(testYearMonth.toString(), 1L);
+        boolean deleted = expenseService.deleteExpense(1L);
 
         assertTrue(deleted);
         
@@ -148,7 +148,6 @@ class ExpenseServiceTest {
     
     @Test
     void shouldThrowExceptionWhenSaveFails() {
-    	YearMonth testYearMonth = YearMonth.of(2000, 1);
     	Mockito.when(expenseRepository.saveAndFlush(Mockito.any(Expense.class)))
                .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
 
@@ -159,16 +158,15 @@ class ExpenseServiceTest {
         expenseRequest.setType(TransactionType.RECURRING);
         
         assertThrows(DataIntegrityViolationException.class,
-            () -> expenseService.createExpense(expenseRequest, testYearMonth.toString()));
+            () -> expenseService.createExpense(expenseRequest));
     }
     
     @Test
     void shouldReturnEmptyWhenExpenseDoesNotExist() {
-    	YearMonth testYearMonth = YearMonth.of(2000, 1);
     	Mockito.when(expenseRepository.findById(99L))
 				.thenReturn(Optional.empty());
         
-    	Optional<Expense> retrievedExpense = expenseService.getExpenseById(testYearMonth.toString(), 99L);
+    	Optional<Expense> retrievedExpense = expenseService.getExpenseById(99L);
         
         assertFalse(retrievedExpense.isPresent());
     }
@@ -194,7 +192,6 @@ class ExpenseServiceTest {
     
     @Test
     void shouldReturnEmptyWhenUpdatingNonExistentExpense() {
-    	YearMonth testYearMonth = YearMonth.of(2000, 1);
     	ExpenseRequest updateRequest = new ExpenseRequest();
         updateRequest.setName("Rent");
         updateRequest.setAmount(2000.0);
@@ -204,7 +201,7 @@ class ExpenseServiceTest {
         Mockito.when(expenseRepository.findById(99L))
  				.thenReturn(Optional.empty());
 
-        Optional<Expense> updatedExpense = expenseService.updateExpense(testYearMonth.toString(), 99L, updateRequest);
+        Optional<Expense> updatedExpense = expenseService.updateExpense( 99L, updateRequest);
 
         assertFalse(updatedExpense.isPresent());
         
@@ -217,9 +214,8 @@ class ExpenseServiceTest {
     	Mockito.doReturn(false)
 				.when(expenseRepository)
 				.existsById(99L);
-
-    	YearMonth testYearMonth = YearMonth.of(2000, 1);
-        boolean deleted = expenseService.deleteExpense(testYearMonth.toString(), 99L);
+        
+        boolean deleted = expenseService.deleteExpense(99L);
 
         assertFalse(deleted);
         

@@ -60,12 +60,14 @@ public class FinancialModelUtils {
     /**
      * Modifies an existing Income object with values from IncomeRequest.
      */
-    public static void modifyIncome(Income income, YearMonth monthYear, IncomeRequest request) {
+    public static void modifyIncome(Income income, IncomeRequest request) {
         income.setName(request.getName());
         income.setSource(request.getSource());
         income.setAmount(request.getAmount());
         income.setType(request.getType());
-        income.setMonthYear(monthYear);
+        if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
+            income.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()));
+        }
     }
 
     /**

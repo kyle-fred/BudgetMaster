@@ -37,8 +37,9 @@ class IncomeServiceTest {
         incomeRequest.setSource("Company XYZ");
         incomeRequest.setAmount(2000.0);
         incomeRequest.setType(TransactionType.RECURRING);
+        incomeRequest.setMonthYear("2000-01");
         
-        Income savedIncome = incomeService.createIncome(incomeRequest, expectedMonthYear.toString());
+        Income savedIncome = incomeService.createIncome(incomeRequest);
 
         assertNotNull(savedIncome);
         assertEquals("Salary", savedIncome.getName());
@@ -61,12 +62,12 @@ class IncomeServiceTest {
         );
 
         try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
-            mockedDateUtils.when(() -> DateUtils.getValidYearMonth(monthYear.toString()))
+            mockedDateUtils.when(() -> DateUtils.getValidYearMonth("2000-01"))
             		.thenReturn(monthYear);
             Mockito.when(incomeRepository.findByMonthYear(monthYear))
             		.thenReturn(incomes);
 
-            List<Income> result = incomeService.getAllIncomesForMonth(monthYear.toString());
+            List<Income> result = incomeService.getAllIncomesForMonth("2000-01");
 
             assertNotNull(result);
             assertEquals(2, result.size());
@@ -82,10 +83,10 @@ class IncomeServiceTest {
 	    YearMonth testYearMonth = YearMonth.of(2000, 1);
     	Income expectedIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testYearMonth);
     	
-    	Mockito.when(incomeRepository.findByMonthYearAndId(Mockito.eq(testYearMonth), Mockito.eq(1L)))
+    	Mockito.when(incomeRepository.findById(1L))
     			.thenReturn(Optional.of(expectedIncome));
     	
-    	Optional<Income> retrievedIncome = incomeService.getIncomeById(testYearMonth.toString(), 1L);
+    	Optional<Income> retrievedIncome = incomeService.getIncomeById(1L);
     	
     	assertTrue(retrievedIncome.isPresent());
         assertEquals("Salary", retrievedIncome.get().getName());
@@ -95,7 +96,7 @@ class IncomeServiceTest {
 	    assertEquals(testYearMonth, retrievedIncome.get().getMonthYear());
 	    
         Mockito.verify(incomeRepository, Mockito.times(1))
-				.findByMonthYearAndId(Mockito.eq(testYearMonth), Mockito.eq(1L));
+				.findById(1L);
     }
     
     @Test
@@ -108,24 +109,25 @@ class IncomeServiceTest {
         updateRequest.setSource("Company ABC");
         updateRequest.setAmount(3000.0);
         updateRequest.setType(TransactionType.ONE_TIME);
+        updateRequest.setMonthYear("2000-01");
         
-        Mockito.when(incomeRepository.findByMonthYearAndId(Mockito.eq(testYearMonth), Mockito.eq(1L)))
+        Mockito.when(incomeRepository.findById(1L))
 				.thenReturn(Optional.of(existingIncome));
         Mockito.when(incomeRepository.saveAndFlush(Mockito.any(Income.class)))
         		.thenReturn(existingIncome);
 
-        Optional<Income> updatedIncome = incomeService.updateIncome(testYearMonth.toString(), 1L, updateRequest);
+        Optional<Income> updatedIncome = incomeService.updateIncome(1L, updateRequest);
 
         assertTrue(updatedIncome.isPresent());
         assertEquals("Bonus", updatedIncome.get().getName());
         assertEquals("Company ABC", updatedIncome.get().getSource());
         assertEquals(3000.0, updatedIncome.get().getAmount());
         assertEquals(TransactionType.ONE_TIME, updatedIncome.get().getType());
+        assertEquals(testYearMonth, updatedIncome.get().getMonthYear());
         
         Mockito.verify(incomeRepository, Mockito.times(1))
         		.saveAndFlush(existingIncome);
     }
-    
     
     @Test
     void shouldDeleteIncomeWhenExists() {
@@ -136,8 +138,7 @@ class IncomeServiceTest {
     			.when(incomeRepository)
     			.deleteById(1L);
     	
-    	YearMonth testYearMonth = YearMonth.of(2000, 1);
-        boolean deleted = incomeService.deleteIncome(testYearMonth.toString(), 1L);
+    	boolean deleted = incomeService.deleteIncome(1L);
 
         assertTrue(deleted);
         
@@ -147,29 +148,26 @@ class IncomeServiceTest {
     
     @Test
     void shouldThrowExceptionWhenSaveFails() {
-    	YearMonth testYearMonth = YearMonth.of(2000, 1);
-    	
     	Mockito.when(incomeRepository.saveAndFlush(Mockito.any(Income.class)))
                .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
-
+    	
         IncomeRequest incomeRequest = new IncomeRequest();
         incomeRequest.setName("Salary");
         incomeRequest.setSource("Company XYZ");
         incomeRequest.setAmount(2000.0);
         incomeRequest.setType(TransactionType.RECURRING);
+        incomeRequest.setMonthYear("2000-01");
         
         assertThrows(DataIntegrityViolationException.class,
-            () -> incomeService.createIncome(incomeRequest, testYearMonth.toString()));
+            () -> incomeService.createIncome(incomeRequest));
     }
     
     @Test
     void shouldReturnEmptyWhenIncomeDoesNotExist() {
-    	YearMonth testYearMonth = YearMonth.of(2000, 1);
-    	
     	Mockito.when(incomeRepository.findById(99L))
     			.thenReturn(Optional.empty());
         
-        Optional<Income> retrievedIncome = incomeService.getIncomeById(testYearMonth.toString(), 99L);
+        Optional<Income> retrievedIncome = incomeService.getIncomeById(99L);
         
         assertFalse(retrievedIncome.isPresent());
     }
@@ -179,12 +177,12 @@ class IncomeServiceTest {
         YearMonth monthYear = YearMonth.of(2000, 1);
         
         try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
-            mockedDateUtils.when(() -> DateUtils.getValidYearMonth(monthYear.toString()))
+            mockedDateUtils.when(() -> DateUtils.getValidYearMonth("2000-01"))
             		.thenReturn(monthYear);
             Mockito.when(incomeRepository.findByMonthYear(monthYear))
             		.thenReturn(Collections.emptyList());
             
-            List<Income> result = incomeService.getAllIncomesForMonth(monthYear.toString());
+            List<Income> result = incomeService.getAllIncomesForMonth("2000-01");
 
             assertNotNull(result);
             assertTrue(result.isEmpty());
@@ -195,18 +193,17 @@ class IncomeServiceTest {
     
     @Test
     void shouldReturnEmptyWhenUpdatingNonExistentIncome() {
-    	YearMonth testYearMonth = YearMonth.of(2000, 1);
-    	
-    	IncomeRequest updateRequest = new IncomeRequest();
+        IncomeRequest updateRequest = new IncomeRequest();
         updateRequest.setName("Interest Income");
         updateRequest.setSource("Bank XYZ");
         updateRequest.setAmount(100.0);
         updateRequest.setType(TransactionType.ONE_TIME);
+        updateRequest.setMonthYear("2000-01");
         
         Mockito.when(incomeRepository.findById(99L))
         		.thenReturn(Optional.empty());
 
-        Optional<Income> updatedIncome = incomeService.updateIncome(testYearMonth.toString(), 99L, updateRequest);
+        Optional<Income> updatedIncome = incomeService.updateIncome(99L, updateRequest);
 
         assertFalse(updatedIncome.isPresent());
         Mockito.verify(incomeRepository, Mockito.never())
@@ -219,8 +216,7 @@ class IncomeServiceTest {
     			.when(incomeRepository)
     			.existsById(99L);
     	
-    	YearMonth testYearMonth = YearMonth.of(2000, 1);
-        boolean deleted = incomeService.deleteIncome(testYearMonth.toString(), 99L);
+        boolean deleted = incomeService.deleteIncome(99L);
 
         assertFalse(deleted);
         Mockito.verify(incomeRepository, Mockito.never())

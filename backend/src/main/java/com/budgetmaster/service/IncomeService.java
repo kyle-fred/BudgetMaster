@@ -22,8 +22,8 @@ public class IncomeService {
 		this.incomeRepository = incomeRepository;
 	}
 	
-	public Income createIncome(IncomeRequest request, String monthYearString) {
-		Income income = FinancialModelUtils.buildIncome(request, monthYearString);
+	public Income createIncome(IncomeRequest request) {
+		Income income = FinancialModelUtils.buildIncome(request, request.getMonthYear());
 		return incomeRepository.saveAndFlush(income);
 	}
 	
@@ -32,27 +32,23 @@ public class IncomeService {
 		return incomeRepository.findByMonthYear(monthYear);
 	}
 	
-	public Optional<Income> getIncomeById(String monthYearString, Long id) {
-		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
-		return incomeRepository.findByMonthYearAndId(monthYear, id);
+	public Optional<Income> getIncomeById(Long id) {
+		return incomeRepository.findById(id);
 	}
 	
-	public Optional<Income> updateIncome(String monthYearString, Long id, IncomeRequest request) {
-		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
-		Optional<Income> existingIncome = incomeRepository.findByMonthYearAndId(monthYear, id);
+	public Optional<Income> updateIncome(Long id, IncomeRequest request) {
+		Optional<Income> existingIncome = incomeRepository.findById(id);
 		
 		if (existingIncome.isPresent()) {
 			Income income = existingIncome.get();
-			FinancialModelUtils.modifyIncome(income, monthYear, request);
-			
+			FinancialModelUtils.modifyIncome(income, request);
 			return Optional.of(incomeRepository.saveAndFlush(income));
-		} else {
-			return Optional.empty();
 		}
+		return Optional.empty();
 	}
 	
 	@Transactional
-	public boolean deleteIncome(String monthYearString, Long id) {
+	public boolean deleteIncome(Long id) {
 		if (incomeRepository.existsById(id)) {
 			incomeRepository.deleteById(id);
 			return true;

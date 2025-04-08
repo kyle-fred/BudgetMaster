@@ -62,19 +62,19 @@ public class FinancialModelUtilsTest {
     
     @Test
     void testModifyBudget_ValidRequest_ModifiesBudgetCorrectly() {
-    	Budget budget = new Budget(3000.0, 1500.0, YearMonth.of(2000, 1));
-    	
+        Budget budget = new Budget(3000.0, 1500.0, YearMonth.of(2000, 1));
+        
         BudgetRequest request = new BudgetRequest();
         request.setTotalIncome(4000.0);
         request.setTotalExpenses(2000.0);
-        request.setMonthYear("2020-01");
+        request.setMonthYear("2000-01");
 
         FinancialModelUtils.modifyBudget(budget, request);
 
         assertEquals(4000.0, budget.getTotalIncome(), "Income should be updated");
         assertEquals(2000.0, budget.getTotalExpenses(), "Expenses should be updated");
         assertEquals(2000.0, budget.getSavings(), "Savings should be recalculated");
-        assertEquals(YearMonth.of(2020, 1), budget.getMonthYear(), "MonthYear should be updated");
+        assertEquals(YearMonth.of(2000, 1), budget.getMonthYear(), "MonthYear should be updated");
     }
 
     @Test
@@ -94,8 +94,8 @@ public class FinancialModelUtilsTest {
 
     @Test
     void testModifyBudget_EmptyMonthYear_DoesNotChangeMonthYear() {
-    	YearMonth originalMonthYear = YearMonth.of(2023, 5);
-    	
+        YearMonth originalMonthYear = YearMonth.of(2023, 5);
+        
         Budget budget = new Budget(3000.0, 1500.0, originalMonthYear);
         BudgetRequest request = new BudgetRequest();
         request.setTotalIncome(4000.0);
@@ -110,7 +110,7 @@ public class FinancialModelUtilsTest {
     // ----- Income Tests -----
     @Test
     void testBuildIncome_CreatesIncomeWithValidValues() {
-    	YearMonth testMonthYear = YearMonth.of(2000, 1);
+        YearMonth testMonthYear = YearMonth.of(2000, 1);
         Income income = FinancialModelUtils.buildIncome(incomeRequest, testMonthYear.toString());
         
         assertNotNull(income, "Income object should not be null");
@@ -123,28 +123,29 @@ public class FinancialModelUtilsTest {
     
     @Test
     void testModifyIncome_ValidRequest_ModifiesIncomeCorrectly() {
-    	YearMonth testMonthYear = YearMonth.of(2000, 1);
-    	Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonthYear);
+        YearMonth testMonthYear = YearMonth.of(2000, 1);
+        Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonthYear);
         
-    	IncomeRequest updateRequest = new IncomeRequest();
-    	updateRequest.setName("Bonus");
+        IncomeRequest updateRequest = new IncomeRequest();
+        updateRequest.setName("Bonus");
         updateRequest.setSource("Company ABC");
         updateRequest.setAmount(3000.0);
         updateRequest.setType(TransactionType.ONE_TIME);
+        updateRequest.setMonthYear("2000-01");
 
-        FinancialModelUtils.modifyIncome(income, YearMonth.of(2020, 1), updateRequest);
+        FinancialModelUtils.modifyIncome(income, updateRequest);
         
         assertEquals("Bonus", income.getName(), "Name should match");
         assertEquals("Company ABC", income.getSource(), "Source should match");
         assertEquals(3000.0, income.getAmount(), "Amount should match");
         assertEquals(TransactionType.ONE_TIME, income.getType(), "Transaction type should match");
-        assertEquals(YearMonth.of(2020, 1), income.getMonthYear(), "MonthYear should be correctly set");
+        assertEquals(YearMonth.of(2000, 1), income.getMonthYear(), "MonthYear should be correctly set");
     }
 
     // ----- Expense Tests -----
     @Test
     void testBuildExpense_CreatesExpenseWithValidValues() {
-    	YearMonth testMonthYear = YearMonth.of(2000, 1);
+        YearMonth testMonthYear = YearMonth.of(2000, 1);
         Expense expense = FinancialModelUtils.buildExpense(expenseRequest, testMonthYear.toString());
         
         assertNotNull(expense, "Expense object should not be null");
@@ -157,21 +158,21 @@ public class FinancialModelUtilsTest {
     
     @Test
     void testModifyExpense_ValidRequest_ModifiesExpenseCorrectly() {
-    	YearMonth testMonthYear = YearMonth.of(2000, 1);
-    	Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testMonthYear);
-    	
-    	ExpenseRequest updateRequest = new ExpenseRequest();
-    	updateRequest.setName("Gas Bill");
-    	updateRequest.setAmount(100.0);
-    	updateRequest.setCategory(ExpenseCategory.UTILITIES);
-    	updateRequest.setType(TransactionType.RECURRING);
-    	
-        FinancialModelUtils.modifyExpense(expense, YearMonth.of(2020, 1), updateRequest);
+        YearMonth testMonthYear = YearMonth.of(2000, 1);
+        Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testMonthYear);
+        
+        ExpenseRequest updateRequest = new ExpenseRequest();
+        updateRequest.setName("Gas Bill");
+        updateRequest.setAmount(100.0);
+        updateRequest.setCategory(ExpenseCategory.UTILITIES);
+        updateRequest.setType(TransactionType.RECURRING);
+        
+        FinancialModelUtils.modifyExpense(expense, YearMonth.of(2000, 1), updateRequest);
         
         assertEquals("Gas Bill", expense.getName(), "Name should match");
         assertEquals(100.0, expense.getAmount(), "Amount should match");
         assertEquals(ExpenseCategory.UTILITIES, expense.getCategory(), "Expense category should match");
         assertEquals(TransactionType.RECURRING, expense.getType(), "Transaction type should match");
-        assertEquals(YearMonth.of(2020, 1), expense.getMonthYear(), "MonthYear should be correctly set");
+        assertEquals(YearMonth.of(2000, 1), expense.getMonthYear(), "MonthYear should be correctly set");
     }
 }

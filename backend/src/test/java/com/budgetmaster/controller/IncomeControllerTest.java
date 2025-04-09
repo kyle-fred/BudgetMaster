@@ -14,12 +14,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.YearMonth;
 import java.util.Collections;
@@ -103,7 +99,7 @@ public class IncomeControllerTest {
 		Mockito.when(incomeService.getIncomeById(1L))
 				.thenReturn(Optional.of(income));
 		
-		mockMvc.perform(get("/api/incomes/1")
+		mockMvc.perform(get("/api/incomes/{id}", 1L)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value("Salary"))
@@ -128,7 +124,8 @@ public class IncomeControllerTest {
 		Mockito.when(incomeService.getAllIncomesForMonth("2000-01"))
 				.thenReturn(incomeList);
 		
-		mockMvc.perform(get("/api/incomes?monthYear=2000-01")
+		mockMvc.perform(get("/api/incomes")
+				.param("monthYear", "2000-01")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 	            .andExpect(jsonPath("$[0].name").value("Salary"))
@@ -151,7 +148,8 @@ public class IncomeControllerTest {
 	    Mockito.when(incomeService.getAllIncomesForMonth("2000-01"))
 	           .thenReturn(Collections.emptyList());
 
-	    mockMvc.perform(get("/api/incomes?monthYear=2000-01")
+	    mockMvc.perform(get("/api/incomes")
+	            .param("monthYear", "2000-01")
 	            .contentType(MediaType.APPLICATION_JSON))
 	            .andExpect(status().isOk())
 	            .andExpect(jsonPath("$").isArray())
@@ -179,7 +177,7 @@ public class IncomeControllerTest {
 		Mockito.when(incomeService.updateIncome(Mockito.eq(1L), Mockito.refEq(updateRequest)))
 				.thenReturn(Optional.of(updatedIncome));
 		
-		mockMvc.perform(put("/api/incomes/1")
+		mockMvc.perform(put("/api/incomes/{id}", 1L)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(updateRequest)))
 				.andExpect(status().isOk())
@@ -199,7 +197,7 @@ public class IncomeControllerTest {
     			.when(incomeService)
     			.deleteIncome(1L);
     	
-        mockMvc.perform(delete("/api/incomes/1"))
+        mockMvc.perform(delete("/api/incomes/{id}", 1L))
                 .andExpect(status().isNoContent());
         
         Mockito.verify(incomeService, Mockito.times(1))
@@ -350,7 +348,7 @@ public class IncomeControllerTest {
 		Mockito.when(incomeService.getIncomeById(99L))
 				.thenReturn(Optional.empty());
 		
-		mockMvc.perform(get("/api/incomes/99"))
+		mockMvc.perform(get("/api/incomes/{id}", 99L))
 				.andExpect(status().isNotFound());
 		
 		Mockito.verify(incomeService, Mockito.times(1))
@@ -368,7 +366,7 @@ public class IncomeControllerTest {
         Mockito.when(incomeService.updateIncome(Mockito.eq(99L), Mockito.any(IncomeRequest.class)))
         		.thenReturn(Optional.empty());
         
-        mockMvc.perform(put("/api/incomes/99")
+        mockMvc.perform(put("/api/incomes/{id}", 99L)
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(objectMapper.writeValueAsString(updateRequest)))
 	            .andExpect(status().isNotFound());
@@ -384,7 +382,7 @@ public class IncomeControllerTest {
 	        }
 	        """;
 		
-	    mockMvc.perform(put("/api/incomes/1")
+	    mockMvc.perform(put("/api/incomes/{id}", 1L)
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(malformedJson))
 		        .andExpect(status().isBadRequest())
@@ -401,7 +399,7 @@ public class IncomeControllerTest {
             }
             """;
         
-        mockMvc.perform(put("/api/incomes/1")
+        mockMvc.perform(put("/api/incomes/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidRequest))
 	            .andExpect(status().isBadRequest())
@@ -414,7 +412,7 @@ public class IncomeControllerTest {
 				.when(incomeService)
 				.deleteIncome(Mockito.eq(99L));
     	
-        mockMvc.perform(delete("/api/incomes/99"))
+        mockMvc.perform(delete("/api/incomes/{id}", 99L))
                 .andExpect(status().isNotFound());
         
         Mockito.verify(incomeService, Mockito.times(1))

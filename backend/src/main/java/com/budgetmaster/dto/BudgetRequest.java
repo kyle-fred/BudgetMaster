@@ -6,15 +6,15 @@ import jakarta.validation.constraints.Pattern;
 
 public class BudgetRequest {
 	
-	@NotNull(message = "Income is required.")
-	@Min(value = 0, message = "Income cannot be negative.")
+	@NotNull(message = "Total income is required.")
+	@Min(value = 0, message = "Total income cannot be negative.")
 	private Double totalIncome;
 	
-	@NotNull(message = "Expenses are required.")
-	@Min(value = 0, message = "Expenses cannot be negative.")
-	private Double totalExpenses;
+	@NotNull(message = "Total expense is required.")
+	@Min(value = 0, message = "Total expense cannot be negative.")
+	private Double totalExpense;
 	
-	@Pattern(regexp = "^\\d{4}-\\d{2}$", message = "Invalid monthYear value. Expected format: YYYY-MM.")
+	@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month year must be in format YYYY-MM")
 	private String monthYear;
 	
 	public Double getTotalIncome() {
@@ -25,12 +25,12 @@ public class BudgetRequest {
 		this.totalIncome = totalIncome;
 	}
 	
-	public Double getTotalExpenses() {
-		return totalExpenses;
+	public Double getTotalExpense() {
+		return totalExpense;
 	}
 	
-	public void setTotalExpenses(Double totalExpenses) {
-		this.totalExpenses = totalExpenses;
+	public void setTotalExpense(Double totalExpense) {
+		this.totalExpense = totalExpense;
 	}
 	
 	public String getMonthYear() {

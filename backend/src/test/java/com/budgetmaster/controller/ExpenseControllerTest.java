@@ -17,12 +17,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.YearMonth;
 import java.util.Collections;
@@ -333,7 +329,6 @@ public class ExpenseControllerTest {
 	        .andExpect(status().isBadRequest())
 	        .andExpect(jsonPath("$.error").value("Invalid request format."));
 	}
-
 	
 	@Test
 	void shouldReturnBadRequestWhenExpenseCategoryIsInvalid() throws Exception {
@@ -411,7 +406,7 @@ public class ExpenseControllerTest {
 	        }
 	        """;
 	    
-	    mockMvc.perform(put("/api/expenses/{id}", 1)
+	    mockMvc.perform(put("/api/expenses/{id}", 1L)
 	            .contentType(MediaType.APPLICATION_JSON)
 	            .content(malformedJson))
 		        .andExpect(status().isBadRequest())
@@ -429,7 +424,7 @@ public class ExpenseControllerTest {
             }
             """;
         
-        mockMvc.perform(put("/api/expenses/{id}", 1)
+        mockMvc.perform(put("/api/expenses/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidRequest))
 	            .andExpect(status().isBadRequest())
@@ -447,7 +442,7 @@ public class ExpenseControllerTest {
             }
             """;
 			
-        mockMvc.perform(put("/api/expenses/{id}", 1)
+        mockMvc.perform(put("/api/expenses/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidRequest))
 	            .andExpect(status().isBadRequest())

@@ -114,8 +114,8 @@ public class FinancialModelUtilsTest {
         Income income = FinancialModelUtils.buildIncome(incomeRequest);
         
         assertNotNull(income, "Income object should not be null");
-        assertEquals("Salary", income.getName(), "Name should match");
-        assertEquals("Company XYZ", income.getSource(), "Source should match");
+        assertEquals("SALARY", income.getName(), "Name should be capitalized");
+        assertEquals("COMPANY XYZ", income.getSource(), "Source should be capitalized");
         assertEquals(2000.0, income.getAmount(), "Amount should match");
         assertEquals(TransactionType.RECURRING, income.getType(), "Transaction type should match");
         assertEquals(YearMonth.of(2000, 1), income.getMonthYear(), "MonthYear should be correctly set");
@@ -135,8 +135,8 @@ public class FinancialModelUtilsTest {
 
         FinancialModelUtils.modifyIncome(income, updateRequest);
         
-        assertEquals("Bonus", income.getName(), "Name should match");
-        assertEquals("Company ABC", income.getSource(), "Source should match");
+        assertEquals("BONUS", income.getName(), "Name should be capitalized");
+        assertEquals("COMPANY ABC", income.getSource(), "Source should be capitalized");
         assertEquals(3000.0, income.getAmount(), "Amount should match");
         assertEquals(TransactionType.ONE_TIME, income.getType(), "Transaction type should match");
         assertEquals(YearMonth.of(2000, 1), income.getMonthYear(), "MonthYear should be correctly set");
@@ -148,7 +148,7 @@ public class FinancialModelUtilsTest {
         Expense expense = FinancialModelUtils.buildExpense(expenseRequest);
         
         assertNotNull(expense, "Expense object should not be null");
-        assertEquals("Rent", expense.getName(), "Name should match");
+        assertEquals("RENT", expense.getName(), "Name should be capitalized");
         assertEquals(1000.0, expense.getAmount(), "Amount should match");
         assertEquals(ExpenseCategory.HOUSING, expense.getCategory(), "Expense category should match");
         assertEquals(TransactionType.RECURRING, expense.getType(), "Transaction type should match");
@@ -161,17 +161,18 @@ public class FinancialModelUtilsTest {
         Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testMonthYear);
         
         ExpenseRequest updateRequest = new ExpenseRequest();
-        updateRequest.setName("Gas Bill");
-        updateRequest.setAmount(100.0);
-        updateRequest.setCategory(ExpenseCategory.UTILITIES);
-        updateRequest.setType(TransactionType.RECURRING);
-        
+        updateRequest.setName("Groceries");
+        updateRequest.setAmount(200.0);
+        updateRequest.setCategory(ExpenseCategory.GROCERIES);
+        updateRequest.setType(TransactionType.ONE_TIME);
+        updateRequest.setMonthYear("2000-01");
+
         FinancialModelUtils.modifyExpense(expense, updateRequest);
         
-        assertEquals("Gas Bill", expense.getName(), "Name should match");
-        assertEquals(100.0, expense.getAmount(), "Amount should match");
-        assertEquals(ExpenseCategory.UTILITIES, expense.getCategory(), "Expense category should match");
-        assertEquals(TransactionType.RECURRING, expense.getType(), "Transaction type should match");
+        assertEquals("GROCERIES", expense.getName(), "Name should be capitalized");
+        assertEquals(200.0, expense.getAmount(), "Amount should match");
+        assertEquals(ExpenseCategory.GROCERIES, expense.getCategory(), "Expense category should match");
+        assertEquals(TransactionType.ONE_TIME, expense.getType(), "Transaction type should match");
         assertEquals(YearMonth.of(2000, 1), expense.getMonthYear(), "MonthYear should be correctly set");
     }
 }

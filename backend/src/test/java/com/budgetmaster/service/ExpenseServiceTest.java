@@ -120,10 +120,11 @@ class ExpenseServiceTest {
          Optional<Expense> updatedExpense = expenseService.updateExpense(1L, updateRequest);
 
         assertTrue(updatedExpense.isPresent());
-        assertEquals("Gas Bill", updatedExpense.get().getName());
-        assertEquals(100.0, updatedExpense.get().getAmount());
-        assertEquals(ExpenseCategory.UTILITIES, updatedExpense.get().getCategory());
-        assertEquals(TransactionType.ONE_TIME, updatedExpense.get().getType());
+        Expense result = updatedExpense.get();
+        assertEquals("GAS BILL", result.getName());
+        assertEquals(100.0, result.getAmount());
+        assertEquals(ExpenseCategory.UTILITIES, result.getCategory());
+        assertEquals(TransactionType.ONE_TIME, result.getType());
         
         Mockito.verify(expenseRepository, Mockito.times(1))
         		.saveAndFlush(existingExpense);

@@ -119,11 +119,12 @@ class IncomeServiceTest {
         Optional<Income> updatedIncome = incomeService.updateIncome(1L, updateRequest);
 
         assertTrue(updatedIncome.isPresent());
-        assertEquals("Bonus", updatedIncome.get().getName());
-        assertEquals("Company ABC", updatedIncome.get().getSource());
-        assertEquals(3000.0, updatedIncome.get().getAmount());
-        assertEquals(TransactionType.ONE_TIME, updatedIncome.get().getType());
-        assertEquals(testYearMonth, updatedIncome.get().getMonthYear());
+        Income result = updatedIncome.get();
+        assertEquals("BONUS", result.getName());
+        assertEquals("COMPANY ABC", result.getSource());
+        assertEquals(3000.0, result.getAmount());
+        assertEquals(TransactionType.ONE_TIME, result.getType());
+        assertEquals(testYearMonth, result.getMonthYear());
         
         Mockito.verify(incomeRepository, Mockito.times(1))
         		.saveAndFlush(existingIncome);

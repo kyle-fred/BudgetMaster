@@ -18,17 +18,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.validation.ConstraintViolationException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<>();
-		for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-			errors.put(error.getField(), error.getDefaultMessage());
-		}
-		return ResponseEntity.badRequest().body(errors);
+		ex.getBindingResult().getAllErrors().forEach((error) -> {
+			String fieldName = ((FieldError) error).getField();
+			String errorMessage = error.getDefaultMessage();
+			errors.put(fieldName, errorMessage);
+		});
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+	}
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<Map<String, String>> handleConstraintViolation(ConstraintViolationException ex) {
+		Map<String, String> errors = new HashMap<>();
+		ex.getConstraintViolations().forEach(violation -> {
+			String fieldName = violation.getPropertyPath().toString();
+			fieldName = fieldName.substring(fieldName.lastIndexOf('.') + 1);
+			String errorMessage = violation.getMessage();
+			errors.put(fieldName, errorMessage);
+		});
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
 	}
 	
 	@ExceptionHandler(HttpMessageNotReadableException.class)
@@ -45,12 +60,6 @@ public class GlobalExceptionHandler {
 	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	}
 	
-	@ExceptionHandler(IllegalArgumentException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-		return ResponseEntity.badRequest().body("Invalid input " + ex.getMessage());
-	}
-	
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseEntity<String> handleGenericException(Exception ex) {
@@ -64,20 +73,12 @@ public class GlobalExceptionHandler {
                 .body("A database constraint was violated.");
     }
     
-    @ExceptionHandler(InvalidMonthYearExceptionHandler.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Map<String, String>> handleInvalidMonthYear(InvalidMonthYearExceptionHandler ex) {
-    	Map<String, String> errors = new HashMap<>();
-    	errors.put("monthYear", ex.getMessage());
-    	return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-    
     @ExceptionHandler(BudgetNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String, String>> handleBudgetNotFound(BudgetNotFoundException ex) {
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
     
     /**

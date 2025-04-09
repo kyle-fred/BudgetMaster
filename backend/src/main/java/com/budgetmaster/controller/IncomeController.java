@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 
 @RestController
 @RequestMapping("api/incomes")
@@ -31,7 +32,10 @@ public class IncomeController {
     }
     
     @GetMapping
-    public ResponseEntity<List<Income>> getAllIncomesForMonth(@RequestParam String monthYear) {
+    public ResponseEntity<List<Income>> getAllIncomesForMonth(
+            @RequestParam 
+            @Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month year must be in format YYYY-MM") 
+            String monthYear) {
         List<Income> incomes = incomeService.getAllIncomesForMonth(monthYear);
         return ResponseEntity.ok(incomes);
     }

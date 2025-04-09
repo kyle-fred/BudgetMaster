@@ -26,7 +26,7 @@ public class FinancialModelUtilsTest {
     void setUp() {
         budgetRequest = new BudgetRequest();
         budgetRequest.setTotalIncome(5000D);
-        budgetRequest.setTotalExpenses(2000D);
+        budgetRequest.setTotalExpense(2000D);
         budgetRequest.setMonthYear("2000-01");
 
         incomeRequest = new IncomeRequest();
@@ -58,7 +58,7 @@ public class FinancialModelUtilsTest {
         
         assertNotNull(budget, "Budget object should not be null");
         assertEquals(5000, budget.getTotalIncome(), "Income should match");
-        assertEquals(2000, budget.getTotalExpenses(), "Expenses should match");
+        assertEquals(2000, budget.getTotalExpense(), "Expenses should match");
         assertEquals(YearMonth.of(2000, 1), budget.getMonthYear(), "MonthYear should be correctly set");
     }
     
@@ -68,15 +68,14 @@ public class FinancialModelUtilsTest {
         
         BudgetRequest request = new BudgetRequest();
         request.setTotalIncome(4000.0);
-        request.setTotalExpenses(2000.0);
-        request.setMonthYear("2000-01");
+        request.setTotalExpense(2000.0);
+        request.setMonthYear("2000-02");
 
         FinancialModelUtils.modifyBudget(budget, request);
 
         assertEquals(4000.0, budget.getTotalIncome(), "Income should be updated");
-        assertEquals(2000.0, budget.getTotalExpenses(), "Expenses should be updated");
-        assertEquals(2000.0, budget.getSavings(), "Savings should be recalculated");
-        assertEquals(YearMonth.of(2000, 1), budget.getMonthYear(), "MonthYear should be updated");
+        assertEquals(2000.0, budget.getTotalExpense(), "Expenses should be updated");
+        assertEquals(YearMonth.of(2000, 2), budget.getMonthYear(), "MonthYear should be updated");
     }
 
     @Test
@@ -86,7 +85,7 @@ public class FinancialModelUtilsTest {
         Budget budget = new Budget(3000.0, 1500.0, originalMonthYear);
         BudgetRequest request = new BudgetRequest();
         request.setTotalIncome(4000.0);
-        request.setTotalExpenses(2000.0);
+        request.setTotalExpense(2000.0);
         request.setMonthYear(null);
 
         FinancialModelUtils.modifyBudget(budget, request);
@@ -101,7 +100,7 @@ public class FinancialModelUtilsTest {
         Budget budget = new Budget(3000.0, 1500.0, originalMonthYear);
         BudgetRequest request = new BudgetRequest();
         request.setTotalIncome(4000.0);
-        request.setTotalExpenses(2000.0);
+        request.setTotalExpense(2000.0);
         request.setMonthYear("");
 
         FinancialModelUtils.modifyBudget(budget, request);

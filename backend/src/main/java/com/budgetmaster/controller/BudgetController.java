@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("api/budget")
+@RequestMapping("api/budgets")
 @Validated
 public class BudgetController {
 	
@@ -30,26 +30,20 @@ public class BudgetController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<Budget> getCurrentMonthBudget() {
-		Budget budget = budgetService.getBudgetByMonthYear(null);
-		return ResponseEntity.ok(budget);
-	}
-	
-	@GetMapping("/{monthYear}")
-	public ResponseEntity<Budget> getBudgetByMonth(@PathVariable String monthYear) {
+	public ResponseEntity<Budget> getBudgetByMonth(@RequestParam String monthYear) {
 		Budget budget = budgetService.getBudgetByMonthYear(monthYear);
 		return ResponseEntity.ok(budget);
 	}
 	
-	@PutMapping("/{monthYear}")
-	public ResponseEntity<Budget> updateBudget(@PathVariable String monthYear, @Valid @RequestBody BudgetRequest request) {
-		Budget budget = budgetService.updateBudget(monthYear, request);
+	@PutMapping("/{id}")
+	public ResponseEntity<Budget> updateBudget(@PathVariable Long id, @Valid @RequestBody BudgetRequest request) {
+		Budget budget = budgetService.updateBudget(id, request);
 		return ResponseEntity.ok(budget);
 	}
 	
-	@DeleteMapping("/{monthYear}")
-	public ResponseEntity<Void> deleteBudget(@PathVariable String monthYear) {
-		budgetService.deleteBudget(monthYear);
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
+		budgetService.deleteBudget(id);
 		return ResponseEntity.noContent().build();
 	}
 }

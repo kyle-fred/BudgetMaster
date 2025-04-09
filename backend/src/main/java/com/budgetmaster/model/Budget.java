@@ -23,8 +23,9 @@ public class Budget {
 	
 	private double totalIncome;
 	
-	private double totalExpenses;
+	private double totalExpense;
 	
+	@Column(insertable = false, updatable = false)
 	private double savings;
 	
 	@Column(nullable = false, unique=true)
@@ -42,10 +43,9 @@ public class Budget {
 	
 	public Budget() {}
 	
-	public Budget(double totalIncome, double totalExpenses, YearMonth monthYear) {
+	public Budget(double totalIncome, double totalExpense, YearMonth monthYear) {
 		this.totalIncome = totalIncome;
-		this.totalExpenses = totalExpenses;
-		this.savings = totalIncome - totalExpenses;
+		this.totalExpense = totalExpense;
 		this.monthYear = monthYear;
 	}
 	
@@ -65,12 +65,12 @@ public class Budget {
 		this.totalIncome = totalIncome;
 	}
 	
-	public double getTotalExpenses() {
-		return totalExpenses;
+	public double getTotalExpense() {
+		return totalExpense;
 	}
 	
-	public void setTotalExpenses(double totalExpenses) {
-		this.totalExpenses = totalExpenses;
+	public void setTotalExpense(double totalExpense) {
+		this.totalExpense = totalExpense;
 	}
 	
 	public double getSavings() {

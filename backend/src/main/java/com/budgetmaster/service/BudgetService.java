@@ -67,14 +67,14 @@ public class BudgetService {
 	/**
 	 * Creates a supplier for BudgetNotFoundException when entity is not found by ID.
 	 */
-	Supplier<BudgetNotFoundException> createIdNotFoundException(Long id) {
-		return () -> new BudgetNotFoundException("Budget not found with id: " + id);
+	private Supplier<BudgetNotFoundException> createIdNotFoundException(Long id) {
+		return () -> new BudgetNotFoundException("Budget not found for id: " + id);
 	}
 	
 	/**
 	 * Creates a supplier for BudgetNotFoundException when entity is not found by month/year.
 	 */
-	Supplier<BudgetNotFoundException> createMonthYearNotFoundException(YearMonth monthYear) {
+	private Supplier<BudgetNotFoundException> createMonthYearNotFoundException(YearMonth monthYear) {
 		return () -> new BudgetNotFoundException("Budget not found for month: " + monthYear);
 	}
 }

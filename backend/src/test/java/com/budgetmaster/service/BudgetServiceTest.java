@@ -194,7 +194,7 @@ class BudgetServiceTest {
         BudgetNotFoundException thrownException = assertThrows(BudgetNotFoundException.class,
         		() -> budgetService.updateBudget(budgetId, updateRequest));
         
-        assertEquals(thrownException.getMessage(), "Budget not found with id: " + budgetId);
+        assertEquals(thrownException.getMessage(), "Budget not found for id: " + budgetId);
         Mockito.verify(budgetRepository, Mockito.never())
                 .saveAndFlush(Mockito.any(Budget.class));
     }
@@ -208,7 +208,7 @@ class BudgetServiceTest {
         BudgetNotFoundException thrownException = assertThrows(BudgetNotFoundException.class,
         		() -> budgetService.deleteBudget(budgetId));
 
-        assertEquals(thrownException.getMessage(), "Budget not found with id: " + budgetId);
+        assertEquals(thrownException.getMessage(), "Budget not found for id: " + budgetId);
         Mockito.verify(budgetRepository, Mockito.never())
                 .deleteById(Mockito.anyLong());
     }

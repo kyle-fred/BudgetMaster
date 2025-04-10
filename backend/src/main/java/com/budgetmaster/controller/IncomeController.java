@@ -5,7 +5,6 @@ import com.budgetmaster.model.Income;
 import com.budgetmaster.service.IncomeService;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -42,31 +41,19 @@ public class IncomeController {
 	
     @GetMapping("/{id}")
     public ResponseEntity<Income> getIncomeById(@PathVariable Long id) {
-        Optional<Income> income = incomeService.getIncomeById(id);
-        if (income.isPresent()) {
-            return ResponseEntity.ok(income.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Income income = incomeService.getIncomeById(id);
+        return ResponseEntity.ok(income);
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<Income> updateIncome(@PathVariable Long id, @Valid @RequestBody IncomeRequest request) {
-        Optional<Income> income = incomeService.updateIncome(id, request);
-        if (income.isPresent()) {
-            return ResponseEntity.ok(income.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Income income = incomeService.updateIncome(id, request);
+        return ResponseEntity.ok(income);
     }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteIncome(@PathVariable Long id) {
-        boolean deleted = incomeService.deleteIncome(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        incomeService.deleteIncome(id);
+        return ResponseEntity.noContent().build();
     }
 }

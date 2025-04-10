@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.budgetmaster.exception.IncomeNotFoundException;
+
 class IncomeServiceTest {
 	
 	private final IncomeRepository incomeRepository = mock(IncomeRepository.class);
@@ -86,14 +88,14 @@ class IncomeServiceTest {
     	Mockito.when(incomeRepository.findById(1L))
     			.thenReturn(Optional.of(expectedIncome));
     	
-    	Optional<Income> retrievedIncome = incomeService.getIncomeById(1L);
+    	Income retrievedIncome = incomeService.getIncomeById(1L);
     	
-    	assertTrue(retrievedIncome.isPresent());
-        assertEquals("Salary", retrievedIncome.get().getName());
-        assertEquals("Company XYZ", retrievedIncome.get().getSource());
-        assertEquals(2000.0, retrievedIncome.get().getAmount());
-        assertEquals(TransactionType.RECURRING, retrievedIncome.get().getType());
-	    assertEquals(testYearMonth, retrievedIncome.get().getMonthYear());
+    	assertNotNull(retrievedIncome);
+        assertEquals("Salary", retrievedIncome.getName());
+        assertEquals("Company XYZ", retrievedIncome.getSource());
+        assertEquals(2000.0, retrievedIncome.getAmount());
+        assertEquals(TransactionType.RECURRING, retrievedIncome.getType());
+	    assertEquals(testYearMonth, retrievedIncome.getMonthYear());
 	    
         Mockito.verify(incomeRepository, Mockito.times(1))
 				.findById(1L);
@@ -116,15 +118,14 @@ class IncomeServiceTest {
         Mockito.when(incomeRepository.saveAndFlush(Mockito.any(Income.class)))
         		.thenReturn(existingIncome);
 
-        Optional<Income> updatedIncome = incomeService.updateIncome(1L, updateRequest);
+        Income updatedIncome = incomeService.updateIncome(1L, updateRequest);
 
-        assertTrue(updatedIncome.isPresent());
-        Income result = updatedIncome.get();
-        assertEquals("BONUS", result.getName());
-        assertEquals("COMPANY ABC", result.getSource());
-        assertEquals(3000.0, result.getAmount());
-        assertEquals(TransactionType.ONE_TIME, result.getType());
-        assertEquals(testYearMonth, result.getMonthYear());
+        assertNotNull(updatedIncome);
+        assertEquals("BONUS", updatedIncome.getName());
+        assertEquals("COMPANY ABC", updatedIncome.getSource());
+        assertEquals(3000.0, updatedIncome.getAmount());
+        assertEquals(TransactionType.ONE_TIME, updatedIncome.getType());
+        assertEquals(testYearMonth, updatedIncome.getMonthYear());
         
         Mockito.verify(incomeRepository, Mockito.times(1))
         		.saveAndFlush(existingIncome);
@@ -132,19 +133,21 @@ class IncomeServiceTest {
     
     @Test
     void shouldDeleteIncomeWhenExists() {
-    	Mockito.doReturn(true)
-    			.when(incomeRepository)
-    			.existsById(1L);
-    	Mockito.doNothing()
-    			.when(incomeRepository)
-    			.deleteById(1L);
-    	
-    	boolean deleted = incomeService.deleteIncome(1L);
-
-        assertTrue(deleted);
+        YearMonth testYearMonth = YearMonth.of(2000, 1);
+        Income existingIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testYearMonth);
         
+        Mockito.when(incomeRepository.findById(1L))
+                .thenReturn(Optional.of(existingIncome));
+        Mockito.doNothing()
+                .when(incomeRepository)
+                .deleteById(1L);
+        
+        incomeService.deleteIncome(1L);
+
         Mockito.verify(incomeRepository, Mockito.times(1))
-        		.deleteById(1L);
+                .findById(1L);
+        Mockito.verify(incomeRepository, Mockito.times(1))
+                .deleteById(1L);
     }
     
     @Test
@@ -168,9 +171,12 @@ class IncomeServiceTest {
     	Mockito.when(incomeRepository.findById(99L))
     			.thenReturn(Optional.empty());
         
-        Optional<Income> retrievedIncome = incomeService.getIncomeById(99L);
+        IncomeNotFoundException exception = assertThrows(
+        		IncomeNotFoundException.class,
+        		() -> incomeService.getIncomeById(99L)
+        );
         
-        assertFalse(retrievedIncome.isPresent());
+        assertEquals("Income not found with id: 99", exception.getMessage());
     }
     
     @Test
@@ -204,23 +210,28 @@ class IncomeServiceTest {
         Mockito.when(incomeRepository.findById(99L))
         		.thenReturn(Optional.empty());
 
-        Optional<Income> updatedIncome = incomeService.updateIncome(99L, updateRequest);
-
-        assertFalse(updatedIncome.isPresent());
+        IncomeNotFoundException exception = assertThrows(
+        		IncomeNotFoundException.class,
+        		() -> incomeService.updateIncome(99L, updateRequest)
+        );
+        
+        assertEquals("Income not found with id: 99", exception.getMessage());
         Mockito.verify(incomeRepository, Mockito.never())
         		.saveAndFlush(Mockito.any(Income.class));
     }
     
     @Test
     void shouldReturnFalseWhenDeletingNonExistentIncome() {
-    	Mockito.doReturn(false)
-    			.when(incomeRepository)
-    			.existsById(99L);
-    	
-        boolean deleted = incomeService.deleteIncome(99L);
-
-        assertFalse(deleted);
+        Mockito.when(incomeRepository.findById(99L))
+                .thenReturn(Optional.empty());
+        
+        IncomeNotFoundException exception = assertThrows(
+                IncomeNotFoundException.class,
+                () -> incomeService.deleteIncome(99L)
+        );
+        
+        assertEquals("Income not found with id: 99", exception.getMessage());
         Mockito.verify(incomeRepository, Mockito.never())
-        		.deleteById(Mockito.anyLong());
+                .deleteById(Mockito.anyLong());
     }
 }

@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.budgetmaster.exception.ExpenseNotFoundException;
+
 class ExpenseServiceTest {
 	
 	private final ExpenseRepository expenseRepository = mock(ExpenseRepository.class);
@@ -88,14 +90,14 @@ class ExpenseServiceTest {
     	Mockito.when(expenseRepository.findById(Mockito.eq(1L)))
     			.thenReturn(Optional.of(expectedExpense));
     	
-    	Optional<Expense> retrievedExpense = expenseService.getExpenseById(1L);
+    	Expense retrievedExpense = expenseService.getExpenseById(1L);
     	
-    	assertTrue(retrievedExpense.isPresent());   	
-        assertEquals("Rent", retrievedExpense.get().getName());
-        assertEquals(1000.0, retrievedExpense.get().getAmount());
-        assertEquals(ExpenseCategory.HOUSING, retrievedExpense.get().getCategory());
-        assertEquals(TransactionType.RECURRING, retrievedExpense.get().getType());
-	    assertEquals(testYearMonth, retrievedExpense.get().getMonthYear());
+    	assertNotNull(retrievedExpense);   	
+        assertEquals("Rent", retrievedExpense.getName());
+        assertEquals(1000.0, retrievedExpense.getAmount());
+        assertEquals(ExpenseCategory.HOUSING, retrievedExpense.getCategory());
+        assertEquals(TransactionType.RECURRING, retrievedExpense.getType());
+	    assertEquals(testYearMonth, retrievedExpense.getMonthYear());
 	    
         Mockito.verify(expenseRepository, Mockito.times(1))
 				.findById(Mockito.eq(1L));
@@ -117,14 +119,13 @@ class ExpenseServiceTest {
          Mockito.when(expenseRepository.saveAndFlush(Mockito.any(Expense.class)))
          		.thenReturn(existingExpense);
 
-         Optional<Expense> updatedExpense = expenseService.updateExpense(1L, updateRequest);
+         Expense updatedExpense = expenseService.updateExpense(1L, updateRequest);
 
-        assertTrue(updatedExpense.isPresent());
-        Expense result = updatedExpense.get();
-        assertEquals("GAS BILL", result.getName());
-        assertEquals(100.0, result.getAmount());
-        assertEquals(ExpenseCategory.UTILITIES, result.getCategory());
-        assertEquals(TransactionType.ONE_TIME, result.getType());
+        assertNotNull(updatedExpense);
+        assertEquals("GAS BILL", updatedExpense.getName());
+        assertEquals(100.0, updatedExpense.getAmount());
+        assertEquals(ExpenseCategory.UTILITIES, updatedExpense.getCategory());
+        assertEquals(TransactionType.ONE_TIME, updatedExpense.getType());
         
         Mockito.verify(expenseRepository, Mockito.times(1))
         		.saveAndFlush(existingExpense);
@@ -132,19 +133,21 @@ class ExpenseServiceTest {
     
     @Test
     void shouldDeleteExpenseWhenExists() {
-    	Mockito.doReturn(true)
-				.when(expenseRepository)
-				.existsById(1L);
-    	Mockito.doNothing()
-				.when(expenseRepository)
-				.deleteById(1L);
-    	
-        boolean deleted = expenseService.deleteExpense(1L);
+        YearMonth testYearMonth = YearMonth.of(2000, 1);
+        Expense existingExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
 
-        assertTrue(deleted);
-        
+        Mockito.when(expenseRepository.findById(1L))
+                .thenReturn(Optional.of(existingExpense));
+        Mockito.doNothing()
+                .when(expenseRepository)
+                .deleteById(1L);
+
+        expenseService.deleteExpense(1L);
+
         Mockito.verify(expenseRepository, Mockito.times(1))
- 				.deleteById(1L);
+                .findById(1L);
+        Mockito.verify(expenseRepository, Mockito.times(1))
+        		.deleteById(1L);
     }
     
     @Test
@@ -165,11 +168,14 @@ class ExpenseServiceTest {
     @Test
     void shouldReturnEmptyWhenExpenseDoesNotExist() {
     	Mockito.when(expenseRepository.findById(99L))
-				.thenReturn(Optional.empty());
-        
-    	Optional<Expense> retrievedExpense = expenseService.getExpenseById(99L);
-        
-        assertFalse(retrievedExpense.isPresent());
+    			.thenReturn(Optional.empty());
+
+        ExpenseNotFoundException exception = assertThrows(
+        		ExpenseNotFoundException.class,
+        		() -> expenseService.getExpenseById(99L)
+        );
+
+        assertEquals("Expense not found with id: 99", exception.getMessage());
     }
     
     @Test
@@ -202,9 +208,12 @@ class ExpenseServiceTest {
         Mockito.when(expenseRepository.findById(99L))
  				.thenReturn(Optional.empty());
 
-        Optional<Expense> updatedExpense = expenseService.updateExpense( 99L, updateRequest);
+        ExpenseNotFoundException exception = assertThrows(
+        		ExpenseNotFoundException.class,
+        		() -> expenseService.updateExpense(99L, updateRequest)
+        );
 
-        assertFalse(updatedExpense.isPresent());
+        assertEquals("Expense not found with id: 99", exception.getMessage());
         
         Mockito.verify(expenseRepository, Mockito.never())
         		.saveAndFlush(Mockito.any(Expense.class));
@@ -212,15 +221,16 @@ class ExpenseServiceTest {
     
     @Test
     void shouldReturnFalseWhenDeletingNonExistentExpense() {
-    	Mockito.doReturn(false)
-				.when(expenseRepository)
-				.existsById(99L);
-        
-        boolean deleted = expenseService.deleteExpense(99L);
+        Mockito.when(expenseRepository.findById(99L))
+                .thenReturn(Optional.empty());
 
-        assertFalse(deleted);
-        
+        ExpenseNotFoundException exception = assertThrows(
+                ExpenseNotFoundException.class,
+                () -> expenseService.deleteExpense(99L)
+        );
+
+        assertEquals("Expense not found with id: 99", exception.getMessage());
         Mockito.verify(expenseRepository, Mockito.never())
- 				.deleteById(Mockito.anyLong());
+        		.deleteById(Mockito.anyLong());
     }
 }

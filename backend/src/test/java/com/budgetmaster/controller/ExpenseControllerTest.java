@@ -3,6 +3,7 @@ package com.budgetmaster.controller;
 import com.budgetmaster.dto.ExpenseRequest;
 import com.budgetmaster.enums.ExpenseCategory;
 import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.exception.ExpenseNotFoundException;
 import com.budgetmaster.exception.GlobalExceptionHandler;
 import com.budgetmaster.service.ExpenseService;
 import com.budgetmaster.model.Expense;
@@ -23,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @WebMvcTest(ExpenseController.class)
 @Import(GlobalExceptionHandler.class)
@@ -103,7 +103,7 @@ public class ExpenseControllerTest {
 		Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
 		
 		Mockito.when(expenseService.getExpenseById(Mockito.eq(1L)))
-				.thenReturn(Optional.of(expense));
+				.thenReturn(expense);
 		
 		mockMvc.perform(get("/api/expenses/{id}", 1L)
 				.contentType(MediaType.APPLICATION_JSON))
@@ -179,7 +179,7 @@ public class ExpenseControllerTest {
 		updateRequest.setType(TransactionType.RECURRING);
 		
 		Mockito.when(expenseService.updateExpense(Mockito.eq(1L), Mockito.any(ExpenseRequest.class)))
-				.thenReturn(Optional.of(updatedExpense));
+				.thenReturn(updatedExpense);
 		
 		mockMvc.perform(put("/api/expenses/{id}", 1L)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -197,15 +197,17 @@ public class ExpenseControllerTest {
 	
 	@Test
     void shouldDeleteExpenseWhenValidId() throws Exception {
-    	Mockito.doReturn(true)
-				.when(expenseService)
-				.deleteExpense(Mockito.eq(1L));
-    	
-        mockMvc.perform(delete("/api/expenses/{id}", 1L))
+    	Long expenseId = 1L;
+
+    	Mockito.doNothing()
+                .when(expenseService)
+                .deleteExpense(expenseId);
+
+        mockMvc.perform(delete("/api/expenses/{id}", expenseId))
                 .andExpect(status().isNoContent());
-        
+
         Mockito.verify(expenseService, Mockito.times(1))
-        		.deleteExpense(Mockito.eq(1L));
+        		.deleteExpense(expenseId);
     }
 	
 	@Test
@@ -369,31 +371,38 @@ public class ExpenseControllerTest {
 	@Test
 	void shouldReturnNotFoundWhenExpenseDoesNotExist() throws Exception {
 		Mockito.when(expenseService.getExpenseById(Mockito.eq(99L)))
-				.thenReturn(Optional.empty());
-		
+				.thenThrow(new ExpenseNotFoundException("Expense not found with id: 99"));
+
 		mockMvc.perform(get("/api/expenses/{id}", 99L)
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
-		
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.error").value("Expense not found with id: 99"));
+
 		Mockito.verify(expenseService, Mockito.times(1))
 				.getExpenseById(Mockito.eq(99L));
 	}
 	
     @Test
     void shouldReturnNotFoundWhenUpdatingNonExistentExpense() throws Exception {
-    	ExpenseRequest updateRequest = new ExpenseRequest();
-		updateRequest.setName("Rent");
-		updateRequest.setAmount(2000.0);
-		updateRequest.setCategory(ExpenseCategory.HOUSING);
-		updateRequest.setType(TransactionType.RECURRING);
-		
-        Mockito.when(expenseService.updateExpense(Mockito.eq(99L), Mockito.any(ExpenseRequest.class)))
-        		.thenReturn(Optional.empty());
-        
-        mockMvc.perform(put("/api/expenses/{id}", 99L)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(updateRequest)))
-            .andExpect(status().isNotFound());
+	    Long expenseId = 1L;
+	    ExpenseRequest request = new ExpenseRequest();
+	    request.setName("Rent");
+	    request.setAmount(2000.0);
+	    request.setCategory(ExpenseCategory.HOUSING);
+	    request.setType(TransactionType.RECURRING);
+	    request.setMonthYear("2000-01");
+
+	    Mockito.when(expenseService.updateExpense(Mockito.eq(expenseId), Mockito.any(ExpenseRequest.class)))
+	            .thenThrow(new ExpenseNotFoundException("Expense not found with id: " + expenseId));
+
+	    mockMvc.perform(put("/api/expenses/{id}", expenseId)
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(objectMapper.writeValueAsString(request)))
+	            .andExpect(status().isNotFound())
+	            .andExpect(jsonPath("$.error").value("Expense not found with id: " + expenseId));
+
+		Mockito.verify(expenseService, Mockito.times(1))
+				.updateExpense(Mockito.eq(expenseId), Mockito.any(ExpenseRequest.class));
     }
     
 	@Test
@@ -451,15 +460,16 @@ public class ExpenseControllerTest {
     
     @Test
     void shouldReturnNotFoundWhenDeletingNonExistentExpense() throws Exception {
-     	Mockito.doReturn(false)
- 				.when(expenseService)
- 				.deleteExpense(Mockito.eq(99L));
+    	Long expenseId = 1L;
+
+        Mockito.doThrow(new ExpenseNotFoundException("Expense not found with id: " + expenseId))
+        		.when(expenseService).deleteExpense(expenseId);
     	
-     	mockMvc.perform(delete("/api/expenses/{id}", 99L))
+		mockMvc.perform(delete("/api/expenses/{id}", expenseId))
                 .andExpect(status().isNotFound());
         
         Mockito.verify(expenseService, Mockito.times(1))
-        		.deleteExpense(Mockito.eq(99L));
+        		.deleteExpense(expenseId);
     }
 	
 	@Test

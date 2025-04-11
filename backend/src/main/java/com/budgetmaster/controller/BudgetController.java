@@ -1,15 +1,12 @@
 package com.budgetmaster.controller;
 
-import com.budgetmaster.dto.BudgetRequest;
 import com.budgetmaster.model.Budget;
 import com.budgetmaster.service.BudgetService;
-import com.budgetmaster.utils.model.FinancialModelUtils;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 
 @RestController
@@ -23,13 +20,6 @@ public class BudgetController {
 		this.budgetService = budgetService;
 	}
 	
-	@PostMapping
-	public ResponseEntity<Budget> createBudget(@Valid @RequestBody BudgetRequest request) {
-		BudgetRequest builtRequest = FinancialModelUtils.buildBudgetRequest(request);
-		Budget budget = budgetService.createBudget(builtRequest);
-		return ResponseEntity.ok(budget);
-	}
-	
 	@GetMapping
 	public ResponseEntity<Budget> getBudgetByMonth(
 			@RequestParam 
@@ -38,13 +28,7 @@ public class BudgetController {
 		Budget budget = budgetService.getBudgetByMonthYear(monthYear);
 		return ResponseEntity.ok(budget);
 	}
-	
-	@PutMapping("/{id}")
-	public ResponseEntity<Budget> updateBudget(@PathVariable Long id, @Valid @RequestBody BudgetRequest request) {
-		Budget budget = budgetService.updateBudget(id, request);
-		return ResponseEntity.ok(budget);
-	}
-	
+		
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
 		budgetService.deleteBudget(id);

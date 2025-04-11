@@ -15,7 +15,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
 import java.time.YearMonth;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -152,8 +151,9 @@ class IncomeServiceTest {
     
     @Test
     void shouldThrowExceptionWhenSaveFails() {
+        String errorMessage = "Duplicate Entry";
     	Mockito.when(incomeRepository.saveAndFlush(Mockito.any(Income.class)))
-               .thenThrow(new DataIntegrityViolationException("Duplicate Entry"));
+               .thenThrow(new DataIntegrityViolationException(errorMessage));
     	
         IncomeRequest incomeRequest = new IncomeRequest();
         incomeRequest.setName("Salary");
@@ -163,43 +163,48 @@ class IncomeServiceTest {
         incomeRequest.setMonthYear("2000-01");
         
         assertThrows(DataIntegrityViolationException.class,
-            () -> incomeService.createIncome(incomeRequest));
+            () -> incomeService.createIncome(incomeRequest),
+            errorMessage
+        );
     }
     
     @Test
-    void shouldReturnEmptyWhenIncomeDoesNotExist() {
-    	Mockito.when(incomeRepository.findById(99L))
+    void shouldThrowExceptionWhenIncomeDoesNotExist() {
+    	String errorMessage = "Income not found with id: 99";
+        Mockito.when(incomeRepository.findById(99L))
     			.thenReturn(Optional.empty());
         
         IncomeNotFoundException exception = assertThrows(
         		IncomeNotFoundException.class,
-        		() -> incomeService.getIncomeById(99L)
+        		() -> incomeService.getIncomeById(99L),
+        		errorMessage
         );
         
-        assertEquals("Income not found with id: 99", exception.getMessage());
+        assertEquals(errorMessage, exception.getMessage());
     }
     
     @Test
-    void shouldReturnEmptyListWhenNoIncomesExistForMonth() {
+    void shouldThrowExceptionWhenNoIncomesExistForMonth() {
         YearMonth monthYear = YearMonth.of(2000, 1);
+        String errorMessage = "Incomes not found for month: " + monthYear;
         
         try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
             mockedDateUtils.when(() -> DateUtils.getValidYearMonth("2000-01"))
             		.thenReturn(monthYear);
             Mockito.when(incomeRepository.findByMonthYear(monthYear))
-            		.thenReturn(Collections.emptyList());
-            
-            List<Income> result = incomeService.getAllIncomesForMonth("2000-01");
+            		.thenThrow(new IncomeNotFoundException(errorMessage));
 
-            assertNotNull(result);
-            assertTrue(result.isEmpty());
-
-            Mockito.verify(incomeRepository, Mockito.times(1)).findByMonthYear(monthYear);
+            assertThrows(IncomeNotFoundException.class,
+                () -> incomeService.getAllIncomesForMonth("2000-01"),
+                errorMessage
+            );
         }
     }
     
     @Test
-    void shouldReturnEmptyWhenUpdatingNonExistentIncome() {
+    void shouldThrowExceptionyWhenUpdatingNonExistentIncome() {
+    	String errorMessage = "Income not found with id: 99";
+
         IncomeRequest updateRequest = new IncomeRequest();
         updateRequest.setName("Interest Income");
         updateRequest.setSource("Bank XYZ");
@@ -212,25 +217,28 @@ class IncomeServiceTest {
 
         IncomeNotFoundException exception = assertThrows(
         		IncomeNotFoundException.class,
-        		() -> incomeService.updateIncome(99L, updateRequest)
+        		() -> incomeService.updateIncome(99L, updateRequest),
+        		errorMessage
         );
         
-        assertEquals("Income not found with id: 99", exception.getMessage());
+        assertEquals(errorMessage, exception.getMessage());
         Mockito.verify(incomeRepository, Mockito.never())
         		.saveAndFlush(Mockito.any(Income.class));
     }
     
     @Test
-    void shouldReturnFalseWhenDeletingNonExistentIncome() {
+    void shouldThrowExceptionWhenDeletingNonExistentIncome() {
+        String errorMessage = "Income not found with id: 99";
         Mockito.when(incomeRepository.findById(99L))
                 .thenReturn(Optional.empty());
         
         IncomeNotFoundException exception = assertThrows(
                 IncomeNotFoundException.class,
-                () -> incomeService.deleteIncome(99L)
+                () -> incomeService.deleteIncome(99L),
+                errorMessage
         );
         
-        assertEquals("Income not found with id: 99", exception.getMessage());
+        assertEquals(errorMessage, exception.getMessage());
         Mockito.verify(incomeRepository, Mockito.never())
                 .deleteById(Mockito.anyLong());
     }

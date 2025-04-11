@@ -1,5 +1,6 @@
 package com.budgetmaster.utils.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -52,5 +53,30 @@ public class ServiceUtils {
             throw exceptionSupplier.get();
         }
         return entity.get();
+    }
+
+    /**
+     * Finds a list of entities using a custom finder method. If no entities are found, throws the provided exception.
+     * 
+     * Example usage:
+     * List<Income> incomes = findListByCustomFinderOrThrow(
+     *     incomeRepository::findByMonthYear,
+     *     monthYear,
+     *     () -> new IncomeNotFoundException("No incomes found for month: " + monthYear)
+     * );
+     * 
+     * @param finderFunction The repository method to use for finding the entities
+     * @param parameter The parameter to pass to the finder function
+     * @param exceptionSupplier Function that creates the exception to throw if no entities are found
+     */
+    public static <T, P, E extends RuntimeException> List<T> findListByCustomFinderOrThrow(
+            Function<P, List<T>> finderFunction,
+            P parameter,
+            Supplier<E> exceptionSupplier) {
+        List<T> entities = finderFunction.apply(parameter);
+        if (entities.isEmpty()) {
+            throw exceptionSupplier.get();
+        }
+        return entities;
     }
 } 

@@ -46,7 +46,8 @@ public class BudgetService {
 	}
 	
 	public Budget getBudgetById(Long id) {
-		return ServiceUtils.findByIdOrThrow(budgetRepository,
+		return ServiceUtils.findByIdOrThrow(
+				budgetRepository,
 				id,
 				createIdNotFoundException(id)
 		);

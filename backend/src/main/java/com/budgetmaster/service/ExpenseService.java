@@ -31,7 +31,11 @@ public class ExpenseService {
 	
 	public List<Expense> getAllExpensesForMonth(String monthYearString) {
  		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
- 		return expenseRepository.findByMonthYear(monthYear);
+ 		return ServiceUtils.findListByCustomFinderOrThrow(
+			expenseRepository::findByMonthYear,
+			monthYear,
+			createMonthYearNotFoundException(monthYear)
+		);
  	}
 	
 	public Expense getExpenseById(Long id) {
@@ -59,5 +63,12 @@ public class ExpenseService {
 	 */
 	private Supplier<ExpenseNotFoundException> createIdNotFoundException(Long id) {
 		return () -> new ExpenseNotFoundException("Expense not found with id: " + id);
+	}
+
+	/**
+	 * Creates a supplier for ExpenseNotFoundException when no entities are found for a given monthYear value.
+	 */
+	private Supplier<ExpenseNotFoundException> createMonthYearNotFoundException(YearMonth monthYear) {
+		return () -> new ExpenseNotFoundException("No expenses found for month: " + monthYear);
 	}
 }

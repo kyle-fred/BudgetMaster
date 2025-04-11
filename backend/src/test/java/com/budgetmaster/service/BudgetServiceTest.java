@@ -168,21 +168,25 @@ class BudgetServiceTest {
     }
     
     @Test
-    void shouldReturnNotFoundWhenBudgetDoesNotExist() {
-    	String testYearMonthString = "2000-01";
+    void shouldThrowExceptionWhenBudgetDoesNotExist() {
+        String testYearMonthString = "2000-01";
+    	String errorMessage = "Budget not found for month: " + testYearMonthString;
     	YearMonth testYearMonth = YearMonth.parse(testYearMonthString);
     	
     	Mockito.when(budgetRepository.findByMonthYear(testYearMonth)).thenReturn(Optional.empty());
         
         BudgetNotFoundException thrownException = assertThrows(BudgetNotFoundException.class,
-        		() -> budgetService.getBudgetByMonthYear(testYearMonthString));
+        		() -> budgetService.getBudgetByMonthYear(testYearMonthString),
+        		errorMessage
+        );
         
-        assertEquals(thrownException.getMessage(), "Budget not found for month: " + testYearMonth);
+        assertEquals(errorMessage, thrownException.getMessage());
     }
     
     @Test
-    void shouldReturnNotFoundWhenUpdatingNonExistentBudget() {
+    void shouldThrowExceptionWhenUpdatingNonExistentBudget() {
     	Long budgetId = 1L;
+    	String errorMessage = "Budget not found for id: " + budgetId;
     	
         BudgetRequest updateRequest = new BudgetRequest();
         updateRequest.setTotalIncome(6000.0);
@@ -192,23 +196,28 @@ class BudgetServiceTest {
                 .thenReturn(Optional.empty());
         
         BudgetNotFoundException thrownException = assertThrows(BudgetNotFoundException.class,
-        		() -> budgetService.updateBudget(budgetId, updateRequest));
+        		() -> budgetService.updateBudget(budgetId, updateRequest),
+        		errorMessage
+        );
         
-        assertEquals(thrownException.getMessage(), "Budget not found for id: " + budgetId);
+        assertEquals(errorMessage, thrownException.getMessage());
         Mockito.verify(budgetRepository, Mockito.never())
                 .saveAndFlush(Mockito.any(Budget.class));
     }
     
     @Test
-    void shouldReturnNotFoundWhenDeletingNonExistentBudget() {
+    void shouldThrowExceptionWhenDeletingNonExistentBudget() {
     	Long budgetId = 1L;
+    	String errorMessage = "Budget not found for id: " + budgetId;
     	
     	Mockito.when(budgetRepository.findById(budgetId)).thenReturn(Optional.empty());
     	
         BudgetNotFoundException thrownException = assertThrows(BudgetNotFoundException.class,
-        		() -> budgetService.deleteBudget(budgetId));
+        		() -> budgetService.deleteBudget(budgetId),
+        		errorMessage
+        );
 
-        assertEquals(thrownException.getMessage(), "Budget not found for id: " + budgetId);
+        assertEquals(errorMessage, thrownException.getMessage());
         Mockito.verify(budgetRepository, Mockito.never())
                 .deleteById(Mockito.anyLong());
     }

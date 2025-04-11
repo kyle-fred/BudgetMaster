@@ -31,7 +31,11 @@ public class IncomeService {
 	
 	public List<Income> getAllIncomesForMonth(String monthYearString) {
 		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
-		return incomeRepository.findByMonthYear(monthYear);
+		return ServiceUtils.findListByCustomFinderOrThrow(
+			incomeRepository::findByMonthYear,
+			monthYear,
+			createMonthYearNotFoundException(monthYear)
+		);
 	}
 	
 	public Income getIncomeById(Long id) {
@@ -59,5 +63,12 @@ public class IncomeService {
 	 */
 	private Supplier<IncomeNotFoundException> createIdNotFoundException(Long id) {
 		return () -> new IncomeNotFoundException("Income not found with id: " + id);
+	}
+	
+	/**
+	 * Creates a supplier for IncomeNotFoundException when no entities are found for a given monthYear value.
+	 */
+	private Supplier<IncomeNotFoundException> createMonthYearNotFoundException(YearMonth monthYear) {
+		return () -> new IncomeNotFoundException("No incomes found for month: " + monthYear);
 	}
 }

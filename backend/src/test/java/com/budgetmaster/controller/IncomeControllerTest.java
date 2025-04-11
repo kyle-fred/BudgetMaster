@@ -144,19 +144,19 @@ public class IncomeControllerTest {
 	}
 	
 	@Test
-	void shouldReturnEmptyListWhenNoIncomesExist() throws Exception {
-	    Mockito.when(incomeService.getAllIncomesForMonth("2000-01"))
-	           .thenReturn(Collections.emptyList());
+	void shouldReturnNotFoundWhenNoIncomesExist() throws Exception {
+	    YearMonth testYearMonth = YearMonth.of(2000, 1);
+		Mockito.when(incomeService.getAllIncomesForMonth(Mockito.eq(testYearMonth.toString())))
+	           .thenThrow(new IncomeNotFoundException("No incomes found for month: " + testYearMonth));
 
 	    mockMvc.perform(get("/api/incomes")
-	            .param("monthYear", "2000-01")
+	            .param("monthYear", testYearMonth.toString())
 	            .contentType(MediaType.APPLICATION_JSON))
-	            .andExpect(status().isOk())
-	            .andExpect(jsonPath("$").isArray())
-	            .andExpect(jsonPath("$.length()").value(0));
+	            .andExpect(status().isNotFound())
+	            .andExpect(jsonPath("$.error").value("No incomes found for month: " + testYearMonth));
 
 	    Mockito.verify(incomeService, Mockito.times(1))
-	           .getAllIncomesForMonth("2000-01");
+	           .getAllIncomesForMonth(Mockito.eq(testYearMonth.toString()));
 	}
 	
 	@Test

@@ -4,7 +4,6 @@ import com.budgetmaster.dto.ExpenseRequest;
 import com.budgetmaster.enums.ExpenseCategory;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.exception.ExpenseNotFoundException;
-import com.budgetmaster.exception.GlobalExceptionHandler;
 import com.budgetmaster.service.ExpenseService;
 import com.budgetmaster.model.Expense;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +12,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,11 +20,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.YearMonth;
-import java.util.Collections;
 import java.util.List;
 
 @WebMvcTest(ExpenseController.class)
-@Import(GlobalExceptionHandler.class)
 public class ExpenseControllerTest {
 	
 	@Autowired
@@ -150,19 +146,18 @@ public class ExpenseControllerTest {
  	}
  	
  	@Test
- 	void shouldReturnEmptyListWhenNoExpensesExist() throws Exception {
+ 	void shouldReturnNotFoundWhenNoExpensesExist() throws Exception {
  	    YearMonth testYearMonth = YearMonth.of(2000, 1);
  
  	    Mockito.when(expenseService.getAllExpensesForMonth(Mockito.eq(testYearMonth.toString())))
- 	           .thenReturn(Collections.emptyList());
- 
+ 	           .thenThrow(new ExpenseNotFoundException("No expenses found for month: " + testYearMonth));
+		
  	    mockMvc.perform(get("/api/expenses")
  	            .param("monthYear", testYearMonth.toString())
  	            .contentType(MediaType.APPLICATION_JSON))
- 	            .andExpect(status().isOk())
- 	            .andExpect(jsonPath("$").isArray())
- 	            .andExpect(jsonPath("$.length()").value(0));
- 
+ 	            .andExpect(status().isNotFound())
+ 	            .andExpect(jsonPath("$.error").value("No expenses found for month: " + testYearMonth));
+		
  	    Mockito.verify(expenseService, Mockito.times(1))
  	           .getAllExpensesForMonth(Mockito.eq(testYearMonth.toString()));
  	}

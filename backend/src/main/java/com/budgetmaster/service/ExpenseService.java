@@ -1,14 +1,16 @@
 package com.budgetmaster.service;
 
 import com.budgetmaster.dto.ExpenseRequest;
+import com.budgetmaster.exception.ExpenseNotFoundException;
 import com.budgetmaster.repository.ExpenseRepository;
 import com.budgetmaster.utils.date.DateUtils;
 import com.budgetmaster.utils.model.FinancialModelUtils;
+import com.budgetmaster.utils.service.ServiceUtils;
 import com.budgetmaster.model.Expense;
 
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,31 +31,44 @@ public class ExpenseService {
 	
 	public List<Expense> getAllExpensesForMonth(String monthYearString) {
  		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
- 		return expenseRepository.findByMonthYear(monthYear);
+ 		return ServiceUtils.findListByCustomFinderOrThrow(
+			expenseRepository::findByMonthYear,
+			monthYear,
+			createMonthYearNotFoundException(monthYear)
+		);
  	}
 	
-	public Optional<Expense> getExpenseById(Long id) {
- 		return expenseRepository.findById(id);
+	public Expense getExpenseById(Long id) {
+ 		return ServiceUtils.findByIdOrThrow(
+			expenseRepository,
+			id,
+			createIdNotFoundException(id)
+		);
  	}
 	
-	public Optional<Expense> updateExpense(Long id, ExpenseRequest request) {
- 		Optional<Expense> existingExpense = expenseRepository.findById(id);
-		
-		if (existingExpense.isPresent()) {
-			Expense expense = existingExpense.get();
-			FinancialModelUtils.modifyExpense(expense, request);
-			
-			return Optional.of(expenseRepository.saveAndFlush(expense));
-		}
-		return Optional.empty();
+	public Expense updateExpense(Long id, ExpenseRequest request) {
+ 		Expense expense = getExpenseById(id);
+		FinancialModelUtils.modifyExpense(expense, request);
+		return expenseRepository.saveAndFlush(expense);
 	}
 
 	@Transactional
-	public boolean deleteExpense(Long id) {
-		if (expenseRepository.existsById(id)) {
-			expenseRepository.deleteById(id);
-			return true;
-		}
-		return false;
+	public void deleteExpense(Long id) {
+		getExpenseById(id);
+		expenseRepository.deleteById(id);
+	}
+
+	/**
+	 * Creates a supplier for ExpenseNotFoundException when entity is not found by ID.
+	 */
+	private Supplier<ExpenseNotFoundException> createIdNotFoundException(Long id) {
+		return () -> new ExpenseNotFoundException("Expense not found with id: " + id);
+	}
+
+	/**
+	 * Creates a supplier for ExpenseNotFoundException when no entities are found for a given monthYear value.
+	 */
+	private Supplier<ExpenseNotFoundException> createMonthYearNotFoundException(YearMonth monthYear) {
+		return () -> new ExpenseNotFoundException("No expenses found for month: " + monthYear);
 	}
 }

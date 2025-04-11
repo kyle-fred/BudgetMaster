@@ -247,7 +247,7 @@ public class BudgetControllerTest {
 		String testYearMonth = "2000-01";
 		
 		Mockito.when(budgetService.getBudgetByMonthYear(testYearMonth))
-			.thenThrow(new BudgetNotFoundException("Budget not found for month: " + testYearMonth));
+				.thenThrow(new BudgetNotFoundException("Budget not found for month: " + testYearMonth));
 		
 		mockMvc.perform(get("/api/budgets")
 				.param("monthYear", testYearMonth)

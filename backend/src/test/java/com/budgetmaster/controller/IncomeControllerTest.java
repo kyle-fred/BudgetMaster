@@ -2,6 +2,7 @@ package com.budgetmaster.controller;
 
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.exception.IncomeNotFoundException;
 import com.budgetmaster.service.IncomeService;
 import com.budgetmaster.model.Income;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,9 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.YearMonth;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @WebMvcTest(IncomeController.class)
 public class IncomeControllerTest {
@@ -97,7 +96,7 @@ public class IncomeControllerTest {
 		Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testYearMonth);
 		
 		Mockito.when(incomeService.getIncomeById(1L))
-				.thenReturn(Optional.of(income));
+				.thenReturn(income);
 		
 		mockMvc.perform(get("/api/incomes/{id}", 1L)
 				.contentType(MediaType.APPLICATION_JSON))
@@ -144,19 +143,19 @@ public class IncomeControllerTest {
 	}
 	
 	@Test
-	void shouldReturnEmptyListWhenNoIncomesExist() throws Exception {
-	    Mockito.when(incomeService.getAllIncomesForMonth("2000-01"))
-	           .thenReturn(Collections.emptyList());
+	void shouldReturnNotFoundWhenNoIncomesExist() throws Exception {
+	    YearMonth testYearMonth = YearMonth.of(2000, 1);
+		Mockito.when(incomeService.getAllIncomesForMonth(Mockito.eq(testYearMonth.toString())))
+	           .thenThrow(new IncomeNotFoundException("No incomes found for month: " + testYearMonth));
 
 	    mockMvc.perform(get("/api/incomes")
-	            .param("monthYear", "2000-01")
+	            .param("monthYear", testYearMonth.toString())
 	            .contentType(MediaType.APPLICATION_JSON))
-	            .andExpect(status().isOk())
-	            .andExpect(jsonPath("$").isArray())
-	            .andExpect(jsonPath("$.length()").value(0));
+	            .andExpect(status().isNotFound())
+	            .andExpect(jsonPath("$.error").value("No incomes found for month: " + testYearMonth));
 
 	    Mockito.verify(incomeService, Mockito.times(1))
-	           .getAllIncomesForMonth("2000-01");
+	           .getAllIncomesForMonth(Mockito.eq(testYearMonth.toString()));
 	}
 	
 	@Test
@@ -175,7 +174,7 @@ public class IncomeControllerTest {
 		updateRequest.setType(TransactionType.ONE_TIME);
 		
 		Mockito.when(incomeService.updateIncome(Mockito.eq(1L), Mockito.refEq(updateRequest)))
-				.thenReturn(Optional.of(updatedIncome));
+				.thenReturn(updatedIncome);
 		
 		mockMvc.perform(put("/api/incomes/{id}", 1L)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -192,16 +191,18 @@ public class IncomeControllerTest {
 	}
 	
     @Test
-    void shouldDeleteIncomeWhenValidId() throws Exception {
-    	Mockito.doReturn(true)
-    			.when(incomeService)
-    			.deleteIncome(1L);
+    void shouldDeleteIncomeWhenValidId() throws Exception {     
+    	Long incomeId = 1L;
     	
-        mockMvc.perform(delete("/api/incomes/{id}", 1L))
+    	Mockito.doNothing()
+                .when(incomeService)
+                .deleteIncome(incomeId);
+    	
+        mockMvc.perform(delete("/api/incomes/{id}", incomeId))
                 .andExpect(status().isNoContent());
         
         Mockito.verify(incomeService, Mockito.times(1))
-        		.deleteIncome(1L);
+                .deleteIncome(incomeId);
     }
 	
 	@Test
@@ -346,30 +347,40 @@ public class IncomeControllerTest {
 	@Test
 	void shouldReturnNotFoundWhenIncomeDoesNotExist() throws Exception {
 		Mockito.when(incomeService.getIncomeById(99L))
-				.thenReturn(Optional.empty());
-		
-		mockMvc.perform(get("/api/incomes/{id}", 99L))
-				.andExpect(status().isNotFound());
-		
+				.thenThrow(new IncomeNotFoundException("Income not found with id: 99"));
+
+		mockMvc.perform(get("/api/incomes/{id}", 99L)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.error").value("Income not found with id: 99"));
+
 		Mockito.verify(incomeService, Mockito.times(1))
 				.getIncomeById(99L);
 	}
 	
     @Test
     void shouldReturnNotFoundWhenUpdatingNonExistentIncome() throws Exception {
-    	IncomeRequest updateRequest = new IncomeRequest();
-		updateRequest.setName("Interest Income");
-		updateRequest.setSource("Bank XYZ");
-		updateRequest.setAmount(100.0);
-		updateRequest.setType(TransactionType.ONE_TIME);
-        
-        Mockito.when(incomeService.updateIncome(Mockito.eq(99L), Mockito.any(IncomeRequest.class)))
-        		.thenReturn(Optional.empty());
-        
-        mockMvc.perform(put("/api/incomes/{id}", 99L)
+	    Long incomeId = 1L;
+	    IncomeRequest request = new IncomeRequest();
+	    request.setName("Salary");
+	    request.setSource("Company XYZ");
+	    request.setAmount(2000.0);
+	    request.setType(TransactionType.RECURRING);
+	    request.setMonthYear("2000-01");
+	
+	    
+	    
+	    Mockito.when(incomeService.updateIncome(Mockito.eq(incomeId), Mockito.any(IncomeRequest.class)))
+	            .thenThrow(new IncomeNotFoundException("Income not found with id: " + incomeId));
+	    
+	    mockMvc.perform(put("/api/incomes/{id}", incomeId)
 	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(objectMapper.writeValueAsString(updateRequest)))
-	            .andExpect(status().isNotFound());
+	            .content(objectMapper.writeValueAsString(request)))
+	            .andExpect(status().isNotFound())
+	            .andExpect(jsonPath("$.error").value("Income not found with id: " + incomeId));
+	    
+	    Mockito.verify(incomeService, Mockito.times(1))
+	            .updateIncome(Mockito.eq(incomeId), Mockito.any(IncomeRequest.class));
     }
     
 	@Test
@@ -408,15 +419,16 @@ public class IncomeControllerTest {
     
     @Test
     void shouldReturnNotFoundWhenDeletingNonExistentIncome() throws Exception {
-    	Mockito.doReturn(false)
-				.when(incomeService)
-				.deleteIncome(Mockito.eq(99L));
+    	Long incomeId = 1L;
     	
-        mockMvc.perform(delete("/api/incomes/{id}", 99L))
+        Mockito.doThrow(new IncomeNotFoundException("Income not found with id: " + incomeId))
+        		.when(incomeService).deleteIncome(incomeId);
+    	
+        mockMvc.perform(delete("/api/incomes/{id}", incomeId))
                 .andExpect(status().isNotFound());
         
         Mockito.verify(incomeService, Mockito.times(1))
-        		.deleteIncome(Mockito.eq(99L));
+                .deleteIncome(incomeId);
     }
 	
 	@Test

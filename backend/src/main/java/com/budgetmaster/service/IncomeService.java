@@ -1,14 +1,16 @@
 package com.budgetmaster.service;
 
 import com.budgetmaster.dto.IncomeRequest;
+import com.budgetmaster.exception.IncomeNotFoundException;
 import com.budgetmaster.repository.IncomeRepository;
 import com.budgetmaster.utils.date.DateUtils;
 import com.budgetmaster.utils.model.FinancialModelUtils;
+import com.budgetmaster.utils.service.ServiceUtils;
 import com.budgetmaster.model.Income;
 
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,30 +31,44 @@ public class IncomeService {
 	
 	public List<Income> getAllIncomesForMonth(String monthYearString) {
 		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
-		return incomeRepository.findByMonthYear(monthYear);
+		return ServiceUtils.findListByCustomFinderOrThrow(
+			incomeRepository::findByMonthYear,
+			monthYear,
+			createMonthYearNotFoundException(monthYear)
+		);
 	}
 	
-	public Optional<Income> getIncomeById(Long id) {
-		return incomeRepository.findById(id);
+	public Income getIncomeById(Long id) {
+		return ServiceUtils.findByIdOrThrow(
+				incomeRepository,
+				id,
+				createIdNotFoundException(id)
+		);
 	}
 	
-	public Optional<Income> updateIncome(Long id, IncomeRequest request) {
-		Optional<Income> existingIncome = incomeRepository.findById(id);
-		
-		if (existingIncome.isPresent()) {
-			Income income = existingIncome.get();
-			FinancialModelUtils.modifyIncome(income, request);
-			return Optional.of(incomeRepository.saveAndFlush(income));
-		}
-		return Optional.empty();
+	public Income updateIncome(Long id, IncomeRequest request) {
+		Income income = getIncomeById(id);
+		FinancialModelUtils.modifyIncome(income, request);
+		return incomeRepository.saveAndFlush(income);
 	}
 	
 	@Transactional
-	public boolean deleteIncome(Long id) {
-		if (incomeRepository.existsById(id)) {
-			incomeRepository.deleteById(id);
-			return true;
-		}
-		return false;
+	public void deleteIncome(Long id) {
+		getIncomeById(id);
+		incomeRepository.deleteById(id);
+	}
+	
+	/**
+	 * Creates a supplier for IncomeNotFoundException when entity is not found by ID.
+	 */
+	private Supplier<IncomeNotFoundException> createIdNotFoundException(Long id) {
+		return () -> new IncomeNotFoundException("Income not found with id: " + id);
+	}
+	
+	/**
+	 * Creates a supplier for IncomeNotFoundException when no entities are found for a given monthYear value.
+	 */
+	private Supplier<IncomeNotFoundException> createMonthYearNotFoundException(YearMonth monthYear) {
+		return () -> new IncomeNotFoundException("No incomes found for month: " + monthYear);
 	}
 }

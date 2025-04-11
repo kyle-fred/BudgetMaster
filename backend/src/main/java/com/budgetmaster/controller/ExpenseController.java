@@ -5,7 +5,6 @@ import com.budgetmaster.model.Expense;
 import com.budgetmaster.service.ExpenseService;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -42,32 +41,19 @@ public class ExpenseController {
     
     @GetMapping("/{id}")
     public ResponseEntity<Expense> getExpenseById(@PathVariable Long id) {
-        Optional<Expense> expense = expenseService.getExpenseById(id);
-        if (expense.isPresent()) {
-        	return ResponseEntity.ok(expense.get());
-        } else {
-        	return ResponseEntity.notFound().build();
-        }
+        Expense expense = expenseService.getExpenseById(id);
+        return ResponseEntity.ok(expense);
     }
 	
     @PutMapping("/{id}")
     public ResponseEntity<Expense> updateExpense(@PathVariable Long id, @Valid @RequestBody ExpenseRequest request) {
-        Optional<Expense> expense = expenseService.updateExpense(id, request);
-        if (expense.isPresent()) {
-        	return ResponseEntity.ok(expense.get());
-        } else {
-        	return ResponseEntity.notFound().build();
-        }
+        Expense expense = expenseService.updateExpense(id, request);
+        return ResponseEntity.ok(expense);
     }
 	
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
-        boolean deleted = expenseService.deleteExpense(id);
-        
-		if (deleted) {
-			return ResponseEntity.noContent().build();
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+        expenseService.deleteExpense(id);
+        return ResponseEntity.noContent().build();
 	}
 }

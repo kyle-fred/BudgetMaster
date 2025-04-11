@@ -5,10 +5,12 @@ import com.budgetmaster.exception.BudgetNotFoundException;
 import com.budgetmaster.repository.BudgetRepository;
 import com.budgetmaster.utils.date.DateUtils;
 import com.budgetmaster.utils.model.FinancialModelUtils;
+import com.budgetmaster.utils.service.ServiceUtils;
 import com.budgetmaster.model.Budget;
 
 import java.time.YearMonth;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,38 +38,44 @@ public class BudgetService {
 	
 	public Budget getBudgetByMonthYear(String monthYearString) {
 		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
-		return findBudgetOrThrow(monthYear);
+		return ServiceUtils.findByCustomFinderOrThrow(
+				budgetRepository::findByMonthYear,
+				monthYear,
+				createMonthYearNotFoundException(monthYear)
+		);
 	}
 	
 	public Budget getBudgetById(Long id) {
-		return findBudgetOrThrow(id);
+		return ServiceUtils.findByIdOrThrow(
+				budgetRepository,
+				id,
+				createIdNotFoundException(id)
+		);
 	}
 	
 	public Budget updateBudget(Long id, BudgetRequest request) {
-		Budget budget = findBudgetOrThrow(id);
+		Budget budget = getBudgetById(id);
 		FinancialModelUtils.modifyBudget(budget, request);
 		return budgetRepository.saveAndFlush(budget);
 	}
 	
 	@Transactional
 	public void deleteBudget(Long id) {
-		findBudgetOrThrow(id);
+		getBudgetById(id);
 		budgetRepository.deleteById(id);
 	}
 	
-	private Budget findBudgetOrThrow(YearMonth monthYear) {
-		Optional<Budget> budgetOptional = budgetRepository.findByMonthYear(monthYear);
-		if (budgetOptional.isEmpty()) {
-			throw new BudgetNotFoundException("Budget not found for month: " + monthYear);
-		}		
-		return budgetOptional.get();
+	/**
+	 * Creates a supplier for BudgetNotFoundException when entity is not found by ID.
+	 */
+	private Supplier<BudgetNotFoundException> createIdNotFoundException(Long id) {
+		return () -> new BudgetNotFoundException("Budget not found for id: " + id);
 	}
 	
-	private Budget findBudgetOrThrow(Long id) {
-		Optional<Budget> budgetOptional = budgetRepository.findById(id);		
-		if (budgetOptional.isEmpty()) {
-			throw new BudgetNotFoundException("Budget not found with id: " + id);
-		}
-		return budgetOptional.get();
+	/**
+	 * Creates a supplier for BudgetNotFoundException when entity is not found by month/year.
+	 */
+	private Supplier<BudgetNotFoundException> createMonthYearNotFoundException(YearMonth monthYear) {
+		return () -> new BudgetNotFoundException("Budget not found for month: " + monthYear);
 	}
 }

@@ -13,7 +13,11 @@ public class ServiceUtils {
      * Finds an entity by its ID. If the entity is not found, throws the provided exception.
      * 
      * Example usage:
-     * Budget budget = findByIdOrThrow(budgetRepository, id, () -> new BudgetNotFoundException("Budget not found"));
+     * Budget budget = findByIdOrThrow(
+     *     budgetRepository,
+     *     id,
+     *     () -> new BudgetNotFoundException("Budget not found")
+     * );
      * 
      * @param repository The JpaRepository instance to search in
      * @param id The ID of the entity to find

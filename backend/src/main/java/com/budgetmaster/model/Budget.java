@@ -41,12 +41,12 @@ public class Budget {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime lastUpdatedAt;
 	
-	public Budget() {}
+	protected Budget() {}
 	
-	public Budget(double totalIncome, double totalExpense, YearMonth monthYear) {
-		this.totalIncome = totalIncome;
-		this.totalExpense = totalExpense;
+	public Budget(YearMonth monthYear) {
 		this.monthYear = monthYear;
+		this.totalIncome = 0;
+		this.totalExpense = 0;
 	}
 	
 	public Long getId() {

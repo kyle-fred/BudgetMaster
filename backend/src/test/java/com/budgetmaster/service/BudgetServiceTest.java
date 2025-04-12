@@ -25,7 +25,9 @@ class BudgetServiceTest {
 	    double expectedExpense = 1500.0;
 	    double expectedSavings = expectedIncome - expectedExpense;
 	    
-	    Budget budget = new Budget(expectedIncome, expectedExpense, testYearMonth);
+	    Budget budget = new Budget(testYearMonth);
+	    budget.setTotalIncome(expectedIncome);
+	    budget.setTotalExpense(expectedExpense);
 	    budget.setSavings(expectedSavings);
 
 	    Mockito.when(budgetRepository.findByMonthYear(testYearMonth))
@@ -48,8 +50,10 @@ class BudgetServiceTest {
     	double expectedExpense = 1500.0;
     	double expectedSavings = expectedIncome - expectedExpense;
     	
-    	Budget existingBudget = new Budget(expectedIncome, expectedExpense, testYearMonth);
+    	Budget existingBudget = new Budget(testYearMonth);
     	existingBudget.setId(budgetId);
+    	existingBudget.setTotalIncome(expectedIncome);
+    	existingBudget.setTotalExpense(expectedExpense);
     	existingBudget.setSavings(expectedSavings);
     	
     	Mockito.when(budgetRepository.findById(budgetId))

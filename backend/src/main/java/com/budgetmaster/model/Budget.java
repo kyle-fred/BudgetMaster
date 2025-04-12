@@ -44,9 +44,6 @@ public class Budget {
 	protected Budget() {}
 	
 	public Budget(YearMonth monthYear) {
-		if (monthYear == null) {
-			throw new IllegalArgumentException("Month year cannot be null");
-		}
 		this.monthYear = monthYear;
 		this.totalIncome = 0;
 		this.totalExpense = 0;

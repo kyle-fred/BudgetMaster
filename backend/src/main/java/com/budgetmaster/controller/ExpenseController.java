@@ -33,9 +33,9 @@ public class ExpenseController {
     @GetMapping
     public ResponseEntity<List<Expense>> getAllExpensesForMonth(
     		@RequestParam 
-    		@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month year must be in format YYYY-MM") 
-    		String monthYear) {
-        List<Expense> expenses = expenseService.getAllExpensesForMonth(monthYear);
+    		@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month must be in format YYYY-MM") 
+    		String month) {
+        List<Expense> expenses = expenseService.getAllExpensesForMonth(month);
         return ResponseEntity.ok(expenses);
     }
     

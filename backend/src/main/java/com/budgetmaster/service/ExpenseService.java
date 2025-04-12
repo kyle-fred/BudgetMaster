@@ -29,12 +29,12 @@ public class ExpenseService {
 		return expenseRepository.saveAndFlush(expense);
 	}
 	
-	public List<Expense> getAllExpensesForMonth(String monthYearString) {
- 		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
+	public List<Expense> getAllExpensesForMonth(String monthString) {
+ 		YearMonth month = DateUtils.getValidYearMonth(monthString);
  		return ServiceUtils.findListByCustomFinderOrThrow(
-			expenseRepository::findByMonthYear,
-			monthYear,
-			createMonthYearNotFoundException(monthYear)
+			expenseRepository::findByMonth,
+			month,
+			createMonthNotFoundException(month)
 		);
  	}
 	
@@ -66,9 +66,9 @@ public class ExpenseService {
 	}
 
 	/**
-	 * Creates a supplier for ExpenseNotFoundException when no entities are found for a given monthYear value.
+	 * Creates a supplier for ExpenseNotFoundException when no entities are found for a given month value.
 	 */
-	private Supplier<ExpenseNotFoundException> createMonthYearNotFoundException(YearMonth monthYear) {
-		return () -> new ExpenseNotFoundException("No expenses found for month: " + monthYear);
+	private Supplier<ExpenseNotFoundException> createMonthNotFoundException(YearMonth month) {
+		return () -> new ExpenseNotFoundException("No expenses found for month: " + month);
 	}
 }

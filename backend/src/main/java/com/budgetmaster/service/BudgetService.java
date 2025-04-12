@@ -21,12 +21,12 @@ public class BudgetService {
 		this.budgetRepository = budgetRepository;
 	}
 	
-	public Budget getBudgetByMonthYear(String monthYearString) {
-		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
+	public Budget getBudgetByMonth(String monthString) {
+		YearMonth month = DateUtils.getValidYearMonth(monthString);
 		return ServiceUtils.findByCustomFinderOrThrow(
-				budgetRepository::findByMonthYear,
-				monthYear,
-				createMonthYearNotFoundException(monthYear)
+				budgetRepository::findByMonth,
+				month,
+				createMonthNotFoundException(month)
 		);
 	}
 	
@@ -52,9 +52,9 @@ public class BudgetService {
 	}
 	
 	/**
-	 * Creates a supplier for BudgetNotFoundException when entity is not found by month/year.
+	 * Creates a supplier for BudgetNotFoundException when entity is not found by month.
 	 */
-	private Supplier<BudgetNotFoundException> createMonthYearNotFoundException(YearMonth monthYear) {
-		return () -> new BudgetNotFoundException("Budget not found for month: " + monthYear);
+	private Supplier<BudgetNotFoundException> createMonthNotFoundException(YearMonth month) {
+		return () -> new BudgetNotFoundException("Budget not found for month: " + month);
 	}
 }

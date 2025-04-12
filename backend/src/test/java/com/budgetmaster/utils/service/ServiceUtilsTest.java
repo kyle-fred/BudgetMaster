@@ -29,12 +29,12 @@ public class ServiceUtilsTest {
     private Budget testBudget;
     private Income testIncome;
     private Long testId;
-    private YearMonth testMonthYear;
+    private YearMonth testMonth;
     
     @BeforeEach
     void setUp() {
-        testMonthYear = YearMonth.of(2024, 3);
-        testBudget = new Budget(testMonthYear);
+        testMonth = YearMonth.of(2024, 3);
+        testBudget = new Budget(testMonth);
         testIncome = new Income();
         testId = 1L;
     }
@@ -77,12 +77,12 @@ public class ServiceUtilsTest {
     
     @Test
     void findByCustomFinderOrThrow_WhenEntityExists_ReturnsEntity() {
-        Function<YearMonth, Optional<Budget>> finder = monthYear -> Optional.of(testBudget);
+        Function<YearMonth, Optional<Budget>> finder = month -> Optional.of(testBudget);
         
         Budget result = ServiceUtils.findByCustomFinderOrThrow(
                 finder,
-                testMonthYear,
-                () -> new BudgetNotFoundException("Budget not found for month: " + testMonthYear)
+                testMonth,
+                () -> new BudgetNotFoundException("Budget not found for month: " + testMonth)
         );
         
         assertEquals(testBudget, result);
@@ -90,14 +90,14 @@ public class ServiceUtilsTest {
     
     @Test
     void findByCustomFinderOrThrow_WhenEntityDoesNotExist_ThrowsException() {
-        Function<YearMonth, Optional<Budget>> finder = testMonthYear -> Optional.empty();
-        String errorMessage = "Budget not found for month: " + testMonthYear;
+        Function<YearMonth, Optional<Budget>> finder = month -> Optional.empty();
+        String errorMessage = "Budget not found for month: " + testMonth;
         
         BudgetNotFoundException exception = assertThrows(
                 BudgetNotFoundException.class,
                 () -> ServiceUtils.findByCustomFinderOrThrow(
                         finder,
-                        testMonthYear,
+                        testMonth,
                         () -> new BudgetNotFoundException(errorMessage)
                 )
         );
@@ -107,12 +107,12 @@ public class ServiceUtilsTest {
 
     @Test
     void findListByCustomFinderOrThrow_WhenEntitiesExists_ReturnsListOfEntities() {
-        Function<YearMonth, List<Income>> finder = monthYear -> List.of(testIncome);
+        Function<YearMonth, List<Income>> finder = month -> List.of(testIncome);
         
         List<Income> result = ServiceUtils.findListByCustomFinderOrThrow(
                 finder,
-                testMonthYear,
-                () -> new IncomeNotFoundException("Incomes not found for month: " + testMonthYear)
+                testMonth,
+                () -> new IncomeNotFoundException("Incomes not found for month: " + testMonth)
         );
         
         assertEquals(List.of(testIncome), result);
@@ -120,14 +120,14 @@ public class ServiceUtilsTest {
 
     @Test
     void findListByCustomFinderOrThrow_WhenEntitiesDoNotExist_ThrowsException() {
-        Function<YearMonth, List<Income>> finder = testMonthYear -> List.of();
-        String errorMessage = "Incomes not found for month: " + testMonthYear;
+        Function<YearMonth, List<Income>> finder = month -> List.of();
+        String errorMessage = "Incomes not found for month: " + testMonth;
 
         IncomeNotFoundException exception = assertThrows(
                 IncomeNotFoundException.class,
                 () -> ServiceUtils.findListByCustomFinderOrThrow(
                         finder, 
-                        testMonthYear, 
+                        testMonth, 
                         () -> new IncomeNotFoundException(errorMessage)
                 )
         );

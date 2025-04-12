@@ -26,31 +26,31 @@ public class BudgetControllerTest {
     private BudgetService budgetService;
 	
 	@Test
-	void shouldGetBudgetWhenValidMonthYear() throws Exception {
-	    String testYearMonth = "2000-01";
+	void shouldGetBudgetWhenValidMonth() throws Exception {
+	    String testMonthString = "2000-01";
 	    double expectedIncome = 3000.0;
 	    double expectedExpense = 1500.0;
 	    double expectedSavings = expectedIncome - expectedExpense;
 	    
-	    Budget budget = new Budget(YearMonth.parse(testYearMonth));
+	    Budget budget = new Budget(YearMonth.parse(testMonthString));
 	    budget.setTotalIncome(expectedIncome);
 	    budget.setTotalExpense(expectedExpense);
 	    budget.setSavings(expectedSavings);
 	    
-	    Mockito.when(budgetService.getBudgetByMonthYear(testYearMonth))
+	    Mockito.when(budgetService.getBudgetByMonth(testMonthString))
                 .thenReturn(budget);
 	    
 	    mockMvc.perform(get("/api/budgets")
-	            .param("monthYear", testYearMonth)
+	            .param("month", testMonthString)
 	            .contentType(MediaType.APPLICATION_JSON))
 	            .andExpect(status().isOk())
 	            .andExpect(jsonPath("$.totalIncome").value(expectedIncome))
 	            .andExpect(jsonPath("$.totalExpense").value(expectedExpense))
 	            .andExpect(jsonPath("$.savings").value(expectedSavings))
-	            .andExpect(jsonPath("$.monthYear").value(testYearMonth));
+	            .andExpect(jsonPath("$.month").value(testMonthString));
 	    
 	    Mockito.verify(budgetService, Mockito.times(1))
-	            .getBudgetByMonthYear(testYearMonth);
+	            .getBudgetByMonth(testMonthString);
 	}
 	
     @Test
@@ -70,19 +70,19 @@ public class BudgetControllerTest {
 	
 	@Test
 	void shouldReturnNotFoundWhenBudgetIsNotFound() throws Exception {
-		String testYearMonth = "2000-01";
+		String testMonthString = "2000-01";
 		
-		Mockito.when(budgetService.getBudgetByMonthYear(testYearMonth))
-				.thenThrow(new BudgetNotFoundException("Budget not found for month: " + testYearMonth));
+		Mockito.when(budgetService.getBudgetByMonth(testMonthString))
+				.thenThrow(new BudgetNotFoundException("Budget not found for month: " + testMonthString));
 		
 		mockMvc.perform(get("/api/budgets")
-				.param("monthYear", testYearMonth)
+				.param("month", testMonthString)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.error").value("Budget not found for month: " + testYearMonth));
+				.andExpect(jsonPath("$.error").value("Budget not found for month: " + testMonthString));
 		
 		Mockito.verify(budgetService, Mockito.times(1))
-				.getBudgetByMonthYear(testYearMonth);
+				.getBudgetByMonth(testMonthString);
 	}
     
     @Test

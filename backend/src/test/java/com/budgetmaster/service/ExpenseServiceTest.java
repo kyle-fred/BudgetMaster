@@ -28,8 +28,8 @@ class ExpenseServiceTest {
 	
     @Test
     void shouldCreateAndSaveExpenseSuccessfully() {
-	    YearMonth expectedMonthYear = YearMonth.of(2000, 1);
-    	Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, expectedMonthYear);
+	    YearMonth expectedMonth = YearMonth.of(2000, 1);
+    	Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, expectedMonth);
         
         Mockito.when(expenseRepository.saveAndFlush(Mockito.any(Expense.class)))
         		.thenReturn(expectedExpense);
@@ -39,7 +39,7 @@ class ExpenseServiceTest {
         expenseRequest.setAmount(1000.0);
         expenseRequest.setCategory(ExpenseCategory.HOUSING);
         expenseRequest.setType(TransactionType.RECURRING);
-        expenseRequest.setMonthYear(expectedMonthYear.toString());
+        expenseRequest.setMonth(expectedMonth.toString());
         
         Expense savedExpense = expenseService.createExpense(expenseRequest);
 
@@ -48,7 +48,7 @@ class ExpenseServiceTest {
         assertEquals(1000.0, savedExpense.getAmount());
         assertEquals(ExpenseCategory.HOUSING, savedExpense.getCategory());
         assertEquals(TransactionType.RECURRING, savedExpense.getType());
-	    assertEquals(expectedMonthYear, savedExpense.getMonthYear());
+	    assertEquals(expectedMonth, savedExpense.getMonth());
 
         Mockito.verify(expenseRepository, Mockito.times(1))
         		.saveAndFlush(Mockito.any(Expense.class));
@@ -56,34 +56,35 @@ class ExpenseServiceTest {
     
     @Test
     void shouldReturnListOfExpensesWhenMonthHasExpenses() {
-        YearMonth monthYear = YearMonth.of(2000, 1);
+        YearMonth month = YearMonth.of(2000, 1);
 
  		List<Expense> expenseList = List.of(
- 				new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, monthYear),
- 				new Expense("Gas", 100.0, ExpenseCategory.UTILITIES, TransactionType.RECURRING, monthYear)
+ 				new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, month),
+ 				new Expense("Gas", 100.0, ExpenseCategory.UTILITIES, TransactionType.RECURRING, month)
  		);
 
         try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
-            mockedDateUtils.when(() -> DateUtils.getValidYearMonth(monthYear.toString()))
-            		.thenReturn(monthYear);
-            Mockito.when(expenseRepository.findByMonthYear(monthYear))
+            mockedDateUtils.when(() -> DateUtils.getValidYearMonth(month.toString()))
+            		.thenReturn(month);
+            Mockito.when(expenseRepository.findByMonth(month))
             		.thenReturn(expenseList);
 
-            List<Expense> result = expenseService.getAllExpensesForMonth(monthYear.toString());
+            List<Expense> result = expenseService.getAllExpensesForMonth(month.toString());
 
             assertNotNull(result);
             assertEquals(2, result.size());
             assertEquals("Rent", result.get(0).getName());
             assertEquals("Gas", result.get(1).getName());
 
-            Mockito.verify(expenseRepository, Mockito.times(1)).findByMonthYear(monthYear);
+            Mockito.verify(expenseRepository, Mockito.times(1))
+                    .findByMonth(month);
         }
     }
     
     @Test
     void shouldReturnExpenseWhenExists() {
-	    YearMonth testYearMonth = YearMonth.of(2000, 1);
-    	Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
+	    YearMonth testMonth = YearMonth.of(2000, 1);
+    	Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testMonth);
     	
     	Mockito.when(expenseRepository.findById(Mockito.eq(1L)))
     			.thenReturn(Optional.of(expectedExpense));
@@ -95,7 +96,7 @@ class ExpenseServiceTest {
         assertEquals(1000.0, retrievedExpense.getAmount());
         assertEquals(ExpenseCategory.HOUSING, retrievedExpense.getCategory());
         assertEquals(TransactionType.RECURRING, retrievedExpense.getType());
-	    assertEquals(testYearMonth, retrievedExpense.getMonthYear());
+	    assertEquals(testMonth, retrievedExpense.getMonth());
 	    
         Mockito.verify(expenseRepository, Mockito.times(1))
 				.findById(Mockito.eq(1L));
@@ -103,8 +104,8 @@ class ExpenseServiceTest {
     
     @Test
     void shouldUpdateExpenseWhenExists() {
-    	YearMonth testYearMonth = YearMonth.of(2000, 1); 	    
-    	Expense existingExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
+    	YearMonth testMonth = YearMonth.of(2000, 1); 	    
+    	Expense existingExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testMonth);
 
         ExpenseRequest updateRequest = new ExpenseRequest();
         updateRequest.setName("Gas Bill");
@@ -131,8 +132,8 @@ class ExpenseServiceTest {
     
     @Test
     void shouldDeleteExpenseWhenExists() {
-        YearMonth testYearMonth = YearMonth.of(2000, 1);
-        Expense existingExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testYearMonth);
+        YearMonth testMonth = YearMonth.of(2000, 1);
+        Expense existingExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testMonth);
 
         Mockito.when(expenseRepository.findById(1L))
                 .thenReturn(Optional.of(existingExpense));
@@ -183,17 +184,17 @@ class ExpenseServiceTest {
     
     @Test
     void shouldThrowExceptionWhenNoExpensesExistForMonth() {
-        YearMonth monthYear = YearMonth.of(2000, 1);
-        String errorMessage = "No expenses found for month: " + monthYear;
+        YearMonth month = YearMonth.of(2000, 1);
+        String errorMessage = "No expenses found for month: " + month;
 
         try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
-            mockedDateUtils.when(() -> DateUtils.getValidYearMonth(monthYear.toString()))
-            		.thenReturn(monthYear);
-            Mockito.when(expenseRepository.findByMonthYear(monthYear))
+            mockedDateUtils.when(() -> DateUtils.getValidYearMonth(month.toString()))
+            		.thenReturn(month);
+            Mockito.when(expenseRepository.findByMonth(month))
             		.thenThrow(new ExpenseNotFoundException(errorMessage));
 
             assertThrows(ExpenseNotFoundException.class,
-                () -> expenseService.getAllExpensesForMonth(monthYear.toString()),
+                () -> expenseService.getAllExpensesForMonth(month.toString()),
                 errorMessage
             );
         }

@@ -23,8 +23,8 @@ public class ExpenseRequest {
 	@NotNull(message = "Expense transaction type is required.")
 	private TransactionType type;
 	
-	@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month year must be in format YYYY-MM")
-	private String monthYear;
+	@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month must be in format YYYY-MM")
+	private String month;
 	
 	public String getName() {
 		return name;
@@ -58,11 +58,11 @@ public class ExpenseRequest {
 		this.type = type;
 	}
 	
-	public String getMonthYear() {
-		return monthYear;
+	public String getMonth() {
+		return month;
 	}
 	
-	public void setMonthYear(String monthYear) {
-		this.monthYear = monthYear;
+	public void setMonth(String month) {
+		this.month = month;
 	}
 }

@@ -39,9 +39,9 @@ public class ServiceUtils {
      * 
      * Example usage:
      * Budget budget = findByCustomFinderOrThrow(
-     *     budgetRepository::findByMonthYear,
-     *     monthYear,
-     *     () -> new BudgetNotFoundException("Budget not found for month: " + monthYear)
+     *     budgetRepository::findByMonth,
+     *     month,
+     *     () -> new BudgetNotFoundException("Budget not found for month: " + month)
      * );
      * 
      * @param finderFunction The repository method to use for finding the entity
@@ -64,9 +64,9 @@ public class ServiceUtils {
      * 
      * Example usage:
      * List<Income> incomes = findListByCustomFinderOrThrow(
-     *     incomeRepository::findByMonthYear,
-     *     monthYear,
-     *     () -> new IncomeNotFoundException("No incomes found for month: " + monthYear)
+     *     incomeRepository::findByMonth,
+     *     month,
+     *     () -> new IncomeNotFoundException("No incomes found for month: " + month)
      * );
      * 
      * @param finderFunction The repository method to use for finding the entities

@@ -23,9 +23,9 @@ public class BudgetController {
 	@GetMapping
 	public ResponseEntity<Budget> getBudgetByMonth(
 			@RequestParam 
-			@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month year must be in format YYYY-MM") 
-			String monthYear) {
-		Budget budget = budgetService.getBudgetByMonthYear(monthYear);
+			@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month must be in format YYYY-MM") 
+			String month) {
+		Budget budget = budgetService.getBudgetByMonth(month);
 		return ResponseEntity.ok(budget);
 	}
 		

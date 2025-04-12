@@ -29,12 +29,12 @@ public class IncomeService {
 		return incomeRepository.saveAndFlush(income);
 	}
 	
-	public List<Income> getAllIncomesForMonth(String monthYearString) {
-		YearMonth monthYear = DateUtils.getValidYearMonth(monthYearString);
+	public List<Income> getAllIncomesForMonth(String monthString) {
+		YearMonth month = DateUtils.getValidYearMonth(monthString);
 		return ServiceUtils.findListByCustomFinderOrThrow(
-			incomeRepository::findByMonthYear,
-			monthYear,
-			createMonthYearNotFoundException(monthYear)
+			incomeRepository::findByMonth,
+			month,
+			createMonthNotFoundException(month)
 		);
 	}
 	
@@ -66,9 +66,9 @@ public class IncomeService {
 	}
 	
 	/**
-	 * Creates a supplier for IncomeNotFoundException when no entities are found for a given monthYear value.
+	 * Creates a supplier for IncomeNotFoundException when no entities are found for a given month value.
 	 */
-	private Supplier<IncomeNotFoundException> createMonthYearNotFoundException(YearMonth monthYear) {
-		return () -> new IncomeNotFoundException("No incomes found for month: " + monthYear);
+	private Supplier<IncomeNotFoundException> createMonthNotFoundException(YearMonth month) {
+		return () -> new IncomeNotFoundException("No incomes found for month: " + month);
 	}
 }

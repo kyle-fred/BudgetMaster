@@ -40,10 +40,10 @@ public class IncomeControllerTest {
         request.setSource("Company XYZ");
         request.setAmount(2000.0);
         request.setType(TransactionType.RECURRING);
-        request.setMonthYear("2000-01");
+        request.setMonth("2000-01");
         
-        YearMonth testYearMonth = YearMonth.of(2000, 1);
-		Income expectedIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testYearMonth);
+        YearMonth testMonth = YearMonth.of(2000, 1);
+		Income expectedIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonth);
 		
 		Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
 				.thenReturn(expectedIncome);
@@ -56,22 +56,22 @@ public class IncomeControllerTest {
 				.andExpect(jsonPath("$.source").value("Company XYZ"))
 				.andExpect(jsonPath("$.amount").value(2000.0))
 				.andExpect(jsonPath("$.type").value("RECURRING"))
-				.andExpect(jsonPath("$.monthYear").value("2000-01"));
+				.andExpect(jsonPath("$.month").value("2000-01"));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 				.createIncome(Mockito.any(IncomeRequest.class));
 	}
 	
 	@Test
-	void shouldCreateIncomeWhenMonthYearIsNotProvided() throws Exception {
+	void shouldCreateIncomeWhenMonthIsNotProvided() throws Exception {
 		IncomeRequest request = new IncomeRequest();
         request.setName("Salary");
         request.setSource("Company XYZ");
         request.setAmount(2000.0);
         request.setType(TransactionType.RECURRING);
 		
-		YearMonth defaultYearMonth = YearMonth.now();
-		Income expectedIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, defaultYearMonth);
+		YearMonth defaultMonth = YearMonth.now();
+		Income expectedIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, defaultMonth);
 		
 		Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
 				.thenReturn(expectedIncome);
@@ -84,7 +84,7 @@ public class IncomeControllerTest {
 				.andExpect(jsonPath("$.source").value("Company XYZ"))
 				.andExpect(jsonPath("$.amount").value(2000.0))
 				.andExpect(jsonPath("$.type").value("RECURRING"))
-				.andExpect(jsonPath("$.monthYear").value(defaultYearMonth.toString()));
+				.andExpect(jsonPath("$.month").value(defaultMonth.toString()));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 				.createIncome(Mockito.any(IncomeRequest.class));
@@ -92,8 +92,8 @@ public class IncomeControllerTest {
 	
 	@Test
 	void shouldGetIncomeWhenValidId() throws Exception {
-        YearMonth testYearMonth = YearMonth.of(2000, 1);
-		Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testYearMonth);
+        YearMonth testMonth = YearMonth.of(2000, 1);
+		Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonth);
 		
 		Mockito.when(incomeService.getIncomeById(1L))
 				.thenReturn(income);
@@ -105,7 +105,7 @@ public class IncomeControllerTest {
 				.andExpect(jsonPath("$.source").value("Company XYZ"))
 				.andExpect(jsonPath("$.amount").value(2000.0))
 				.andExpect(jsonPath("$.type").value("RECURRING"))
-	            .andExpect(jsonPath("$.monthYear").value("2000-01"));
+	            .andExpect(jsonPath("$.month").value("2000-01"));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 				.getIncomeById(1L);
@@ -113,58 +113,58 @@ public class IncomeControllerTest {
 	
 	@Test
 	void shouldGetAllIncomesForValidMonth() throws Exception {
-		YearMonth testYearMonth = YearMonth.of(2000, 1);
+		YearMonth testMonth = YearMonth.of(2000, 1);
 		
 		List<Income> incomeList = List.of(
-				new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testYearMonth),
-				new Income("Bonus", "Company ABC", 500.0, TransactionType.ONE_TIME, testYearMonth)
+				new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonth),
+				new Income("Bonus", "Company ABC", 500.0, TransactionType.ONE_TIME, testMonth)
 		);
 		
-		Mockito.when(incomeService.getAllIncomesForMonth("2000-01"))
+		Mockito.when(incomeService.getAllIncomesForMonth(Mockito.eq(testMonth.toString())))
 				.thenReturn(incomeList);
 		
 		mockMvc.perform(get("/api/incomes")
-				.param("monthYear", "2000-01")
+				.param("month", testMonth.toString())
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 	            .andExpect(jsonPath("$[0].name").value("Salary"))
 	            .andExpect(jsonPath("$[0].source").value("Company XYZ"))
 	            .andExpect(jsonPath("$[0].amount").value(2000.0))
 	            .andExpect(jsonPath("$[0].type").value("RECURRING"))
-	            .andExpect(jsonPath("$[0].monthYear").value("2000-01"))
+	            .andExpect(jsonPath("$[0].month").value("2000-01"))
 	            .andExpect(jsonPath("$[1].name").value("Bonus"))
 	            .andExpect(jsonPath("$[1].source").value("Company ABC"))
 	            .andExpect(jsonPath("$[1].amount").value(500.0))
 	            .andExpect(jsonPath("$[1].type").value("ONE_TIME"))
-	            .andExpect(jsonPath("$[1].monthYear").value("2000-01"));
+	            .andExpect(jsonPath("$[1].month").value("2000-01"));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
-				.getAllIncomesForMonth("2000-01");
+				.getAllIncomesForMonth(Mockito.eq(testMonth.toString()));
 	}
 	
 	@Test
 	void shouldReturnNotFoundWhenNoIncomesExist() throws Exception {
-	    YearMonth testYearMonth = YearMonth.of(2000, 1);
-		Mockito.when(incomeService.getAllIncomesForMonth(Mockito.eq(testYearMonth.toString())))
-	           .thenThrow(new IncomeNotFoundException("No incomes found for month: " + testYearMonth));
+	    YearMonth testMonth = YearMonth.of(2000, 1);
+		Mockito.when(incomeService.getAllIncomesForMonth(Mockito.eq(testMonth.toString())))
+	           .thenThrow(new IncomeNotFoundException("No incomes found for month: " + testMonth));
 
 	    mockMvc.perform(get("/api/incomes")
-	            .param("monthYear", testYearMonth.toString())
+	            .param("month", testMonth.toString())
 	            .contentType(MediaType.APPLICATION_JSON))
 	            .andExpect(status().isNotFound())
-	            .andExpect(jsonPath("$.error").value("No incomes found for month: " + testYearMonth));
+	            .andExpect(jsonPath("$.error").value("No incomes found for month: " + testMonth));
 
 	    Mockito.verify(incomeService, Mockito.times(1))
-	           .getAllIncomesForMonth(Mockito.eq(testYearMonth.toString()));
+	           .getAllIncomesForMonth(Mockito.eq(testMonth.toString()));
 	}
 	
 	@Test
 	void shouldUpdateIncomeWhenValidId() throws Exception {
-		YearMonth testYearMonth = YearMonth.of(2000, 1);
-		Income existingIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testYearMonth);
+		YearMonth testMonth = YearMonth.of(2000, 1);
+		Income existingIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonth);
 		existingIncome.setId(1L);
 		
-		Income updatedIncome = new Income ("Bonus", "Company ABC", 3000.0, TransactionType.ONE_TIME, testYearMonth);
+		Income updatedIncome = new Income ("Bonus", "Company ABC", 3000.0, TransactionType.ONE_TIME, testMonth);
 		updatedIncome.setId(1L);
 		
 		IncomeRequest updateRequest = new IncomeRequest();
@@ -184,7 +184,7 @@ public class IncomeControllerTest {
 				.andExpect(jsonPath("$.source").value("Company ABC"))
 				.andExpect(jsonPath("$.amount").value(3000.0))
 				.andExpect(jsonPath("$.type").value("ONE_TIME"))
-	            .andExpect(jsonPath("$.monthYear").value("2000-01"));
+	            .andExpect(jsonPath("$.month").value("2000-01"));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 				.updateIncome(Mockito.eq(1L), Mockito.refEq(updateRequest));
@@ -292,19 +292,19 @@ public class IncomeControllerTest {
 	}
 	
     @Test
-    void shouldReturnBadRequestWhenMonthYearFormatIsInvalid() throws Exception {
+    void shouldReturnBadRequestWhenMonthFormatIsInvalid() throws Exception {
         IncomeRequest request = new IncomeRequest();
         request.setName("Salary");
         request.setSource("Company XYZ");
         request.setAmount(2000.0);
         request.setType(TransactionType.RECURRING);
-        request.setMonthYear("2000-jan");
+        request.setMonth("2000-jan");
         
         mockMvc.perform(post("/api/incomes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.monthYear").value("Month year must be in format YYYY-MM"));
+                .andExpect(jsonPath("$.month").value("Month must be in format YYYY-MM"));
 
         Mockito.verify(incomeService, Mockito.times(0))
         		.createIncome(Mockito.any(IncomeRequest.class));
@@ -366,9 +366,7 @@ public class IncomeControllerTest {
 	    request.setSource("Company XYZ");
 	    request.setAmount(2000.0);
 	    request.setType(TransactionType.RECURRING);
-	    request.setMonthYear("2000-01");
-	
-	    
+	    request.setMonth("2000-01");
 	    
 	    Mockito.when(incomeService.updateIncome(Mockito.eq(incomeId), Mockito.any(IncomeRequest.class)))
 	            .thenThrow(new IncomeNotFoundException("Income not found with id: " + incomeId));

@@ -19,38 +19,38 @@ class BudgetServiceTest {
     
 	@Test
 	void shouldReturnBudgetWhenExists() {
-		String testYearMonthString = "2000-01";
-	    YearMonth testYearMonth = YearMonth.parse(testYearMonthString);
+		String testMonthString = "2000-01";
+	    YearMonth testMonth = YearMonth.parse(testMonthString);
 	    double expectedIncome = 3000.0;
 	    double expectedExpense = 1500.0;
 	    double expectedSavings = expectedIncome - expectedExpense;
 	    
-	    Budget budget = new Budget(testYearMonth);
+	    Budget budget = new Budget(testMonth);
 	    budget.setTotalIncome(expectedIncome);
 	    budget.setTotalExpense(expectedExpense);
 	    budget.setSavings(expectedSavings);
 
-	    Mockito.when(budgetRepository.findByMonthYear(testYearMonth))
+	    Mockito.when(budgetRepository.findByMonth(testMonth))
                 .thenReturn(Optional.of(budget));
 
-	    Budget retrievedBudget = budgetService.getBudgetByMonthYear(testYearMonthString);
+	    Budget retrievedBudget = budgetService.getBudgetByMonth(testMonthString);
 
 	    assertNotNull(retrievedBudget);
 	    assertEquals(expectedIncome, retrievedBudget.getTotalIncome());
 	    assertEquals(expectedExpense, retrievedBudget.getTotalExpense());
 	    assertEquals(expectedSavings, retrievedBudget.getSavings());
-	    assertEquals(testYearMonth, retrievedBudget.getMonthYear());
+	    assertEquals(testMonth, retrievedBudget.getMonth());
 	}
     
     @Test
     void shouldDeleteBudgetWhenExists() {
     	Long budgetId = 1L;
-    	YearMonth testYearMonth = YearMonth.parse("2000-01");
+    	YearMonth testMonth = YearMonth.parse("2000-01");
     	double expectedIncome = 3000.0;
     	double expectedExpense = 1500.0;
     	double expectedSavings = expectedIncome - expectedExpense;
     	
-    	Budget existingBudget = new Budget(testYearMonth);
+    	Budget existingBudget = new Budget(testMonth);
     	existingBudget.setId(budgetId);
     	existingBudget.setTotalIncome(expectedIncome);
     	existingBudget.setTotalExpense(expectedExpense);
@@ -69,14 +69,15 @@ class BudgetServiceTest {
     
     @Test
     void shouldThrowExceptionWhenBudgetDoesNotExist() {
-        String testYearMonthString = "2000-01";
-    	String errorMessage = "Budget not found for month: " + testYearMonthString;
-    	YearMonth testYearMonth = YearMonth.parse(testYearMonthString);
+        String testMonthString = "2000-01";
+    	String errorMessage = "Budget not found for month: " + testMonthString;
+    	YearMonth testMonth = YearMonth.parse(testMonthString);
     	
-    	Mockito.when(budgetRepository.findByMonthYear(testYearMonth)).thenReturn(Optional.empty());
+    	Mockito.when(budgetRepository.findByMonth(testMonth))
+				.thenReturn(Optional.empty());
         
         BudgetNotFoundException thrownException = assertThrows(BudgetNotFoundException.class,
-        		() -> budgetService.getBudgetByMonthYear(testYearMonthString),
+        		() -> budgetService.getBudgetByMonth(testMonthString),
         		errorMessage
         );
         

@@ -13,38 +13,43 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "BUDGET")
 public class Budget {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID")
 	private Long id;
 	
+	@Column(name = "TOTAL_INCOME")
 	private double totalIncome;
 	
+	@Column(name = "TOTAL_EXPENSE")
 	private double totalExpense;
 	
-	@Column(insertable = false, updatable = false)
+	@Column(name = "SAVINGS", insertable = false, updatable = false)
 	private double savings;
 	
-	@Column(nullable = false, unique=true)
-	private YearMonth monthYear;
+	@Column(name = "MONTH", nullable = false, unique=true)
+	private YearMonth month;
 	
 	@CreationTimestamp
-	@Column(nullable = false, updatable = false, insertable = false)
+	@Column(name = "CREATED_AT", nullable = false, updatable = false, insertable = false)
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime createdAt;
 	
 	@UpdateTimestamp
-	@Column(nullable = false, insertable = false)
+	@Column(name = "LAST_UPDATED_AT", nullable = false, insertable = false)
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime lastUpdatedAt;
 	
 	protected Budget() {}
 	
-	public Budget(YearMonth monthYear) {
-		this.monthYear = monthYear;
+	public Budget(YearMonth month) {
+		this.month = month;
 		this.totalIncome = 0;
 		this.totalExpense = 0;
 	}
@@ -81,12 +86,12 @@ public class Budget {
 		this.savings = savings;
 	}
 	
-	public YearMonth getMonthYear() {
-		return monthYear;
+	public YearMonth getMonth() {
+		return month;
 	}
 	
-	public void setMonthYear(YearMonth monthYear) {
-		this.monthYear = monthYear;
+	public void setMonth(YearMonth month) {
+		this.month = month;
 	}
 	
 	public LocalDateTime getCreatedAt() {

@@ -17,7 +17,7 @@ public class FinancialModelUtils {
                 StringUtils.capitalize(request.getSource()),
                 request.getAmount(),
                 request.getType(),
-                DateUtils.getValidYearMonth(request.getMonthYear())
+                DateUtils.getValidYearMonth(request.getMonth())
         );
     }
 
@@ -29,8 +29,8 @@ public class FinancialModelUtils {
         income.setSource(StringUtils.capitalize(request.getSource()));
         income.setAmount(request.getAmount());
         income.setType(request.getType());
-        if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
-            income.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()));
+        if (request.getMonth() != null && !request.getMonth().isEmpty()) {
+            income.setMonth(DateUtils.getValidYearMonth(request.getMonth()));
         }
     }
 
@@ -43,7 +43,7 @@ public class FinancialModelUtils {
                 request.getAmount(),
                 request.getCategory(),
                 request.getType(),
-                DateUtils.getValidYearMonth(request.getMonthYear())
+                DateUtils.getValidYearMonth(request.getMonth())
         );
     }
 
@@ -55,8 +55,8 @@ public class FinancialModelUtils {
         expense.setAmount(request.getAmount());
         expense.setCategory(request.getCategory());
         expense.setType(request.getType());
-        if (request.getMonthYear() != null && !request.getMonthYear().isEmpty()) {
-            expense.setMonthYear(DateUtils.getValidYearMonth(request.getMonthYear()));
+        if (request.getMonth() != null && !request.getMonth().isEmpty()) {
+            expense.setMonth(DateUtils.getValidYearMonth(request.getMonth()));
         }
     }
 }

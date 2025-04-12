@@ -8,5 +8,5 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IncomeRepository extends JpaRepository<Income, Long> {
-	List<Income> findByMonthYear(YearMonth monthYear);
+	List<Income> findByMonth(YearMonth month);
 }

@@ -33,9 +33,9 @@ public class IncomeController {
     @GetMapping
     public ResponseEntity<List<Income>> getAllIncomesForMonth(
             @RequestParam 
-            @Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month year must be in format YYYY-MM") 
-            String monthYear) {
-        List<Income> incomes = incomeService.getAllIncomesForMonth(monthYear);
+            @Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month must be in format YYYY-MM") 
+            String month) {
+        List<Income> incomes = incomeService.getAllIncomesForMonth(month);
         return ResponseEntity.ok(incomes);
     }
 	

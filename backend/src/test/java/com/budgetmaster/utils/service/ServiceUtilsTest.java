@@ -33,10 +33,10 @@ public class ServiceUtilsTest {
     
     @BeforeEach
     void setUp() {
-        testBudget = new Budget();
+        testMonthYear = YearMonth.of(2024, 3);
+        testBudget = new Budget(testMonthYear);
         testIncome = new Income();
         testId = 1L;
-        testMonthYear = YearMonth.of(2024, 3);
     }
     
     @Test

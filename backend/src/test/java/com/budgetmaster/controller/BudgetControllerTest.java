@@ -32,7 +32,9 @@ public class BudgetControllerTest {
 	    double expectedExpense = 1500.0;
 	    double expectedSavings = expectedIncome - expectedExpense;
 	    
-	    Budget budget = new Budget(expectedIncome, expectedExpense, YearMonth.parse(testYearMonth));
+	    Budget budget = new Budget(YearMonth.parse(testYearMonth));
+	    budget.setTotalIncome(expectedIncome);
+	    budget.setTotalExpense(expectedExpense);
 	    budget.setSavings(expectedSavings);
 	    
 	    Mockito.when(budgetService.getBudgetByMonthYear(testYearMonth))

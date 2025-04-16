@@ -17,8 +17,12 @@ import org.junit.jupiter.api.Test;
 
 class MoneyRequestTest {
     private static Validator validator;
-    private static final Currency GBP = Currency.getInstance("GBP");
     private MoneyRequest request;
+
+    // -- Test Data --
+
+    private BigDecimal testAmount = new BigDecimal("100.00");
+    private static final Currency GBP = Currency.getInstance("GBP");
 
     // -- Setup --
 
@@ -37,7 +41,7 @@ class MoneyRequestTest {
 
     @Test
     void testValidMoneyRequest() {
-        request.setAmount(new BigDecimal("100.00"));
+        request.setAmount(testAmount);
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
@@ -55,7 +59,7 @@ class MoneyRequestTest {
 
     @Test
     void testNullCurrency() {
-        request.setAmount(new BigDecimal("100.00"));
+        request.setAmount(testAmount);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
@@ -64,7 +68,7 @@ class MoneyRequestTest {
 
     @Test
     void testNegativeAmount() {
-        request.setAmount(new BigDecimal("-100.00"));
+        request.setAmount(testAmount.negate());
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
@@ -92,13 +96,10 @@ class MoneyRequestTest {
 
     @Test
     void testGettersAndSetters() {
-        BigDecimal amount = new BigDecimal("100.00");
-        Currency currency = GBP;
+        request.setAmount(testAmount);
+        request.setCurrency(GBP);
 
-        request.setAmount(amount);
-        request.setCurrency(currency);
-
-        assertEquals(amount, request.getAmount());
-        assertEquals(currency, request.getCurrency());
+        assertEquals(testAmount, request.getAmount());
+        assertEquals(GBP, request.getCurrency());
     }
 }

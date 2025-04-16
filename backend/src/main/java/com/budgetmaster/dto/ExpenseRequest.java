@@ -1,9 +1,10 @@
 package com.budgetmaster.dto;
 
 import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.ExpenseCategory;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -13,9 +14,9 @@ public class ExpenseRequest {
 	@NotBlank(message = "Expense name is required.")
 	private String name;
 	
-	@NotNull(message = "Expense amount is required.")
-	@Min(value = 0, message = "Expense amount cannot be negative.")
-	private Double amount;
+	@NotNull(message = "Money details (amount and currency) are required.")
+	@Valid
+	private MoneyRequest money;
 	
 	@NotNull(message = "Expense category is required.")
 	private ExpenseCategory category;
@@ -34,12 +35,12 @@ public class ExpenseRequest {
 		this.name = name;
 	}
 	
-	public Double getAmount() {
-		return amount;
+	public MoneyRequest getMoney() {
+		return money;
 	}
 	
-	public void setAmount(Double amount) {
-		this.amount = amount;
+	public void setMoney(MoneyRequest money) {
+		this.money = money;
 	}
 	
 	public ExpenseCategory getCategory() {

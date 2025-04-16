@@ -1,8 +1,9 @@
 package com.budgetmaster.dto;
 
+import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.TransactionType;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -14,10 +15,10 @@ public class IncomeRequest {
 	
 	@NotBlank(message = "Income source is required.")
 	private String source;
-	
-	@NotNull(message = "Income amount is required.")
-	@Min(value = 0, message = "Income amount cannot be negative.")
-	private Double amount;
+
+	@NotNull(message = "Money details (amount and currency) are required.")
+	@Valid
+	private MoneyRequest money;
 	
 	@NotNull(message = "Income transaction type is required.")
 	private TransactionType type;
@@ -41,12 +42,12 @@ public class IncomeRequest {
 		this.source = source;
 	}
 	
-	public Double getAmount() {
-		return amount;
+	public MoneyRequest getMoney() {
+		return money;
 	}
 	
-	public void setAmount(Double amount) {
-		this.amount = amount;
+	public void setMoney(MoneyRequest money) {
+		this.money = money;
 	}
 	
 	public TransactionType getType() {

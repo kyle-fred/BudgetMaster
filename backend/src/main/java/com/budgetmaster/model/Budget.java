@@ -1,5 +1,6 @@
 package com.budgetmaster.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 
@@ -24,14 +25,14 @@ public class Budget {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "TOTAL_INCOME")
-	private double totalIncome;
+	@Column(name = "TOTAL_INCOME", precision = 19, scale = 2)
+	private BigDecimal totalIncome;
 	
-	@Column(name = "TOTAL_EXPENSE")
-	private double totalExpense;
+	@Column(name = "TOTAL_EXPENSE", precision = 19, scale = 2)
+	private BigDecimal totalExpense;
 	
-	@Column(name = "SAVINGS", insertable = false, updatable = false)
-	private double savings;
+	@Column(name = "SAVINGS", precision = 19, scale = 2, insertable = false, updatable = false)
+	private BigDecimal savings;
 	
 	@Column(name = "MONTH", nullable = false, unique=true)
 	private YearMonth month;
@@ -50,8 +51,8 @@ public class Budget {
 	
 	public Budget(YearMonth month) {
 		this.month = month;
-		this.totalIncome = 0;
-		this.totalExpense = 0;
+		this.totalIncome = BigDecimal.ZERO;
+		this.totalExpense = BigDecimal.ZERO;
 	}
 	
 	public Long getId() {
@@ -62,27 +63,27 @@ public class Budget {
 		this.id = id;
 	}
 	
-	public double getTotalIncome() {
+	public BigDecimal getTotalIncome() {
 		return totalIncome;
 	}
 	
-	public void setTotalIncome(double totalIncome) {
+	public void setTotalIncome(BigDecimal totalIncome) {
 		this.totalIncome = totalIncome;
 	}
 	
-	public double getTotalExpense() {
+	public BigDecimal getTotalExpense() {
 		return totalExpense;
 	}
 	
-	public void setTotalExpense(double totalExpense) {
+	public void setTotalExpense(BigDecimal totalExpense) {
 		this.totalExpense = totalExpense;
 	}
 	
-	public double getSavings() {
+	public BigDecimal getSavings() {
 		return savings;
 	}
 	
-	public void setSavings(double savings) {
+	public void setSavings(BigDecimal savings) {
 		this.savings = savings;
 	}
 	

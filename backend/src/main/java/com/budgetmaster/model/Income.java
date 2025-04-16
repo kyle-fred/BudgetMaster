@@ -7,9 +7,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.model.value.Money;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,7 +19,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
 
 @Entity
 @Table(name = "INCOME")
@@ -28,18 +29,17 @@ public class Income {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "NAME")
+	@Column(name = "NAME", nullable = false)
 	private String name;
 	
-	@Column(name = "SOURCE")
+	@Column(name = "SOURCE", nullable = false)
 	private String source;
 	
-	@Min(value = 0, message = "Amount must be greater than 0")
-	@Column(name = "AMOUNT")
-	private Double amount;
+	@Embedded
+	private Money money;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TYPE")
+	@Column(name = "TYPE", nullable = false)
 	private TransactionType type;
 	
 	@Column(name = "MONTH", nullable = false)
@@ -57,10 +57,10 @@ public class Income {
 	
 	public Income() {}
 	
-	public Income(String name, String source, Double amount, TransactionType type, YearMonth month) {
+	public Income(String name, String source, Money money, TransactionType type, YearMonth month) {
 		this.name = name;
 		this.source = source;
-		this.amount = amount;
+		this.money = money;
 		this.type = type;
 		this.month = month;
 	}
@@ -89,12 +89,12 @@ public class Income {
 		this.source = source;
 	}
 	
-	public Double getAmount() {
-		return amount;
+	public Money getMoney() {
+		return money;
 	}
 	
-	public void setAmount(Double amount) {
-		this.amount = amount;
+	public void setMoney(Money money) {
+		this.money = money;
 	}
 	
 	public TransactionType getType() {

@@ -20,12 +20,14 @@ import com.budgetmaster.enums.ExpenseCategory;
 import com.budgetmaster.enums.TransactionType;
 
 public class ExpenseRequestTest {
+    // -- Dependencies --
     private static Validator validator;
+    
+    // -- Test Objects --
     private ExpenseRequest expenseRequest;
     private MoneyRequest moneyRequest;
 
     // -- Test Data --
-    
     private String testName = "Test Expense";   
     private ExpenseCategory testCategory = ExpenseCategory.MISCELLANEOUS;
     private BigDecimal testAmount = new BigDecimal("100.00");

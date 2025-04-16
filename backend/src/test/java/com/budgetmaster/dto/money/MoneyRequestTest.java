@@ -16,11 +16,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class MoneyRequestTest {
+    // -- Dependencies --
     private static Validator validator;
+    
+    // -- Test Objects --
     private MoneyRequest request;
 
     // -- Test Data --
-
     private BigDecimal testAmount = new BigDecimal("100.00");
     private static final Currency GBP = Currency.getInstance("GBP");
 

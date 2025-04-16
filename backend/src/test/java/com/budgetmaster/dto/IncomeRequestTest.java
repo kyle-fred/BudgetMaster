@@ -19,12 +19,14 @@ import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.TransactionType;
 
 public class IncomeRequestTest {    
+    // -- Dependencies --
     private static Validator validator;
+    
+    // -- Test Objects --
     private IncomeRequest incomeRequest;
     private MoneyRequest moneyRequest;
 
     // -- Test Data --
-
     private String testName = "Test Income";
     private String testSource = "Test Source";
     private BigDecimal testAmount = new BigDecimal("100.00");

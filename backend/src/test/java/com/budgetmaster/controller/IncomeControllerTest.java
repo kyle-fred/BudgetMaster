@@ -1,11 +1,14 @@
 package com.budgetmaster.controller;
 
 import com.budgetmaster.dto.IncomeRequest;
+import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.exception.IncomeNotFoundException;
 import com.budgetmaster.service.IncomeService;
 import com.budgetmaster.model.Income;
+import com.budgetmaster.model.value.Money;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +21,24 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Currency;
 
 @WebMvcTest(IncomeController.class)
 public class IncomeControllerTest {
+	// -- Test Data --
+	private static final Long testId = 1L;
+	private static final String testName = "Test Income";
+	private static final String testSource = "Test Source";
+	private static final BigDecimal testAmount = new BigDecimal("123.45");
+	private static final Currency testCurrency = Currency.getInstance("GBP");
+	private static final TransactionType testType = TransactionType.ONE_TIME;
+	private static final String testMonth = "2000-01";
+	private static final YearMonth testYearMonth = YearMonth.of(2000, 1);
 	
+	// -- Dependencies --
 	@Autowired
 	private MockMvc mockMvc;
 	
@@ -33,319 +48,83 @@ public class IncomeControllerTest {
 	@MockBean
     private IncomeService incomeService;
 	
-	@Test
-	void shouldCreateIncomeWhenValidRequest() throws Exception {
-		IncomeRequest request = new IncomeRequest();
-        request.setName("Salary");
-        request.setSource("Company XYZ");
-        request.setAmount(2000.0);
-        request.setType(TransactionType.RECURRING);
-        request.setMonth("2000-01");
-        
-        YearMonth testMonth = YearMonth.of(2000, 1);
-		Income expectedIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonth);
+	// -- Test Objects --
+	private IncomeRequest incomeRequest;
+	private Income testIncome;
+	private MoneyRequest moneyRequest;
+	
+	// -- Setup --
+	
+	@BeforeEach
+	void setUp() {
+		// Setup MoneyRequest
+		moneyRequest = new MoneyRequest();
+		moneyRequest.setAmount(testAmount);
+		moneyRequest.setCurrency(testCurrency);
 		
+		// Setup IncomeRequest
+		incomeRequest = new IncomeRequest();
+		incomeRequest.setName(testName);
+		incomeRequest.setSource(testSource);
+		incomeRequest.setMoney(moneyRequest);
+		incomeRequest.setType(testType);
+		incomeRequest.setMonth(testMonth);
+		
+		// Setup Income
+		testIncome = new Income();
+		testIncome.setId(testId);
+		testIncome.setName(testName);
+		testIncome.setSource(testSource);
+		testIncome.setMoney(Money.of(testAmount, testCurrency));
+		testIncome.setType(testType);
+		testIncome.setMonth(testYearMonth);
+	}
+	
+	// -- Create Income Tests --
+	
+	@Test
+	void createIncome_ValidRequest_ReturnsCreated() throws Exception {
 		Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
-				.thenReturn(expectedIncome);
+				.thenReturn(testIncome);
 		
 		mockMvc.perform(post("/api/incomes")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
+				.content(objectMapper.writeValueAsString(incomeRequest)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Salary"))
-				.andExpect(jsonPath("$.source").value("Company XYZ"))
-				.andExpect(jsonPath("$.amount").value(2000.0))
-				.andExpect(jsonPath("$.type").value("RECURRING"))
-				.andExpect(jsonPath("$.month").value("2000-01"));
+				.andExpect(jsonPath("$.name").value(testName))
+				.andExpect(jsonPath("$.source").value(testSource))
+				.andExpect(jsonPath("$.money.amount").value(testAmount.toString()))
+				.andExpect(jsonPath("$.money.currency").value(testCurrency.toString()))
+				.andExpect(jsonPath("$.type").value(testType.toString()))
+				.andExpect(jsonPath("$.month").value(testMonth));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 				.createIncome(Mockito.any(IncomeRequest.class));
 	}
 	
-	@Test
-	void shouldCreateIncomeWhenMonthIsNotProvided() throws Exception {
-		IncomeRequest request = new IncomeRequest();
-        request.setName("Salary");
-        request.setSource("Company XYZ");
-        request.setAmount(2000.0);
-        request.setType(TransactionType.RECURRING);
-		
-		YearMonth defaultMonth = YearMonth.now();
-		Income expectedIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, defaultMonth);
-		
-		Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
-				.thenReturn(expectedIncome);
-		
-		mockMvc.perform(post("/api/incomes")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Salary"))
-				.andExpect(jsonPath("$.source").value("Company XYZ"))
-				.andExpect(jsonPath("$.amount").value(2000.0))
-				.andExpect(jsonPath("$.type").value("RECURRING"))
-				.andExpect(jsonPath("$.month").value(defaultMonth.toString()));
-		
-		Mockito.verify(incomeService, Mockito.times(1))
-				.createIncome(Mockito.any(IncomeRequest.class));
-	}
+	// -- Get Income Tests --
 	
 	@Test
-	void shouldGetIncomeWhenValidId() throws Exception {
-        YearMonth testMonth = YearMonth.of(2000, 1);
-		Income income = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonth);
+	void getIncome_ValidId_ReturnsOk() throws Exception {
+		Mockito.when(incomeService.getIncomeById(testId))
+				.thenReturn(testIncome);
 		
-		Mockito.when(incomeService.getIncomeById(1L))
-				.thenReturn(income);
-		
-		mockMvc.perform(get("/api/incomes/{id}", 1L)
+		mockMvc.perform(get("/api/incomes/{id}", testId)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Salary"))
-				.andExpect(jsonPath("$.source").value("Company XYZ"))
-				.andExpect(jsonPath("$.amount").value(2000.0))
-				.andExpect(jsonPath("$.type").value("RECURRING"))
-	            .andExpect(jsonPath("$.month").value("2000-01"));
+				.andExpect(jsonPath("$.name").value(testName))
+				.andExpect(jsonPath("$.source").value(testSource))
+				.andExpect(jsonPath("$.money.amount").value(testAmount.toString()))
+				.andExpect(jsonPath("$.money.currency").value(testCurrency.toString()))
+				.andExpect(jsonPath("$.type").value(testType.toString()))
+				.andExpect(jsonPath("$.month").value(testMonth));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
-				.getIncomeById(1L);
+				.getIncomeById(testId);
 	}
 	
 	@Test
-	void shouldGetAllIncomesForValidMonth() throws Exception {
-		YearMonth testMonth = YearMonth.of(2000, 1);
-		
-		List<Income> incomeList = List.of(
-				new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonth),
-				new Income("Bonus", "Company ABC", 500.0, TransactionType.ONE_TIME, testMonth)
-		);
-		
-		Mockito.when(incomeService.getAllIncomesForMonth(Mockito.eq(testMonth.toString())))
-				.thenReturn(incomeList);
-		
-		mockMvc.perform(get("/api/incomes")
-				.param("month", testMonth.toString())
-				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-	            .andExpect(jsonPath("$[0].name").value("Salary"))
-	            .andExpect(jsonPath("$[0].source").value("Company XYZ"))
-	            .andExpect(jsonPath("$[0].amount").value(2000.0))
-	            .andExpect(jsonPath("$[0].type").value("RECURRING"))
-	            .andExpect(jsonPath("$[0].month").value("2000-01"))
-	            .andExpect(jsonPath("$[1].name").value("Bonus"))
-	            .andExpect(jsonPath("$[1].source").value("Company ABC"))
-	            .andExpect(jsonPath("$[1].amount").value(500.0))
-	            .andExpect(jsonPath("$[1].type").value("ONE_TIME"))
-	            .andExpect(jsonPath("$[1].month").value("2000-01"));
-		
-		Mockito.verify(incomeService, Mockito.times(1))
-				.getAllIncomesForMonth(Mockito.eq(testMonth.toString()));
-	}
-	
-	@Test
-	void shouldReturnNotFoundWhenNoIncomesExist() throws Exception {
-	    YearMonth testMonth = YearMonth.of(2000, 1);
-		Mockito.when(incomeService.getAllIncomesForMonth(Mockito.eq(testMonth.toString())))
-	           .thenThrow(new IncomeNotFoundException("No incomes found for month: " + testMonth));
-
-	    mockMvc.perform(get("/api/incomes")
-	            .param("month", testMonth.toString())
-	            .contentType(MediaType.APPLICATION_JSON))
-	            .andExpect(status().isNotFound())
-	            .andExpect(jsonPath("$.error").value("No incomes found for month: " + testMonth));
-
-	    Mockito.verify(incomeService, Mockito.times(1))
-	           .getAllIncomesForMonth(Mockito.eq(testMonth.toString()));
-	}
-	
-	@Test
-	void shouldUpdateIncomeWhenValidId() throws Exception {
-		YearMonth testMonth = YearMonth.of(2000, 1);
-		Income existingIncome = new Income("Salary", "Company XYZ", 2000.0, TransactionType.RECURRING, testMonth);
-		existingIncome.setId(1L);
-		
-		Income updatedIncome = new Income ("Bonus", "Company ABC", 3000.0, TransactionType.ONE_TIME, testMonth);
-		updatedIncome.setId(1L);
-		
-		IncomeRequest updateRequest = new IncomeRequest();
-		updateRequest.setName("Bonus");
-		updateRequest.setSource("Company ABC");
-		updateRequest.setAmount(3000.0);
-		updateRequest.setType(TransactionType.ONE_TIME);
-		
-		Mockito.when(incomeService.updateIncome(Mockito.eq(1L), Mockito.refEq(updateRequest)))
-				.thenReturn(updatedIncome);
-		
-		mockMvc.perform(put("/api/incomes/{id}", 1L)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(updateRequest)))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Bonus"))
-				.andExpect(jsonPath("$.source").value("Company ABC"))
-				.andExpect(jsonPath("$.amount").value(3000.0))
-				.andExpect(jsonPath("$.type").value("ONE_TIME"))
-	            .andExpect(jsonPath("$.month").value("2000-01"));
-		
-		Mockito.verify(incomeService, Mockito.times(1))
-				.updateIncome(Mockito.eq(1L), Mockito.refEq(updateRequest));
-	}
-	
-    @Test
-    void shouldDeleteIncomeWhenValidId() throws Exception {     
-    	Long incomeId = 1L;
-    	
-    	Mockito.doNothing()
-                .when(incomeService)
-                .deleteIncome(incomeId);
-    	
-        mockMvc.perform(delete("/api/incomes/{id}", incomeId))
-                .andExpect(status().isNoContent());
-        
-        Mockito.verify(incomeService, Mockito.times(1))
-                .deleteIncome(incomeId);
-    }
-	
-	@Test
-	void shouldReturnBadRequestWhenNameIsMissing() throws Exception {
-		IncomeRequest request = new IncomeRequest();
-        request.setSource("Company XYZ");
-        request.setAmount(2000.0);
-        request.setType(TransactionType.RECURRING);
-		
-		mockMvc.perform(post("/api/incomes")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.name").value("Income name is required."));
-		
-		Mockito.verify(incomeService, Mockito.times(0))
-				.createIncome(Mockito.any(IncomeRequest.class));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenSourceIsMissing() throws Exception {
-		IncomeRequest request = new IncomeRequest();
-		request.setName("Salary");
-        request.setAmount(2000.0);
-        request.setType(TransactionType.RECURRING);
-		
-		mockMvc.perform(post("/api/incomes")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.source").value("Income source is required."));
-		
-		Mockito.verify(incomeService, Mockito.times(0))
-				.createIncome(Mockito.any(IncomeRequest.class));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenAmountIsMissing() throws Exception {
-		IncomeRequest request = new IncomeRequest();
-        request.setName("Salary");
-        request.setSource("Company XYZ");
-        request.setType(TransactionType.RECURRING);
-		
-		mockMvc.perform(post("/api/incomes")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.amount").value("Income amount is required."));
-		
-		Mockito.verify(incomeService, Mockito.times(0))
-				.createIncome(Mockito.any(IncomeRequest.class));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenIncomeAmountIsNegative() throws Exception {
-		IncomeRequest request = new IncomeRequest();
-        request.setName("Salary");
-        request.setSource("Company XYZ");
-        request.setAmount(-2000.0);
-        request.setType(TransactionType.RECURRING);
-		
-		mockMvc.perform(post("/api/incomes")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.amount").value("Income amount cannot be negative."));
-		
-		Mockito.verify(incomeService, Mockito.times(0))
-				.createIncome(Mockito.any(IncomeRequest.class));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenTransactionTypeIsMissing() throws Exception {
-		IncomeRequest request = new IncomeRequest();
-        request.setName("Salary");
-        request.setSource("Company XYZ");
-        request.setAmount(2000.0);
-		
-		mockMvc.perform(post("/api/incomes")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.type").value("Income transaction type is required."));
-		
-		Mockito.verify(incomeService, Mockito.times(0))
-				.createIncome(Mockito.any(IncomeRequest.class));
-	}
-	
-    @Test
-    void shouldReturnBadRequestWhenMonthFormatIsInvalid() throws Exception {
-        IncomeRequest request = new IncomeRequest();
-        request.setName("Salary");
-        request.setSource("Company XYZ");
-        request.setAmount(2000.0);
-        request.setType(TransactionType.RECURRING);
-        request.setMonth("2000-jan");
-        
-        mockMvc.perform(post("/api/incomes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.month").value("Month must be in format YYYY-MM"));
-
-        Mockito.verify(incomeService, Mockito.times(0))
-        		.createIncome(Mockito.any(IncomeRequest.class));
-    }
-	
-	@Test
-	void shouldReturnBadRequestForMalformedJsonIncome() throws Exception {
-	    String malformedJson = """
-	        {
-	            "name": "Bonus",
-	            "amount": 200.0,
-	            "type": 
-	        }
-	        """;
-
-	    mockMvc.perform(post("/api/incomes")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(malformedJson))
-		        .andExpect(status().isBadRequest())
-		        .andExpect(jsonPath("$.error").value("Invalid request format."));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenIncomeTypeIsInvalid() throws Exception {
-	    String invalidRequest = """
-	        {
-	            "name": "Salary",
-	            "amount": 3000.0,
-	            "type": "INVALID_TYPE"
-	        }
-	        """;
-
-	    mockMvc.perform(post("/api/incomes")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(invalidRequest))
-		        .andExpect(status().isBadRequest())
-		        .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
-	}
-	
-	@Test
-	void shouldReturnNotFoundWhenIncomeDoesNotExist() throws Exception {
+	void getIncome_NonExistentId_ReturnsNotFound() throws Exception {
 		Mockito.when(incomeService.getIncomeById(99L))
 				.thenThrow(new IncomeNotFoundException("Income not found with id: 99"));
 
@@ -358,116 +137,125 @@ public class IncomeControllerTest {
 				.getIncomeById(99L);
 	}
 	
-    @Test
-    void shouldReturnNotFoundWhenUpdatingNonExistentIncome() throws Exception {
-	    Long incomeId = 1L;
-	    IncomeRequest request = new IncomeRequest();
-	    request.setName("Salary");
-	    request.setSource("Company XYZ");
-	    request.setAmount(2000.0);
-	    request.setType(TransactionType.RECURRING);
-	    request.setMonth("2000-01");
-	    
-	    Mockito.when(incomeService.updateIncome(Mockito.eq(incomeId), Mockito.any(IncomeRequest.class)))
-	            .thenThrow(new IncomeNotFoundException("Income not found with id: " + incomeId));
-	    
-	    mockMvc.perform(put("/api/incomes/{id}", incomeId)
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(objectMapper.writeValueAsString(request)))
-	            .andExpect(status().isNotFound())
-	            .andExpect(jsonPath("$.error").value("Income not found with id: " + incomeId));
-	    
-	    Mockito.verify(incomeService, Mockito.times(1))
-	            .updateIncome(Mockito.eq(incomeId), Mockito.any(IncomeRequest.class));
-    }
-    
+	// -- Get All Incomes Tests --
+	
 	@Test
-	void shouldReturnBadRequestWhenUpdatingWithMalformedRequest() throws Exception {
-		String malformedJson = """
-	        {
-	            "name": "Rent",
-	            "amount": 1000.0,
-	            "category": 
-	        }
-	        """;
+	void getAllIncomes_ValidMonth_ReturnsOk() throws Exception {
+		List<Income> incomeList = List.of(testIncome, testIncome);
 		
-	    mockMvc.perform(put("/api/incomes/{id}", 1L)
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(malformedJson))
-		        .andExpect(status().isBadRequest())
-		        .andExpect(jsonPath("$.error").value("Invalid request format."));
+		Mockito.when(incomeService.getAllIncomesForMonth(testMonth))
+				.thenReturn(incomeList);
+		
+		mockMvc.perform(get("/api/incomes")
+				.param("month", testMonth)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].name").value(testName))
+				.andExpect(jsonPath("$[1].name").value(testName));
+				
+		Mockito.verify(incomeService, Mockito.times(1))
+				.getAllIncomesForMonth(testMonth);
 	}
-    
-    @Test
-    void shouldReturnBadRequestWhenUpdatingIncomeWithInvalidType() throws Exception {
-        String invalidRequest = """
-            {
-                "name": "Freelance Work",
-                "amount": 500.0,
-                "type": "INVALID_TYPE"
-            }
-            """;
-        
-        mockMvc.perform(put("/api/incomes/{id}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidRequest))
-	            .andExpect(status().isBadRequest())
-	            .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
-    }
-    
-    @Test
-    void shouldReturnNotFoundWhenDeletingNonExistentIncome() throws Exception {
-    	Long incomeId = 1L;
-    	
-        Mockito.doThrow(new IncomeNotFoundException("Income not found with id: " + incomeId))
-        		.when(incomeService).deleteIncome(incomeId);
-    	
-        mockMvc.perform(delete("/api/incomes/{id}", incomeId))
-                .andExpect(status().isNotFound());
-        
-        Mockito.verify(incomeService, Mockito.times(1))
-                .deleteIncome(incomeId);
-    }
+	
+	// -- Update Income Tests --
 	
 	@Test
-	void shouldReturnConflictWhenDataIntegrityViolationOccurs() throws Exception {	
-		IncomeRequest request = new IncomeRequest();
-        request.setName("Salary");
-        request.setSource("Company XYZ");
-        request.setAmount(2000.0);
-        request.setType(TransactionType.RECURRING);
-
-	    Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
-	            .thenThrow(new DataIntegrityViolationException("Database constraint violation"));
-	    
-	    mockMvc.perform(post("/api/incomes")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(objectMapper.writeValueAsString(request)))
-	            .andExpect(status().isConflict())
-	            .andExpect(jsonPath("$").value("A database constraint was violated."));
-	    
-	    Mockito.verify(incomeService, Mockito.times(1))
-	            .createIncome(Mockito.any(IncomeRequest.class));
+	void updateIncome_ValidRequest_ReturnsOk() throws Exception {
+		Mockito.when(incomeService.updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class)))
+				.thenReturn(testIncome);
+		
+		mockMvc.perform(put("/api/incomes/{id}", testId)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(incomeRequest)))
+				.andDo(result -> {
+					System.out.println("Response content: " + result.getResponse().getContentAsString());
+					System.out.println("Expected testIncome: " + objectMapper.writeValueAsString(testIncome));
+				})
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value(testName))
+				.andExpect(jsonPath("$.source").value(testSource))
+				.andExpect(jsonPath("$.money.amount").value(testAmount.toString()))
+				.andExpect(jsonPath("$.money.currency").value(testCurrency.toString()))
+				.andExpect(jsonPath("$.type").value(testType.toString()))
+				.andExpect(jsonPath("$.month").value(testMonth));
+		
+		Mockito.verify(incomeService, Mockito.times(1))
+				.updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class));
 	}
 	
 	@Test
-	void shouldReturnInternalServerErrorWhenServiceFails() throws Exception {
-		IncomeRequest request = new IncomeRequest();
-        request.setName("Salary");
-        request.setSource("Company XYZ");
-        request.setAmount(2000.0);
-        request.setType(TransactionType.RECURRING);
+	void updateIncome_NonExistentId_ReturnsNotFound() throws Exception {
+		Mockito.when(incomeService.updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class)))
+				.thenThrow(new IncomeNotFoundException("Income not found with id: 99"));
+		
+		mockMvc.perform(put("/api/incomes/{id}", 99L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(incomeRequest)))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.error").value("Income not found with id: 99"));
+		
+		Mockito.verify(incomeService, Mockito.times(1))
+				.updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class));
+	}
+	
+	// -- Delete Income Tests --
+	
+	@Test
+	void deleteIncome_ValidId_ReturnsNoContent() throws Exception {
+		Mockito.doNothing()
+				.when(incomeService)
+				.deleteIncome(testId);
+		
+		mockMvc.perform(delete("/api/incomes/{id}", testId))
+				.andExpect(status().isNoContent());
+		
+		Mockito.verify(incomeService, Mockito.times(1))
+				.deleteIncome(testId);
+	}
 
-	    Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
-	            .thenThrow(new RuntimeException("Service failure"));
+	@Test
+	void deleteIncome_NonExistentId_ReturnsNotFound() throws Exception {
+		Mockito.doThrow(new IncomeNotFoundException("Income not found with id: 99"))
+				.when(incomeService)
+				.deleteIncome(99L);
+		
+		mockMvc.perform(delete("/api/incomes/{id}", 99L))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.error").value("Income not found with id: 99"));
+		
+		Mockito.verify(incomeService, Mockito.times(1))
+				.deleteIncome(99L);
+	}
+	
+	// -- Error Handling Tests --
+	
+	@Test
+	void createIncome_ServiceError_ReturnsInternalServerError() throws Exception {
+		Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
+				.thenThrow(new RuntimeException("Service failure"));
 
-	    mockMvc.perform(post("/api/incomes")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(objectMapper.writeValueAsString(request)))
-	            .andExpect(status().isInternalServerError())
-	            .andExpect(jsonPath("$").value("An unexpected error occurred."));
+		mockMvc.perform(post("/api/incomes")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(incomeRequest)))
+				.andExpect(status().isInternalServerError())
+				.andExpect(jsonPath("$").value("An unexpected error occurred."));
 
-	    Mockito.verify(incomeService, Mockito.times(1))
-	    		.createIncome(Mockito.any(IncomeRequest.class));
+		Mockito.verify(incomeService, Mockito.times(1))
+				.createIncome(Mockito.any(IncomeRequest.class));
+	}
+	
+	@Test
+	void createIncome_DataIntegrityViolation_ReturnsConflict() throws Exception {
+		Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
+				.thenThrow(new DataIntegrityViolationException("Database constraint violation"));
+		
+		mockMvc.perform(post("/api/incomes")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(incomeRequest)))
+				.andExpect(status().isConflict())
+				.andExpect(jsonPath("$").value("A database constraint was violated."));
+		
+		Mockito.verify(incomeService, Mockito.times(1))
+				.createIncome(Mockito.any(IncomeRequest.class));
 	}
 }

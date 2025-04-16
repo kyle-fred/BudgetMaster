@@ -56,7 +56,6 @@ public class ExpenseControllerTest {
 	private MoneyRequest moneyRequest;
 
 	// -- Setup --
-
 	@BeforeEach
 	void setUp() {
 		// Setup MoneyRequest

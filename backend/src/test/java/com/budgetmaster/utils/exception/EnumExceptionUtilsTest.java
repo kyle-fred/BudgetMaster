@@ -11,6 +11,19 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 class EnumExceptionUtilsTest {
+    // -- Enum for Testing --
+    enum SampleEnum { 
+    	RED, 
+    	GREEN, 
+    	BLUE 
+    }
+
+    // -- Model Class for Testing --
+    static class ModelClass {
+        public SampleEnum color;
+    }
+
+    // -- Extract Invalid Enum Value Tests --
 
     @Test
     void testExtractInvalidEnumValue_ValidExceptionMessage_ReturnsEnumConstant() {
@@ -26,12 +39,16 @@ class EnumExceptionUtilsTest {
         assertNull(extracted, "Should return null when 'No enum constant' is not found");
     }
 
+    // -- Extract Enum Part Tests --
+
     @Test
     void testExtractEnumPart_ValidMessage_ReturnsEnumPart() {
         String message = "No enum constant com.example.Color.BLUEE";
         String extracted = EnumExceptionUtils.extractEnumPart(message, 17);
         assertEquals("com.example.Color.BLUEE", extracted, "Should extract full enum reference");
     }
+
+    // -- Extract Enum Constant Tests --
 
     @Test
     void testExtractEnumConstant_ValidEnumPart_ReturnsConstant() {
@@ -46,12 +63,8 @@ class EnumExceptionUtilsTest {
         String extracted = EnumExceptionUtils.extractEnumConstant(enumPart);
         assertEquals("BLUEE", extracted, "Should return the same string if no dot exists");
     }
-    
-    enum SampleEnum { 
-    	RED, 
-    	GREEN, 
-    	BLUE 
-    }
+
+    // -- Create Error Response Tests --
     
     @Test
     void testCreateErrorResponse_ValidInputs_ReturnsCorrectErrorMap() {
@@ -62,6 +75,8 @@ class EnumExceptionUtilsTest {
         assertEquals("Invalid value 'YELLOW' for 'color'. Allowed values: [RED, GREEN, BLUE]",
                      errorResponse.get("color"), "Error message should list allowed values");
     }
+
+    // -- Create Fallback Response Tests --
     
     @Test
     void testCreateFallbackResponse_ReturnsDefaultError() {
@@ -70,10 +85,8 @@ class EnumExceptionUtilsTest {
         assertTrue(fallbackResponse.containsKey("error"), "Response should contain \"error\" as key");
         assertEquals("Invalid enum value.", fallbackResponse.get("error"), "Should return default error message");
     }
-    
-    static class ModelClass {
-        public SampleEnum color;
-    }
+
+    // -- Find Enum Type Tests --
     
     @Test
     void testFindEnumType_ValidField_ReturnsEnumClass() {

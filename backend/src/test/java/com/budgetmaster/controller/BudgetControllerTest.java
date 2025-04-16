@@ -38,7 +38,6 @@ public class BudgetControllerTest {
 	private Budget budget;
 	
 	// -- Setup --
-	
 	@BeforeEach
 	void setUp() {
 		// Setup Budget

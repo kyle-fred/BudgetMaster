@@ -27,7 +27,6 @@ class MoneyRequestTest {
     private static final Currency GBP = Currency.getInstance("GBP");
 
     // -- Setup --
-
     @BeforeAll
     static void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -47,7 +46,7 @@ class MoneyRequestTest {
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty());
+        assertTrue(violations.isEmpty(), "Violations should be empty for valid request");
     }
 
     @Test
@@ -55,8 +54,8 @@ class MoneyRequestTest {
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size());
-        assertEquals("Amount is required.", violations.iterator().next().getMessage());
+        assertEquals(1, violations.size(), "Violations should contain 1 error for null amount");
+        assertEquals("Amount is required.", violations.iterator().next().getMessage(), "Error message should be 'Amount is required.'");
     }
 
     @Test
@@ -64,8 +63,8 @@ class MoneyRequestTest {
         request.setAmount(testAmount);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size());
-        assertEquals("Currency must be provided", violations.iterator().next().getMessage());
+        assertEquals(1, violations.size(), "Violations should contain 1 error for null currency");
+        assertEquals("Currency must be provided", violations.iterator().next().getMessage(), "Error message should be 'Currency must be provided'");
     }
 
     @Test
@@ -74,8 +73,8 @@ class MoneyRequestTest {
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size());
-        assertEquals("Amount must be non-negative.", violations.iterator().next().getMessage());
+        assertEquals(1, violations.size(), "Violations should contain 1 error for negative amount");
+        assertEquals("Amount must be non-negative.", violations.iterator().next().getMessage(), "Error message should be 'Amount must be non-negative.'");
     }
 
     @Test
@@ -84,7 +83,7 @@ class MoneyRequestTest {
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty());
+        assertTrue(violations.isEmpty(), "Violations should be empty for zero amount");
     }
 
     @Test
@@ -93,7 +92,7 @@ class MoneyRequestTest {
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty());
+        assertTrue(violations.isEmpty(), "Violations should be empty for large amount");
     }
 
     @Test
@@ -101,7 +100,7 @@ class MoneyRequestTest {
         request.setAmount(testAmount);
         request.setCurrency(GBP);
 
-        assertEquals(testAmount, request.getAmount());
-        assertEquals(GBP, request.getCurrency());
+        assertEquals(testAmount, request.getAmount(), "Amount should be set correctly");
+        assertEquals(GBP, request.getCurrency(), "Currency should be set correctly");
     }
 }

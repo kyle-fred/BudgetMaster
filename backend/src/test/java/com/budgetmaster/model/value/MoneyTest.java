@@ -20,43 +20,43 @@ class MoneyTest {
     @Test
     void testOfBigDecimal() {
         Money money = Money.of(new BigDecimal("123.456"));
-        assertEquals(new BigDecimal("123.46"), money.getAmount());
-        assertEquals(GBP, money.getCurrency());
+        assertEquals(new BigDecimal("123.46"), money.getAmount(), "Amount should be rounded to 2 decimal places");
+        assertEquals(GBP, money.getCurrency(), "Default currency should be set correctly");
     }
 
     @Test
     void testOfBigDecimalWithCurrency() {
         Money money = Money.of(new BigDecimal("123.456"), USD);
-        assertEquals(new BigDecimal("123.46"), money.getAmount());
-        assertEquals(USD, money.getCurrency());
+        assertEquals(new BigDecimal("123.46"), money.getAmount(), "Amount should be rounded to 2 decimal places");
+        assertEquals(USD, money.getCurrency(), "Currency should be set correctly");
     }
 
     @Test
     void testOfString() {
         Money money = Money.of("123.456");
-        assertEquals(new BigDecimal("123.46"), money.getAmount());
-        assertEquals(GBP, money.getCurrency());
+        assertEquals(new BigDecimal("123.46"), money.getAmount(), "Amount should be rounded to 2 decimal places");
+        assertEquals(GBP, money.getCurrency(), "Default currency should be set correctly");
     }
 
     @Test
     void testOfStringWithCurrency() {
         Money money = Money.of("123.456", USD);
-        assertEquals(new BigDecimal("123.46"), money.getAmount());
-        assertEquals(USD, money.getCurrency());
+        assertEquals(new BigDecimal("123.46"), money.getAmount(), "Amount should be rounded to 2 decimal places");
+        assertEquals(USD, money.getCurrency(), "Currency should be set correctly");
     }
 
     @Test
     void testOfDouble() {
         Money money = Money.of(123.456);
-        assertEquals(new BigDecimal("123.46"), money.getAmount());
-        assertEquals(GBP, money.getCurrency());
+        assertEquals(new BigDecimal("123.46"), money.getAmount(), "Amount should be rounded to 2 decimal places");
+        assertEquals(GBP, money.getCurrency(), "Default currency should be set correctly");
     }
 
     @Test
     void testOfDoubleWithCurrency() {
         Money money = Money.of(123.456, USD);
-        assertEquals(new BigDecimal("123.46"), money.getAmount());
-        assertEquals(USD, money.getCurrency());
+        assertEquals(new BigDecimal("123.46"), money.getAmount(), "Amount should be rounded to 2 decimal places");
+        assertEquals(USD, money.getCurrency(), "Currency should be set correctly");
     }
 
     // -- Zero Methods --
@@ -64,15 +64,15 @@ class MoneyTest {
     @Test
     void testZero() {
         Money money = Money.zero();
-        assertEquals(0, money.getAmount().compareTo(BigDecimal.ZERO));
-        assertEquals(GBP, money.getCurrency());
+        assertEquals(0, money.getAmount().compareTo(BigDecimal.ZERO), "Amount should be zero");
+        assertEquals(GBP, money.getCurrency(), "Default currency should be set correctly");
     }
 
     @Test
     void testZeroWithCurrency() {
         Money money = Money.zero(USD);
-        assertEquals(0, money.getAmount().compareTo(BigDecimal.ZERO));
-        assertEquals(USD, money.getCurrency());
+        assertEquals(0, money.getAmount().compareTo(BigDecimal.ZERO), "Amount should be zero");
+        assertEquals(USD, money.getCurrency(), "Currency should be set correctly");
     }
 
     // -- Arithmetic Methods --
@@ -82,14 +82,14 @@ class MoneyTest {
         Money money1 = Money.of("100.00");
         Money money2 = Money.of("50.00");
         Money result = money1.add(money2);
-        assertEquals(new BigDecimal("150.00"), result.getAmount());
+        assertEquals(new BigDecimal("150.00"), result.getAmount(), "Amount should be added correctly");
     }
 
     @Test
     void testAddDifferentCurrency() {
         Money money1 = Money.of("100.00", GBP);
         Money money2 = Money.of("50.00", USD);
-        assertThrows(IllegalArgumentException.class, () -> money1.add(money2));
+        assertThrows(IllegalArgumentException.class, () -> money1.add(money2), "Should throw an exception for different currencies");
     }
 
     @Test
@@ -97,21 +97,21 @@ class MoneyTest {
         Money money1 = Money.of("100.00");
         Money money2 = Money.of("50.00");
         Money result = money1.subtract(money2);
-        assertEquals(new BigDecimal("50.00"), result.getAmount());
+        assertEquals(new BigDecimal("50.00"), result.getAmount(), "Amount should be subtracted correctly");
     }
 
     @Test
     void testMultiply() {
         Money money = Money.of("100.00");
         Money result = money.multiply(new BigDecimal("1.5"));
-        assertEquals(new BigDecimal("150.00"), result.getAmount());
+        assertEquals(new BigDecimal("150.00"), result.getAmount(), "Amount should be multiplied correctly");
     }
 
     @Test
     void testDivide() {
         Money money = Money.of("100.00");
         Money result = money.divide(new BigDecimal("3"));
-        assertEquals(new BigDecimal("33.33"), result.getAmount());
+        assertEquals(new BigDecimal("33.33"), result.getAmount(), "Amount should be divided correctly");
     }
 
     // -- Comparison Methods --
@@ -125,7 +125,7 @@ class MoneyTest {
     void testIsGreaterThan(String amount1, String amount2, boolean expected) {
         Money money1 = Money.of(amount1);
         Money money2 = Money.of(amount2);
-        assertEquals(expected, money1.isGreaterThan(money2));
+        assertEquals(expected, money1.isGreaterThan(money2), "Should return true if amount1 is greater than amount2");
     }
 
     @ParameterizedTest(name = "isLessThan({0}, {1}) = {2}")
@@ -137,7 +137,7 @@ class MoneyTest {
     void testIsLessThan(String amount1, String amount2, boolean expected) {
         Money money1 = Money.of(amount1);
         Money money2 = Money.of(amount2);
-        assertEquals(expected, money1.isLessThan(money2));
+        assertEquals(expected, money1.isLessThan(money2), "Should return true if amount1 is less than amount2");
     }
 
     @ParameterizedTest(name = "isEqualTo({0}, {1}) = {2}")
@@ -148,7 +148,7 @@ class MoneyTest {
     void testIsEqualTo(String amount1, String amount2, boolean expected) {
         Money money1 = Money.of(amount1);
         Money money2 = Money.of(amount2);
-        assertEquals(expected, money1.isEqualTo(money2));
+        assertEquals(expected, money1.isEqualTo(money2), "Should return true if amount1 is equal to amount2");
     }
 
     // -- Rounding Methods --
@@ -162,7 +162,7 @@ class MoneyTest {
     })
     void testRounding(String amount) {
         Money money = Money.of(amount);
-        assertEquals(2, money.getAmount().scale());
+        assertEquals(2, money.getAmount().scale(), "Amount should be rounded to 2 decimal places");
     }
 
     // -- Equality and HashCode Methods --
@@ -173,20 +173,20 @@ class MoneyTest {
         Money money2 = Money.of("100.00");
         Money money3 = Money.of("100.00", USD);
         
-        assertEquals(money1, money2);
-        assertEquals(money1.hashCode(), money2.hashCode());
-        assertNotEquals(money1, money3);
+        assertEquals(money1, money2, "Should return true if Money objects have the same amount and currency");
+        assertEquals(money1.hashCode(), money2.hashCode(), "Hash code should be equal for Money objects with the same amount and currency");
+        assertNotEquals(money1, money3, "Should return false if Money objects have different amounts or currencies");
     }
 
     @Test
     void testToString() {
         Money money = Money.of("100.00");
-        assertEquals("£100.00", money.toString());
+        assertEquals("£100.00", money.toString(), "Should return the correct string representation of the Money object");
     }
 
     @Test
     void testToStringWithCurrency() {
         Money money = Money.of("100.00", USD);
-        assertEquals("US$100.00", money.toString());
+        assertEquals("US$100.00", money.toString(), "Should return the correct string representation of the Money object with the specified currency");
     }  
 }

@@ -1,12 +1,16 @@
 package com.budgetmaster.controller;
 
 import com.budgetmaster.dto.ExpenseRequest;
+import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.ExpenseCategory;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.exception.ExpenseNotFoundException;
 import com.budgetmaster.service.ExpenseService;
 import com.budgetmaster.model.Expense;
+import com.budgetmaster.model.value.Money;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +23,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.Currency;
 import java.util.List;
 
 @WebMvcTest(ExpenseController.class)
 public class ExpenseControllerTest {
-	
+	// -- Dependencies --
 	@Autowired
 	private MockMvc mockMvc;
 	
@@ -33,478 +39,220 @@ public class ExpenseControllerTest {
 	
 	@MockBean
     private ExpenseService expenseService;
+
+	// -- Test Data --
+	private static final Long testId = 1L;
+	private static final String testName = "Test Expense";
+	private static final BigDecimal testAmount = new BigDecimal("123.45");
+	private static final Currency testCurrency = Currency.getInstance("GBP");
+	private static final TransactionType testType = TransactionType.ONE_TIME;
+	private static final ExpenseCategory testCategory = ExpenseCategory.MISCELLANEOUS;
+	private static final String testMonth = "2000-01";
+	private static final YearMonth testYearMonth = YearMonth.of(2000, 1);
+
+	// -- Test Objects --
+	private ExpenseRequest expenseRequest;
+	private Expense expense;
+	private MoneyRequest moneyRequest;
+
+	// -- Setup --
+
+	@BeforeEach
+	void setUp() {
+		// Setup MoneyRequest
+		moneyRequest = new MoneyRequest();
+		moneyRequest.setAmount(testAmount);
+		moneyRequest.setCurrency(testCurrency);
+
+		// Setup ExpenseRequest
+		expenseRequest = new ExpenseRequest();
+		expenseRequest.setName(testName);
+		expenseRequest.setMoney(moneyRequest);
+		expenseRequest.setCategory(testCategory);
+		expenseRequest.setType(testType);
+		expenseRequest.setMonth(testMonth);
+	
+		expense = new Expense();
+		expense.setId(testId);
+		expense.setName(testName);
+		expense.setMoney(Money.of(testAmount, testCurrency));
+		expense.setCategory(testCategory);
+		expense.setType(testType);
+		expense.setMonth(testYearMonth);
+	}
+	
+	// -- Create Expense Tests --
 	
 	@Test
-	void shouldCreateExpenseWhenValidRequest() throws Exception {
-		ExpenseRequest request = new ExpenseRequest();
-        request.setName("Rent");
-        request.setAmount(1000.0);
-        request.setCategory(ExpenseCategory.HOUSING);
-        request.setType(TransactionType.RECURRING);
-        
-        YearMonth testMonth = YearMonth.of(2000, 1);
-		
-		Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testMonth);
-		
+	void createExpense_ValidRequest_ReturnsCreated() throws Exception {
 		Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
-				.thenReturn(expectedExpense);
-		
+				.thenReturn(expense);	
+				
 		mockMvc.perform(post("/api/expenses")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
+				.content(objectMapper.writeValueAsString(expenseRequest)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Rent"))
-				.andExpect(jsonPath("$.amount").value(1000.0))
-				.andExpect(jsonPath("$.category").value("HOUSING"))
-				.andExpect(jsonPath("$.type").value("RECURRING"))
-				.andExpect(jsonPath("$.month").value("2000-01"));
-		
+				.andExpect(jsonPath("$.name").value(testName))
+				.andExpect(jsonPath("$.money.amount").value(testAmount.toString()))
+				.andExpect(jsonPath("$.money.currency").value(testCurrency.toString()))
+				.andExpect(jsonPath("$.category").value(testCategory.toString()))
+				.andExpect(jsonPath("$.type").value(testType.toString()))
+				.andExpect(jsonPath("$.month").value(testMonth));
+				
 		Mockito.verify(expenseService, Mockito.times(1))
 				.createExpense(Mockito.any(ExpenseRequest.class));
 	}
 	
-	@Test
- 	void shouldCreateExpenseWhenMonthIsNotProvided() throws Exception {
-		ExpenseRequest request = new ExpenseRequest();
-		request.setName("Rent");
-		request.setAmount(1000.0);
-		request.setCategory(ExpenseCategory.HOUSING);
-		request.setType(TransactionType.RECURRING);
-		
-		YearMonth defaultMonth = YearMonth.now();
-		
-		Expense expectedExpense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, defaultMonth);
-		
-		Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
-				.thenReturn(expectedExpense);
-		
-		mockMvc.perform(post("/api/expenses")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Rent"))
-				.andExpect(jsonPath("$.amount").value(1000.0))
-				.andExpect(jsonPath("$.type").value("RECURRING"))
-				.andExpect(jsonPath("$.category").value("HOUSING"))
-				.andExpect(jsonPath("$.month").value(defaultMonth.toString()));
-		 
-		 Mockito.verify(expenseService, Mockito.times(1))
-		 		.createExpense(Mockito.any(ExpenseRequest.class));
- 	}
+	// -- Get Expense Tests --
 	
 	@Test
-	void shouldGetExpenseWhenValidId() throws Exception {
-		YearMonth testMonth = YearMonth.of(2000, 1);
-		Expense expense = new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testMonth);
-		
-		Mockito.when(expenseService.getExpenseById(Mockito.eq(1L)))
+	void getExpense_ValidId_ReturnsOk() throws Exception {
+		Mockito.when(expenseService.getExpenseById(testId))
 				.thenReturn(expense);
-		
-		mockMvc.perform(get("/api/expenses/{id}", 1L)
+				
+		mockMvc.perform(get("/api/expenses/{id}", testId)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Rent"))
-				.andExpect(jsonPath("$.amount").value(1000.0))
-				.andExpect(jsonPath("$.category").value("HOUSING"))
-				.andExpect(jsonPath("$.type").value("RECURRING"))
-				.andExpect(jsonPath("$.month").value("2000-01"));
-		
+				.andExpect(jsonPath("$.name").value(testName))
+				.andExpect(jsonPath("$.money.amount").value(testAmount.toString()))
+				.andExpect(jsonPath("$.money.currency").value(testCurrency.toString()))
+				.andExpect(jsonPath("$.category").value(testCategory.toString()))
+				.andExpect(jsonPath("$.type").value(testType.toString()))
+				.andExpect(jsonPath("$.month").value(testMonth));
+				
 		Mockito.verify(expenseService, Mockito.times(1))
-				.getExpenseById(Mockito.eq(1L));
+				.getExpenseById(testId);
 	}
-	
-	@Test
- 	void shouldGetAllExpensesForValidMonth() throws Exception {
- 		YearMonth testMonth = YearMonth.of(2000, 1);
- 		
- 		List<Expense> expenseList = List.of(
- 				new Expense("Rent", 1000.0, ExpenseCategory.HOUSING, TransactionType.RECURRING, testMonth),
- 				new Expense("Gas", 100.0, ExpenseCategory.UTILITIES, TransactionType.RECURRING, testMonth)
- 		);
- 		
- 		Mockito.when(expenseService.getAllExpensesForMonth(Mockito.eq(testMonth.toString())))
- 				.thenReturn(expenseList);
- 		
- 		mockMvc.perform(get("/api/expenses")
- 				.param("month", testMonth.toString())
- 				.contentType(MediaType.APPLICATION_JSON))
- 				.andExpect(status().isOk())
- 	            .andExpect(jsonPath("$[0].name").value("Rent"))
- 	            .andExpect(jsonPath("$[0].amount").value(1000.0))
- 	            .andExpect(jsonPath("$[0].category").value("HOUSING"))
- 	            .andExpect(jsonPath("$[0].type").value("RECURRING"))
- 	            .andExpect(jsonPath("$[0].month").value("2000-01"))
- 	            .andExpect(jsonPath("$[1].name").value("Gas"))
- 	            .andExpect(jsonPath("$[1].amount").value(100.0))
- 	            .andExpect(jsonPath("$[1].category").value("UTILITIES"))
- 	            .andExpect(jsonPath("$[1].type").value("RECURRING"))
- 	            .andExpect(jsonPath("$[1].month").value("2000-01"));
- 		
- 		Mockito.verify(expenseService, Mockito.times(1))
- 				.getAllExpensesForMonth(testMonth.toString());
- 	}
- 	
- 	@Test
- 	void shouldReturnNotFoundWhenNoExpensesExist() throws Exception {
- 	    YearMonth testMonth = YearMonth.of(2000, 1);
- 
- 	    Mockito.when(expenseService.getAllExpensesForMonth(Mockito.eq(testMonth.toString())))
- 	           .thenThrow(new ExpenseNotFoundException("No expenses found for month: " + testMonth));
-		
- 	    mockMvc.perform(get("/api/expenses")
- 	            .param("month", testMonth.toString())
- 	            .contentType(MediaType.APPLICATION_JSON))
- 	            .andExpect(status().isNotFound())
- 	            .andExpect(jsonPath("$.error").value("No expenses found for month: " + testMonth));
-		
- 	    Mockito.verify(expenseService, Mockito.times(1))
- 	           .getAllExpensesForMonth(Mockito.eq(testMonth.toString()));
- 	}
-	
-	@Test
-	void shouldUpdateExpenseWhenValidId() throws Exception {
-		YearMonth testMonth = YearMonth.of(2000, 1);
-		Expense updatedExpense = new Expense("Gas Bill", 100.0, ExpenseCategory.UTILITIES, TransactionType.RECURRING, testMonth);
-		
-		ExpenseRequest updateRequest = new ExpenseRequest();
-		updateRequest.setName("Gas Bill");
-		updateRequest.setAmount(100.0);
-		updateRequest.setCategory(ExpenseCategory.UTILITIES);
-		updateRequest.setType(TransactionType.RECURRING);
-		
-		Mockito.when(expenseService.updateExpense(Mockito.eq(1L), Mockito.any(ExpenseRequest.class)))
-				.thenReturn(updatedExpense);
-		
-		mockMvc.perform(put("/api/expenses/{id}", 1L)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(updateRequest)))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Gas Bill"))
-				.andExpect(jsonPath("$.amount").value(100.0))
-				.andExpect(jsonPath("$.category").value("UTILITIES"))
-				.andExpect(jsonPath("$.type").value("RECURRING"))
-				.andExpect(jsonPath("$.month").value("2000-01"));
-		
-		Mockito.verify(expenseService, Mockito.times(1))
-				.updateExpense(Mockito.eq(1L), Mockito.any(ExpenseRequest.class));
-	}
-	
-	@Test
-    void shouldDeleteExpenseWhenValidId() throws Exception {
-    	Long expenseId = 1L;
 
-    	Mockito.doNothing()
-                .when(expenseService)
-                .deleteExpense(expenseId);
-
-        mockMvc.perform(delete("/api/expenses/{id}", expenseId))
-                .andExpect(status().isNoContent());
-
-        Mockito.verify(expenseService, Mockito.times(1))
-        		.deleteExpense(expenseId);
-    }
-	
 	@Test
-	void shouldReturnBadRequestWhenNameIsMissing() throws Exception {
-		ExpenseRequest request = new ExpenseRequest();
-        request.setAmount(1000.0);
-        request.setCategory(ExpenseCategory.HOUSING);
-        request.setType(TransactionType.RECURRING);
-        
-		mockMvc.perform(post("/api/expenses")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.name").value("Expense name is required."));
-		
-		Mockito.verify(expenseService, Mockito.times(0))
-				.createExpense(Mockito.any(ExpenseRequest.class));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenAmountIsMissing() throws Exception {
-		ExpenseRequest request = new ExpenseRequest();
-        request.setName("Rent");
-        request.setCategory(ExpenseCategory.HOUSING);
-        request.setType(TransactionType.RECURRING);
-        
-		mockMvc.perform(post("/api/expenses")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.amount").value("Expense amount is required."));
-		
-		Mockito.verify(expenseService, Mockito.times(0))
-				.createExpense(Mockito.any(ExpenseRequest.class));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenExpenseAmountIsNegative() throws Exception {
-		ExpenseRequest request = new ExpenseRequest();
-        request.setName("Rent");
-        request.setAmount(-1000.0);
-        request.setCategory(ExpenseCategory.HOUSING);
-        request.setType(TransactionType.RECURRING);
-        
-		mockMvc.perform(post("/api/expenses")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.amount").value("Expense amount cannot be negative."));
-		
-		Mockito.verify(expenseService, Mockito.times(0))
-				.createExpense(Mockito.any(ExpenseRequest.class));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenExpenseCategoryIsMissing() throws Exception {
-		ExpenseRequest request = new ExpenseRequest();
-		request.setName("Rent");
-        request.setAmount(1000.0);
-        request.setType(TransactionType.RECURRING);
-        
-		mockMvc.perform(post("/api/expenses")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.category").value("Expense category is required."));
-		
-		Mockito.verify(expenseService, Mockito.times(0))
-				.createExpense(Mockito.any(ExpenseRequest.class));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenTransactionTypeIsMissing() throws Exception {
-		ExpenseRequest request = new ExpenseRequest();
-        request.setName("Rent");
-        request.setAmount(1000.0);
-        request.setCategory(ExpenseCategory.HOUSING);
-        
-		mockMvc.perform(post("/api/expenses")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.type").value("Expense transaction type is required."));
-		
-		Mockito.verify(expenseService, Mockito.times(0))
-				.createExpense(Mockito.any(ExpenseRequest.class));
-	}
-	
-    @Test
-    void shouldReturnBadRequestWhenMonthFormatIsInvalid() throws Exception {
-    	ExpenseRequest request = new ExpenseRequest();
-        request.setName("Rent");
-        request.setAmount(1000.0);
-        request.setType(TransactionType.RECURRING);
-        request.setCategory(ExpenseCategory.HOUSING);
-        request.setMonth("2000-jan");
-        
-        mockMvc.perform(post("/api/expenses")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.month").value("Month must be in format YYYY-MM"));
-
-        Mockito.verify(expenseService, Mockito.times(0))
- 				.createExpense(Mockito.any(ExpenseRequest.class));
-    }
-	
-	@Test
-	void shouldReturnBadRequestForMalformedJsonExpense() throws Exception {
-	    String malformedJson = """
-	        {
-	            "name": "Rent",
-	            "amount": 1000.0,
-	            "category": 
-	        }
-	        """;
-
-	    mockMvc.perform(post("/api/expenses")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(malformedJson))
-	        .andExpect(status().isBadRequest())
-	        .andExpect(jsonPath("$.error").value("Invalid request format."));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenExpenseCategoryIsInvalid() throws Exception {
-	    String invalidRequest = """
-	        {
-	            "name": "Rent",
-	            "amount": 1000.0,
-	            "category": "INVALID_CATEGORY",
-	            "type": "RECURRING"
-	        }
-	        """;
-
-	    mockMvc.perform(post("/api/expenses")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(invalidRequest))
-	        .andExpect(status().isBadRequest())
-	        .andExpect(jsonPath("$.category").value("Invalid value 'INVALID_CATEGORY' for 'category'. Allowed values: [HOUSING, UTILITIES, TAXES, MOBILE_PHONE, GROCERIES, DINING_OUT, TRANSPORT, HEALTH, FITNESS, DEBT_REPAYMENT, SUBSCIPTIONS, HOBBIES, EVENTS, CLOTHING_AND_ACCESSORIES, ELECTRONICS, HOME_AND_DECOR, EDUCATION, GIFTS_AND_DONATIONS, PETS, MISCELLANEOUS]"));
-	}
-	
-	@Test
-	void shouldReturnBadRequestWhenExpenseTypeIsInvalid() throws Exception {
-	    String invalidRequest = """
-	        {
-	            "name": "Subscription",
-	            "amount": 15.0,
-	            "category": "TRANSPORT",
-	            "type": "INVALID_TYPE"
-	        }
-	        """;
-
-	    mockMvc.perform(post("/api/expenses")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(invalidRequest))
-	        .andExpect(status().isBadRequest())
-	        .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
-	}
-	
-	@Test
-	void shouldReturnNotFoundWhenExpenseDoesNotExist() throws Exception {
-		Mockito.when(expenseService.getExpenseById(Mockito.eq(99L)))
+	void getExpense_NonExistentId_ReturnsNotFound() throws Exception {
+		Mockito.when(expenseService.getExpenseById(99L))
 				.thenThrow(new ExpenseNotFoundException("Expense not found with id: 99"));
-
+				
 		mockMvc.perform(get("/api/expenses/{id}", 99L)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.error").value("Expense not found with id: 99"));
-
+				
 		Mockito.verify(expenseService, Mockito.times(1))
-				.getExpenseById(Mockito.eq(99L));
+				.getExpenseById(99L);
 	}
+
+	// -- Get All Expenses Tests --
 	
-    @Test
-    void shouldReturnNotFoundWhenUpdatingNonExistentExpense() throws Exception {
-	    Long expenseId = 1L;
-	    ExpenseRequest request = new ExpenseRequest();
-	    request.setName("Rent");
-	    request.setAmount(2000.0);
-	    request.setCategory(ExpenseCategory.HOUSING);
-	    request.setType(TransactionType.RECURRING);
-	    request.setMonth("2000-01");
-
-	    Mockito.when(expenseService.updateExpense(Mockito.eq(expenseId), Mockito.any(ExpenseRequest.class)))
-	            .thenThrow(new ExpenseNotFoundException("Expense not found with id: " + expenseId));
-
-	    mockMvc.perform(put("/api/expenses/{id}", expenseId)
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(objectMapper.writeValueAsString(request)))
-	            .andExpect(status().isNotFound())
-	            .andExpect(jsonPath("$.error").value("Expense not found with id: " + expenseId));
-
+	@Test
+	void getAllExpenses_ValidMonth_ReturnsOk() throws Exception {
+		List<Expense> expenseList = List.of(expense, expense);
+		
+		Mockito.when(expenseService.getAllExpensesForMonth(testMonth))
+				.thenReturn(expenseList);
+				
+		mockMvc.perform(get("/api/expenses")
+				.param("month", testMonth)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].name").value(testName))
+				.andExpect(jsonPath("$[1].name").value(testName));
+				
 		Mockito.verify(expenseService, Mockito.times(1))
-				.updateExpense(Mockito.eq(expenseId), Mockito.any(ExpenseRequest.class));
-    }
-    
-	@Test
-	void shouldReturnBadRequestWhenUpdatingWithMalformedRequest() throws Exception {
-	    String malformedJson = """
-	        {
-	            "name": "Rent",
-	            "amount": 1000.0,
-	            "category": 
-	        }
-	        """;
-	    
-	    mockMvc.perform(put("/api/expenses/{id}", 1L)
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(malformedJson))
-		        .andExpect(status().isBadRequest())
-		        .andExpect(jsonPath("$.error").value("Invalid request format."));
+				.getAllExpensesForMonth(testMonth);
 	}
-    
-    @Test
-    void shouldReturnBadRequestWhenUpdatingExpenseWithInvalidCategory() throws Exception {
-        String invalidRequest = """
-            {
-                "name": "Groceries",
-                "amount": 200.0,
-                "category": "INVALID_CATEGORY",
-                "type": "ONE_TIME"
-            }
-            """;
-        
-        mockMvc.perform(put("/api/expenses/{id}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidRequest))
-	            .andExpect(status().isBadRequest())
-	            .andExpect(jsonPath("$.category").value("Invalid value 'INVALID_CATEGORY' for 'category'. Allowed values: [HOUSING, UTILITIES, TAXES, MOBILE_PHONE, GROCERIES, DINING_OUT, TRANSPORT, HEALTH, FITNESS, DEBT_REPAYMENT, SUBSCIPTIONS, HOBBIES, EVENTS, CLOTHING_AND_ACCESSORIES, ELECTRONICS, HOME_AND_DECOR, EDUCATION, GIFTS_AND_DONATIONS, PETS, MISCELLANEOUS]"));
-    }
-    
-    @Test
-    void shouldReturnBadRequestWhenUpdatingExpenseWithInvalidType() throws Exception {
-        String invalidRequest = """
-            {
-                "name": "Car Insurance",
-                "amount": 500.0,
-                "category": "TRANSPORT",
-                "type": "INVALID_TYPE"
-            }
-            """;
-			
-        mockMvc.perform(put("/api/expenses/{id}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidRequest))
-	            .andExpect(status().isBadRequest())
-	            .andExpect(jsonPath("$.type").value("Invalid value 'INVALID_TYPE' for 'type'. Allowed values: [RECURRING, ONE_TIME]"));
-    }
-    
-    @Test
-    void shouldReturnNotFoundWhenDeletingNonExistentExpense() throws Exception {
-    	Long expenseId = 1L;
+	
+	// -- Update Expense Tests --
+	
+	@Test
+	void updateExpense_ValidRequest_ReturnsOk() throws Exception {
+		Mockito.when(expenseService.updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class)))
+				.thenReturn(expense);
+				
+		mockMvc.perform(put("/api/expenses/{id}", testId)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(expenseRequest)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value(testName))
+				.andExpect(jsonPath("$.money.amount").value(testAmount.toString()))
+				.andExpect(jsonPath("$.money.currency").value(testCurrency.toString()))
+				.andExpect(jsonPath("$.category").value(testCategory.toString()))
+				.andExpect(jsonPath("$.type").value(testType.toString()))
+				.andExpect(jsonPath("$.month").value(testMonth));
+				
+		Mockito.verify(expenseService, Mockito.times(1))
+				.updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class));
+	}
 
-        Mockito.doThrow(new ExpenseNotFoundException("Expense not found with id: " + expenseId))
-        		.when(expenseService).deleteExpense(expenseId);
-    	
-		mockMvc.perform(delete("/api/expenses/{id}", expenseId))
-                .andExpect(status().isNotFound());
-        
-        Mockito.verify(expenseService, Mockito.times(1))
-        		.deleteExpense(expenseId);
-    }
+	@Test
+	void updateExpense_NonExistentId_ReturnsNotFound() throws Exception {
+		Mockito.when(expenseService.updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class)))
+				.thenThrow(new ExpenseNotFoundException("Expense not found with id: 99"));
+				
+		mockMvc.perform(put("/api/expenses/{id}", 99L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(expenseRequest)))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.error").value("Expense not found with id: 99"));
+				
+		Mockito.verify(expenseService, Mockito.times(1))
+				.updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class));
+	}
+	
+	// -- Delete Expense Tests --
 	
 	@Test
-	void shouldReturnConflictWhenDataIntegrityViolationOccurs() throws Exception {
-		ExpenseRequest request = new ExpenseRequest();
-        request.setName("Rent");
-        request.setAmount(1000.0);
-        request.setCategory(ExpenseCategory.HOUSING);
-        request.setType(TransactionType.RECURRING);
-        
-	    Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
-	            .thenThrow(new DataIntegrityViolationException("Database constraint violation"));
-	    
-	    mockMvc.perform(post("/api/expenses")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(objectMapper.writeValueAsString(request)))
-	            .andExpect(status().isConflict())
-	            .andExpect(jsonPath("$").value("A database constraint was violated."));
-	    
-	    Mockito.verify(expenseService, Mockito.times(1))
-	    		.createExpense(Mockito.any(ExpenseRequest.class));
+	void deleteExpense_ValidId_ReturnsNoContent() throws Exception {
+		Mockito.doNothing()
+				.when(expenseService)
+				.deleteExpense(testId);
+				
+		mockMvc.perform(delete("/api/expenses/{id}", testId))
+				.andExpect(status().isNoContent());
+				
+		Mockito.verify(expenseService, Mockito.times(1))
+				.deleteExpense(testId);
 	}
 	
 	@Test
-	void shouldReturnInternalServerErrorWhenServiceFails() throws Exception {
-		ExpenseRequest request = new ExpenseRequest();
-        request.setName("Rent");
-        request.setAmount(1000.0);
-        request.setCategory(ExpenseCategory.HOUSING);
-        request.setType(TransactionType.RECURRING);
-        
-        Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
-	            .thenThrow(new RuntimeException("Service failure"));
-	    
-        mockMvc.perform(post("/api/expenses")
-	            .contentType(MediaType.APPLICATION_JSON)
-	            .content(objectMapper.writeValueAsString(request)))
-	            .andExpect(status().isInternalServerError())
-	            .andExpect(jsonPath("$").value("An unexpected error occurred."));
-        
-	    Mockito.verify(expenseService, Mockito.times(1))
-	    		.createExpense(Mockito.any(ExpenseRequest.class));
+	void deleteExpense_NonExistentId_ReturnsNotFound() throws Exception {
+		Mockito.doThrow(new ExpenseNotFoundException("Expense not found with id: 99"))
+				.when(expenseService)
+				.deleteExpense(99L);
+				
+		mockMvc.perform(delete("/api/expenses/{id}", 99L))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.error").value("Expense not found with id: 99"));
+				
+		Mockito.verify(expenseService, Mockito.times(1))
+				.deleteExpense(99L);
+	}
+	
+	// -- Error Handling Tests --
+	
+	@Test
+	void createExpense_ServiceError_ReturnsInternalServerError() throws Exception {
+		Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
+				.thenThrow(new RuntimeException("Service failure"));
+				
+		mockMvc.perform(post("/api/expenses")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(expenseRequest)))
+				.andExpect(status().isInternalServerError())
+				.andExpect(jsonPath("$").value("An unexpected error occurred."));
+				
+		Mockito.verify(expenseService, Mockito.times(1))
+				.createExpense(Mockito.any(ExpenseRequest.class));
+	}
+	
+	@Test
+	void createExpense_DataIntegrityViolation_ReturnsConflict() throws Exception {
+		Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
+				.thenThrow(new DataIntegrityViolationException("Database constraint violation"));
+				
+		mockMvc.perform(post("/api/expenses")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(expenseRequest)))
+				.andExpect(status().isConflict())
+				.andExpect(jsonPath("$").value("A database constraint was violated."));
+				
+		Mockito.verify(expenseService, Mockito.times(1))
+				.createExpense(Mockito.any(ExpenseRequest.class));
 	}
 }

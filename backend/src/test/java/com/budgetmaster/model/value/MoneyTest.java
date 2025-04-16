@@ -11,11 +11,12 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class MoneyTest {
+    // -- Test Data --
     private static final Currency GBP = Currency.getInstance("GBP");
     private static final Currency USD = Currency.getInstance("USD");
 
     // -- Creation Methods --
-
+    
     @Test
     void testOfBigDecimal() {
         Money money = Money.of(new BigDecimal("123.456"));

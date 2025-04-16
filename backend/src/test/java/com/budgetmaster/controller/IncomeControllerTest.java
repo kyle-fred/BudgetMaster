@@ -28,6 +28,16 @@ import java.util.Currency;
 
 @WebMvcTest(IncomeController.class)
 public class IncomeControllerTest {
+	// -- Dependencies --
+	@Autowired
+	private MockMvc mockMvc;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
+	
+	@MockBean
+	private IncomeService incomeService;
+
 	// -- Test Data --
 	private static final Long testId = 1L;
 	private static final String testName = "Test Income";
@@ -37,16 +47,6 @@ public class IncomeControllerTest {
 	private static final TransactionType testType = TransactionType.ONE_TIME;
 	private static final String testMonth = "2000-01";
 	private static final YearMonth testYearMonth = YearMonth.of(2000, 1);
-	
-	// -- Dependencies --
-	@Autowired
-	private MockMvc mockMvc;
-	
-	@Autowired
-	private ObjectMapper objectMapper;
-	
-	@MockBean
-    private IncomeService incomeService;
 	
 	// -- Test Objects --
 	private IncomeRequest incomeRequest;
@@ -167,10 +167,6 @@ public class IncomeControllerTest {
 		mockMvc.perform(put("/api/incomes/{id}", testId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(incomeRequest)))
-				.andDo(result -> {
-					System.out.println("Response content: " + result.getResponse().getContentAsString());
-					System.out.println("Expected testIncome: " + objectMapper.writeValueAsString(testIncome));
-				})
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value(testName))
 				.andExpect(jsonPath("$.source").value(testSource))

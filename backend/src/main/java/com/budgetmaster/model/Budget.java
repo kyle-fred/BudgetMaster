@@ -19,7 +19,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "BUDGET")
 public class Budget {
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")

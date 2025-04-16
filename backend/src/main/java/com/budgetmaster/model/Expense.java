@@ -25,7 +25,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "EXPENSE")
 public class Expense {
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")

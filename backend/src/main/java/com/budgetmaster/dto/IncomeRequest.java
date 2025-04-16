@@ -9,7 +9,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public class IncomeRequest {
-	
 	@NotBlank(message = "Income name is required.")
 	private String name;
 	
@@ -23,7 +22,8 @@ public class IncomeRequest {
 	@NotNull(message = "Income transaction type is required.")
 	private TransactionType type;
 	
-	@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month must be in format YYYY-MM")
+	@NotNull(message = "Month is required.")
+	@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month must be in format YYYY-MM.")
 	private String month;
 	
 	public String getName() {

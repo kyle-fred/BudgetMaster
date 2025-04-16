@@ -1,6 +1,7 @@
 package com.budgetmaster.model;
 
 import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.model.value.Money;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.budgetmaster.enums.ExpenseCategory;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,7 +21,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
 
 @Entity
 @Table(name = "EXPENSE")
@@ -30,19 +31,18 @@ public class Expense {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "NAME")
+	@Column(name = "NAME", nullable = false)
 	private String name;
 	
-	@Min(value = 0, message = "Amount must be greater than 0")
-	@Column(name = "AMOUNT")
-	private Double amount;
+	@Embedded
+	private Money money;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "CATEGORY")
+	@Column(name = "CATEGORY", nullable = false)
 	private ExpenseCategory category;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TYPE")
+	@Column(name = "TYPE", nullable = false)
 	private TransactionType type;
 	
 	@Column(name = "MONTH", nullable = false)
@@ -60,9 +60,9 @@ public class Expense {
 	
 	public Expense() {}
 	
-	public Expense(String name, Double amount, ExpenseCategory category, TransactionType type, YearMonth month) {
+	public Expense(String name, Money money, ExpenseCategory category, TransactionType type, YearMonth month) {
 		this.name = name;
-		this.amount = amount;
+		this.money = money;
 		this.category = category;
 		this.type = type;
 		this.month = month;
@@ -84,12 +84,12 @@ public class Expense {
 		this.name = name;
 	}
 	
-	public Double getAmount() {
-		return amount;
+	public Money getMoney() {
+		return money;
 	}
 	
-	public void setAmount(Double amount) {
-		this.amount = amount;
+	public void setMoney(Money money) {
+		this.money = money;
 	}
 	
 	public ExpenseCategory getCategory() {

@@ -3,6 +3,7 @@ package com.budgetmaster.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.util.Currency;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -32,6 +33,9 @@ public class Budget {
 	
 	@Column(name = "SAVINGS", precision = 19, scale = 2, insertable = false, updatable = false)
 	private BigDecimal savings;
+
+	@Column(name = "COMMON_CURRENCY", nullable = false, length = 3)
+	private Currency currency;
 	
 	@Column(name = "MONTH", nullable = false, unique=true)
 	private YearMonth month;
@@ -98,7 +102,15 @@ public class Budget {
 		return createdAt;
 	}
 	
-    public LocalDateTime getLastUpdatedAt() {
-        return lastUpdatedAt;
-    }
+	public LocalDateTime getLastUpdatedAt() {
+		return lastUpdatedAt;
+	}
+
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
 }

@@ -10,10 +10,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.budgetmaster.enums.SupportedCurrency;
+
 class MoneyTest {
     // -- Test Data --
-    private static final Currency GBP = Currency.getInstance("GBP");
-    private static final Currency USD = Currency.getInstance("USD");
+    private static final Currency GBP = SupportedCurrency.GBP.getCurrency();
 
     // -- Creation Methods --
     
@@ -26,9 +27,9 @@ class MoneyTest {
 
     @Test
     void testOfBigDecimalWithCurrency() {
-        Money money = Money.of(new BigDecimal("123.456"), USD);
+        Money money = Money.of(new BigDecimal("123.456"), GBP);
         assertEquals(new BigDecimal("123.46"), money.getAmount(), "Amount should be rounded to 2 decimal places");
-        assertEquals(USD, money.getCurrency(), "Currency should be set correctly");
+        assertEquals(GBP, money.getCurrency(), "Currency should be set correctly");
     }
 
     @Test
@@ -40,9 +41,9 @@ class MoneyTest {
 
     @Test
     void testOfStringWithCurrency() {
-        Money money = Money.of("123.456", USD);
+        Money money = Money.of("123.456", GBP);
         assertEquals(new BigDecimal("123.46"), money.getAmount(), "Amount should be rounded to 2 decimal places");
-        assertEquals(USD, money.getCurrency(), "Currency should be set correctly");
+        assertEquals(GBP, money.getCurrency(), "Currency should be set correctly");
     }
 
     @Test
@@ -54,9 +55,9 @@ class MoneyTest {
 
     @Test
     void testOfDoubleWithCurrency() {
-        Money money = Money.of(123.456, USD);
+        Money money = Money.of(123.456, GBP);
         assertEquals(new BigDecimal("123.46"), money.getAmount(), "Amount should be rounded to 2 decimal places");
-        assertEquals(USD, money.getCurrency(), "Currency should be set correctly");
+        assertEquals(GBP, money.getCurrency(), "Currency should be set correctly");
     }
 
     // -- Zero Methods --
@@ -70,9 +71,9 @@ class MoneyTest {
 
     @Test
     void testZeroWithCurrency() {
-        Money money = Money.zero(USD);
+        Money money = Money.zero(GBP);
         assertEquals(0, money.getAmount().compareTo(BigDecimal.ZERO), "Amount should be zero");
-        assertEquals(USD, money.getCurrency(), "Currency should be set correctly");
+        assertEquals(GBP, money.getCurrency(), "Currency should be set correctly");
     }
 
     // -- Arithmetic Methods --
@@ -83,13 +84,6 @@ class MoneyTest {
         Money money2 = Money.of("50.00");
         Money result = money1.add(money2);
         assertEquals(new BigDecimal("150.00"), result.getAmount(), "Amount should be added correctly");
-    }
-
-    @Test
-    void testAddDifferentCurrency() {
-        Money money1 = Money.of("100.00", GBP);
-        Money money2 = Money.of("50.00", USD);
-        assertThrows(IllegalArgumentException.class, () -> money1.add(money2), "Should throw an exception for different currencies");
     }
 
     @Test
@@ -171,11 +165,11 @@ class MoneyTest {
     void testEqualsAndHashCode() {
         Money money1 = Money.of("100.00");
         Money money2 = Money.of("100.00");
-        Money money3 = Money.of("100.00", USD);
+        Money money3 = Money.of("99.99");
         
         assertEquals(money1, money2, "Should return true if Money objects have the same amount and currency");
         assertEquals(money1.hashCode(), money2.hashCode(), "Hash code should be equal for Money objects with the same amount and currency");
-        assertNotEquals(money1, money3, "Should return false if Money objects have different amounts or currencies");
+        assertNotEquals(money1, money3, "Should return false if Money objects have any different attributes");
     }
 
     @Test
@@ -186,7 +180,7 @@ class MoneyTest {
 
     @Test
     void testToStringWithCurrency() {
-        Money money = Money.of("100.00", USD);
-        assertEquals("US$100.00", money.toString(), "Should return the correct string representation of the Money object with the specified currency");
+        Money money = Money.of("100.00", GBP);
+        assertEquals("£100.00", money.toString(), "Should return the correct string representation of the Money object with the specified currency");
     }  
 }

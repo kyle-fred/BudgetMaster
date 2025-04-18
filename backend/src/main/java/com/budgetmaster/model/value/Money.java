@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Objects;
 
+import com.budgetmaster.enums.SupportedCurrency;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
@@ -12,7 +14,7 @@ import jakarta.persistence.Embeddable;
 public final class Money {
     private static final int DEFAULT_SCALE = 2;
     private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.HALF_EVEN;
-    private static final Currency DEFAULT_CURRENCY = Currency.getInstance("GBP");
+    private static final Currency DEFAULT_CURRENCY = SupportedCurrency.GBP.getCurrency();
 
     @Column(name = "AMOUNT", nullable = false)
     private BigDecimal amount;
@@ -23,6 +25,9 @@ public final class Money {
     protected Money() {}
     
     private Money(BigDecimal amount, Currency currency) {
+        if (!SupportedCurrency.isSupported(currency)) {
+            throw new IllegalArgumentException("Currency " + currency + " is not supported");
+        }
         this.amount = amount.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
         this.currency = currency;
     }

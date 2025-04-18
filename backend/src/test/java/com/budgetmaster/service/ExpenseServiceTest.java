@@ -3,6 +3,7 @@ package com.budgetmaster.service;
 import com.budgetmaster.dto.ExpenseRequest;
 import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.ExpenseCategory;
+import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.repository.ExpenseRepository;
 import com.budgetmaster.utils.date.DateUtils;
@@ -35,7 +36,7 @@ class ExpenseServiceTest {
 	private static final Long testId = 1L;
 	private static final String testName = "TEST EXPENSE";
 	private static final BigDecimal testAmount = new BigDecimal("123.45");
-	private static final Currency testCurrency = Currency.getInstance("GBP");
+	private static final Currency testCurrency = SupportedCurrency.GBP.getCurrency();
     private static final ExpenseCategory testCategory = ExpenseCategory.MISCELLANEOUS;
 	private static final TransactionType testType = TransactionType.ONE_TIME;
 	private static final String testMonth = "2000-01";

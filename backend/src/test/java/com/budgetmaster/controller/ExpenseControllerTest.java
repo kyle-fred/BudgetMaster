@@ -3,6 +3,7 @@ package com.budgetmaster.controller;
 import com.budgetmaster.dto.ExpenseRequest;
 import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.ExpenseCategory;
+import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.exception.ExpenseNotFoundException;
 import com.budgetmaster.service.ExpenseService;
@@ -44,7 +45,7 @@ public class ExpenseControllerTest {
 	private static final Long testId = 1L;
 	private static final String testName = "Test Expense";
 	private static final BigDecimal testAmount = new BigDecimal("123.45");
-	private static final Currency testCurrency = Currency.getInstance("GBP");
+	private static final Currency testCurrency = SupportedCurrency.GBP.getCurrency();
 	private static final TransactionType testType = TransactionType.ONE_TIME;
 	private static final ExpenseCategory testCategory = ExpenseCategory.MISCELLANEOUS;
 	private static final String testMonth = "2000-01";

@@ -1,5 +1,6 @@
 package com.budgetmaster.service;
 
+import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.exception.BudgetNotFoundException;
 import com.budgetmaster.repository.BudgetRepository;
 import com.budgetmaster.utils.date.DateUtils;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.mockStatic;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.Currency;
 import java.util.Optional;
 
 class BudgetServiceTest {
@@ -28,6 +30,7 @@ class BudgetServiceTest {
 	private static final BigDecimal testTotalIncome = new BigDecimal("543.21");
 	private static final BigDecimal testTotalExpense = new BigDecimal("123.45");
 	private static final BigDecimal testSavings = testTotalIncome.subtract(testTotalExpense);
+	private static final Currency testCurrency = SupportedCurrency.GBP.getCurrency();
 	private static final String testMonth = "2000-01";
 	private static final YearMonth testYearMonth = YearMonth.of(2000, 1);
 	
@@ -44,6 +47,7 @@ class BudgetServiceTest {
 		testBudget.setTotalIncome(testTotalIncome);
 		testBudget.setTotalExpense(testTotalExpense);
 		testBudget.setSavings(testSavings);
+		testBudget.setCurrency(testCurrency);
 	}
 	
 	// -- Get Budget Tests --
@@ -62,6 +66,7 @@ class BudgetServiceTest {
 			assertEquals(testTotalIncome, retrievedBudget.getTotalIncome(), "Total income should be equal to the test value");
 			assertEquals(testTotalExpense, retrievedBudget.getTotalExpense(), "Total expense should be equal to the test value");
 			assertEquals(testSavings, retrievedBudget.getSavings(), "Savings should be equal to the test value");
+			assertEquals(testCurrency, retrievedBudget.getCurrency(), "Currency should be equal to the test value");
 			assertEquals(testYearMonth, retrievedBudget.getMonth(), "Month should be equal to the test value");
 
 			Mockito.verify(budgetRepository, Mockito.times(1))
@@ -80,6 +85,7 @@ class BudgetServiceTest {
 		assertEquals(testTotalIncome, retrievedBudget.getTotalIncome(), "Total income should be equal to the test value");
 		assertEquals(testTotalExpense, retrievedBudget.getTotalExpense(), "Total expense should be equal to the test value");
 		assertEquals(testSavings, retrievedBudget.getSavings(), "Savings should be equal to the test value");
+		assertEquals(testCurrency, retrievedBudget.getCurrency(), "Currency should be equal to the test value");
 		assertEquals(testYearMonth, retrievedBudget.getMonth(), "Month should be equal to the test value");
 		
 		Mockito.verify(budgetRepository, Mockito.times(1))

@@ -1,5 +1,6 @@
 package com.budgetmaster.controller;
 
+import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.exception.BudgetNotFoundException;
 import com.budgetmaster.service.BudgetService;
 import com.budgetmaster.model.Budget;
@@ -17,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
+import java.util.Currency;
 
 @WebMvcTest(BudgetController.class)
 public class BudgetControllerTest {
@@ -32,6 +34,7 @@ public class BudgetControllerTest {
 	private static final BigDecimal testIncome = new BigDecimal("543.21");
 	private static final BigDecimal testExpense = new BigDecimal("123.45");
 	private static final BigDecimal testSavings = testIncome.subtract(testExpense);
+	private static final Currency testCurrency = SupportedCurrency.GBP.getCurrency();
 	private static final YearMonth testYearMonth = YearMonth.of(2000, 1);
 	private static final String testMonth = "2000-01";
 	// -- Test Objects --
@@ -46,6 +49,7 @@ public class BudgetControllerTest {
 		budget.setTotalIncome(testIncome);
 		budget.setTotalExpense(testExpense);
 		budget.setSavings(testSavings);
+		budget.setCurrency(testCurrency);
 	}
 
 	// -- Get Budget Tests --
@@ -62,6 +66,7 @@ public class BudgetControllerTest {
 				.andExpect(jsonPath("$.totalIncome").value(testIncome))
 				.andExpect(jsonPath("$.totalExpense").value(testExpense))
 				.andExpect(jsonPath("$.savings").value(testSavings))
+				.andExpect(jsonPath("$.currency").value(testCurrency.getCurrencyCode()))
 				.andExpect(jsonPath("$.month").value(testMonth));
 
 		Mockito.verify(budgetService, Mockito.times(1))

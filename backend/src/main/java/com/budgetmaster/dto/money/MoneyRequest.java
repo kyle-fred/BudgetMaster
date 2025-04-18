@@ -3,9 +3,12 @@ package com.budgetmaster.dto.money;
 import java.math.BigDecimal;
 import java.util.Currency;
 
+import com.budgetmaster.validation.currency.SupportedCurrencyConstraint;
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 
+@SupportedCurrencyConstraint
 public class MoneyRequest {
     
     @NotNull(message = "Amount is required.")

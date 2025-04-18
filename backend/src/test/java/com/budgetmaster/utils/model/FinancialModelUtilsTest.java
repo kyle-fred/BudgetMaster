@@ -78,7 +78,7 @@ public class FinancialModelUtilsTest {
 		Income income = new Income();
 		income.setName("OLD NAME");
 		income.setSource("OLD SOURCE");
-		income.setMoney(Money.of(new BigDecimal("1000.00"), Currency.getInstance("USD")));
+		income.setMoney(Money.of(new BigDecimal("1000.00"), Currency.getInstance("GBP")));
 		income.setType(TransactionType.ONE_TIME);
 		income.setMonth(YearMonth.of(1999, 12));
 		
@@ -87,7 +87,7 @@ public class FinancialModelUtilsTest {
 		assertEquals(testName, income.getName(), "Name should be updated");
 		assertEquals(testSource, income.getSource(), "Source should be updated");
 		assertEquals(testAmount, income.getMoney().getAmount(), "Amount should be updated");
-		assertEquals(testCurrency, income.getMoney().getCurrency(), "Currency should be updated");
+		assertEquals(testCurrency, income.getMoney().getCurrency(), "Currency has not been updated");
 		assertEquals(testType, income.getType(), "Transaction type should be updated");
 		assertEquals(testYearMonth, income.getMonth(), "Month should be updated");
 	}
@@ -110,7 +110,7 @@ public class FinancialModelUtilsTest {
 	void modifyExpense_ValidRequest_UpdatesExpense() {
 		Expense expense = new Expense();
 		expense.setName("OLD NAME");
-		expense.setMoney(Money.of(new BigDecimal("1000.00"), Currency.getInstance("USD")));
+		expense.setMoney(Money.of(new BigDecimal("1000.00"), Currency.getInstance("GBP")));
 		expense.setCategory(ExpenseCategory.GROCERIES);
 		expense.setType(TransactionType.ONE_TIME);
 		expense.setMonth(YearMonth.of(1999, 12));
@@ -119,7 +119,7 @@ public class FinancialModelUtilsTest {
 		
 		assertEquals(testName, expense.getName(), "Name should be updated");
 		assertEquals(testAmount, expense.getMoney().getAmount(), "Amount should be updated");
-		assertEquals(testCurrency, expense.getMoney().getCurrency(), "Currency should be updated");
+		assertEquals(testCurrency, expense.getMoney().getCurrency(), "Currency has not been updated");
 		assertEquals(testCategory, expense.getCategory(), "Category should be updated");
 		assertEquals(testType, expense.getType(), "Transaction type should be updated");
 		assertEquals(testYearMonth, expense.getMonth(), "Month should be updated");

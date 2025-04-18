@@ -10,9 +10,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.budgetmaster.enums.SupportedCurrency;
+
 class MoneyTest {
     // -- Test Data --
-    private static final Currency GBP = Currency.getInstance("GBP");
+    private static final Currency GBP = SupportedCurrency.GBP.getCurrency();
 
     // -- Creation Methods --
     

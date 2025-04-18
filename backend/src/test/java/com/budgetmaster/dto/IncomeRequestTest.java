@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.budgetmaster.dto.money.MoneyRequest;
+import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.enums.TransactionType;
 
 public class IncomeRequestTest {    
@@ -30,7 +31,7 @@ public class IncomeRequestTest {
     private String testName = "Test Income";
     private String testSource = "Test Source";
     private BigDecimal testAmount = new BigDecimal("100.00");
-    private static final Currency GBP = Currency.getInstance("GBP");
+    private static final Currency GBP = SupportedCurrency.GBP.getCurrency();
     private TransactionType testType = TransactionType.ONE_TIME;
     private String testMonth = "2000-01";
 

@@ -2,6 +2,7 @@ package com.budgetmaster.service;
 
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.dto.money.MoneyRequest;
+import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.repository.IncomeRepository;
 import com.budgetmaster.utils.date.DateUtils;
@@ -36,7 +37,7 @@ class IncomeServiceTest {
 	private static final String testName = "TEST INCOME";
 	private static final String testSource = "TEST SOURCE";
 	private static final BigDecimal testAmount = new BigDecimal("123.45");
-	private static final Currency testCurrency = Currency.getInstance("GBP");
+	private static final Currency testCurrency = SupportedCurrency.GBP.getCurrency();
 	private static final TransactionType testType = TransactionType.ONE_TIME;
 	private static final String testMonth = "2000-01";
 	private static final YearMonth testYearMonth = YearMonth.of(2000, 1);

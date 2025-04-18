@@ -13,6 +13,7 @@ import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.dto.ExpenseRequest;
 import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.ExpenseCategory;
+import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.model.Income;
 import com.budgetmaster.model.Expense;
@@ -23,7 +24,7 @@ public class FinancialModelUtilsTest {
 	private static final String testName = "TEST NAME";
 	private static final String testSource = "TEST SOURCE";
 	private static final BigDecimal testAmount = new BigDecimal("123.45");
-	private static final Currency testCurrency = Currency.getInstance("GBP");
+	private static final Currency testCurrency = SupportedCurrency.GBP.getCurrency();
     private static final ExpenseCategory testCategory = ExpenseCategory.MISCELLANEOUS;
 	private static final TransactionType testType = TransactionType.RECURRING;
 	private static final String testMonth = "2000-01";
@@ -78,7 +79,7 @@ public class FinancialModelUtilsTest {
 		Income income = new Income();
 		income.setName("OLD NAME");
 		income.setSource("OLD SOURCE");
-		income.setMoney(Money.of(new BigDecimal("1000.00"), Currency.getInstance("GBP")));
+		income.setMoney(Money.of(new BigDecimal("1000.00"), SupportedCurrency.GBP.getCurrency()));
 		income.setType(TransactionType.ONE_TIME);
 		income.setMonth(YearMonth.of(1999, 12));
 		
@@ -110,7 +111,7 @@ public class FinancialModelUtilsTest {
 	void modifyExpense_ValidRequest_UpdatesExpense() {
 		Expense expense = new Expense();
 		expense.setName("OLD NAME");
-		expense.setMoney(Money.of(new BigDecimal("1000.00"), Currency.getInstance("GBP")));
+		expense.setMoney(Money.of(new BigDecimal("1000.00"), SupportedCurrency.GBP.getCurrency()));
 		expense.setCategory(ExpenseCategory.GROCERIES);
 		expense.setType(TransactionType.ONE_TIME);
 		expense.setMonth(YearMonth.of(1999, 12));

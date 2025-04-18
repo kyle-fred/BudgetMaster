@@ -25,6 +25,7 @@ class MoneyRequestTest {
     // -- Test Data --
     private BigDecimal testAmount = new BigDecimal("100.00");
     private static final Currency GBP = Currency.getInstance("GBP");
+    private static final Currency USD = Currency.getInstance("USD");
 
     // -- Setup --
     @BeforeAll
@@ -65,6 +66,16 @@ class MoneyRequestTest {
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size(), "Violations should contain 1 error for null currency");
         assertEquals("Currency must be provided", violations.iterator().next().getMessage(), "Error message should be 'Currency must be provided'");
+    }
+
+    @Test
+    void testUnsupportedCurrency() {
+        request.setAmount(testAmount);
+        request.setCurrency(USD);
+        Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
+        assertEquals(1, violations.size(), "Violations should contain 1 error for unsupported currency");
+        assertEquals("This currency type is not supported yet", violations.iterator().next().getMessage(),
+            "Error message should be 'This currency type is not supported yet'");
     }
 
     @Test

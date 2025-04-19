@@ -63,8 +63,8 @@ public class BudgetControllerTest {
 				.param("month", testMonth))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(testId))
-				.andExpect(jsonPath("$.totalIncome").value(testIncome))
-				.andExpect(jsonPath("$.totalExpense").value(testExpense))
+				.andExpect(jsonPath("$.total-income").value(testIncome))
+				.andExpect(jsonPath("$.total-expense").value(testExpense))
 				.andExpect(jsonPath("$.savings").value(testSavings))
 				.andExpect(jsonPath("$.currency").value(testCurrency.getCurrencyCode()))
 				.andExpect(jsonPath("$.month").value(testMonth));

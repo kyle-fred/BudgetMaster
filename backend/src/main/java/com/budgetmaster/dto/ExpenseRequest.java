@@ -1,6 +1,9 @@
 package com.budgetmaster.dto;
 
 import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.constants.validation.ValidationMessages.ExpenseValidation;
+import com.budgetmaster.constants.validation.ValidationMessages.CommonValidation;
+import com.budgetmaster.constants.validation.ValidationPatterns;
 import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.ExpenseCategory;
 
@@ -10,21 +13,22 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public class ExpenseRequest {
-	@NotBlank(message = "Expense name is required.")
+	@NotBlank(message = ExpenseValidation.VALIDATION_MESSAGE_REQUIRED_NAME)
 	private String name;
 	
-	@NotNull(message = "Money details (amount and currency) are required.")
+	@NotNull(message = CommonValidation.VALIDATION_MESSAGE_REQUIRED_MONEY)
 	@Valid
 	private MoneyRequest money;
 	
-	@NotNull(message = "Expense category is required.")
+	@NotNull(message = ExpenseValidation.VALIDATION_MESSAGE_REQUIRED_CATEGORY)
 	private ExpenseCategory category;
 	
-	@NotNull(message = "Expense transaction type is required.")
+	@NotNull(message = CommonValidation.VALIDATION_MESSAGE_REQUIRED_TYPE)
 	private TransactionType type;
 	
-	@NotNull(message = "Month is required.")
-	@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month must be in format YYYY-MM.")
+	@NotNull(message = CommonValidation.VALIDATION_MESSAGE_REQUIRED_MONTH)
+	@Pattern(regexp = ValidationPatterns.VALIDATION_PATTERN_YEAR_MONTH_REGEX, 
+			message = CommonValidation.VALIDATION_MESSAGE_INVALID_MONTH)
 	private String month;
 	
 	public String getName() {

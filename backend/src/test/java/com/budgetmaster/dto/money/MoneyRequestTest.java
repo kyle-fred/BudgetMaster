@@ -65,7 +65,7 @@ class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size(), "Violations should contain 1 error for null currency");
-        assertEquals("Currency must be provided", violations.iterator().next().getMessage(), "Error message should be 'Currency must be provided'");
+        assertEquals("Currency is required.", violations.iterator().next().getMessage(), "Error message should be 'Currency must be provided'");
     }
 
     @Test

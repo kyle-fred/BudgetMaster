@@ -1,5 +1,8 @@
 package com.budgetmaster.controller;
 
+import com.budgetmaster.constants.api.ApiMessages;
+import com.budgetmaster.constants.api.ApiPaths;
+import com.budgetmaster.constants.validation.ValidationPatterns;
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.model.Income;
 import com.budgetmaster.service.IncomeService;
@@ -14,7 +17,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 
 @RestController
-@RequestMapping("api/incomes")
+@RequestMapping(ApiPaths.API_PATH_BASE_PATH + ApiPaths.API_PATH_INCOMES)
 @Validated
 public class IncomeController {
 	
@@ -33,25 +36,25 @@ public class IncomeController {
     @GetMapping
     public ResponseEntity<List<Income>> getAllIncomesForMonth(
             @RequestParam 
-            @Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month must be in format YYYY-MM") 
+            @Pattern(regexp = ValidationPatterns.VALIDATION_PATTERN_YEAR_MONTH_REGEX, message = ApiMessages.API_MESSAGE_MONTH_FORMAT_INVALID) 
             String month) {
         List<Income> incomes = incomeService.getAllIncomesForMonth(month);
         return ResponseEntity.ok(incomes);
     }
 	
-    @GetMapping("/{id}")
+    @GetMapping(ApiPaths.API_PATH_BY_ID)
     public ResponseEntity<Income> getIncomeById(@PathVariable Long id) {
         Income income = incomeService.getIncomeById(id);
         return ResponseEntity.ok(income);
     }
     
-    @PutMapping("/{id}")
+    @PutMapping(ApiPaths.API_PATH_BY_ID)
     public ResponseEntity<Income> updateIncome(@PathVariable Long id, @Valid @RequestBody IncomeRequest request) {
         Income income = incomeService.updateIncome(id, request);
         return ResponseEntity.ok(income);
     }
     
-    @DeleteMapping("/{id}")
+    @DeleteMapping(ApiPaths.API_PATH_BY_ID)
     public ResponseEntity<Void> deleteIncome(@PathVariable Long id) {
         incomeService.deleteIncome(id);
         return ResponseEntity.noContent().build();

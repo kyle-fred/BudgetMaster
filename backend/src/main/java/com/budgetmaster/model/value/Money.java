@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Objects;
 
+import com.budgetmaster.constants.database.ColumnNames.TransactionColumns;
 import com.budgetmaster.enums.SupportedCurrency;
 
 import jakarta.persistence.Column;
@@ -16,10 +17,10 @@ public final class Money {
     private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.HALF_EVEN;
     private static final Currency DEFAULT_CURRENCY = SupportedCurrency.GBP.getCurrency();
 
-    @Column(name = "AMOUNT", nullable = false)
+    @Column(name = TransactionColumns.COLUMN_NAME_AMOUNT, nullable = false)
     private BigDecimal amount;
 
-    @Column(name = "CURRENCY", nullable = false)
+    @Column(name = TransactionColumns.COLUMN_NAME_CURRENCY, nullable = false)
     private Currency currency;
     
     protected Money() {}

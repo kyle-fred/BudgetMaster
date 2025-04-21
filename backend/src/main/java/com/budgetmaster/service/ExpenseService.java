@@ -1,5 +1,6 @@
 package com.budgetmaster.service;
 
+import com.budgetmaster.constants.error.ErrorMessages.ExpenseErrorMessages;
 import com.budgetmaster.dto.ExpenseRequest;
 import com.budgetmaster.exception.ExpenseNotFoundException;
 import com.budgetmaster.repository.ExpenseRepository;
@@ -62,13 +63,13 @@ public class ExpenseService {
 	 * Creates a supplier for ExpenseNotFoundException when entity is not found by ID.
 	 */
 	private Supplier<ExpenseNotFoundException> createIdNotFoundException(Long id) {
-		return () -> new ExpenseNotFoundException("Expense not found with id: " + id);
-	}
+		return () -> new ExpenseNotFoundException(String.format(ExpenseErrorMessages.ERROR_MESSAGE_EXPENSE_NOT_FOUND_BY_ID, id));
+		}
 
 	/**
 	 * Creates a supplier for ExpenseNotFoundException when no entities are found for a given month value.
 	 */
 	private Supplier<ExpenseNotFoundException> createMonthNotFoundException(YearMonth month) {
-		return () -> new ExpenseNotFoundException("No expenses found for month: " + month);
+		return () -> new ExpenseNotFoundException(String.format(ExpenseErrorMessages.ERROR_MESSAGE_EXPENSE_NOT_FOUND_BY_MONTH, month));
 	}
 }

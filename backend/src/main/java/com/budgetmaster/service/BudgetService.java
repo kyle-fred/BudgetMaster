@@ -1,5 +1,6 @@
 package com.budgetmaster.service;
 
+import com.budgetmaster.constants.error.ErrorMessages.BudgetErrorMessages;
 import com.budgetmaster.exception.BudgetNotFoundException;
 import com.budgetmaster.repository.BudgetRepository;
 import com.budgetmaster.utils.date.DateUtils;
@@ -48,13 +49,13 @@ public class BudgetService {
 	 * Creates a supplier for BudgetNotFoundException when entity is not found by ID.
 	 */
 	private Supplier<BudgetNotFoundException> createIdNotFoundException(Long id) {
-		return () -> new BudgetNotFoundException("Budget not found for id: " + id);
+		return () -> new BudgetNotFoundException(String.format(BudgetErrorMessages.ERROR_MESSAGE_BUDGET_NOT_FOUND_BY_ID, id));
 	}
 	
 	/**
 	 * Creates a supplier for BudgetNotFoundException when entity is not found by month.
 	 */
 	private Supplier<BudgetNotFoundException> createMonthNotFoundException(YearMonth month) {
-		return () -> new BudgetNotFoundException("Budget not found for month: " + month);
+		return () -> new BudgetNotFoundException(String.format(BudgetErrorMessages.ERROR_MESSAGE_BUDGET_NOT_FOUND_BY_MONTH, month));
 	}
 }

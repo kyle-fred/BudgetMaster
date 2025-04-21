@@ -134,7 +134,7 @@ class BudgetServiceTest {
 	
 	@Test
 	void getBudget_NonExistentId_ReturnsNotFound() {
-		String errorMessage = "Budget not found for id: 99";
+		String errorMessage = "Budget not found with id: 99";
 		Mockito.when(budgetRepository.findById(99L))
 				.thenReturn(Optional.empty());
 		
@@ -149,7 +149,7 @@ class BudgetServiceTest {
 	
 	@Test
 	void deleteBudget_NonExistentId_ReturnsNotFound() {
-		String errorMessage = "Budget not found for id: 99";
+		String errorMessage = "Budget not found with id: 99";
 		Mockito.when(budgetRepository.findById(99L))
 				.thenReturn(Optional.empty());
 		

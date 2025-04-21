@@ -26,9 +26,7 @@ public final class Money {
     protected Money() {}
     
     private Money(BigDecimal amount, Currency currency) {
-        if (!SupportedCurrency.isSupported(currency)) {
-            throw new IllegalArgumentException("Currency " + currency + " is not supported");
-        }
+        SupportedCurrency.validateSupportedCurrency(currency);
         this.amount = amount.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
         this.currency = currency;
     }

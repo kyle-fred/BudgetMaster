@@ -12,6 +12,6 @@ public class SupportedCurrencyValidator implements ConstraintValidator<Supported
             // Let MoneyRequest's @NotNull handle this case
             return true;
         }
-        return SupportedCurrency.isSupported(value.getCurrency());
+        return SupportedCurrency.validateSupportedCurrency(value.getCurrency());
     }
 } 

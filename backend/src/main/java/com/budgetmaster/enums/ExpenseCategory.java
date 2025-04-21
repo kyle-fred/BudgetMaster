@@ -1,5 +1,6 @@
 package com.budgetmaster.enums;
 
+import com.budgetmaster.constants.common.StringConstants;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -27,7 +28,7 @@ public enum ExpenseCategory {
 	
 	@JsonCreator
 	public static ExpenseCategory fromString(String value) {
-		return ExpenseCategory.valueOf(value.toUpperCase().replace(" ", "_"));
+		return ExpenseCategory.valueOf(value.toUpperCase().replace(StringConstants.STRING_CONSTANTS_SPACE, StringConstants.STRING_CONSTANTS_UNDERSCORE));
 	}
 	
 	@JsonValue

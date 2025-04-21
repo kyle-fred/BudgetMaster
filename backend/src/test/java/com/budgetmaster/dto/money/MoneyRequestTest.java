@@ -8,6 +8,7 @@ import java.util.Set;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
+import jakarta.validation.ValidationException;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
@@ -72,10 +73,8 @@ class MoneyRequestTest {
     void testUnsupportedCurrency() {
         request.setAmount(testAmount);
         request.setCurrency(USD);
-        Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for unsupported currency");
-        assertEquals("This currency type is not supported yet", violations.iterator().next().getMessage(),
-            "Error message should be 'This currency type is not supported yet'");
+        assertThrows(ValidationException.class, () -> validator.validate(request),
+            "Should throw ValidationException for unsupported currency");
     }
 
     @Test

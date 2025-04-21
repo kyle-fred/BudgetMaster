@@ -1,5 +1,6 @@
 package com.budgetmaster.model;
 
+import com.budgetmaster.constants.database.ColumnConstraints;
 import com.budgetmaster.constants.database.ColumnNames.BudgetColumns;
 import com.budgetmaster.constants.database.ColumnNames.CommonColumns;
 import com.budgetmaster.constants.database.TableNames;
@@ -30,13 +31,17 @@ public class Budget {
 	@Column(name = CommonColumns.COLUMN_NAME_ID)
 	private Long id;
 	
-	@Column(name = BudgetColumns.COLUMN_NAME_TOTAL_INCOME, precision = 19, scale = 2)
+	@Column(name = BudgetColumns.COLUMN_NAME_TOTAL_INCOME, 
+			precision = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_PRECISION, scale = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE)
 	private BigDecimal totalIncome;
 	
-	@Column(name = BudgetColumns.COLUMN_NAME_TOTAL_EXPENSE, precision = 19, scale = 2)
+	@Column(name = BudgetColumns.COLUMN_NAME_TOTAL_EXPENSE, 
+			precision = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_PRECISION, scale = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE)
 	private BigDecimal totalExpense;
 	
-	@Column(name = BudgetColumns.COLUMN_NAME_SAVINGS, precision = 19, scale = 2, insertable = false, updatable = false)
+	@Column(name = BudgetColumns.COLUMN_NAME_SAVINGS, 
+			precision = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_PRECISION, scale = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE, 
+			insertable = false, updatable = false)
 	private BigDecimal savings;
 
 	@Column(name = BudgetColumns.COLUMN_NAME_COMMON_CURRENCY, nullable = false, length = 3)

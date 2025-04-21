@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Objects;
 
+import com.budgetmaster.constants.database.ColumnConstraints;
 import com.budgetmaster.constants.database.ColumnNames.TransactionColumns;
 import com.budgetmaster.enums.SupportedCurrency;
 
@@ -13,7 +14,7 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public final class Money {
-    private static final int DEFAULT_SCALE = 2;
+    private static final int DEFAULT_SCALE = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE;
     private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.HALF_EVEN;
     private static final Currency DEFAULT_CURRENCY = SupportedCurrency.GBP.getCurrency();
 

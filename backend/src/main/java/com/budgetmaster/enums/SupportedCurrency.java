@@ -24,7 +24,7 @@ public enum SupportedCurrency {
                 return true;
             }
         }
-        throw new IllegalArgumentException(String.format(CurrencyErrorMessages.ERROR_UNSUPPORTED_CURRENCY, currency));
+        throw new IllegalArgumentException(String.format(CurrencyErrorMessages.ERROR_MESSAGE_UNSUPPORTED_CURRENCY, currency));
     }
 
     public static SupportedCurrency fromCurrency(Currency currency) {
@@ -33,6 +33,6 @@ public enum SupportedCurrency {
                 return supported;
             }
         }
-        throw new IllegalArgumentException(String.format(CurrencyErrorMessages.ERROR_UNSUPPORTED_CURRENCY, currency));
+        throw new IllegalArgumentException(String.format(CurrencyErrorMessages.ERROR_MESSAGE_UNSUPPORTED_CURRENCY, currency));
     }
 } 

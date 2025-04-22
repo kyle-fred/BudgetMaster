@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import com.budgetmaster.constants.database.ColumnConstraints;
 import com.budgetmaster.constants.database.ColumnNames.TransactionColumns;
+import com.budgetmaster.constants.error.ErrorMessages.CurrencyErrorMessages;
 import com.budgetmaster.enums.SupportedCurrency;
 
 import jakarta.persistence.Column;
@@ -107,7 +108,7 @@ public final class Money {
 
     private void validateCurrency(Money other) {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Currency mismatch: " + this.currency + " vs " + other.currency);
+            throw new IllegalArgumentException(String.format(CurrencyErrorMessages.ERROR_MESSAGE_CURRENCY_MISMATCH, this.currency, other.currency));
         }
     }
 

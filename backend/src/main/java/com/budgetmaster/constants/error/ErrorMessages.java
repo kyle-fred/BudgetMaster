@@ -31,5 +31,6 @@ public class ErrorMessages {
     public class CurrencyErrorMessages {
         public static final String ERROR_MESSAGE_UNSUPPORTED_CURRENCY = "Currency %s is not supported";
         public static final String ERROR_MESSAGE_UNSUPPORTED_CURRENCY_FOR_CONSTRAINT_ANNOTATION = "This currency type is not supported yet";
+        public static final String ERROR_MESSAGE_CURRENCY_MISMATCH = "Currency mismatch: %s vs %s";
     }
 }

@@ -2,8 +2,11 @@ package com.budgetmaster.enums;
 
 import java.util.Currency;
 
+import com.budgetmaster.constants.error.ErrorMessages.CurrencyErrorMessages;
+import com.budgetmaster.constants.money.CurrencyConstants.CurrencyCodes;
+
 public enum SupportedCurrency {
-    GBP(Currency.getInstance("GBP"));
+    GBP(Currency.getInstance(CurrencyCodes.CURRENCY_CODE_GBP));
 
     private final Currency currency;
 
@@ -15,13 +18,13 @@ public enum SupportedCurrency {
         return currency;
     }
 
-    public static boolean isSupported(Currency currency) {
+    public static boolean validateSupportedCurrency(Currency currency) {
         for (SupportedCurrency supported : SupportedCurrency.values()) {
             if (supported.currency.equals(currency)) {
                 return true;
             }
         }
-        return false;
+        throw new IllegalArgumentException(String.format(CurrencyErrorMessages.ERROR_MESSAGE_UNSUPPORTED_CURRENCY, currency));
     }
 
     public static SupportedCurrency fromCurrency(Currency currency) {
@@ -30,6 +33,6 @@ public enum SupportedCurrency {
                 return supported;
             }
         }
-        throw new IllegalArgumentException("Currency " + currency + " is not supported");
+        throw new IllegalArgumentException(String.format(CurrencyErrorMessages.ERROR_MESSAGE_UNSUPPORTED_CURRENCY, currency));
     }
 } 

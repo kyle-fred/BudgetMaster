@@ -110,7 +110,7 @@ public class ExpenseRequestTest {
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size(), "Violations should contain 1 error for null type");
-        assertEquals("Expense transaction type is required.", violations.iterator().next().getMessage(), "Error message should be 'Expense transaction type is required.'");
+        assertEquals("The transaction type is required.", violations.iterator().next().getMessage(), "Error message should be 'Expense transaction type is required.'");
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ExpenseRequestTest {
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size(), "Violations should contain 1 error for invalid month");
-        assertEquals("Month must be in format YYYY-MM.", violations.iterator().next().getMessage(), "Error message should be 'Month must be in format YYYY-MM.'");
+        assertEquals("Invalid month format. Please use the format YYYY-MM.", violations.iterator().next().getMessage(), "Error message should be 'Month must be in format YYYY-MM.'");
     }
 
     @Test
@@ -148,6 +148,6 @@ public class ExpenseRequestTest {
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size(), "Violations should contain 1 error for invalid month format");
-        assertEquals("Month must be in format YYYY-MM.", violations.iterator().next().getMessage(), "Error message should be 'Month must be in format YYYY-MM.'");
+        assertEquals("Invalid month format. Please use the format YYYY-MM.", violations.iterator().next().getMessage(), "Error message should be 'Month must be in format YYYY-MM.'");
     }
 }

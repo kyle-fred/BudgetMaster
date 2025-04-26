@@ -1,5 +1,11 @@
 package com.budgetmaster.model;
 
+import com.budgetmaster.constants.database.ColumnConstraints;
+import com.budgetmaster.constants.database.ColumnNames.BudgetColumns;
+import com.budgetmaster.constants.database.ColumnNames.CommonColumns;
+import com.budgetmaster.constants.database.TableNames;
+import com.budgetmaster.constants.date.DateFormats;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -18,36 +24,40 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "BUDGET")
+@Table(name = TableNames.TABLE_NAME_BUDGETS)
 public class Budget {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = CommonColumns.COLUMN_NAME_ID)
 	private Long id;
 	
-	@Column(name = "TOTAL_INCOME", precision = 19, scale = 2)
+	@Column(name = BudgetColumns.COLUMN_NAME_TOTAL_INCOME, 
+			precision = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_PRECISION, scale = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE)
 	private BigDecimal totalIncome;
 	
-	@Column(name = "TOTAL_EXPENSE", precision = 19, scale = 2)
+	@Column(name = BudgetColumns.COLUMN_NAME_TOTAL_EXPENSE, 
+			precision = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_PRECISION, scale = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE)
 	private BigDecimal totalExpense;
 	
-	@Column(name = "SAVINGS", precision = 19, scale = 2, insertable = false, updatable = false)
+	@Column(name = BudgetColumns.COLUMN_NAME_SAVINGS, 
+			precision = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_PRECISION, scale = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE, 
+			insertable = false, updatable = false)
 	private BigDecimal savings;
 
-	@Column(name = "COMMON_CURRENCY", nullable = false, length = 3)
+	@Column(name = BudgetColumns.COLUMN_NAME_COMMON_CURRENCY, nullable = false, length = 3)
 	private Currency currency;
 	
-	@Column(name = "MONTH", nullable = false, unique=true)
+	@Column(name = CommonColumns.COLUMN_NAME_MONTH, nullable = false, unique=true)
 	private YearMonth month;
 	
 	@CreationTimestamp
-	@Column(name = "CREATED_AT", nullable = false, updatable = false, insertable = false)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Column(name = CommonColumns.COLUMN_NAME_CREATED_AT, nullable = false, updatable = false, insertable = false)
+	@JsonFormat(pattern = DateFormats.DATE_FORMATS_DATE_TIME_STANDARD)
 	private LocalDateTime createdAt;
 	
 	@UpdateTimestamp
-	@Column(name = "LAST_UPDATED_AT", nullable = false, insertable = false)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@Column(name = CommonColumns.COLUMN_NAME_LAST_UPDATED_AT, nullable = false, insertable = false)
+	@JsonFormat(pattern = DateFormats.DATE_FORMATS_DATE_TIME_STANDARD)
 	private LocalDateTime lastUpdatedAt;
 	
 	protected Budget() {}

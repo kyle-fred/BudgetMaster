@@ -5,6 +5,9 @@ import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Objects;
 
+import com.budgetmaster.constants.database.ColumnConstraints;
+import com.budgetmaster.constants.database.ColumnNames.TransactionColumns;
+import com.budgetmaster.constants.error.ErrorMessages.CurrencyErrorMessages;
 import com.budgetmaster.enums.SupportedCurrency;
 
 import jakarta.persistence.Column;
@@ -12,22 +15,20 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public final class Money {
-    private static final int DEFAULT_SCALE = 2;
+    private static final int DEFAULT_SCALE = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE;
     private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.HALF_EVEN;
     private static final Currency DEFAULT_CURRENCY = SupportedCurrency.GBP.getCurrency();
 
-    @Column(name = "AMOUNT", nullable = false)
+    @Column(name = TransactionColumns.COLUMN_NAME_AMOUNT, nullable = false)
     private BigDecimal amount;
 
-    @Column(name = "CURRENCY", nullable = false)
+    @Column(name = TransactionColumns.COLUMN_NAME_CURRENCY, nullable = false)
     private Currency currency;
     
     protected Money() {}
     
     private Money(BigDecimal amount, Currency currency) {
-        if (!SupportedCurrency.isSupported(currency)) {
-            throw new IllegalArgumentException("Currency " + currency + " is not supported");
-        }
+        SupportedCurrency.validateSupportedCurrency(currency);
         this.amount = amount.setScale(DEFAULT_SCALE, DEFAULT_ROUNDING_MODE);
         this.currency = currency;
     }
@@ -107,7 +108,7 @@ public final class Money {
 
     private void validateCurrency(Money other) {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Currency mismatch: " + this.currency + " vs " + other.currency);
+            throw new IllegalArgumentException(String.format(CurrencyErrorMessages.ERROR_MESSAGE_CURRENCY_MISMATCH, this.currency, other.currency));
         }
     }
 

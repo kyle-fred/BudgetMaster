@@ -1,5 +1,8 @@
 package com.budgetmaster.controller;
 
+import com.budgetmaster.constants.api.ApiMessages;
+import com.budgetmaster.constants.api.ApiPaths;
+import com.budgetmaster.constants.validation.ValidationPatterns;
 import com.budgetmaster.model.Budget;
 import com.budgetmaster.service.BudgetService;
 
@@ -10,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.constraints.Pattern;
 
 @RestController
-@RequestMapping("api/budgets")
+@RequestMapping(ApiPaths.API_PATH_BASE_PATH + ApiPaths.API_PATH_BUDGETS)
 @Validated
 public class BudgetController {
 	
@@ -23,13 +26,13 @@ public class BudgetController {
 	@GetMapping
 	public ResponseEntity<Budget> getBudgetByMonth(
 			@RequestParam 
-			@Pattern(regexp = "^\\d{4}-(?:0[1-9]|1[0-2])$", message = "Month must be in format YYYY-MM") 
+			@Pattern(regexp = ValidationPatterns.VALIDATION_PATTERN_YEAR_MONTH_REGEX, message = ApiMessages.API_MESSAGE_MONTH_FORMAT_INVALID) 
 			String month) {
 		Budget budget = budgetService.getBudgetByMonth(month);
 		return ResponseEntity.ok(budget);
 	}
 		
-	@DeleteMapping("/{id}")
+	@DeleteMapping(ApiPaths.API_PATH_BY_ID)
 	public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
 		budgetService.deleteBudget(id);
 		return ResponseEntity.noContent().build();

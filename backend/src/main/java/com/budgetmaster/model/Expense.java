@@ -1,5 +1,10 @@
 package com.budgetmaster.model;
 
+import com.budgetmaster.constants.database.ColumnNames.CommonColumns;
+import com.budgetmaster.constants.database.ColumnNames.ExpenseColumns;
+import com.budgetmaster.constants.database.ColumnNames.TransactionColumns;
+import com.budgetmaster.constants.database.TableNames;
+import com.budgetmaster.constants.date.DateFormats;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.model.value.Money;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,38 +28,38 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "EXPENSE")
+@Table(name = TableNames.TABLE_NAME_EXPENSES)
 public class Expense {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = CommonColumns.COLUMN_NAME_ID)
 	private Long id;
 	
-	@Column(name = "NAME", nullable = false)
+	@Column(name = TransactionColumns.COLUMN_NAME_TRANSACTION_NAME, nullable = false)
 	private String name;
 	
 	@Embedded
 	private Money money;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "CATEGORY", nullable = false)
+	@Column(name = ExpenseColumns.COLUMN_NAME_CATEGORY, nullable = false)
 	private ExpenseCategory category;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "TYPE", nullable = false)
+	@Column(name = TransactionColumns.COLUMN_NAME_TYPE, nullable = false)
 	private TransactionType type;
 	
-	@Column(name = "MONTH", nullable = false)
+	@Column(name = CommonColumns.COLUMN_NAME_MONTH, nullable = false)
   	private YearMonth month;
   	
 	@CreationTimestamp
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@Column(name = "CREATED_AT", nullable = false, updatable = false, insertable = false)
+	@JsonFormat(pattern = DateFormats.DATE_FORMATS_DATE_TIME_STANDARD)
+	@Column(name = CommonColumns.COLUMN_NAME_CREATED_AT, nullable = false, updatable = false, insertable = false)
   	private LocalDateTime createdAt;
   	
 	@UpdateTimestamp
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	@Column(name = "LAST_UPDATED_AT", nullable = false, insertable = false)
+	@JsonFormat(pattern = DateFormats.DATE_FORMATS_DATE_TIME_STANDARD)
+	@Column(name = CommonColumns.COLUMN_NAME_LAST_UPDATED_AT, nullable = false, insertable = false)
   	private LocalDateTime lastUpdatedAt;
 	
 	public Expense() {}

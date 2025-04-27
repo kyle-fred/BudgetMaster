@@ -16,6 +16,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.test.constants.TestData.MoneyDtoTestData;
+import com.budgetmaster.test.constants.TestData.SharedTestData;
+import com.budgetmaster.test.constants.TestMessages.MoneyErrorMessages;
+
 class MoneyRequestTest {
     // -- Dependencies --
     private static Validator validator;
@@ -24,9 +28,9 @@ class MoneyRequestTest {
     private MoneyRequest request;
 
     // -- Test Data --
-    private BigDecimal testAmount = new BigDecimal("100.00");
-    private static final Currency GBP = Currency.getInstance("GBP");
-    private static final Currency USD = Currency.getInstance("USD");
+    private BigDecimal testAmount = MoneyDtoTestData.TEST_AMOUNT;
+    private static final Currency GBP = SharedTestData.TEST_GBP;
+    private static final Currency USD = MoneyDtoTestData.TEST_USD;
 
     // -- Setup --
     @BeforeAll
@@ -48,7 +52,7 @@ class MoneyRequestTest {
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty(), "Violations should be empty for valid request");
+        assertTrue(violations.isEmpty());
     }
 
     @Test
@@ -56,8 +60,8 @@ class MoneyRequestTest {
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for null amount");
-        assertEquals("Amount is required.", violations.iterator().next().getMessage(), "Error message should be 'Amount is required.'");
+        assertEquals(1, violations.size());
+        assertEquals(MoneyErrorMessages.TEST_MESSAGE_MONEY_AMOUNT_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -65,16 +69,15 @@ class MoneyRequestTest {
         request.setAmount(testAmount);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for null currency");
-        assertEquals("Currency is required.", violations.iterator().next().getMessage(), "Error message should be 'Currency must be provided'");
+        assertEquals(1, violations.size());
+        assertEquals(MoneyErrorMessages.TEST_MESSAGE_MONEY_CURRENCY_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testUnsupportedCurrency() {
         request.setAmount(testAmount);
         request.setCurrency(USD);
-        assertThrows(ValidationException.class, () -> validator.validate(request),
-            "Should throw ValidationException for unsupported currency");
+        assertThrows(ValidationException.class, () -> validator.validate(request));
     }
 
     @Test
@@ -83,8 +86,8 @@ class MoneyRequestTest {
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for negative amount");
-        assertEquals("Amount must be non-negative.", violations.iterator().next().getMessage(), "Error message should be 'Amount must be non-negative.'");
+        assertEquals(1, violations.size());
+        assertEquals(MoneyErrorMessages.TEST_MESSAGE_MONEY_NEGATIVE_AMOUNT, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -93,16 +96,16 @@ class MoneyRequestTest {
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty(), "Violations should be empty for zero amount");
+        assertTrue(violations.isEmpty());
     }
 
     @Test
     void testLargeAmount() {
-        request.setAmount(new BigDecimal("999999999999999.99"));
+        request.setAmount(MoneyDtoTestData.TEST_LARGE_AMOUNT);
         request.setCurrency(GBP);
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty(), "Violations should be empty for large amount");
+        assertTrue(violations.isEmpty());
     }
 
     @Test
@@ -110,7 +113,7 @@ class MoneyRequestTest {
         request.setAmount(testAmount);
         request.setCurrency(GBP);
 
-        assertEquals(testAmount, request.getAmount(), "Amount should be set correctly");
-        assertEquals(GBP, request.getCurrency(), "Currency should be set correctly");
+        assertEquals(testAmount, request.getAmount());
+        assertEquals(GBP, request.getCurrency());
     }
 }

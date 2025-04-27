@@ -19,6 +19,7 @@ import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.ExpenseCategory;
 import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.test.constants.TestData.ExpenseDtoTestData;
 
 public class ExpenseRequestTest {
     // -- Dependencies --
@@ -29,9 +30,9 @@ public class ExpenseRequestTest {
     private MoneyRequest moneyRequest;
 
     // -- Test Data --
-    private String testName = "Test Expense";   
-    private ExpenseCategory testCategory = ExpenseCategory.MISCELLANEOUS;
-    private BigDecimal testAmount = new BigDecimal("100.00");
+    private String testName = ExpenseDtoTestData.TEST_NAME;   
+    private ExpenseCategory testCategory = ExpenseDtoTestData.TEST_CATEGORY;
+    private BigDecimal testAmount = ExpenseDtoTestData.TEST_AMOUNT;
     private static final Currency GBP = SupportedCurrency.GBP.getCurrency();
     private TransactionType testType = TransactionType.ONE_TIME;
     private String testMonth = "2000-01";

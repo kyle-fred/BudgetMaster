@@ -19,4 +19,12 @@ public class TestMessages {
     public static class IncomeErrorMessages {
         public static final String TEST_MESSAGE_INCOME_NOT_FOUND_WITH_ID = "Income not found with id: %s";
     }
+
+    public static class MoneyErrorMessages {
+        public static final String TEST_MESSAGE_MONEY_AMOUNT_REQUIRED = "Amount is required.";
+        public static final String TEST_MESSAGE_MONEY_CURRENCY_REQUIRED = "Currency is required.";
+        public static final String TEST_MESSAGE_MONEY_UNSUPPORTED_CURRENCY = "Unsupported currency.";
+        public static final String TEST_MESSAGE_MONEY_NEGATIVE_AMOUNT = "Amount must be non-negative.";
+        
+    }
 }

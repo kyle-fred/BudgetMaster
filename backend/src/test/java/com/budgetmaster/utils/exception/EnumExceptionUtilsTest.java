@@ -1,16 +1,19 @@
 package com.budgetmaster.utils.exception;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-class EnumExceptionUtilsTest {
+import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.constants.TestMessages;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class EnumExceptionUtilsTest {
     // -- Enum for Testing --
     enum SampleEnum { 
     	RED, 
@@ -27,53 +30,55 @@ class EnumExceptionUtilsTest {
 
     @Test
     void testExtractInvalidEnumValue_ValidExceptionMessage_ReturnsEnumConstant() {
-        String message = "java.lang.IllegalArgumentException: No enum constant com.example.Color.BLUEE";
+        String message = TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_FULL_EXCEPTION_INVALID_ENUM;
         String extracted = EnumExceptionUtils.extractInvalidEnumValue(message);
-        assertEquals("BLUEE", extracted, "Should correctly extract invalid enum constant");
+        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT, extracted);
     }
 
     @Test
     void testExtractInvalidEnumValue_NoEnumPrefix_ReturnsNull() {
-        String message = "java.lang.IllegalArgumentException: Some other error";
+        String message = TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_FULL_EXCEPTION_OTHER;
         String extracted = EnumExceptionUtils.extractInvalidEnumValue(message);
-        assertNull(extracted, "Should return null when 'No enum constant' is not found");
+        assertNull(extracted);
     }
 
     // -- Extract Enum Part Tests --
 
     @Test
     void testExtractEnumPart_ValidMessage_ReturnsEnumPart() {
-        String message = "No enum constant com.example.Color.BLUEE";
+        String message = TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_NO_ENUM_PREFIX;
         String extracted = EnumExceptionUtils.extractEnumPart(message, 17);
-        assertEquals("com.example.Color.BLUEE", extracted, "Should extract full enum reference");
+        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_PART, extracted);
     }
 
     // -- Extract Enum Constant Tests --
 
     @Test
     void testExtractEnumConstant_ValidEnumPart_ReturnsConstant() {
-        String enumPart = "com.example.Color.BLUEE";
+        String enumPart = TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_PART;
         String extracted = EnumExceptionUtils.extractEnumConstant(enumPart);
-        assertEquals("BLUEE", extracted, "Should extract just the enum constant name");
+        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT, extracted);
     }
 
     @Test
     void testExtractEnumConstant_NoDot_ReturnsSameString() {
-        String enumPart = "BLUEE";
+        String enumPart = TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT;
         String extracted = EnumExceptionUtils.extractEnumConstant(enumPart);
-        assertEquals("BLUEE", extracted, "Should return the same string if no dot exists");
+        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT, extracted);
     }
 
     // -- Create Error Response Tests --
     
     @Test
     void testCreateErrorResponse_ValidInputs_ReturnsCorrectErrorMap() {
-        Map<String, Object> errorResponse = EnumExceptionUtils.createErrorResonse("YELLOW", "color", SampleEnum.class);
+        Map<String, Object> errorResponse = EnumExceptionUtils.createErrorResonse(  TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_VALUE, 
+                                                                                    TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD, 
+                                                                                    SampleEnum.class);
         
-        assertNotNull(errorResponse, "Error response should not be null");
-        assertTrue(errorResponse.containsKey("color"), "Response should contain field name as key");
-        assertEquals("Invalid value 'YELLOW' for 'color'. Allowed values: [RED, GREEN, BLUE]",
-                     errorResponse.get("color"), "Error message should list allowed values");
+        assertNotNull(errorResponse);
+        assertTrue(errorResponse.containsKey(TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD));
+        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_INVALID_ENUM_VALUE_RESPONSE,
+                     errorResponse.get(TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD));
     }
 
     // -- Create Fallback Response Tests --
@@ -81,23 +86,23 @@ class EnumExceptionUtilsTest {
     @Test
     void testCreateFallbackResponse_ReturnsDefaultError() {
         Map<String, Object> fallbackResponse = EnumExceptionUtils.createFallbackResponse();
-        assertNotNull(fallbackResponse, "Fallback response should not be null");
-        assertTrue(fallbackResponse.containsKey("error"), "Response should contain \"error\" as key");
-        assertEquals("Invalid enum value.", fallbackResponse.get("error"), "Should return default error message");
+        assertNotNull(fallbackResponse);
+        assertTrue(fallbackResponse.containsKey(TestMessages.CommonErrorMessageConstants.ERROR));
+        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_FALLBACK_MESSAGE, fallbackResponse.get(TestMessages.CommonErrorMessageConstants.ERROR));
     }
 
     // -- Find Enum Type Tests --
     
     @Test
     void testFindEnumType_ValidField_ReturnsEnumClass() {
-        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, "color");
-        assertTrue(enumType.isPresent(), "Should return an enum type");
-        assertEquals(SampleEnum.class, enumType.get(), "Should correctly identify the enum class");
+        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD);
+        assertTrue(enumType.isPresent());
+        assertEquals(SampleEnum.class, enumType.get());
     }
     
     @Test
     void testFindEnumType_InvalidField_ReturnsEmptyOptional() {
-        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, "invalidField");
-        assertTrue(enumType.isEmpty(), "Should return an empty Optional for nonexistent field");
+        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_FIELD_NAME);
+        assertTrue(enumType.isEmpty());
     }
 }

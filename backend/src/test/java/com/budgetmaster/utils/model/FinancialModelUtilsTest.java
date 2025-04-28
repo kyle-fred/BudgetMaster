@@ -1,34 +1,34 @@
 package com.budgetmaster.utils.model;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Currency;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.dto.ExpenseRequest;
 import com.budgetmaster.dto.money.MoneyRequest;
 import com.budgetmaster.enums.ExpenseCategory;
-import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.enums.TransactionType;
 import com.budgetmaster.model.Income;
 import com.budgetmaster.model.Expense;
 import com.budgetmaster.model.value.Money;
+import com.budgetmaster.test.constants.TestData;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FinancialModelUtilsTest {
 	// -- Test Data --
-	private static final String testName = "TEST NAME";
-	private static final String testSource = "TEST SOURCE";
-	private static final BigDecimal testAmount = new BigDecimal("123.45");
-	private static final Currency testCurrency = SupportedCurrency.GBP.getCurrency();
-    private static final ExpenseCategory testCategory = ExpenseCategory.MISCELLANEOUS;
-	private static final TransactionType testType = TransactionType.RECURRING;
-	private static final String testMonth = "2000-01";
-	private static final YearMonth testYearMonth = YearMonth.of(2000, 1);
+	private static final String testName = TestData.FinancialModelTestDataConstants.NAME;
+	private static final String testSource = TestData.FinancialModelTestDataConstants.SOURCE;
+	private static final BigDecimal testAmount = TestData.FinancialModelTestDataConstants.AMOUNT;
+	private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
+    private static final ExpenseCategory testCategory = TestData.FinancialModelTestDataConstants.CATEGORY_MISCELLANEOUS;
+	private static final TransactionType testType = TestData.FinancialModelTestDataConstants.TYPE_ONE_TIME;
+	private static final String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
+	private static final YearMonth testYearMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
 	
 	// -- Test Objects --
 	private IncomeRequest incomeRequest;
@@ -65,32 +65,32 @@ public class FinancialModelUtilsTest {
 	void buildIncome_ValidRequest_ReturnsIncome() {
 		Income income = FinancialModelUtils.buildIncome(incomeRequest);
 		
-		assertNotNull(income, "Income should not be null");
-		assertEquals(testName, income.getName(), "Name should match");
-		assertEquals(testSource, income.getSource(), "Source should match");
-		assertEquals(testAmount, income.getMoney().getAmount(), "Amount should match");
-		assertEquals(testCurrency, income.getMoney().getCurrency(), "Currency should match");
-		assertEquals(testType, income.getType(), "Transaction type should match");
-		assertEquals(testYearMonth, income.getMonth(), "Month should match");
+		assertNotNull(income);
+		assertEquals(testName, income.getName());
+		assertEquals(testSource, income.getSource());
+		assertEquals(testAmount, income.getMoney().getAmount());
+		assertEquals(testCurrency, income.getMoney().getCurrency());
+		assertEquals(testType, income.getType());
+		assertEquals(testYearMonth, income.getMonth());
 	}
 	
 	@Test
 	void modifyIncome_ValidRequest_UpdatesIncome() {
 		Income income = new Income();
-		income.setName("OLD NAME");
-		income.setSource("OLD SOURCE");
-		income.setMoney(Money.of(new BigDecimal("1000.00"), SupportedCurrency.GBP.getCurrency()));
-		income.setType(TransactionType.ONE_TIME);
-		income.setMonth(YearMonth.of(1999, 12));
+		income.setName(TestData.FinancialModelTestDataConstants.NAME_OLD);
+		income.setSource(TestData.FinancialModelTestDataConstants.SOURCE_OLD);
+		income.setMoney(Money.of(TestData.FinancialModelTestDataConstants.AMOUNT_OLD, testCurrency));
+		income.setType(TestData.FinancialModelTestDataConstants.TYPE_OLD);
+		income.setMonth(TestData.MonthTestDataConstants.MONTH_NON_EXISTING);
 		
 		FinancialModelUtils.modifyIncome(income, incomeRequest);
 		
-		assertEquals(testName, income.getName(), "Name should be updated");
-		assertEquals(testSource, income.getSource(), "Source should be updated");
-		assertEquals(testAmount, income.getMoney().getAmount(), "Amount should be updated");
-		assertEquals(testCurrency, income.getMoney().getCurrency(), "Currency has not been updated");
-		assertEquals(testType, income.getType(), "Transaction type should be updated");
-		assertEquals(testYearMonth, income.getMonth(), "Month should be updated");
+		assertEquals(testName, income.getName());
+		assertEquals(testSource, income.getSource());
+		assertEquals(testAmount, income.getMoney().getAmount());
+		assertEquals(testCurrency, income.getMoney().getCurrency());
+		assertEquals(testType, income.getType());
+		assertEquals(testYearMonth, income.getMonth());
 	}
 	
 	// -- Expense Tests --
@@ -98,31 +98,31 @@ public class FinancialModelUtilsTest {
 	void buildExpense_ValidRequest_ReturnsExpense() {
 		Expense expense = FinancialModelUtils.buildExpense(expenseRequest);
 		
-		assertNotNull(expense, "Expense should not be null");
-		assertEquals(testName, expense.getName(), "Name should match");
-		assertEquals(testAmount, expense.getMoney().getAmount(), "Amount should match");
-		assertEquals(testCurrency, expense.getMoney().getCurrency(), "Currency should match");
-		assertEquals(testCategory, expense.getCategory(), "Category should match");
-		assertEquals(testType, expense.getType(), "Transaction type should match");
-		assertEquals(testYearMonth, expense.getMonth(), "Month should match");
+		assertNotNull(expense);
+		assertEquals(testName, expense.getName());
+		assertEquals(testAmount, expense.getMoney().getAmount());
+		assertEquals(testCurrency, expense.getMoney().getCurrency());
+		assertEquals(testCategory, expense.getCategory());
+		assertEquals(testType, expense.getType());
+		assertEquals(testYearMonth, expense.getMonth());
 	}
 	
 	@Test
 	void modifyExpense_ValidRequest_UpdatesExpense() {
 		Expense expense = new Expense();
-		expense.setName("OLD NAME");
-		expense.setMoney(Money.of(new BigDecimal("1000.00"), SupportedCurrency.GBP.getCurrency()));
-		expense.setCategory(ExpenseCategory.GROCERIES);
-		expense.setType(TransactionType.ONE_TIME);
-		expense.setMonth(YearMonth.of(1999, 12));
+		expense.setName(TestData.FinancialModelTestDataConstants.NAME_OLD);
+		expense.setMoney(Money.of(TestData.FinancialModelTestDataConstants.AMOUNT_OLD, testCurrency));
+		expense.setCategory(TestData.FinancialModelTestDataConstants.CATEGORY_OLD);
+		expense.setType(TestData.FinancialModelTestDataConstants.TYPE_OLD);
+		expense.setMonth(TestData.MonthTestDataConstants.MONTH_NON_EXISTING);
 		
 		FinancialModelUtils.modifyExpense(expense, expenseRequest);
 		
-		assertEquals(testName, expense.getName(), "Name should be updated");
-		assertEquals(testAmount, expense.getMoney().getAmount(), "Amount should be updated");
-		assertEquals(testCurrency, expense.getMoney().getCurrency(), "Currency has not been updated");
-		assertEquals(testCategory, expense.getCategory(), "Category should be updated");
-		assertEquals(testType, expense.getType(), "Transaction type should be updated");
-		assertEquals(testYearMonth, expense.getMonth(), "Month should be updated");
+		assertEquals(testName, expense.getName());
+		assertEquals(testAmount, expense.getMoney().getAmount());
+		assertEquals(testCurrency, expense.getMoney().getCurrency());
+		assertEquals(testCategory, expense.getCategory());
+		assertEquals(testType, expense.getType());
+		assertEquals(testYearMonth, expense.getMonth());
 	}
 }

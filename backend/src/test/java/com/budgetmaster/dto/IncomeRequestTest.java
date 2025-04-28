@@ -1,10 +1,13 @@
 package com.budgetmaster.dto;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Set;
+
+import com.budgetmaster.dto.money.MoneyRequest;
+import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.constants.TestMessages;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -15,9 +18,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.budgetmaster.dto.money.MoneyRequest;
-import com.budgetmaster.enums.SupportedCurrency;
-import com.budgetmaster.enums.TransactionType;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IncomeRequestTest {    
     // -- Dependencies --
@@ -28,12 +29,12 @@ public class IncomeRequestTest {
     private MoneyRequest moneyRequest;
 
     // -- Test Data --
-    private String testName = "Test Income";
-    private String testSource = "Test Source";
-    private BigDecimal testAmount = new BigDecimal("100.00");
-    private static final Currency GBP = SupportedCurrency.GBP.getCurrency();
-    private TransactionType testType = TransactionType.ONE_TIME;
-    private String testMonth = "2000-01";
+    private String testName = TestData.IncomeTestDataConstants.NAME;
+    private String testSource = TestData.IncomeTestDataConstants.SOURCE;
+    private BigDecimal testAmount = TestData.IncomeTestDataConstants.AMOUNT;
+    private static final Currency GBP = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
+    private TransactionType testType = TestData.IncomeTestDataConstants.TYPE_ONE_TIME;
+    private String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
 
     // -- Setup --
     @BeforeAll
@@ -61,7 +62,7 @@ public class IncomeRequestTest {
         incomeRequest.setMonth(testMonth);
         
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertTrue(violations.isEmpty(), "Violations should be empty for valid request");
+        assertTrue(violations.isEmpty());
     }
 
     @Test
@@ -72,8 +73,8 @@ public class IncomeRequestTest {
         incomeRequest.setMonth(testMonth);
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for null name");
-        assertEquals("Income name is required.", violations.iterator().next().getMessage(), "Error message should be 'Income name is required.'");
+        assertEquals(1, violations.size());
+        assertEquals(TestMessages.IncomeErrorMessageConstants.INCOME_NAME_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -84,8 +85,8 @@ public class IncomeRequestTest {
         incomeRequest.setMonth(testMonth);
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for null source");
-        assertEquals("Income source is required.", violations.iterator().next().getMessage(), "Error message should be 'Income source is required.'");
+        assertEquals(1, violations.size());
+        assertEquals(TestMessages.IncomeErrorMessageConstants.INCOME_SOURCE_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -96,8 +97,8 @@ public class IncomeRequestTest {
         incomeRequest.setMonth(testMonth);
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for null money");
-        assertEquals("Money details (amount and currency) are required.", violations.iterator().next().getMessage(), "Error message should be 'Money details (amount and currency) are required.'");
+        assertEquals(1, violations.size());
+        assertEquals(TestMessages.MoneyErrorMessageConstants.MONEY_DETAILS_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -108,8 +109,8 @@ public class IncomeRequestTest {
         incomeRequest.setMonth(testMonth);
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for null type");
-        assertEquals("The transaction type is required.", violations.iterator().next().getMessage(), "Error message should be 'Income transaction type is required.'");
+        assertEquals(1, violations.size());
+        assertEquals(TestMessages.IncomeErrorMessageConstants.INCOME_TYPE_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -120,8 +121,8 @@ public class IncomeRequestTest {
         incomeRequest.setType(testType);
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for null month");
-        assertEquals("Month is required.", violations.iterator().next().getMessage(), "Error message should be 'Month is required.'");
+        assertEquals(1, violations.size());
+        assertEquals(TestMessages.MonthErrorMessageConstants.MONTH_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -130,11 +131,11 @@ public class IncomeRequestTest {
         incomeRequest.setSource(testSource);
         incomeRequest.setMoney(moneyRequest);
         incomeRequest.setType(testType);
-        incomeRequest.setMonth("2000-13");
+        incomeRequest.setMonth(TestData.MonthTestDataConstants.MONTH_INVALID);
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for invalid month");
-        assertEquals("Invalid month format. Please use the format YYYY-MM.", violations.iterator().next().getMessage(), "Error message should be 'Month must be in format YYYY-MM.'");
+        assertEquals(1, violations.size());
+        assertEquals(TestMessages.MonthErrorMessageConstants.MONTH_INVALID_FORMAT, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -143,10 +144,10 @@ public class IncomeRequestTest {
         incomeRequest.setSource(testSource);
         incomeRequest.setMoney(moneyRequest);
         incomeRequest.setType(testType);
-        incomeRequest.setMonth("2000/01");
+        incomeRequest.setMonth(TestData.MonthTestDataConstants.MONTH_INVALID_FORMAT);
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size(), "Violations should contain 1 error for invalid month format");
-        assertEquals("Invalid month format. Please use the format YYYY-MM.", violations.iterator().next().getMessage(), "Error message should be 'Month must be in format YYYY-MM.'");
+        assertEquals(1, violations.size());
+        assertEquals(TestMessages.MonthErrorMessageConstants.MONTH_INVALID_FORMAT, violations.iterator().next().getMessage());
     }
 }

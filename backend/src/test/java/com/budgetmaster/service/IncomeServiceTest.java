@@ -1,13 +1,21 @@
 package com.budgetmaster.service;
 
+import java.math.BigDecimal;
+import java.time.YearMonth;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
+
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.dto.money.MoneyRequest;
-import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.enums.TransactionType;
-import com.budgetmaster.repository.IncomeRepository;
-import com.budgetmaster.utils.date.DateUtils;
+import com.budgetmaster.exception.IncomeNotFoundException;
 import com.budgetmaster.model.Income;
 import com.budgetmaster.model.value.Money;
+import com.budgetmaster.repository.IncomeRepository;
+import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.constants.TestMessages;
+import com.budgetmaster.utils.date.DateUtils;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,28 +27,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
-import java.math.BigDecimal;
-import java.time.YearMonth;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
 
-import com.budgetmaster.exception.IncomeNotFoundException;
-
-class IncomeServiceTest {
+public class IncomeServiceTest {
 	// -- Dependencies --
 	private final IncomeRepository incomeRepository = mock(IncomeRepository.class);
 	private final IncomeService incomeService = new IncomeService(incomeRepository);
 	
 	// -- Test Data --
-	private static final Long testId = 1L;
-	private static final String testName = "TEST INCOME";
-	private static final String testSource = "TEST SOURCE";
-	private static final BigDecimal testAmount = new BigDecimal("123.45");
-	private static final Currency testCurrency = SupportedCurrency.GBP.getCurrency();
-	private static final TransactionType testType = TransactionType.ONE_TIME;
-	private static final String testMonth = "2000-01";
-	private static final YearMonth testYearMonth = YearMonth.of(2000, 1);
+	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;
+	private static final Long testIdNonExistent = TestData.CommonTestDataConstants.ID_NON_EXISTING;
+	private static final String testName = TestData.IncomeTestDataConstants.NAME;
+	private static final String testSource = TestData.IncomeTestDataConstants.SOURCE;
+	private static final BigDecimal testAmount = TestData.MoneyDtoTestDataConstants.AMOUNT;
+	private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
+	private static final TransactionType testType = TestData.IncomeTestDataConstants.TYPE_ONE_TIME;
+	private static final String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
+	private static final YearMonth testYearMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
 	
 	// -- Test Objects --
 	private IncomeRequest incomeRequest;
@@ -82,13 +84,13 @@ class IncomeServiceTest {
 		
 		Income savedIncome = incomeService.createIncome(incomeRequest);
 
-		assertNotNull(savedIncome, "Income should not be null");
-		assertEquals(testName, savedIncome.getName(), "Name should be equal to the test value");
-		assertEquals(testSource, savedIncome.getSource(), "Source should be equal to the test value");
-		assertEquals(testAmount, savedIncome.getMoney().getAmount(), "Amount should be equal to the test value");
-		assertEquals(testCurrency, savedIncome.getMoney().getCurrency(), "Currency should be equal to the test value");
-		assertEquals(testType, savedIncome.getType(), "Type should be equal to the test value");
-		assertEquals(testYearMonth, savedIncome.getMonth(), "Month should be equal to the test value");
+		assertNotNull(savedIncome);
+		assertEquals(testName, savedIncome.getName());
+		assertEquals(testSource, savedIncome.getSource());
+		assertEquals(testAmount, savedIncome.getMoney().getAmount());
+		assertEquals(testCurrency, savedIncome.getMoney().getCurrency());
+		assertEquals(testType, savedIncome.getType());
+		assertEquals(testYearMonth, savedIncome.getMonth());
 
 		Mockito.verify(incomeRepository, Mockito.times(1))
 				.saveAndFlush(Mockito.any(Income.class));
@@ -108,10 +110,10 @@ class IncomeServiceTest {
 
 			List<Income> result = incomeService.getAllIncomesForMonth(testMonth);
 
-			assertNotNull(result, "Result should not be null");
-			assertEquals(2, result.size(), "Result should have 2 incomes");
-			assertEquals(testName, result.get(0).getName(), "Name should be equal to the test value");
-			assertEquals(testName, result.get(1).getName(), "Name should be equal to the test value");
+			assertNotNull(result);
+			assertEquals(2, result.size());
+			assertEquals(testName, result.get(0).getName());
+			assertEquals(testName, result.get(1).getName());
 
 			Mockito.verify(incomeRepository, Mockito.times(1))
 					.findByMonth(testYearMonth);
@@ -127,13 +129,13 @@ class IncomeServiceTest {
 		
 		Income retrievedIncome = incomeService.getIncomeById(testId);
 		
-		assertNotNull(retrievedIncome, "Income should not be null");
-		assertEquals(testName, retrievedIncome.getName(), "Name should be equal to the test value");
-		assertEquals(testSource, retrievedIncome.getSource(), "Source should be equal to the test value");
-		assertEquals(testAmount, retrievedIncome.getMoney().getAmount(), "Amount should be equal to the test value");
-		assertEquals(testCurrency, retrievedIncome.getMoney().getCurrency(), "Currency should be equal to the test value");
-		assertEquals(testType, retrievedIncome.getType(), "Type should be equal to the test value");
-		assertEquals(testYearMonth, retrievedIncome.getMonth(), "Month should be equal to the test value");
+		assertNotNull(retrievedIncome);
+		assertEquals(testName, retrievedIncome.getName());
+		assertEquals(testSource, retrievedIncome.getSource());
+		assertEquals(testAmount, retrievedIncome.getMoney().getAmount());
+		assertEquals(testCurrency, retrievedIncome.getMoney().getCurrency());
+		assertEquals(testType, retrievedIncome.getType());
+		assertEquals(testYearMonth, retrievedIncome.getMonth());
 		
 		Mockito.verify(incomeRepository, Mockito.times(1))
 				.findById(testId);
@@ -150,21 +152,21 @@ class IncomeServiceTest {
 				.thenReturn(testIncome);
 
         IncomeRequest updatedIncomeRequest = new IncomeRequest();
-        updatedIncomeRequest.setName(testName + " UPDATED");
-        updatedIncomeRequest.setSource(testSource + " UPDATED");
+        updatedIncomeRequest.setName(TestData.IncomeTestDataConstants.NAME_UPDATED);
+        updatedIncomeRequest.setSource(TestData.IncomeTestDataConstants.SOURCE_UPDATED);
         updatedIncomeRequest.setMoney(moneyRequest);
-        updatedIncomeRequest.setType(testType);
-        updatedIncomeRequest.setMonth(testMonth);
+        updatedIncomeRequest.setType(TestData.IncomeTestDataConstants.TYPE_UPDATED);
+        updatedIncomeRequest.setMonth(TestData.IncomeTestDataConstants.MONTH_UPDATED);
 
 		Income updatedIncome = incomeService.updateIncome(testId, updatedIncomeRequest);
 
-		assertNotNull(updatedIncome, "Updated income should not be null");
-		assertEquals(updatedIncomeRequest.getName(), updatedIncome.getName(), "Name should be equal to the updated value");
-		assertEquals(updatedIncomeRequest.getSource(), updatedIncome.getSource(), "Source should be equal to the updated value");
-		assertEquals(updatedIncomeRequest.getMoney().getAmount(), updatedIncome.getMoney().getAmount(), "Amount should be equal to the updated value");
-		assertEquals(updatedIncomeRequest.getMoney().getCurrency(), updatedIncome.getMoney().getCurrency(), "Currency should be equal to the updated value");
-		assertEquals(updatedIncomeRequest.getType(), updatedIncome.getType(), "Type should be equal to the updated value");
-		assertEquals(updatedIncomeRequest.getMonth(), updatedIncome.getMonth().toString(), "Month should be equal to the updated value");
+		assertNotNull(updatedIncome);
+		assertEquals(updatedIncomeRequest.getName(), updatedIncome.getName());
+		assertEquals(updatedIncomeRequest.getSource(), updatedIncome.getSource());
+		assertEquals(updatedIncomeRequest.getMoney().getAmount(), updatedIncome.getMoney().getAmount());
+		assertEquals(updatedIncomeRequest.getMoney().getCurrency(), updatedIncome.getMoney().getCurrency());
+		assertEquals(updatedIncomeRequest.getType(), updatedIncome.getType());
+		assertEquals(updatedIncomeRequest.getMonth(), updatedIncome.getMonth().toString());
 		
 		Mockito.verify(incomeRepository, Mockito.times(1))
 				.saveAndFlush(Mockito.any(Income.class));
@@ -192,7 +194,7 @@ class IncomeServiceTest {
 	
 	@Test
 	void createIncome_ServiceError_ReturnsInternalServerError() {
-		String errorMessage = "Duplicate Entry";
+		String errorMessage = TestMessages.CommonErrorMessageConstants.DUPLICATE_ENTRY;
 		Mockito.when(incomeRepository.saveAndFlush(Mockito.any(Income.class)))
 				.thenThrow(new DataIntegrityViolationException(errorMessage));
 		
@@ -202,27 +204,27 @@ class IncomeServiceTest {
 				errorMessage
 		);
 		
-		assertEquals(errorMessage, exception.getMessage(), "Exception message thrown should be equal to the error message");
+		assertEquals(errorMessage, exception.getMessage());
 	}
 	
 	@Test
 	void getIncome_NonExistentId_ReturnsNotFound() {
-		String errorMessage = "Income not found with id: 99";
-		Mockito.when(incomeRepository.findById(99L))
+		String errorMessage = String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, testIdNonExistent);
+		Mockito.when(incomeRepository.findById(testIdNonExistent))
 				.thenReturn(Optional.empty());
 		
 		IncomeNotFoundException exception = assertThrows(
 				IncomeNotFoundException.class,
-				() -> incomeService.getIncomeById(99L),
+				() -> incomeService.getIncomeById(testIdNonExistent),
 				errorMessage
 		);
 		
-		assertEquals(errorMessage, exception.getMessage(), "Exception message thrown should be equal to the error message");
+		assertEquals(errorMessage, exception.getMessage());
 	}
 	
 	@Test
 	void getAllIncomes_NoIncomes_ReturnsNotFound() {
-		String errorMessage = "No incomes found for month: " + testYearMonth;
+		String errorMessage = String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_BY_MONTH, testYearMonth);
 		
 		try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(testMonth))
@@ -236,40 +238,40 @@ class IncomeServiceTest {
 					errorMessage
 			);
 			
-			assertEquals(errorMessage, exception.getMessage(), "Exception message thrown should be equal to the error message");
+			assertEquals(errorMessage, exception.getMessage());
 		}
 	}
 	
 	@Test
 	void updateIncome_NonExistentId_ReturnsNotFound() {
-		String errorMessage = "Income not found with id: 99";
-		Mockito.when(incomeRepository.findById(99L))
+		String errorMessage = String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, testIdNonExistent);
+		Mockito.when(incomeRepository.findById(testIdNonExistent))
 				.thenReturn(Optional.empty());
 
 		IncomeNotFoundException exception = assertThrows(
 				IncomeNotFoundException.class,
-				() -> incomeService.updateIncome(99L, incomeRequest),
+				() -> incomeService.updateIncome(testIdNonExistent, incomeRequest),
 				errorMessage
 		);
 		
-		assertEquals(errorMessage, exception.getMessage(), "Exception message thrown should be equal to the error message");
+		assertEquals(errorMessage, exception.getMessage());
 		Mockito.verify(incomeRepository, Mockito.never())
 				.saveAndFlush(Mockito.any(Income.class));
 	}
 	
 	@Test
 	void deleteIncome_NonExistentId_ReturnsNotFound() {
-		String errorMessage = "Income not found with id: 99";
-		Mockito.when(incomeRepository.findById(99L))
+		String errorMessage = String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, testIdNonExistent);
+		Mockito.when(incomeRepository.findById(testIdNonExistent))
 				.thenReturn(Optional.empty());
 		
 		IncomeNotFoundException exception = assertThrows(
 				IncomeNotFoundException.class,
-				() -> incomeService.deleteIncome(99L),
+				() -> incomeService.deleteIncome(testIdNonExistent),
 				errorMessage
 		);
 		
-		assertEquals(errorMessage, exception.getMessage(), "Exception message thrown should be equal to the error message");
+		assertEquals(errorMessage, exception.getMessage());
 		Mockito.verify(incomeRepository, Mockito.never())
 				.deleteById(Mockito.anyLong());
 	}

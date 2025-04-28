@@ -6,28 +6,30 @@ import java.time.YearMonth;
 
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.test.constants.TestData;
+
 public class DateUtilsTest {
     // -- Get Valid Year Month Tests --
     @Test
     void getValidYearMonth_NullInput_ReturnsCurrentYearMonth() {
         YearMonth expected = YearMonth.now();
         YearMonth actual = DateUtils.getValidYearMonth(null);
-        assertNotNull(actual, "Should not return null when input is null");
-        assertEquals(expected, actual, "Should return current YearMonth when input is null");
+        assertNotNull(actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     void getValidYearMonth_EmptyInput_ReturnsCurrentYearMonth() {
         YearMonth expected = YearMonth.now();
-        YearMonth actual = DateUtils.getValidYearMonth("");
-        assertNotNull(actual, "Should not return null when input is empty");
-        assertEquals(expected, actual, "Should return current YearMonth when input is empty");
+        YearMonth actual = DateUtils.getValidYearMonth(TestData.CommonTestDataConstants.EMPTY_STRING);
+        assertNotNull(actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     void getValidYearMonth_ValidInput_ReturnsParsedYearMonth() {
-        YearMonth expected = YearMonth.of(2025, 3);
-        YearMonth actual = DateUtils.getValidYearMonth("2025-03");
-        assertEquals(expected, actual, "Should correctly parse and return the set YearMonth");
+        YearMonth expected = TestData.MonthTestDataConstants.MONTH_EXISTING;
+        YearMonth actual = DateUtils.getValidYearMonth(TestData.MonthTestDataConstants.MONTH_STRING_EXISTING);
+        assertEquals(expected, actual);
     }
 }

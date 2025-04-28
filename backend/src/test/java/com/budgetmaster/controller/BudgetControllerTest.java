@@ -1,16 +1,15 @@
 package com.budgetmaster.controller;
 
-import com.budgetmaster.enums.SupportedCurrency;
+import java.math.BigDecimal;
+import java.time.YearMonth;
+import java.util.Currency;
+
 import com.budgetmaster.exception.BudgetNotFoundException;
-import com.budgetmaster.service.BudgetService;
 import com.budgetmaster.model.Budget;
-import com.budgetmaster.test.constants.TestData.BudgetTestData;
-import com.budgetmaster.test.constants.TestData.SharedTestData;
-import com.budgetmaster.test.constants.TestMessages.BudgetErrorMessages;
-import com.budgetmaster.test.constants.TestMessages.CommonErrorMessages;
-import com.budgetmaster.test.constants.TestPaths.TestBudgetPaths;
-import com.budgetmaster.test.constants.TestPaths.TestJsonPaths;
-import com.budgetmaster.test.constants.TestPaths.TestRequestParams;
+import com.budgetmaster.service.BudgetService;
+import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.constants.TestMessages;
+import com.budgetmaster.test.constants.TestPaths;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,10 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.math.BigDecimal;
-import java.time.YearMonth;
-import java.util.Currency;
-
 @WebMvcTest(BudgetController.class)
 public class BudgetControllerTest {
 	// -- Dependencies --
@@ -37,13 +32,13 @@ public class BudgetControllerTest {
     private BudgetService budgetService;
 	
 	// -- Test Data --
-	private static final Long testId = SharedTestData.TEST_EXISTING_ID;
-	private static final BigDecimal testIncome = BudgetTestData.TEST_INCOME;
-	private static final BigDecimal testExpense = BudgetTestData.TEST_EXPENSE;
-	private static final BigDecimal testSavings = testIncome.subtract(testExpense);
-	private static final Currency testCurrency = SupportedCurrency.GBP.getCurrency();
-	private static final YearMonth testYearMonth = SharedTestData.TEST_EXISTING_MONTH_YEAR;
-	private static final String testMonth = SharedTestData.TEST_EXISTING_MONTH_YEAR_STRING;
+	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;
+	private static final BigDecimal testIncome = TestData.BudgetTestDataConstants.INCOME_AMOUNT;
+	private static final BigDecimal testExpense = TestData.BudgetTestDataConstants.EXPENSE_AMOUNT;
+	private static final BigDecimal testSavings = TestData.BudgetTestDataConstants.SAVINGS_AMOUNT;
+	private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
+	private static final YearMonth testYearMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
+	private static final String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
 
 	// -- Test Objects --
 	private Budget budget;
@@ -67,15 +62,15 @@ public class BudgetControllerTest {
 		Mockito.when(budgetService.getBudgetByMonth(testMonth))
 				.thenReturn(budget);
 
-		mockMvc.perform(get(TestBudgetPaths.TEST_BUDGET_ENDPOINT)
-				.param(TestRequestParams.TEST_PARAM_MONTH, testMonth))
+		mockMvc.perform(get(TestPaths.EndpointPathConstants.ENDPOINT_BUDGET)
+				.param(TestPaths.RequestParamsConstants.REQUEST_PARAM_MONTH, testMonth))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(TestJsonPaths.TEST_JSON_PATH_ID).value(testId))
-				.andExpect(jsonPath(TestJsonPaths.TEST_JSON_PATH_TOTAL_INCOME).value(testIncome))
-				.andExpect(jsonPath(TestJsonPaths.TEST_JSON_PATH_TOTAL_EXPENSE).value(testExpense))
-				.andExpect(jsonPath(TestJsonPaths.TEST_JSON_PATH_SAVINGS).value(testSavings))
-				.andExpect(jsonPath(TestJsonPaths.TEST_JSON_PATH_CURRENCY).value(testCurrency.getCurrencyCode()))
-				.andExpect(jsonPath(TestJsonPaths.TEST_JSON_PATH_MONTH).value(testMonth));
+				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_ID).value(testId))
+				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_TOTAL_INCOME).value(testIncome))
+				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_TOTAL_EXPENSE).value(testExpense))
+				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_SAVINGS).value(testSavings))
+				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_CURRENCY).value(testCurrency.getCurrencyCode()))
+				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONTH).value(testMonth));
 
 		Mockito.verify(budgetService, Mockito.times(1))
 				.getBudgetByMonth(testMonth);
@@ -84,12 +79,12 @@ public class BudgetControllerTest {
 	@Test
 	void getBudget_NonExistentMonth_ReturnsNotFound() throws Exception {
 		Mockito.when(budgetService.getBudgetByMonth(testMonth))
-				.thenThrow(new BudgetNotFoundException(String.format(BudgetErrorMessages.TEST_MESSAGE_BUDGET_NOT_FOUND_FOR_MONTH, testMonth)));
+				.thenThrow(new BudgetNotFoundException(String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, testMonth)));
 
-		mockMvc.perform(get(TestBudgetPaths.TEST_BUDGET_ENDPOINT)
-				.param(TestRequestParams.TEST_PARAM_MONTH, testMonth))
+		mockMvc.perform(get(TestPaths.EndpointPathConstants.ENDPOINT_BUDGET)
+				.param(TestPaths.RequestParamsConstants.REQUEST_PARAM_MONTH, testMonth))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath(TestJsonPaths.TEST_JSON_PATH_ERROR).value(String.format(BudgetErrorMessages.TEST_MESSAGE_BUDGET_NOT_FOUND_FOR_MONTH, testMonth)));
+				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, testMonth)));
 
 		Mockito.verify(budgetService, Mockito.times(1))
 				.getBudgetByMonth(testMonth);
@@ -103,7 +98,7 @@ public class BudgetControllerTest {
 				.when(budgetService)
 				.deleteBudget(testId);
 		
-		mockMvc.perform(delete(TestBudgetPaths.TEST_BUDGET_ENDPOINT_WITH_ID, testId))
+		mockMvc.perform(delete(TestPaths.EndpointPathConstants.ENDPOINT_BUDGET_WITH_ID, testId))
 				.andExpect(status().isNoContent());
 
 		Mockito.verify(budgetService, Mockito.times(1))
@@ -112,13 +107,13 @@ public class BudgetControllerTest {
 
 	@Test
 	void deleteBudget_NonExistentId_ReturnsNotFound() throws Exception {
-		Mockito.doThrow(new BudgetNotFoundException(String.format(BudgetErrorMessages.TEST_MESSAGE_BUDGET_NOT_FOUND_WITH_ID, testId)))
+		Mockito.doThrow(new BudgetNotFoundException(String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, testId)))
 				.when(budgetService)
 				.deleteBudget(testId);
 
-		mockMvc.perform(delete(TestBudgetPaths.TEST_BUDGET_ENDPOINT_WITH_ID, testId))
+		mockMvc.perform(delete(TestPaths.EndpointPathConstants.ENDPOINT_BUDGET_WITH_ID, testId))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath(TestJsonPaths.TEST_JSON_PATH_ERROR).value(String.format(BudgetErrorMessages.TEST_MESSAGE_BUDGET_NOT_FOUND_WITH_ID, testId)));
+				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, testId)));
 
 		Mockito.verify(budgetService, Mockito.times(1))
 				.deleteBudget(testId);
@@ -129,12 +124,12 @@ public class BudgetControllerTest {
 	@Test
 	void getBudget_ServiceError_ReturnsInternalServerError() throws Exception {
 		Mockito.when(budgetService.getBudgetByMonth(testMonth))
-				.thenThrow(new RuntimeException(CommonErrorMessages.TEST_MESSAGE_SERVICE_FAILURE));
+				.thenThrow(new RuntimeException(TestMessages.CommonErrorMessageConstants.SERVICE_FAILURE));
 				
-		mockMvc.perform(get(TestBudgetPaths.TEST_BUDGET_ENDPOINT)
-				.param(TestRequestParams.TEST_PARAM_MONTH, testMonth))
+		mockMvc.perform(get(TestPaths.EndpointPathConstants.ENDPOINT_BUDGET)
+				.param(TestPaths.RequestParamsConstants.REQUEST_PARAM_MONTH, testMonth))
 				.andExpect(status().isInternalServerError())
-				.andExpect(jsonPath(TestJsonPaths.TEST_JSON_PATH_EMPTY).value(CommonErrorMessages.TEST_MESSAGE_INTERNAL_SERVER_ERROR));
+				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_EMPTY).value(TestMessages.CommonErrorMessageConstants.UNEXPECTED_ERROR));
 
 		Mockito.verify(budgetService, Mockito.times(1))
 				.getBudgetByMonth(testMonth);

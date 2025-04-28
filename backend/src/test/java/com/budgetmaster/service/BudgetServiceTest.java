@@ -1,10 +1,16 @@
 package com.budgetmaster.service;
 
-import com.budgetmaster.enums.SupportedCurrency;
+import java.math.BigDecimal;
+import java.time.YearMonth;
+import java.util.Currency;
+import java.util.Optional;
+
 import com.budgetmaster.exception.BudgetNotFoundException;
-import com.budgetmaster.repository.BudgetRepository;
-import com.budgetmaster.utils.date.DateUtils;
 import com.budgetmaster.model.Budget;
+import com.budgetmaster.repository.BudgetRepository;
+import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.constants.TestMessages;
+import com.budgetmaster.utils.date.DateUtils;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,24 +21,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
-import java.math.BigDecimal;
-import java.time.YearMonth;
-import java.util.Currency;
-import java.util.Optional;
-
-class BudgetServiceTest {
+public class BudgetServiceTest {
 	// -- Dependencies --
 	private final BudgetRepository budgetRepository = mock(BudgetRepository.class);
 	private final BudgetService budgetService = new BudgetService(budgetRepository);
 	
 	// -- Test Data --
-	private static final Long testId = 1L;
-	private static final BigDecimal testTotalIncome = new BigDecimal("543.21");
-	private static final BigDecimal testTotalExpense = new BigDecimal("123.45");
-	private static final BigDecimal testSavings = testTotalIncome.subtract(testTotalExpense);
-	private static final Currency testCurrency = SupportedCurrency.GBP.getCurrency();
-	private static final String testMonth = "2000-01";
-	private static final YearMonth testYearMonth = YearMonth.of(2000, 1);
+	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;
+	private static final Long testIdNonExistent = TestData.CommonTestDataConstants.ID_NON_EXISTING;
+	private static final BigDecimal testTotalIncome = TestData.BudgetTestDataConstants.INCOME_AMOUNT;
+	private static final BigDecimal testTotalExpense = TestData.BudgetTestDataConstants.EXPENSE_AMOUNT;
+	private static final BigDecimal testSavings = TestData.BudgetTestDataConstants.SAVINGS_AMOUNT;
+	private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
+	private static final String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
+	private static final YearMonth testYearMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
 	
 	// -- Test Objects --
 	private Budget testBudget;
@@ -62,12 +64,12 @@ class BudgetServiceTest {
 
 			Budget retrievedBudget = budgetService.getBudgetByMonth(testMonth);
 
-			assertNotNull(retrievedBudget, "Budget should not be null");
-			assertEquals(testTotalIncome, retrievedBudget.getTotalIncome(), "Total income should be equal to the test value");
-			assertEquals(testTotalExpense, retrievedBudget.getTotalExpense(), "Total expense should be equal to the test value");
-			assertEquals(testSavings, retrievedBudget.getSavings(), "Savings should be equal to the test value");
-			assertEquals(testCurrency, retrievedBudget.getCurrency(), "Currency should be equal to the test value");
-			assertEquals(testYearMonth, retrievedBudget.getMonth(), "Month should be equal to the test value");
+			assertNotNull(retrievedBudget);
+			assertEquals(testTotalIncome, retrievedBudget.getTotalIncome());
+			assertEquals(testTotalExpense, retrievedBudget.getTotalExpense());
+			assertEquals(testSavings, retrievedBudget.getSavings());
+			assertEquals(testCurrency, retrievedBudget.getCurrency());
+			assertEquals(testYearMonth, retrievedBudget.getMonth());
 
 			Mockito.verify(budgetRepository, Mockito.times(1))
 					.findByMonth(testYearMonth);
@@ -81,12 +83,12 @@ class BudgetServiceTest {
 		
 		Budget retrievedBudget = budgetService.getBudgetById(testId);
 		
-		assertNotNull(retrievedBudget, "Budget should not be null");
-		assertEquals(testTotalIncome, retrievedBudget.getTotalIncome(), "Total income should be equal to the test value");
-		assertEquals(testTotalExpense, retrievedBudget.getTotalExpense(), "Total expense should be equal to the test value");
-		assertEquals(testSavings, retrievedBudget.getSavings(), "Savings should be equal to the test value");
-		assertEquals(testCurrency, retrievedBudget.getCurrency(), "Currency should be equal to the test value");
-		assertEquals(testYearMonth, retrievedBudget.getMonth(), "Month should be equal to the test value");
+		assertNotNull(retrievedBudget);
+		assertEquals(testTotalIncome, retrievedBudget.getTotalIncome());
+		assertEquals(testTotalExpense, retrievedBudget.getTotalExpense());
+		assertEquals(testSavings, retrievedBudget.getSavings());
+		assertEquals(testCurrency, retrievedBudget.getCurrency());
+		assertEquals(testYearMonth, retrievedBudget.getMonth());
 		
 		Mockito.verify(budgetRepository, Mockito.times(1))
 				.findById(testId);
@@ -114,7 +116,7 @@ class BudgetServiceTest {
 	
 	@Test
 	void getBudget_NonExistentMonth_ReturnsNotFound() {
-		String errorMessage = "Budget not found for month: " + testYearMonth;
+		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, testYearMonth);
 		
 		try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(testMonth))
@@ -128,38 +130,38 @@ class BudgetServiceTest {
 					errorMessage
 			);
 			
-			assertEquals(errorMessage, exception.getMessage(), "Exception message thrown should be equal to the error message");
+			assertEquals(errorMessage, exception.getMessage());
 		}
 	}
 	
 	@Test
 	void getBudget_NonExistentId_ReturnsNotFound() {
-		String errorMessage = "Budget not found with id: 99";
-		Mockito.when(budgetRepository.findById(99L))
+		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, testIdNonExistent);
+		Mockito.when(budgetRepository.findById(testId))
 				.thenReturn(Optional.empty());
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
-				() -> budgetService.getBudgetById(99L),
+				() -> budgetService.getBudgetById(testIdNonExistent),
 				errorMessage
 		);
 		
-		assertEquals(errorMessage, exception.getMessage(), "Exception message thrown should be equal to the error message");
+		assertEquals(errorMessage, exception.getMessage());
 	}
 	
 	@Test
 	void deleteBudget_NonExistentId_ReturnsNotFound() {
-		String errorMessage = "Budget not found with id: 99";
-		Mockito.when(budgetRepository.findById(99L))
+		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, testIdNonExistent);
+		Mockito.when(budgetRepository.findById(testIdNonExistent))
 				.thenReturn(Optional.empty());
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
-				() -> budgetService.deleteBudget(99L),
+				() -> budgetService.deleteBudget(testIdNonExistent),
 				errorMessage
 		);
 		
-		assertEquals(errorMessage, exception.getMessage(), "Exception message thrown should be equal to the error message");
+		assertEquals(errorMessage, exception.getMessage());
 		Mockito.verify(budgetRepository, Mockito.never())
 				.deleteById(Mockito.anyLong());
 	}

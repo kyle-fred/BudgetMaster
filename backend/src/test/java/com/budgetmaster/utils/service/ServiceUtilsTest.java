@@ -1,12 +1,16 @@
 package com.budgetmaster.utils.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+
+import com.budgetmaster.exception.BudgetNotFoundException;
+import com.budgetmaster.exception.IncomeNotFoundException;
+import com.budgetmaster.model.Budget;
+import com.budgetmaster.model.Income;
+import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.constants.TestMessages;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,10 +19,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.budgetmaster.exception.BudgetNotFoundException;
-import com.budgetmaster.exception.IncomeNotFoundException;
-import com.budgetmaster.model.Budget;
-import com.budgetmaster.model.Income;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ServiceUtilsTest {
@@ -27,8 +29,8 @@ public class ServiceUtilsTest {
 	private JpaRepository<Budget, Long> mockRepository;
 	
 	// -- Test Data --
-	private static final Long testId = 1L;
-	private static final YearMonth testMonth = YearMonth.of(2024, 3);
+	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;
+	private static final YearMonth testMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
 	
 	// -- Test Objects --
 	private Budget testBudget;
@@ -50,7 +52,7 @@ public class ServiceUtilsTest {
 		Budget result = ServiceUtils.findByIdOrThrow(
 				mockRepository,
 				testId,
-				() -> new BudgetNotFoundException("Budget not found for id: " + testId)
+				() -> new BudgetNotFoundException(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID)
 		);
 		
 		assertEquals(testBudget, result);
@@ -62,7 +64,7 @@ public class ServiceUtilsTest {
 	void findByIdOrThrow_WhenEntityDoesNotExist_ThrowsException() {
 		when(mockRepository.findById(testId))
 				.thenReturn(Optional.empty());
-		String errorMessage = "Budget not found for id: " + testId;
+		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, testId);
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
@@ -86,7 +88,7 @@ public class ServiceUtilsTest {
 		Budget result = ServiceUtils.findByCustomFinderOrThrow(
 				finder,
 				testMonth,
-				() -> new BudgetNotFoundException("Budget not found for month: " + testMonth)
+				() -> new BudgetNotFoundException(String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, testMonth))
 		);
 		
 		assertEquals(testBudget, result);
@@ -95,7 +97,7 @@ public class ServiceUtilsTest {
 	@Test
 	void findByCustomFinderOrThrow_WhenEntityDoesNotExist_ThrowsException() {
 		Function<YearMonth, Optional<Budget>> finder = month -> Optional.empty();
-		String errorMessage = "Budget not found for month: " + testMonth;
+		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, testMonth);
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
@@ -117,7 +119,7 @@ public class ServiceUtilsTest {
 		List<Income> result = ServiceUtils.findListByCustomFinderOrThrow(
 				finder,
 				testMonth,
-				() -> new IncomeNotFoundException("Incomes not found for month: " + testMonth)
+				() -> new IncomeNotFoundException(String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_BY_MONTH, testMonth))
 		);
 		
 		assertEquals(List.of(testIncome), result);
@@ -126,7 +128,7 @@ public class ServiceUtilsTest {
 	@Test
 	void findListByCustomFinderOrThrow_WhenEntitiesDoNotExist_ThrowsException() {
 		Function<YearMonth, List<Income>> finder = month -> List.of();
-		String errorMessage = "Incomes not found for month: " + testMonth;
+		String errorMessage = String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_BY_MONTH, testMonth);
 
 		IncomeNotFoundException exception = assertThrows(
 				IncomeNotFoundException.class,

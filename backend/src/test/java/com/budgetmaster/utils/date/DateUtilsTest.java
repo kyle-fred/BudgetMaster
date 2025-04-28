@@ -1,12 +1,12 @@
 package com.budgetmaster.utils.date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.budgetmaster.test.constants.TestData;
 
 import java.time.YearMonth;
 
 import org.junit.jupiter.api.Test;
 
-import com.budgetmaster.test.constants.TestData;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DateUtilsTest {
     // -- Get Valid Year Month Tests --

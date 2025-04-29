@@ -1,6 +1,7 @@
 package com.budgetmaster.test.constants;
 
 public class TestPaths {
+    
     public static class EndpointPathConstants {
         // -- Budget --
         public static final String ENDPOINT_BUDGET = "/api/budgets";

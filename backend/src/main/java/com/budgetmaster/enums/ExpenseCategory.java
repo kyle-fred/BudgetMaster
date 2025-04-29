@@ -28,7 +28,7 @@ public enum ExpenseCategory {
 	
 	@JsonCreator
 	public static ExpenseCategory fromString(String value) {
-		return ExpenseCategory.valueOf(value.toUpperCase().replace(StringConstants.STRING_CONSTANTS_SPACE, StringConstants.STRING_CONSTANTS_UNDERSCORE));
+		return ExpenseCategory.valueOf(value.toUpperCase().replace(StringConstants.Punctuation.SPACE, StringConstants.Punctuation.UNDERSCORE));
 	}
 	
 	@JsonValue

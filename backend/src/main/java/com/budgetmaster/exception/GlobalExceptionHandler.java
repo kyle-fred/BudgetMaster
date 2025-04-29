@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
 		Map<String, String> errors = new HashMap<>();
 		ex.getConstraintViolations().forEach(violation -> {
 			String fieldName = violation.getPropertyPath().toString();
-			fieldName = fieldName.substring(fieldName.lastIndexOf(StringConstants.STRING_CONSTANTS_DOT) + 1);
+			fieldName = fieldName.substring(fieldName.lastIndexOf(StringConstants.Punctuation.DOT) + 1);
 			String errorMessage = violation.getMessage();
 			errors.put(fieldName, errorMessage);
 		});

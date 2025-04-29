@@ -1,14 +1,18 @@
 package com.budgetmaster.constants.common;
 
 public class StringConstants {
-    // Punctuation constants
-    public static final String STRING_CONSTANTS_EMPTY = "";
-    public static final String STRING_CONSTANTS_SPACE = " ";
-    public static final String STRING_CONSTANTS_UNDERSCORE = "_";
-    public static final String STRING_CONSTANTS_DOT = ".";
-    public static final String STRING_CONSTANTS_NEW_LINE = "\n";
-    public static final String STRING_CONSTANTS_COMMA_SPACE = ", ";
 
-    // Exception messages
-    public static final String EXCEPTION_PREFIX_NO_ENUM_CONSTANT = "No enum constant ";
+    public static class Punctuation {
+        public static final String EMPTY = "";
+        public static final String SPACE = " ";
+        public static final String UNDERSCORE = "_";
+        public static final String DOT = ".";
+        public static final String NEW_LINE = "\n";
+        public static final String COMMA_SPACE = ", ";
+    }
+
+    public static class ExceptionMessages {
+        public static final String NO_ENUM_CONSTANT_PREFIX = "No enum constant ";
+    }
 }
+

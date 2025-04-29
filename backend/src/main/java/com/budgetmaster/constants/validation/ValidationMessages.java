@@ -1,6 +1,7 @@
 package com.budgetmaster.constants.validation;
 
 public class ValidationMessages {
+    
     public static class Money {
         public static final String REQUIRED_AMOUNT = "Amount is required.";
         public static final String NON_NEGATIVE_AMOUNT = "Amount must be non-negative.";

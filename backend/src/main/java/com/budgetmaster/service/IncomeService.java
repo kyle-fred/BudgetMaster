@@ -1,6 +1,6 @@
 package com.budgetmaster.service;
 
-import com.budgetmaster.constants.error.ErrorMessages.IncomeErrorMessages;
+import com.budgetmaster.constants.error.ErrorMessages;
 import com.budgetmaster.dto.IncomeRequest;
 import com.budgetmaster.exception.IncomeNotFoundException;
 import com.budgetmaster.repository.IncomeRepository;
@@ -63,13 +63,13 @@ public class IncomeService {
 	 * Creates a supplier for IncomeNotFoundException when entity is not found by ID.
 	 */
 	private Supplier<IncomeNotFoundException> createIdNotFoundException(Long id) {
-		return () -> new IncomeNotFoundException(String.format(IncomeErrorMessages.ERROR_MESSAGE_INCOME_NOT_FOUND_BY_ID, id));
+		return () -> new IncomeNotFoundException(String.format(ErrorMessages.Income.NOT_FOUND_BY_ID, id));
 	}
 	
 	/**
 	 * Creates a supplier for IncomeNotFoundException when no entities are found for a given month value.
 	 */
 	private Supplier<IncomeNotFoundException> createMonthNotFoundException(YearMonth month) {
-		return () -> new IncomeNotFoundException(String.format(IncomeErrorMessages.ERROR_MESSAGE_INCOME_NOT_FOUND_BY_MONTH, month));
+		return () -> new IncomeNotFoundException(String.format(ErrorMessages.Income.NOT_FOUND_BY_MONTH, month));
 	}
 }

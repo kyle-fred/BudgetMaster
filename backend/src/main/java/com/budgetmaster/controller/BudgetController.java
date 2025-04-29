@@ -26,7 +26,7 @@ public class BudgetController {
 	@GetMapping
 	public ResponseEntity<Budget> getBudgetByMonth(
 			@RequestParam 
-			@Pattern(regexp = ValidationPatterns.VALIDATION_PATTERN_YEAR_MONTH_REGEX, message = ApiMessages.ValidationMessages.MONTH_FORMAT_INVALID) 
+			@Pattern(regexp = ValidationPatterns.Date.YEAR_MONTH_REGEX, message = ApiMessages.ValidationMessages.MONTH_FORMAT_INVALID) 
 			String month) {
 		Budget budget = budgetService.getBudgetByMonth(month);
 		return ResponseEntity.ok(budget);

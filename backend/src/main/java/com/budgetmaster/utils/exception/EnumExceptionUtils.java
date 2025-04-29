@@ -7,8 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.budgetmaster.constants.common.StringConstants;
-import com.budgetmaster.constants.error.ErrorMessages.CommonErrorMessages;
-import com.budgetmaster.constants.error.ErrorMessages.EnumErrorMessages;
+import com.budgetmaster.constants.error.ErrorMessages;
 
 public class EnumExceptionUtils {
     
@@ -57,7 +56,7 @@ public class EnumExceptionUtils {
      */
     public static Map<String, Object> createErrorResonse(String invalidValue, String fieldName, Class<? extends Enum<?>> enumType) {
     	String errorMessage =  String.format(
-                EnumErrorMessages.ERROR_MESSAGE_INVALID_ENUM_VALUE_FORMAT,
+                ErrorMessages.Enum.INVALID_VALUE_FORMAT,
                 invalidValue, 
                 fieldName, 
                 Arrays.stream(enumType.getEnumConstants())
@@ -76,7 +75,7 @@ public class EnumExceptionUtils {
      */
     public static Map<String, Object> createFallbackResponse() {
     	Map<String, Object> fallbackResponse = new HashMap<>();
-    	fallbackResponse.put(CommonErrorMessages.ERROR_MESSAGE_ERROR, EnumErrorMessages.ERROR_MESSAGE_INVALID_ENUM_VALUE);
+    	fallbackResponse.put(ErrorMessages.Common.ERROR, ErrorMessages.Enum.INVALID_VALUE);
     	return fallbackResponse;
     }
     

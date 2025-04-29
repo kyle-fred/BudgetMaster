@@ -36,7 +36,7 @@ public class ExpenseController {
     @GetMapping
     public ResponseEntity<List<Expense>> getAllExpensesForMonth(
     		@RequestParam 
-    		@Pattern(regexp = ValidationPatterns.VALIDATION_PATTERN_YEAR_MONTH_REGEX, message = ApiMessages.ValidationMessages.MONTH_FORMAT_INVALID) 
+    		@Pattern(regexp = ValidationPatterns.Date.YEAR_MONTH_REGEX, message = ApiMessages.ValidationMessages.MONTH_FORMAT_INVALID) 
     		String month) {
         List<Expense> expenses = expenseService.getAllExpensesForMonth(month);
         return ResponseEntity.ok(expenses);

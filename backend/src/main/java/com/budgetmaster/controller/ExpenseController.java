@@ -17,7 +17,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 
 @RestController
-@RequestMapping(ApiPaths.API_PATH_BASE_PATH + ApiPaths.API_PATH_EXPENSES)
+@RequestMapping(ApiPaths.Expenses.ROOT)
 @Validated
 public class ExpenseController {
 	
@@ -36,25 +36,25 @@ public class ExpenseController {
     @GetMapping
     public ResponseEntity<List<Expense>> getAllExpensesForMonth(
     		@RequestParam 
-    		@Pattern(regexp = ValidationPatterns.VALIDATION_PATTERN_YEAR_MONTH_REGEX, message = ApiMessages.API_MESSAGE_MONTH_FORMAT_INVALID) 
+    		@Pattern(regexp = ValidationPatterns.VALIDATION_PATTERN_YEAR_MONTH_REGEX, message = ApiMessages.ValidationMessages.MONTH_FORMAT_INVALID) 
     		String month) {
         List<Expense> expenses = expenseService.getAllExpensesForMonth(month);
         return ResponseEntity.ok(expenses);
     }
     
-    @GetMapping(ApiPaths.API_PATH_BY_ID)
+    @GetMapping(ApiPaths.Expenses.BY_ID)
     public ResponseEntity<Expense> getExpenseById(@PathVariable Long id) {
         Expense expense = expenseService.getExpenseById(id);
         return ResponseEntity.ok(expense);
     }
 	
-    @PutMapping(ApiPaths.API_PATH_BY_ID)
+    @PutMapping(ApiPaths.Expenses.BY_ID)
     public ResponseEntity<Expense> updateExpense(@PathVariable Long id, @Valid @RequestBody ExpenseRequest request) {
         Expense expense = expenseService.updateExpense(id, request);
         return ResponseEntity.ok(expense);
     }
 	
-    @DeleteMapping(ApiPaths.API_PATH_BY_ID)
+    @DeleteMapping(ApiPaths.Expenses.BY_ID)
     public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
         expenseService.deleteExpense(id);
         return ResponseEntity.noContent().build();

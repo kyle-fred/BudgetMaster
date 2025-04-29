@@ -42,19 +42,19 @@ public class ExpenseController {
         return ResponseEntity.ok(expenses);
     }
     
-    @GetMapping(ApiPaths.Expenses.BY_ID)
+    @GetMapping(ApiPaths.SEARCH_BY_ID)
     public ResponseEntity<Expense> getExpenseById(@PathVariable Long id) {
         Expense expense = expenseService.getExpenseById(id);
         return ResponseEntity.ok(expense);
     }
 	
-    @PutMapping(ApiPaths.Expenses.BY_ID)
+    @PutMapping(ApiPaths.SEARCH_BY_ID)
     public ResponseEntity<Expense> updateExpense(@PathVariable Long id, @Valid @RequestBody ExpenseRequest request) {
         Expense expense = expenseService.updateExpense(id, request);
         return ResponseEntity.ok(expense);
     }
 	
-    @DeleteMapping(ApiPaths.Expenses.BY_ID)
+    @DeleteMapping(ApiPaths.SEARCH_BY_ID)
     public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
         expenseService.deleteExpense(id);
         return ResponseEntity.noContent().build();

@@ -32,7 +32,7 @@ public class BudgetController {
 		return ResponseEntity.ok(budget);
 	}
 		
-	@DeleteMapping(ApiPaths.Budgets.BY_ID)
+	@DeleteMapping(ApiPaths.SEARCH_BY_ID)
 	public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
 		budgetService.deleteBudget(id);
 		return ResponseEntity.noContent().build();

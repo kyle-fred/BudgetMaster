@@ -42,19 +42,19 @@ public class IncomeController {
         return ResponseEntity.ok(incomes);
     }
 	
-    @GetMapping(ApiPaths.Incomes.BY_ID)
+    @GetMapping(ApiPaths.SEARCH_BY_ID)
     public ResponseEntity<Income> getIncomeById(@PathVariable Long id) {
         Income income = incomeService.getIncomeById(id);
         return ResponseEntity.ok(income);
     }
     
-    @PutMapping(ApiPaths.Incomes.BY_ID)
+    @PutMapping(ApiPaths.SEARCH_BY_ID)
     public ResponseEntity<Income> updateIncome(@PathVariable Long id, @Valid @RequestBody IncomeRequest request) {
         Income income = incomeService.updateIncome(id, request);
         return ResponseEntity.ok(income);
     }
     
-    @DeleteMapping(ApiPaths.Incomes.BY_ID)
+    @DeleteMapping(ApiPaths.SEARCH_BY_ID)
     public ResponseEntity<Void> deleteIncome(@PathVariable Long id) {
         incomeService.deleteIncome(id);
         return ResponseEntity.noContent().build();

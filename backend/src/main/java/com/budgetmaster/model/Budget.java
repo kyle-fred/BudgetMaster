@@ -51,12 +51,12 @@ public class Budget {
 	
 	@CreationTimestamp
 	@Column(name = ColumnNames.Common.CREATED_AT, nullable = false, updatable = false, insertable = false)
-	@JsonFormat(pattern = DateFormats.DATE_FORMATS_DATE_TIME_STANDARD)
+	@JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	private LocalDateTime createdAt;
 	
 	@UpdateTimestamp
 	@Column(name = ColumnNames.Common.LAST_UPDATED_AT, nullable = false, insertable = false)
-	@JsonFormat(pattern = DateFormats.DATE_FORMATS_DATE_TIME_STANDARD)
+	@JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	private LocalDateTime lastUpdatedAt;
 	
 	protected Budget() {}

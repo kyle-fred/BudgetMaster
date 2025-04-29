@@ -49,12 +49,12 @@ public class Income {
  	private YearMonth month;
  	
 	@CreationTimestamp
-	@JsonFormat(pattern = DateFormats.DATE_FORMATS_DATE_TIME_STANDARD)
+	@JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	@Column(name = ColumnNames.Common.CREATED_AT, nullable = false, updatable = false, insertable = false)
  	private LocalDateTime createdAt;
  	
 	@UpdateTimestamp
-	@JsonFormat(pattern = DateFormats.DATE_FORMATS_DATE_TIME_STANDARD)
+	@JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	@Column(name = ColumnNames.Common.LAST_UPDATED_AT, nullable = false, insertable = false)
  	private LocalDateTime lastUpdatedAt;
 	

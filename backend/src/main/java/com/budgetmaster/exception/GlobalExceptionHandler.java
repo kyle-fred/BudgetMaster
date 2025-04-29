@@ -12,7 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.budgetmaster.constants.common.StringConstants;
-import com.budgetmaster.constants.error.ErrorMessages.CommonErrorMessages;
+import com.budgetmaster.constants.error.ErrorMessages;
 import com.budgetmaster.utils.exception.EnumExceptionUtils;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
 		Map<String, String> errors = new HashMap<>();
 		ex.getConstraintViolations().forEach(violation -> {
 			String fieldName = violation.getPropertyPath().toString();
-			fieldName = fieldName.substring(fieldName.lastIndexOf(StringConstants.STRING_CONSTANTS_DOT) + 1);
+			fieldName = fieldName.substring(fieldName.lastIndexOf(StringConstants.Punctuation.DOT) + 1);
 			String errorMessage = violation.getMessage();
 			errors.put(fieldName, errorMessage);
 		});
@@ -58,28 +58,28 @@ public class GlobalExceptionHandler {
 	    }
 	    
 	    Map<String, Object> response = new HashMap<>();
-	    response.put(CommonErrorMessages.ERROR_MESSAGE_ERROR, CommonErrorMessages.ERROR_MESSAGE_INVALID_REQUEST);
+	    response.put(ErrorMessages.Common.ERROR, ErrorMessages.Common.INVALID_REQUEST);
 	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	}
 	
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseEntity<String> handleGenericException(Exception ex) {
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CommonErrorMessages.ERROR_MESSAGE_UNEXPECTED_ERROR);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessages.Common.UNEXPECTED_ERROR);
 	}
 	
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<String> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(CommonErrorMessages.ERROR_MESSAGE_DATABASE_CONSTRAINT_VIOLATION);
+                .body(ErrorMessages.Common.DATABASE_CONSTRAINT_VIOLATION);
     }
     
     @ExceptionHandler(BudgetNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String, String>> handleBudgetNotFound(BudgetNotFoundException ex) {
         Map<String, String> response = new HashMap<>();
-        response.put(CommonErrorMessages.ERROR_MESSAGE_ERROR, ex.getMessage());
+        response.put(ErrorMessages.Common.ERROR, ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
     
@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String, String>> handleIncomeNotFound(IncomeNotFoundException ex) {
         Map<String, String> response = new HashMap<>();
-        response.put(CommonErrorMessages.ERROR_MESSAGE_ERROR, ex.getMessage());
+        response.put(ErrorMessages.Common.ERROR, ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
     
@@ -95,7 +95,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String, String>> handleExpenseNotFound(ExpenseNotFoundException ex) {
         Map<String, String> response = new HashMap<>();
-        response.put(CommonErrorMessages.ERROR_MESSAGE_ERROR, ex.getMessage());
+        response.put(ErrorMessages.Common.ERROR, ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
     

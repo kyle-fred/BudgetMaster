@@ -1,6 +1,7 @@
 package com.budgetmaster.test.constants;
 
 public class TestMessages {
+    
     public static class CommonErrorMessageConstants {
         public static final String ERROR = "error";
         public static final String SERVICE_FAILURE = "Service failure";

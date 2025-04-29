@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 import com.budgetmaster.constants.validation.ValidationConstraints;
-import com.budgetmaster.constants.validation.ValidationMessages.MoneyValidation;
+import com.budgetmaster.constants.validation.ValidationMessages;
 import com.budgetmaster.validation.currency.SupportedCurrencyConstraint;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -12,13 +12,13 @@ import jakarta.validation.constraints.NotNull;
 
 @SupportedCurrencyConstraint
 public class MoneyRequest {
-    @NotNull(message = MoneyValidation.VALIDATION_MESSAGE_REQUIRED_AMOUNT)
-    @DecimalMin(value = ValidationConstraints.VALIDATION_CONSTRAINT_MIN_MONETARY_AMOUNT, 
+    @NotNull(message = ValidationMessages.Money.REQUIRED_AMOUNT)
+    @DecimalMin(value = ValidationConstraints.Monetary.MIN_AMOUNT, 
                 inclusive = true, 
-                message = MoneyValidation.VALIDATION_MESSAGE_NON_NEGATIVE_AMOUNT)
+                message = ValidationMessages.Money.NON_NEGATIVE_AMOUNT)
     private BigDecimal amount;
 
-    @NotNull(message = MoneyValidation.VALIDATION_MESSAGE_REQUIRED_CURRENCY)
+    @NotNull(message = ValidationMessages.Money.REQUIRED_CURRENCY)
     private Currency currency;
 
     public BigDecimal getAmount() {

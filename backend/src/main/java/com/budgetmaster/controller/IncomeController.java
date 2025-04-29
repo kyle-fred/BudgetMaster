@@ -17,7 +17,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 
 @RestController
-@RequestMapping(ApiPaths.API_PATH_BASE_PATH + ApiPaths.API_PATH_INCOMES)
+@RequestMapping(ApiPaths.Incomes.ROOT)
 @Validated
 public class IncomeController {
 	
@@ -36,25 +36,25 @@ public class IncomeController {
     @GetMapping
     public ResponseEntity<List<Income>> getAllIncomesForMonth(
             @RequestParam 
-            @Pattern(regexp = ValidationPatterns.VALIDATION_PATTERN_YEAR_MONTH_REGEX, message = ApiMessages.API_MESSAGE_MONTH_FORMAT_INVALID) 
+            @Pattern(regexp = ValidationPatterns.Date.YEAR_MONTH_REGEX, message = ApiMessages.ValidationMessages.MONTH_FORMAT_INVALID) 
             String month) {
         List<Income> incomes = incomeService.getAllIncomesForMonth(month);
         return ResponseEntity.ok(incomes);
     }
 	
-    @GetMapping(ApiPaths.API_PATH_BY_ID)
+    @GetMapping(ApiPaths.SEARCH_BY_ID)
     public ResponseEntity<Income> getIncomeById(@PathVariable Long id) {
         Income income = incomeService.getIncomeById(id);
         return ResponseEntity.ok(income);
     }
     
-    @PutMapping(ApiPaths.API_PATH_BY_ID)
+    @PutMapping(ApiPaths.SEARCH_BY_ID)
     public ResponseEntity<Income> updateIncome(@PathVariable Long id, @Valid @RequestBody IncomeRequest request) {
         Income income = incomeService.updateIncome(id, request);
         return ResponseEntity.ok(income);
     }
     
-    @DeleteMapping(ApiPaths.API_PATH_BY_ID)
+    @DeleteMapping(ApiPaths.SEARCH_BY_ID)
     public ResponseEntity<Void> deleteIncome(@PathVariable Long id) {
         incomeService.deleteIncome(id);
         return ResponseEntity.noContent().build();

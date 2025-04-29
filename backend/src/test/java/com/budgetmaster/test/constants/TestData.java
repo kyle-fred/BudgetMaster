@@ -9,6 +9,7 @@ import com.budgetmaster.enums.SupportedCurrency;
 import com.budgetmaster.enums.TransactionType;
 
 public class TestData {
+    
     public static class CommonTestDataConstants {
         // -- IDs --    
         public static final Long ID_EXISTING = 1L;

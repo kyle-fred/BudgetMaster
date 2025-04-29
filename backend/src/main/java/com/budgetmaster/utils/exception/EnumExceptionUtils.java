@@ -7,8 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.budgetmaster.constants.common.StringConstants;
-import com.budgetmaster.constants.error.ErrorMessages.CommonErrorMessages;
-import com.budgetmaster.constants.error.ErrorMessages.EnumErrorMessages;
+import com.budgetmaster.constants.error.ErrorMessages;
 
 public class EnumExceptionUtils {
     
@@ -16,13 +15,13 @@ public class EnumExceptionUtils {
      * Extracts the invalid enum constant from the exception message.
      */
     public static String extractInvalidEnumValue(String exceptionMessage) {
-        int startIndex = exceptionMessage.indexOf(StringConstants.EXCEPTION_PREFIX_NO_ENUM_CONSTANT);
+        int startIndex = exceptionMessage.indexOf(StringConstants.ExceptionMessages.NO_ENUM_CONSTANT_PREFIX);
         
         if (startIndex == -1) {
             return null;
         }
         
-        startIndex += StringConstants.EXCEPTION_PREFIX_NO_ENUM_CONSTANT.length();
+        startIndex += StringConstants.ExceptionMessages.NO_ENUM_CONSTANT_PREFIX.length();
         String enumPart = extractEnumPart(exceptionMessage, startIndex);
         return extractEnumConstant(enumPart);
     }
@@ -31,7 +30,7 @@ public class EnumExceptionUtils {
      * Extracts the portion of the message representing the invalid enum value.
      */
     public static String extractEnumPart(String message, int startIndex) {
-        int endIndex = message.indexOf(StringConstants.STRING_CONSTANTS_SPACE, startIndex);
+        int endIndex = message.indexOf(StringConstants.Punctuation.SPACE, startIndex);
         if (endIndex == -1) {
             return message.substring(startIndex);
         } else {
@@ -43,8 +42,8 @@ public class EnumExceptionUtils {
      * Extracts the enum constant name from its fully qualified reference.
      */
     public static String extractEnumConstant(String enumPart) {
-        enumPart = enumPart.replace(StringConstants.STRING_CONSTANTS_NEW_LINE, StringConstants.STRING_CONSTANTS_EMPTY);
-        int lastDotIndex = enumPart.lastIndexOf(StringConstants.STRING_CONSTANTS_DOT);
+        enumPart = enumPart.replace(StringConstants.Punctuation.NEW_LINE, StringConstants.Punctuation.EMPTY);
+        int lastDotIndex = enumPart.lastIndexOf(StringConstants.Punctuation.DOT);
         if (lastDotIndex != -1) {
             return enumPart.substring(lastDotIndex + 1);
         } else {
@@ -57,12 +56,12 @@ public class EnumExceptionUtils {
      */
     public static Map<String, Object> createErrorResonse(String invalidValue, String fieldName, Class<? extends Enum<?>> enumType) {
     	String errorMessage =  String.format(
-                EnumErrorMessages.ERROR_MESSAGE_INVALID_ENUM_VALUE_FORMAT,
+                ErrorMessages.Enum.INVALID_VALUE_FORMAT,
                 invalidValue, 
                 fieldName, 
                 Arrays.stream(enumType.getEnumConstants())
                     .map(Enum::name)
-                    .collect(Collectors.joining(StringConstants.STRING_CONSTANTS_COMMA_SPACE))
+                    .collect(Collectors.joining(StringConstants.Punctuation.COMMA_SPACE))
             );
     	
     	Map<String, Object> errorResponse = new HashMap<>();
@@ -76,7 +75,7 @@ public class EnumExceptionUtils {
      */
     public static Map<String, Object> createFallbackResponse() {
     	Map<String, Object> fallbackResponse = new HashMap<>();
-    	fallbackResponse.put(CommonErrorMessages.ERROR_MESSAGE_ERROR, EnumErrorMessages.ERROR_MESSAGE_INVALID_ENUM_VALUE);
+    	fallbackResponse.put(ErrorMessages.Common.ERROR, ErrorMessages.Enum.INVALID_VALUE);
     	return fallbackResponse;
     }
     

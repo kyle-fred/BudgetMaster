@@ -1,8 +1,7 @@
 package com.budgetmaster.model;
 
 import com.budgetmaster.constants.database.ColumnConstraints;
-import com.budgetmaster.constants.database.ColumnNames.BudgetColumns;
-import com.budgetmaster.constants.database.ColumnNames.CommonColumns;
+import com.budgetmaster.constants.database.ColumnNames;
 import com.budgetmaster.constants.database.TableNames;
 import com.budgetmaster.constants.date.DateFormats;
 
@@ -24,40 +23,40 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = TableNames.TABLE_NAME_BUDGETS)
+@Table(name = TableNames.BUDGETS)
 public class Budget {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = CommonColumns.COLUMN_NAME_ID)
+	@Column(name = ColumnNames.Common.ID)
 	private Long id;
 	
-	@Column(name = BudgetColumns.COLUMN_NAME_TOTAL_INCOME, 
-			precision = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_PRECISION, scale = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE)
+	@Column(name = ColumnNames.Budget.TOTAL_INCOME, 
+			precision = ColumnConstraints.Amount.PRECISION, scale = ColumnConstraints.Amount.SCALE)
 	private BigDecimal totalIncome;
 	
-	@Column(name = BudgetColumns.COLUMN_NAME_TOTAL_EXPENSE, 
-			precision = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_PRECISION, scale = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE)
+	@Column(name = ColumnNames.Budget.TOTAL_EXPENSE, 
+			precision = ColumnConstraints.Amount.PRECISION, scale = ColumnConstraints.Amount.SCALE)
 	private BigDecimal totalExpense;
 	
-	@Column(name = BudgetColumns.COLUMN_NAME_SAVINGS, 
-			precision = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_PRECISION, scale = ColumnConstraints.COLUMN_CONSTRAINT_AMOUNT_SCALE, 
+	@Column(name = ColumnNames.Budget.SAVINGS, 
+			precision = ColumnConstraints.Amount.PRECISION, scale = ColumnConstraints.Amount.SCALE, 
 			insertable = false, updatable = false)
 	private BigDecimal savings;
 
-	@Column(name = BudgetColumns.COLUMN_NAME_COMMON_CURRENCY, nullable = false, length = 3)
+	@Column(name = ColumnNames.Budget.COMMON_CURRENCY, nullable = false, length = 3)
 	private Currency currency;
 	
-	@Column(name = CommonColumns.COLUMN_NAME_MONTH, nullable = false, unique=true)
+	@Column(name = ColumnNames.Common.MONTH, nullable = false, unique=true)
 	private YearMonth month;
 	
 	@CreationTimestamp
-	@Column(name = CommonColumns.COLUMN_NAME_CREATED_AT, nullable = false, updatable = false, insertable = false)
-	@JsonFormat(pattern = DateFormats.DATE_FORMATS_DATE_TIME_STANDARD)
+	@Column(name = ColumnNames.Common.CREATED_AT, nullable = false, updatable = false, insertable = false)
+	@JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	private LocalDateTime createdAt;
 	
 	@UpdateTimestamp
-	@Column(name = CommonColumns.COLUMN_NAME_LAST_UPDATED_AT, nullable = false, insertable = false)
-	@JsonFormat(pattern = DateFormats.DATE_FORMATS_DATE_TIME_STANDARD)
+	@Column(name = ColumnNames.Common.LAST_UPDATED_AT, nullable = false, insertable = false)
+	@JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	private LocalDateTime lastUpdatedAt;
 	
 	protected Budget() {}

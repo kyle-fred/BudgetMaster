@@ -1,11 +1,10 @@
-package com.budgetmaster.utils.exception;
+package com.budgetmaster.common.utils;
 
 import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import com.budgetmaster.common.utils.EnumExceptionUtils;
 import com.budgetmaster.test.constants.TestData;
 import com.budgetmaster.test.constants.TestMessages;
 

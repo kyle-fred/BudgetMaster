@@ -1,4 +1,4 @@
-package com.budgetmaster.model;
+package com.budgetmaster.income.model;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -6,7 +6,6 @@ import java.util.Currency;
 
 import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.income.dto.IncomeRequest;
-import com.budgetmaster.income.model.Income;
 import com.budgetmaster.money.dto.MoneyRequest;
 import com.budgetmaster.test.constants.TestData;
 

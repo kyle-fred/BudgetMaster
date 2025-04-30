@@ -1,9 +1,8 @@
-package com.budgetmaster.model.value;
+package com.budgetmaster.money.model;
 
 import java.math.BigDecimal;
 import java.util.Currency;
 
-import com.budgetmaster.money.model.Money;
 import com.budgetmaster.test.constants.TestData;
 
 import org.junit.jupiter.api.Test;

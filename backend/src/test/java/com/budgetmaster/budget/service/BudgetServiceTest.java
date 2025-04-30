@@ -1,4 +1,4 @@
-package com.budgetmaster.service;
+package com.budgetmaster.budget.service;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -8,7 +8,6 @@ import java.util.Optional;
 import com.budgetmaster.budget.exception.BudgetNotFoundException;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
-import com.budgetmaster.budget.service.BudgetService;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.test.constants.TestData;
 import com.budgetmaster.test.constants.TestMessages;

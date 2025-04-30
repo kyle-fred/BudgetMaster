@@ -1,4 +1,4 @@
-package com.budgetmaster.controller;
+package com.budgetmaster.expense.controller;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -6,7 +6,6 @@ import java.util.Currency;
 import java.util.List;
 
 import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.expense.controller.ExpenseController;
 import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.enums.ExpenseCategory;
 import com.budgetmaster.expense.exception.ExpenseNotFoundException;

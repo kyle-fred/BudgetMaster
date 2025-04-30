@@ -1,4 +1,4 @@
-package com.budgetmaster.service;
+package com.budgetmaster.income.service;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -12,7 +12,6 @@ import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.income.exception.IncomeNotFoundException;
 import com.budgetmaster.income.model.Income;
 import com.budgetmaster.income.repository.IncomeRepository;
-import com.budgetmaster.income.service.IncomeService;
 import com.budgetmaster.money.dto.MoneyRequest;
 import com.budgetmaster.money.model.Money;
 import com.budgetmaster.test.constants.TestData;

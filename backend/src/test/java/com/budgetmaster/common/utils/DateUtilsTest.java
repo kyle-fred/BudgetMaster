@@ -1,6 +1,5 @@
-package com.budgetmaster.utils.date;
+package com.budgetmaster.common.utils;
 
-import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.test.constants.TestData;
 
 import java.time.YearMonth;

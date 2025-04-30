@@ -1,4 +1,4 @@
-package com.budgetmaster.model;
+package com.budgetmaster.expense.model;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -7,7 +7,6 @@ import java.util.Currency;
 import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.enums.ExpenseCategory;
-import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.money.dto.MoneyRequest;
 import com.budgetmaster.test.constants.TestData;
 

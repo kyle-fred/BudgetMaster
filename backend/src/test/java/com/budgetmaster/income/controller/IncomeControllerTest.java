@@ -1,4 +1,4 @@
-package com.budgetmaster.controller;
+package com.budgetmaster.income.controller;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -6,7 +6,6 @@ import java.util.Currency;
 import java.util.List;
 
 import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.income.controller.IncomeController;
 import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.income.exception.IncomeNotFoundException;
 import com.budgetmaster.income.model.Income;

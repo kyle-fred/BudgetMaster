@@ -1,4 +1,4 @@
-package com.budgetmaster.service;
+package com.budgetmaster.expense.service;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -13,7 +13,6 @@ import com.budgetmaster.expense.enums.ExpenseCategory;
 import com.budgetmaster.expense.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.repository.ExpenseRepository;
-import com.budgetmaster.expense.service.ExpenseService;
 import com.budgetmaster.money.dto.MoneyRequest;
 import com.budgetmaster.money.model.Money;
 import com.budgetmaster.test.constants.TestData;

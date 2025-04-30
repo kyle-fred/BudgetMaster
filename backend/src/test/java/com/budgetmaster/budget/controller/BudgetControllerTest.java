@@ -1,10 +1,9 @@
-package com.budgetmaster.controller;
+package com.budgetmaster.budget.controller;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Currency;
 
-import com.budgetmaster.budget.controller.BudgetController;
 import com.budgetmaster.budget.exception.BudgetNotFoundException;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.service.BudgetService;

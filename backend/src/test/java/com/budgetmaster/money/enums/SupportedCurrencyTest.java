@@ -1,8 +1,7 @@
-package com.budgetmaster.common.enums;
+package com.budgetmaster.money.enums;
 
 import java.util.Currency;
 
-import com.budgetmaster.money.enums.SupportedCurrency;
 import com.budgetmaster.test.constants.TestData;
 
 import org.junit.jupiter.api.Test;

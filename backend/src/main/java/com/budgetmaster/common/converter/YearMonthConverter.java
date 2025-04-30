@@ -1,4 +1,4 @@
-package com.budgetmaster.converter;
+package com.budgetmaster.common.converter;
 
 import java.time.YearMonth;
 

@@ -3,6 +3,7 @@ package com.budgetmaster.model.value;
 import java.math.BigDecimal;
 import java.util.Currency;
 
+import com.budgetmaster.money.model.Money;
 import com.budgetmaster.test.constants.TestData;
 
 import org.junit.jupiter.api.Test;

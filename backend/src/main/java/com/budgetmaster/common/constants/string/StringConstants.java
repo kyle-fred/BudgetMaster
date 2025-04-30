@@ -1,4 +1,4 @@
-package com.budgetmaster.constants.common;
+package com.budgetmaster.common.constants.string;
 
 public class StringConstants {
 

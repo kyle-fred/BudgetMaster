@@ -1,4 +1,4 @@
-package com.budgetmaster.exception;
+package com.budgetmaster.budget.exception;
 
 public class BudgetNotFoundException extends RuntimeException {
     /*

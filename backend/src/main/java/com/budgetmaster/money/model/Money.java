@@ -1,14 +1,14 @@
-package com.budgetmaster.model.value;
+package com.budgetmaster.money.model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.Objects;
 
-import com.budgetmaster.constants.database.ColumnConstraints;
-import com.budgetmaster.constants.database.ColumnNames;
-import com.budgetmaster.constants.error.ErrorMessages;
-import com.budgetmaster.enums.SupportedCurrency;
+import com.budgetmaster.common.constants.database.ColumnConstraints;
+import com.budgetmaster.common.constants.database.ColumnNames;
+import com.budgetmaster.common.constants.error.ErrorMessages;
+import com.budgetmaster.money.enums.SupportedCurrency;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

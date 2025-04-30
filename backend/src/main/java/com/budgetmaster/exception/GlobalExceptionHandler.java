@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
-import com.budgetmaster.constants.common.StringConstants;
-import com.budgetmaster.constants.error.ErrorMessages;
-import com.budgetmaster.utils.exception.EnumExceptionUtils;
+import com.budgetmaster.budget.exception.BudgetNotFoundException;
+import com.budgetmaster.common.constants.error.ErrorMessages;
+import com.budgetmaster.common.constants.string.StringConstants;
+import com.budgetmaster.common.utils.EnumExceptionUtils;
+import com.budgetmaster.expense.exception.ExpenseNotFoundException;
+import com.budgetmaster.income.exception.IncomeNotFoundException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.util.HashMap;

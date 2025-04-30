@@ -1,4 +1,4 @@
-package com.budgetmaster.constants.api;
+package com.budgetmaster.common.constants.api;
 
 public class ApiPaths {
 

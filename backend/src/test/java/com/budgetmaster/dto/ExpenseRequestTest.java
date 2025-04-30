@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Set;
 
-import com.budgetmaster.dto.money.MoneyRequest;
-import com.budgetmaster.enums.ExpenseCategory;
-import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.common.enums.TransactionType;
+import com.budgetmaster.expense.dto.ExpenseRequest;
+import com.budgetmaster.expense.enums.ExpenseCategory;
+import com.budgetmaster.money.dto.MoneyRequest;
 import com.budgetmaster.test.constants.TestData;
 import com.budgetmaster.test.constants.TestMessages;
 

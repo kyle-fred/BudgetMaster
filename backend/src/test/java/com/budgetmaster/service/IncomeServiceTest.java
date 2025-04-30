@@ -6,16 +6,17 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
-import com.budgetmaster.dto.IncomeRequest;
-import com.budgetmaster.dto.money.MoneyRequest;
-import com.budgetmaster.enums.TransactionType;
-import com.budgetmaster.exception.IncomeNotFoundException;
-import com.budgetmaster.model.Income;
-import com.budgetmaster.model.value.Money;
-import com.budgetmaster.repository.IncomeRepository;
+import com.budgetmaster.common.enums.TransactionType;
+import com.budgetmaster.common.utils.DateUtils;
+import com.budgetmaster.income.dto.IncomeRequest;
+import com.budgetmaster.income.exception.IncomeNotFoundException;
+import com.budgetmaster.income.model.Income;
+import com.budgetmaster.income.repository.IncomeRepository;
+import com.budgetmaster.income.service.IncomeService;
+import com.budgetmaster.money.dto.MoneyRequest;
+import com.budgetmaster.money.model.Money;
 import com.budgetmaster.test.constants.TestData;
 import com.budgetmaster.test.constants.TestMessages;
-import com.budgetmaster.utils.date.DateUtils;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

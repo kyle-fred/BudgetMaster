@@ -4,14 +4,14 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Currency;
 
-import com.budgetmaster.dto.IncomeRequest;
-import com.budgetmaster.dto.ExpenseRequest;
-import com.budgetmaster.dto.money.MoneyRequest;
-import com.budgetmaster.enums.ExpenseCategory;
-import com.budgetmaster.enums.TransactionType;
-import com.budgetmaster.model.Income;
-import com.budgetmaster.model.Expense;
-import com.budgetmaster.model.value.Money;
+import com.budgetmaster.common.enums.TransactionType;
+import com.budgetmaster.expense.dto.ExpenseRequest;
+import com.budgetmaster.expense.enums.ExpenseCategory;
+import com.budgetmaster.expense.model.Expense;
+import com.budgetmaster.income.dto.IncomeRequest;
+import com.budgetmaster.income.model.Income;
+import com.budgetmaster.money.dto.MoneyRequest;
+import com.budgetmaster.money.model.Money;
 import com.budgetmaster.test.constants.TestData;
 
 import org.junit.jupiter.api.BeforeEach;

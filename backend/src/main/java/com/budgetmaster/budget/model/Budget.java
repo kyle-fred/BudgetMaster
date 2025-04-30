@@ -1,9 +1,9 @@
-package com.budgetmaster.model;
+package com.budgetmaster.budget.model;
 
-import com.budgetmaster.constants.database.ColumnConstraints;
-import com.budgetmaster.constants.database.ColumnNames;
-import com.budgetmaster.constants.database.TableNames;
-import com.budgetmaster.constants.date.DateFormats;
+import com.budgetmaster.common.constants.database.ColumnConstraints;
+import com.budgetmaster.common.constants.database.ColumnNames;
+import com.budgetmaster.common.constants.database.TableNames;
+import com.budgetmaster.common.constants.date.DateFormats;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

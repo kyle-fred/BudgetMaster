@@ -1,10 +1,10 @@
-package com.budgetmaster.model;
+package com.budgetmaster.expense.model;
 
-import com.budgetmaster.constants.database.ColumnNames;
-import com.budgetmaster.constants.database.TableNames;
-import com.budgetmaster.constants.date.DateFormats;
-import com.budgetmaster.enums.TransactionType;
-import com.budgetmaster.model.value.Money;
+import com.budgetmaster.common.constants.database.ColumnNames;
+import com.budgetmaster.common.constants.database.TableNames;
+import com.budgetmaster.common.constants.date.DateFormats;
+import com.budgetmaster.common.enums.TransactionType;
+import com.budgetmaster.expense.enums.ExpenseCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ import java.time.YearMonth;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.budgetmaster.enums.ExpenseCategory;
+import com.budgetmaster.money.model.Money;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

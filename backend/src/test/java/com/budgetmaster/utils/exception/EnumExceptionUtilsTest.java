@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.common.utils.EnumExceptionUtils;
 import com.budgetmaster.test.constants.TestData;
 import com.budgetmaster.test.constants.TestMessages;
 

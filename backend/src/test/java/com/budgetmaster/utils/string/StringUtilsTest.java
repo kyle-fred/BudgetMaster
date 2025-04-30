@@ -1,5 +1,6 @@
 package com.budgetmaster.utils.string;
 
+import com.budgetmaster.common.utils.StringUtils;
 import com.budgetmaster.test.constants.TestData;
 
 import org.junit.jupiter.api.Test;

@@ -1,11 +1,11 @@
-package com.budgetmaster.controller;
+package com.budgetmaster.expense.controller;
 
-import com.budgetmaster.constants.api.ApiMessages;
-import com.budgetmaster.constants.api.ApiPaths;
-import com.budgetmaster.constants.validation.ValidationPatterns;
-import com.budgetmaster.dto.ExpenseRequest;
-import com.budgetmaster.model.Expense;
-import com.budgetmaster.service.ExpenseService;
+import com.budgetmaster.common.constants.api.ApiMessages;
+import com.budgetmaster.common.constants.api.ApiPaths;
+import com.budgetmaster.common.constants.validation.ValidationPatterns;
+import com.budgetmaster.expense.dto.ExpenseRequest;
+import com.budgetmaster.expense.model.Expense;
+import com.budgetmaster.expense.service.ExpenseService;
 
 import java.util.List;
 

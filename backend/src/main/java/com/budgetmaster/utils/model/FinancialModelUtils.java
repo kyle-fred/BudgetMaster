@@ -1,12 +1,12 @@
 package com.budgetmaster.utils.model;
 
-import com.budgetmaster.dto.IncomeRequest;
-import com.budgetmaster.dto.ExpenseRequest;
-import com.budgetmaster.model.Income;
-import com.budgetmaster.model.value.Money;
-import com.budgetmaster.model.Expense;
-import com.budgetmaster.utils.date.DateUtils;
-import com.budgetmaster.utils.string.StringUtils;
+import com.budgetmaster.expense.dto.ExpenseRequest;
+import com.budgetmaster.expense.model.Expense;
+import com.budgetmaster.income.dto.IncomeRequest;
+import com.budgetmaster.income.model.Income;
+import com.budgetmaster.money.model.Money;
+import com.budgetmaster.common.utils.DateUtils;
+import com.budgetmaster.common.utils.StringUtils;
 
 public class FinancialModelUtils {
     /**

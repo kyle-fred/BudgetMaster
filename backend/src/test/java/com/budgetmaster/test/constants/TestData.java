@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Currency;
 
-import com.budgetmaster.enums.ExpenseCategory;
-import com.budgetmaster.enums.SupportedCurrency;
-import com.budgetmaster.enums.TransactionType;
+import com.budgetmaster.common.enums.TransactionType;
+import com.budgetmaster.expense.enums.ExpenseCategory;
+import com.budgetmaster.money.enums.SupportedCurrency;
 
 public class TestData {
     

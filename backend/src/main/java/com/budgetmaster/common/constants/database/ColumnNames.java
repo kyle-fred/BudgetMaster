@@ -1,4 +1,4 @@
-package com.budgetmaster.constants.database;
+package com.budgetmaster.common.constants.database;
 
 public class ColumnNames {
 

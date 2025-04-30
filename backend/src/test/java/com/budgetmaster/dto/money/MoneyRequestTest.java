@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Set;
 
+import com.budgetmaster.money.dto.MoneyRequest;
 import com.budgetmaster.test.constants.TestData;
 import com.budgetmaster.test.constants.TestMessages;
 

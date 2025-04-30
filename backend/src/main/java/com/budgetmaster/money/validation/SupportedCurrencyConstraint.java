@@ -1,10 +1,10 @@
-package com.budgetmaster.validation.currency;
+package com.budgetmaster.money.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
-import com.budgetmaster.constants.error.ErrorMessages;
+import com.budgetmaster.common.constants.error.ErrorMessages;
 
 @Documented
 @Constraint(validatedBy = SupportedCurrencyValidator.class)

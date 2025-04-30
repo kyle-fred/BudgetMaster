@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Currency;
 
-import com.budgetmaster.exception.BudgetNotFoundException;
-import com.budgetmaster.model.Budget;
-import com.budgetmaster.service.BudgetService;
+import com.budgetmaster.budget.controller.BudgetController;
+import com.budgetmaster.budget.exception.BudgetNotFoundException;
+import com.budgetmaster.budget.model.Budget;
+import com.budgetmaster.budget.service.BudgetService;
 import com.budgetmaster.test.constants.TestData;
 import com.budgetmaster.test.constants.TestMessages;
 import com.budgetmaster.test.constants.TestPaths;

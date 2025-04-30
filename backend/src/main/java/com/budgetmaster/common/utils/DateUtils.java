@@ -1,4 +1,4 @@
-package com.budgetmaster.utils.date;
+package com.budgetmaster.common.utils;
 
 import java.time.YearMonth;
 

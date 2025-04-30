@@ -1,11 +1,11 @@
-package com.budgetmaster.service;
+package com.budgetmaster.budget.service;
 
-import com.budgetmaster.constants.error.ErrorMessages;
-import com.budgetmaster.exception.BudgetNotFoundException;
-import com.budgetmaster.repository.BudgetRepository;
-import com.budgetmaster.utils.date.DateUtils;
+import com.budgetmaster.budget.exception.BudgetNotFoundException;
+import com.budgetmaster.budget.model.Budget;
+import com.budgetmaster.budget.repository.BudgetRepository;
+import com.budgetmaster.common.constants.error.ErrorMessages;
+import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.utils.service.ServiceUtils;
-import com.budgetmaster.model.Budget;
 
 import java.time.YearMonth;
 import java.util.function.Supplier;

@@ -1,4 +1,4 @@
-package com.budgetmaster.utils.string;
+package com.budgetmaster.common.utils;
 
 public class StringUtils {
     

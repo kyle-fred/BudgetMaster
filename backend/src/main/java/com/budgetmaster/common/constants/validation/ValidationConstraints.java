@@ -1,4 +1,4 @@
-package com.budgetmaster.constants.validation;
+package com.budgetmaster.common.constants.validation;
 
 public class ValidationConstraints {
     

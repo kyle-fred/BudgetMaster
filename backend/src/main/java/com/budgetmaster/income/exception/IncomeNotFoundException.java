@@ -1,4 +1,4 @@
-package com.budgetmaster.exception;
+package com.budgetmaster.income.exception;
 
 public class IncomeNotFoundException extends RuntimeException {
     /*

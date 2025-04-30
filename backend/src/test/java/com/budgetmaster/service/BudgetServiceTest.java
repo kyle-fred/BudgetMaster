@@ -5,12 +5,13 @@ import java.time.YearMonth;
 import java.util.Currency;
 import java.util.Optional;
 
-import com.budgetmaster.exception.BudgetNotFoundException;
-import com.budgetmaster.model.Budget;
-import com.budgetmaster.repository.BudgetRepository;
+import com.budgetmaster.budget.exception.BudgetNotFoundException;
+import com.budgetmaster.budget.model.Budget;
+import com.budgetmaster.budget.repository.BudgetRepository;
+import com.budgetmaster.budget.service.BudgetService;
+import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.test.constants.TestData;
 import com.budgetmaster.test.constants.TestMessages;
-import com.budgetmaster.utils.date.DateUtils;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

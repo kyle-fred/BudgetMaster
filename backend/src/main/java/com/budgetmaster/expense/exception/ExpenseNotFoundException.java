@@ -1,4 +1,4 @@
-package com.budgetmaster.exception;
+package com.budgetmaster.expense.exception;
 
 public class ExpenseNotFoundException extends RuntimeException {
     /*

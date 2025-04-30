@@ -1,12 +1,12 @@
 package com.budgetmaster.expense.service;
 
 import com.budgetmaster.common.constants.error.ErrorMessages;
+import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.repository.ExpenseRepository;
-import com.budgetmaster.utils.service.ServiceUtils;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ExpenseService {
+public class ExpenseService extends EntityLookupService {
 	
 	private final ExpenseRepository expenseRepository;
 	
@@ -31,7 +31,7 @@ public class ExpenseService {
 	
 	public List<Expense> getAllExpensesForMonth(String monthString) {
  		YearMonth month = DateUtils.getValidYearMonth(monthString);
- 		return ServiceUtils.findListByCustomFinderOrThrow(
+ 		return findListByCustomFinderOrThrow(
 			expenseRepository::findByMonth,
 			month,
 			createMonthNotFoundException(month)
@@ -39,7 +39,7 @@ public class ExpenseService {
  	}
 	
 	public Expense getExpenseById(Long id) {
- 		return ServiceUtils.findByIdOrThrow(
+ 		return findByIdOrThrow(
 			expenseRepository,
 			id,
 			createIdNotFoundException(id)

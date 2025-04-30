@@ -1,4 +1,4 @@
-package com.budgetmaster.utils.service;
+package com.budgetmaster.common.service;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -23,10 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ServiceUtilsTest {
+public class EntityLookupServiceTest extends EntityLookupService {
 	// -- Dependencies --
 	@Mock
 	private JpaRepository<Budget, Long> mockRepository;
+
+	// -- Test Objects --
+	private EntityLookupService entityLookupService;
 	
 	// -- Test Data --
 	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;
@@ -39,6 +42,7 @@ public class ServiceUtilsTest {
 	// -- Setup --
 	@BeforeEach
 	void setUp() {
+		entityLookupService = new EntityLookupService();
 		testBudget = new Budget(testMonth);
 		testIncome = new Income();
 	}
@@ -49,7 +53,7 @@ public class ServiceUtilsTest {
 		when(mockRepository.findById(testId))
 				.thenReturn(Optional.of(testBudget));
 		
-		Budget result = ServiceUtils.findByIdOrThrow(
+		Budget result = entityLookupService.findByIdOrThrow(
 				mockRepository,
 				testId,
 				() -> new BudgetNotFoundException(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID)
@@ -68,7 +72,7 @@ public class ServiceUtilsTest {
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
-				() -> ServiceUtils.findByIdOrThrow(
+				() -> entityLookupService.findByIdOrThrow(
 						mockRepository,
 						testId,
 						() -> new BudgetNotFoundException(errorMessage)
@@ -85,7 +89,7 @@ public class ServiceUtilsTest {
 	void findByCustomFinderOrThrow_WhenEntityExists_ReturnsEntity() {
 		Function<YearMonth, Optional<Budget>> finder = month -> Optional.of(testBudget);
 		
-		Budget result = ServiceUtils.findByCustomFinderOrThrow(
+		Budget result = entityLookupService.findByCustomFinderOrThrow(
 				finder,
 				testMonth,
 				() -> new BudgetNotFoundException(String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, testMonth))
@@ -101,7 +105,7 @@ public class ServiceUtilsTest {
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
-				() -> ServiceUtils.findByCustomFinderOrThrow(
+				() -> entityLookupService.findByCustomFinderOrThrow(
 						finder,
 						testMonth,
 						() -> new BudgetNotFoundException(errorMessage)
@@ -116,7 +120,7 @@ public class ServiceUtilsTest {
 	void findListByCustomFinderOrThrow_WhenEntitiesExists_ReturnsListOfEntities() {
 		Function<YearMonth, List<Income>> finder = month -> List.of(testIncome);
 		
-		List<Income> result = ServiceUtils.findListByCustomFinderOrThrow(
+		List<Income> result = entityLookupService.findListByCustomFinderOrThrow(
 				finder,
 				testMonth,
 				() -> new IncomeNotFoundException(String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_BY_MONTH, testMonth))
@@ -132,7 +136,7 @@ public class ServiceUtilsTest {
 
 		IncomeNotFoundException exception = assertThrows(
 				IncomeNotFoundException.class,
-				() -> ServiceUtils.findListByCustomFinderOrThrow(
+				() -> entityLookupService.findListByCustomFinderOrThrow(
 						finder, 
 						testMonth, 
 						() -> new IncomeNotFoundException(errorMessage)

@@ -1,12 +1,12 @@
 package com.budgetmaster.income.service;
 
 import com.budgetmaster.common.constants.error.ErrorMessages;
+import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.income.exception.IncomeNotFoundException;
 import com.budgetmaster.income.model.Income;
 import com.budgetmaster.income.repository.IncomeRepository;
-import com.budgetmaster.utils.service.ServiceUtils;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class IncomeService {
+public class IncomeService extends EntityLookupService {
 	
 	private final IncomeRepository incomeRepository;
 	
@@ -31,7 +31,7 @@ public class IncomeService {
 	
 	public List<Income> getAllIncomesForMonth(String monthString) {
 		YearMonth month = DateUtils.getValidYearMonth(monthString);
-		return ServiceUtils.findListByCustomFinderOrThrow(
+		return findListByCustomFinderOrThrow(
 			incomeRepository::findByMonth,
 			month,
 			createMonthNotFoundException(month)
@@ -39,7 +39,7 @@ public class IncomeService {
 	}
 	
 	public Income getIncomeById(Long id) {
-		return ServiceUtils.findByIdOrThrow(
+		return findByIdOrThrow(
 				incomeRepository,
 				id,
 				createIdNotFoundException(id)

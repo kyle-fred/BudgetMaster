@@ -4,8 +4,8 @@ import com.budgetmaster.budget.exception.BudgetNotFoundException;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.common.constants.error.ErrorMessages;
+import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
-import com.budgetmaster.utils.service.ServiceUtils;
 
 import java.time.YearMonth;
 import java.util.function.Supplier;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class BudgetService {
+public class BudgetService extends EntityLookupService {
 	
 	private final BudgetRepository budgetRepository;
 	
@@ -24,7 +24,7 @@ public class BudgetService {
 	
 	public Budget getBudgetByMonth(String monthString) {
 		YearMonth month = DateUtils.getValidYearMonth(monthString);
-		return ServiceUtils.findByCustomFinderOrThrow(
+		return findByCustomFinderOrThrow(
 				budgetRepository::findByMonth,
 				month,
 				createMonthNotFoundException(month)
@@ -32,7 +32,7 @@ public class BudgetService {
 	}
 	
 	public Budget getBudgetById(Long id) {
-		return ServiceUtils.findByIdOrThrow(
+		return findByIdOrThrow(
 				budgetRepository,
 				id,
 				createIdNotFoundException(id)

@@ -6,7 +6,6 @@ import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.repository.ExpenseRepository;
-import com.budgetmaster.utils.model.FinancialModelUtils;
 import com.budgetmaster.utils.service.ServiceUtils;
 
 import java.time.YearMonth;
@@ -26,7 +25,7 @@ public class ExpenseService {
 	}
 	
 	public Expense createExpense(ExpenseRequest request) {
-		Expense expense = FinancialModelUtils.buildExpense(request);
+		Expense expense = Expense.from(request);
 		return expenseRepository.saveAndFlush(expense);
 	}
 	
@@ -49,7 +48,7 @@ public class ExpenseService {
 	
 	public Expense updateExpense(Long id, ExpenseRequest request) {
  		Expense expense = getExpenseById(id);
-		FinancialModelUtils.modifyExpense(expense, request);
+		expense.updateFrom(request);
 		return expenseRepository.saveAndFlush(expense);
 	}
 

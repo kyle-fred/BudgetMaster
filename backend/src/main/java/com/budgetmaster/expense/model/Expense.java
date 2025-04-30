@@ -4,6 +4,8 @@ import com.budgetmaster.common.constants.database.ColumnNames;
 import com.budgetmaster.common.constants.database.TableNames;
 import com.budgetmaster.common.constants.date.DateFormats;
 import com.budgetmaster.common.enums.TransactionType;
+import com.budgetmaster.common.utils.DateUtils;
+import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.enums.ExpenseCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -68,6 +70,26 @@ public class Expense {
 		this.category = category;
 		this.type = type;
 		this.month = month;
+	}
+
+	public static Expense from(ExpenseRequest request) {
+		return new Expense(
+			request.getName().toUpperCase(),
+			Money.of(request.getMoney().getAmount(), request.getMoney().getCurrency()),
+			request.getCategory(),
+			request.getType(),
+			DateUtils.getValidYearMonth(request.getMonth())
+		);
+	}
+
+	public void updateFrom(ExpenseRequest request) {
+		this.name = request.getName().toUpperCase();
+		this.money = Money.of(request.getMoney().getAmount(), request.getMoney().getCurrency());
+		this.category = request.getCategory();
+		this.type = request.getType();
+		if (request.getMonth() != null && !request.getMonth().isEmpty()) {
+			this.month = DateUtils.getValidYearMonth(request.getMonth());
+		}
 	}
 	
 	public Long getId() {

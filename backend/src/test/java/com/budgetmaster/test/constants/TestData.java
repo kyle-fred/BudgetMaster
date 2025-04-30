@@ -33,21 +33,6 @@ public class TestData {
         public static final Currency CURRENCY_GBP = SupportedCurrency.GBP.getCurrency();
         public static final Currency CURRENCY_USD = Currency.getInstance("USD");
     }
-
-    public static class FinancialModelTestDataConstants {
-        public static final String NAME = "TEST NAME";
-        public static final String SOURCE = "TEST SOURCE";
-        public static final BigDecimal AMOUNT = new BigDecimal("123.45");
-        public static final ExpenseCategory CATEGORY_MISCELLANEOUS = ExpenseCategory.MISCELLANEOUS;
-        public static final TransactionType TYPE_ONE_TIME = TransactionType.ONE_TIME;
-
-        // -- Old Values --
-        public static final String NAME_OLD = "OLD NAME";
-        public static final String SOURCE_OLD = "OLD SOURCE";
-        public static final BigDecimal AMOUNT_OLD = new BigDecimal("543.21");
-        public static final ExpenseCategory CATEGORY_OLD = ExpenseCategory.HOUSING;
-        public static final TransactionType TYPE_OLD = TransactionType.RECURRING;
-    }
     
     public static class BudgetTestDataConstants {
         public static final BigDecimal INCOME_AMOUNT = new BigDecimal("543.21");
@@ -56,7 +41,7 @@ public class TestData {
     }
 
     public static class ExpenseTestDataConstants {
-        public static final String NAME = "Test Expense";
+        public static final String NAME = "TEST EXPENSE";
         public static final BigDecimal AMOUNT = new BigDecimal("123.45");
         public static final ExpenseCategory CATEGORY_MISCELLANEOUS = ExpenseCategory.MISCELLANEOUS;
         public static final TransactionType TYPE_ONE_TIME = TransactionType.ONE_TIME;
@@ -69,8 +54,8 @@ public class TestData {
     }
 
     public static class IncomeTestDataConstants {
-        public static final String NAME = "Test Income";
-        public static final String SOURCE = "Test Source";
+        public static final String NAME = "TEST INCOME";
+        public static final String SOURCE = "TEST SOURCE";
         public static final BigDecimal AMOUNT = new BigDecimal("123.45");
         public static final TransactionType TYPE_ONE_TIME = TransactionType.ONE_TIME;
 

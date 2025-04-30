@@ -6,7 +6,6 @@ import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.income.exception.IncomeNotFoundException;
 import com.budgetmaster.income.model.Income;
 import com.budgetmaster.income.repository.IncomeRepository;
-import com.budgetmaster.utils.model.FinancialModelUtils;
 import com.budgetmaster.utils.service.ServiceUtils;
 
 import java.time.YearMonth;
@@ -26,7 +25,7 @@ public class IncomeService {
 	}
 	
 	public Income createIncome(IncomeRequest request) {
-		Income income = FinancialModelUtils.buildIncome(request);
+		Income income = Income.from(request);
 		return incomeRepository.saveAndFlush(income);
 	}
 	
@@ -49,7 +48,7 @@ public class IncomeService {
 	
 	public Income updateIncome(Long id, IncomeRequest request) {
 		Income income = getIncomeById(id);
-		FinancialModelUtils.modifyIncome(income, request);
+		income.updateFrom(request);
 		return incomeRepository.saveAndFlush(income);
 	}
 	

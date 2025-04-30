@@ -4,6 +4,8 @@ import com.budgetmaster.common.constants.database.ColumnNames;
 import com.budgetmaster.common.constants.database.TableNames;
 import com.budgetmaster.common.constants.date.DateFormats;
 import com.budgetmaster.common.enums.TransactionType;
+import com.budgetmaster.common.utils.DateUtils;
+import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.money.model.Money;
 
 import java.time.LocalDateTime;
@@ -66,6 +68,26 @@ public class Income {
 		this.money = money;
 		this.type = type;
 		this.month = month;
+	}
+
+	public static Income from(IncomeRequest request) {
+		return new Income(
+			request.getName().toUpperCase(),
+			request.getSource().toUpperCase(),
+			Money.of(request.getMoney().getAmount(), request.getMoney().getCurrency()),
+			request.getType(),
+			DateUtils.getValidYearMonth(request.getMonth())
+		);
+	}
+
+	public void updateFrom(IncomeRequest request) {
+		this.name = request.getName().toUpperCase();
+		this.source = request.getSource().toUpperCase();
+		this.money = Money.of(request.getMoney().getAmount(), request.getMoney().getCurrency());
+		this.type = request.getType();
+		if (request.getMonth() != null && !request.getMonth().isEmpty()) {
+			this.month = DateUtils.getValidYearMonth(request.getMonth());
+		}
 	}
 	
 	public Long getId() {

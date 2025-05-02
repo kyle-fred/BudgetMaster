@@ -6,8 +6,10 @@ import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
+import com.budgetmaster.income.model.Income;
 
 import java.time.YearMonth;
+import java.util.Currency;
 import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
@@ -43,6 +45,20 @@ public class BudgetService extends EntityLookupService {
 	public void deleteBudget(Long id) {
 		getBudgetById(id);
 		budgetRepository.deleteById(id);
+	}
+
+	public void updateBudgetWithIncome(Income income) {
+		Budget budget = getOrInitializeBudget(income.getMonth(), income.getMoney().getCurrency());
+		budget.addIncome(income.getMoney().getAmount());
+		budgetRepository.save(budget);
+	}
+
+	/**
+	 * Returns a budget for the given month. If no budget exists, a new one is created.
+	 */
+	private Budget getOrInitializeBudget(YearMonth month, Currency currency) {
+		return budgetRepository.findByMonth(month)
+			.orElseGet(() -> new Budget(month, currency));
 	}
 	
 	/**

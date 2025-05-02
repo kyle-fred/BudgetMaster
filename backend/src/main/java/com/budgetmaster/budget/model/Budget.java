@@ -61,10 +61,12 @@ public class Budget {
 	
 	protected Budget() {}
 	
-	public Budget(YearMonth month) {
+	public Budget(YearMonth month, Currency currency) {
 		this.month = month;
+		this.currency = currency;
 		this.totalIncome = BigDecimal.ZERO;
 		this.totalExpense = BigDecimal.ZERO;
+		this.savings = BigDecimal.ZERO;
 	}
 	
 	public Long getId() {
@@ -121,5 +123,9 @@ public class Budget {
 
 	public void setCurrency(Currency currency) {
 		this.currency = currency;
+	}
+
+	public void addIncome(BigDecimal income) {
+		this.totalIncome = this.totalIncome.add(income);
 	}
 }

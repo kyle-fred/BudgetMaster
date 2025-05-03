@@ -1,6 +1,6 @@
 package com.budgetmaster.income.service;
 
-import com.budgetmaster.budget.service.BudgetService;
+import com.budgetmaster.budget.service.logic.ApplyIncomeToBudget;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
@@ -20,17 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class IncomeService extends EntityLookupService {
 	
 	private final IncomeRepository incomeRepository;
-	private final BudgetService budgetService;
+	private final ApplyIncomeToBudget applyIncomeToBudget;
 	
-	public IncomeService(IncomeRepository incomeRepository, BudgetService budgetService) {
+	public IncomeService(IncomeRepository incomeRepository, ApplyIncomeToBudget applyIncomeToBudget) {
 		this.incomeRepository = incomeRepository;
-		this.budgetService = budgetService;
+		this.applyIncomeToBudget = applyIncomeToBudget;
 	}
 	
 	@Transactional
 	public Income createIncome(IncomeRequest request) {
 		Income income = incomeRepository.saveAndFlush(Income.from(request));
-		budgetService.updateBudgetWithIncome(income);
+		applyIncomeToBudget.apply(income);
 		return income;
 	}
 	

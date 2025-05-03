@@ -6,7 +6,7 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
-import com.budgetmaster.budget.service.BudgetService;
+import com.budgetmaster.budget.service.logic.ApplyIncomeToBudget;
 import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.income.dto.IncomeRequest;
@@ -32,8 +32,8 @@ import static org.mockito.Mockito.mockStatic;
 public class IncomeServiceTest {
 	// -- Dependencies --
 	private final IncomeRepository incomeRepository = mock(IncomeRepository.class);
-	private final BudgetService budgetService = mock(BudgetService.class);
-	private final IncomeService incomeService = new IncomeService(incomeRepository, budgetService);
+	private final ApplyIncomeToBudget applyIncomeToBudget = mock(ApplyIncomeToBudget.class);
+	private final IncomeService incomeService = new IncomeService(incomeRepository, applyIncomeToBudget);
 	
 	// -- Test Data --
 	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;

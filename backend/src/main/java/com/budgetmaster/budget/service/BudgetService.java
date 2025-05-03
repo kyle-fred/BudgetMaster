@@ -45,20 +45,6 @@ public class BudgetService extends EntityLookupService {
 		getBudgetById(id);
 		budgetRepository.deleteById(id);
 	}
-
-	public void updateBudgetWithIncome(Income income) {
-		Budget budget = findOrCreateBudgetFor(income);
-		budget.addIncome(income.getMoney().getAmount());
-		budgetRepository.save(budget);
-	}
-
-	/**
-	 * Returns the budget associated with the given income. If no budget exists, a new one is created.
-	 */
-	private Budget findOrCreateBudgetFor(Income income) {
-		return budgetRepository.findByMonth(income.getMonth())
-			.orElseGet(() -> Budget.of(income.getMonth(), income.getMoney().getCurrency()));
-	}
 	
 	/**
 	 * Creates a supplier for BudgetNotFoundException when entity is not found by ID.

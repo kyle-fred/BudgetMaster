@@ -29,10 +29,9 @@ public class IncomeService extends EntityLookupService {
 	
 	@Transactional
 	public Income createIncome(IncomeRequest request) {
-		Income income = Income.from(request);
-		Income savedIncome = incomeRepository.saveAndFlush(income);
-		budgetService.updateBudgetWithIncome(savedIncome);
-		return savedIncome;
+		Income income = incomeRepository.saveAndFlush(Income.from(request));
+		budgetService.updateBudgetWithIncome(income);
+		return income;
 	}
 	
 	public List<Income> getAllIncomesForMonth(String monthString) {

@@ -47,7 +47,7 @@ public class BudgetControllerTest {
 	@BeforeEach
 	void setUp() {
 		// Setup Budget
-		budget = new Budget(testYearMonth, testCurrency);
+		budget = Budget.of(testYearMonth, testCurrency);
 		budget.setId(testId);
 		budget.setTotalIncome(testIncome);
 		budget.setTotalExpense(testExpense);

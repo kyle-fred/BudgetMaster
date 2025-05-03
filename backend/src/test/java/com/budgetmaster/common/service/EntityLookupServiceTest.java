@@ -1,6 +1,7 @@
 package com.budgetmaster.common.service;
 
 import java.time.YearMonth;
+import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -34,7 +35,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	// -- Test Data --
 	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;
 	private static final YearMonth testMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
-	
+	private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
 	// -- Test Objects --
 	private Budget testBudget;
 	private Income testIncome;
@@ -43,7 +44,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	@BeforeEach
 	void setUp() {
 		entityLookupService = new EntityLookupService();
-		testBudget = new Budget(testMonth);
+		testBudget = Budget.of(testMonth, testCurrency);
 		testIncome = new Income();
 	}
 	

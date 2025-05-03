@@ -13,7 +13,6 @@ public class ColumnNames {
         public static final String TOTAL_INCOME = "TOTAL_INCOME";
         public static final String TOTAL_EXPENSE = "TOTAL_EXPENSE";
         public static final String SAVINGS = "SAVINGS";
-        public static final String COMMON_CURRENCY = "COMMON_CURRENCY";
     }
 
     public static class Income {

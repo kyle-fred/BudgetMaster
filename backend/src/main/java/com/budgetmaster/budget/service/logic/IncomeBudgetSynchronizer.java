@@ -17,7 +17,6 @@ public class IncomeBudgetSynchronizer {
         this.budgetRepository = budgetRepository;
     }
 
-	@Transactional
     public void apply(Income income) {
 		Budget budget = findOrCreateBudgetFor(income);
 		budget.addIncome(income.getMoney().getAmount());
@@ -26,13 +25,19 @@ public class IncomeBudgetSynchronizer {
 
 	@Transactional
     public void reapply(Income originalIncome, Income updatedIncome) {
-		Budget originalBudget = getOriginalBudget(originalIncome);
+		Budget originalBudget = getExistingBudgetFor(originalIncome);
 		originalBudget.subtractIncome(originalIncome.getMoney().getAmount());
 
 		Budget targetBudget = findOrCreateBudgetFor(updatedIncome);
 		targetBudget.addIncome(updatedIncome.getMoney().getAmount());
 		budgetRepository.save(targetBudget);
     }
+
+	public void retract(Income income) {
+		Budget budget = getExistingBudgetFor(income);
+		budget.subtractIncome(income.getMoney().getAmount());
+		budgetRepository.save(budget);
+	}
 
 	/**
 	 * Returns the budget associated with the given income. If no budget exists, a new one is created.
@@ -45,7 +50,7 @@ public class IncomeBudgetSynchronizer {
 	/**
 	 * Returns the budget associated with the given income. If no budget exists, an exception is thrown.
 	 */
-	private Budget getOriginalBudget(Income income) {
+	private Budget getExistingBudgetFor(Income income) {
 		return budgetRepository.findByMonth(income.getMonth())
 			.orElseThrow(() -> new BudgetNotFoundException("Income's original budget not found for month: " + income.getMonth()));
 	}

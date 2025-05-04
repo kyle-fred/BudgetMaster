@@ -66,7 +66,8 @@ public class IncomeService extends EntityLookupService {
 	
 	@Transactional
 	public void deleteIncome(Long id) {
-		getIncomeById(id);
+		Income income = getIncomeById(id);
+		incomeBudgetSynchronizer.retract(income);
 		incomeRepository.deleteById(id);
 	}
 	

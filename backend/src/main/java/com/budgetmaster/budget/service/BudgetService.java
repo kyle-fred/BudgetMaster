@@ -6,7 +6,6 @@ import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
-import com.budgetmaster.income.model.Income;
 
 import java.time.YearMonth;
 import java.util.function.Supplier;

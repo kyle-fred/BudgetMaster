@@ -145,4 +145,17 @@ public class Income {
  	public LocalDateTime getLastUpdatedAt() {
  		return lastUpdatedAt;
  	}
+
+	public Income deepCopy() {
+		Income copy = new Income();
+        copy.id = this.id;
+        copy.name = this.name;
+        copy.source = this.source;
+        copy.type = this.type;
+        copy.month = this.month;
+        copy.money = Money.of(this.money.getAmount(), this.money.getCurrency());
+        copy.createdAt = this.createdAt;
+        copy.lastUpdatedAt = this.lastUpdatedAt;
+        return copy;
+	}
 }

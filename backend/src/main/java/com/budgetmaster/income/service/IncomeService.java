@@ -1,5 +1,6 @@
 package com.budgetmaster.income.service;
 
+import com.budgetmaster.budget.service.logic.IncomeBudgetSynchronizer;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
@@ -19,14 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class IncomeService extends EntityLookupService {
 	
 	private final IncomeRepository incomeRepository;
+	private final IncomeBudgetSynchronizer incomeBudgetSynchronizer;
 	
-	public IncomeService(IncomeRepository incomeRepository) {
+	public IncomeService(IncomeRepository incomeRepository, IncomeBudgetSynchronizer incomeBudgetSynchronizer) {
 		this.incomeRepository = incomeRepository;
+		this.incomeBudgetSynchronizer = incomeBudgetSynchronizer;
 	}
+
 	
+	@Transactional
 	public Income createIncome(IncomeRequest request) {
-		Income income = Income.from(request);
-		return incomeRepository.saveAndFlush(income);
+		Income income = incomeRepository.saveAndFlush(Income.from(request));
+		incomeBudgetSynchronizer.apply(income);
+		return income;
 	}
 	
 	public List<Income> getAllIncomesForMonth(String monthString) {
@@ -46,15 +52,22 @@ public class IncomeService extends EntityLookupService {
 		);
 	}
 	
+	@Transactional
 	public Income updateIncome(Long id, IncomeRequest request) {
 		Income income = getIncomeById(id);
+		Income original = income.deepCopy();
+	
 		income.updateFrom(request);
-		return incomeRepository.saveAndFlush(income);
+		incomeRepository.saveAndFlush(income);
+	
+		incomeBudgetSynchronizer.reapply(original, income);
+		return income;
 	}
 	
 	@Transactional
 	public void deleteIncome(Long id) {
-		getIncomeById(id);
+		Income income = getIncomeById(id);
+		incomeBudgetSynchronizer.retract(income);
 		incomeRepository.deleteById(id);
 	}
 	

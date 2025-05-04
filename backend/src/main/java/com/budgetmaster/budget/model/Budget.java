@@ -39,11 +39,10 @@ public class Budget {
 	private BigDecimal totalExpense;
 	
 	@Column(name = ColumnNames.Budget.SAVINGS, 
-			precision = ColumnConstraints.Amount.PRECISION, scale = ColumnConstraints.Amount.SCALE, 
-			insertable = false, updatable = false)
+			precision = ColumnConstraints.Amount.PRECISION, scale = ColumnConstraints.Amount.SCALE)
 	private BigDecimal savings;
 
-	@Column(name = ColumnNames.Budget.COMMON_CURRENCY, nullable = false, length = 3)
+	@Column(name = ColumnNames.Transaction.CURRENCY, nullable = false, length = 3)
 	private Currency currency;
 	
 	@Column(name = ColumnNames.Common.MONTH, nullable = false, unique=true)
@@ -61,10 +60,14 @@ public class Budget {
 	
 	protected Budget() {}
 	
-	public Budget(YearMonth month) {
-		this.month = month;
-		this.totalIncome = BigDecimal.ZERO;
-		this.totalExpense = BigDecimal.ZERO;
+	public static Budget of(YearMonth month, Currency currency) {
+		Budget budget = new Budget();
+		budget.month = month;
+		budget.currency = currency;
+		budget.totalIncome = BigDecimal.ZERO;
+		budget.totalExpense = BigDecimal.ZERO;
+		budget.savings = BigDecimal.ZERO;
+		return budget;
 	}
 	
 	public Long getId() {
@@ -121,5 +124,19 @@ public class Budget {
 
 	public void setCurrency(Currency currency) {
 		this.currency = currency;
+	}
+
+	public void addIncome(BigDecimal income) {
+		this.totalIncome = this.totalIncome.add(income);
+		updateSavings();
+	}
+
+	public void subtractIncome(BigDecimal income) {
+		this.totalIncome = this.totalIncome.subtract(income);
+		updateSavings();
+	}
+
+	private void updateSavings() {
+		this.savings = this.totalIncome.subtract(this.totalExpense);
 	}
 }

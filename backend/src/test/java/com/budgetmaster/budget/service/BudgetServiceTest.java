@@ -44,12 +44,11 @@ public class BudgetServiceTest {
 	@BeforeEach
 	void setUp() {
 		// Setup Budget
-		testBudget = new Budget(testYearMonth);
+		testBudget = Budget.of(testYearMonth, testCurrency);
 		testBudget.setId(testId);
 		testBudget.setTotalIncome(testTotalIncome);
 		testBudget.setTotalExpense(testTotalExpense);
 		testBudget.setSavings(testSavings);
-		testBudget.setCurrency(testCurrency);
 	}
 	
 	// -- Get Budget Tests --

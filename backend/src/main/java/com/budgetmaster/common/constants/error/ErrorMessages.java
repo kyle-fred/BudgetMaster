@@ -12,6 +12,7 @@ public class ErrorMessages {
     public static class Budget {
         public static final String NOT_FOUND_BY_ID = "Budget not found with id: %s";
         public static final String NOT_FOUND_BY_MONTH = "Budget not found for month: %s";
+        public static final String NOT_FOUND_BY_ASSOCIATED_INCOME = "Income's original budget not found for month: %s";
     }
 
     public static class Enum {

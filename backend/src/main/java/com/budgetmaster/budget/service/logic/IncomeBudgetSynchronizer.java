@@ -3,6 +3,7 @@ package com.budgetmaster.budget.service.logic;
 import com.budgetmaster.budget.exception.BudgetNotFoundException;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
+import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.income.model.Income;
 
 import org.springframework.stereotype.Service;
@@ -52,6 +53,6 @@ public class IncomeBudgetSynchronizer {
 	 */
 	private Budget getExistingBudgetFor(Income income) {
 		return budgetRepository.findByMonth(income.getMonth())
-			.orElseThrow(() -> new BudgetNotFoundException("Income's original budget not found for month: " + income.getMonth()));
+			.orElseThrow(() -> new BudgetNotFoundException(String.format(ErrorMessages.Budget.NOT_FOUND_BY_ASSOCIATED_INCOME, income.getMonth())));
 	}
 }

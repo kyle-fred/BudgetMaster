@@ -20,9 +20,10 @@ public class TestData {
     }
 
     public static class MonthTestDataConstants {
-        // -- Months --
         public static final YearMonth MONTH_EXISTING = YearMonth.of(2000, 1);
         public static final YearMonth MONTH_NON_EXISTING = YearMonth.of(2000, 2);
+
+        // -- String --
         public static final String MONTH_STRING_EXISTING = "2000-01";
         public static final String MONTH_STRING_NON_EXISTING = "2000-02";
         public static final String MONTH_INVALID = "2000-13";
@@ -50,7 +51,6 @@ public class TestData {
         public static final String NAME_UPDATED = "TEST EXPENSE UPDATED";
         public static final ExpenseCategory CATEGORY_UPDATED = ExpenseCategory.HOUSING;
         public static final TransactionType TYPE_UPDATED = TransactionType.RECURRING;
-        public static final String MONTH_UPDATED = "2000-02";
     }
 
     public static class IncomeTestDataConstants {
@@ -63,7 +63,6 @@ public class TestData {
         public static final String NAME_UPDATED = "TEST INCOME UPDATED";
         public static final String SOURCE_UPDATED = "TEST SOURCE UPDATED";
         public static final TransactionType TYPE_UPDATED = TransactionType.RECURRING;
-        public static final String MONTH_UPDATED = "2000-02";
     }
 
     public static class MoneyDtoTestDataConstants {

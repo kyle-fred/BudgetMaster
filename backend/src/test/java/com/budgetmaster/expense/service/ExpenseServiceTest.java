@@ -156,7 +156,7 @@ public class ExpenseServiceTest {
 		updatedExpenseRequest.setMoney(moneyRequest);
 		updatedExpenseRequest.setCategory(TestData.ExpenseTestDataConstants.CATEGORY_UPDATED);
 		updatedExpenseRequest.setType(TestData.ExpenseTestDataConstants.TYPE_UPDATED);
-		updatedExpenseRequest.setMonth(TestData.ExpenseTestDataConstants.MONTH_UPDATED);
+		updatedExpenseRequest.setMonth(TestData.MonthTestDataConstants.MONTH_STRING_NON_EXISTING);
 
 		Expense updatedExpense = expenseService.updateExpense(testId, updatedExpenseRequest);
 

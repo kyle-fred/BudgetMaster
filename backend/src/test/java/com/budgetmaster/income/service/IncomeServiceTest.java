@@ -27,6 +27,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 
 
 public class IncomeServiceTest {
@@ -83,6 +84,8 @@ public class IncomeServiceTest {
 	void createIncome_ValidRequest_ReturnsCreated() {
 		Mockito.when(incomeRepository.saveAndFlush(Mockito.any(Income.class)))
 				.thenReturn(testIncome);
+		Mockito.doNothing().when(incomeBudgetSynchronizer)
+				.apply(Mockito.any(Income.class));
 		
 		Income savedIncome = incomeService.createIncome(incomeRequest);
 
@@ -94,6 +97,8 @@ public class IncomeServiceTest {
 		assertEquals(testType, savedIncome.getType());
 		assertEquals(testYearMonth, savedIncome.getMonth());
 
+		Mockito.verify(incomeBudgetSynchronizer, Mockito.times(1))
+				.apply(testIncome);
 		Mockito.verify(incomeRepository, Mockito.times(1))
 				.saveAndFlush(Mockito.any(Income.class));
 	}
@@ -149,6 +154,8 @@ public class IncomeServiceTest {
 	void updateIncome_ValidRequest_ReturnsOk() {
 		Mockito.when(incomeRepository.findById(testId))
 				.thenReturn(Optional.of(testIncome));
+		Mockito.doNothing().when(incomeBudgetSynchronizer)
+				.reapply(Mockito.any(Income.class), Mockito.any(Income.class));
         
 		Mockito.when(incomeRepository.saveAndFlush(Mockito.any(Income.class)))
 				.thenReturn(testIncome);
@@ -158,7 +165,7 @@ public class IncomeServiceTest {
         updatedIncomeRequest.setSource(TestData.IncomeTestDataConstants.SOURCE_UPDATED);
         updatedIncomeRequest.setMoney(moneyRequest);
         updatedIncomeRequest.setType(TestData.IncomeTestDataConstants.TYPE_UPDATED);
-        updatedIncomeRequest.setMonth(TestData.IncomeTestDataConstants.MONTH_UPDATED);
+        updatedIncomeRequest.setMonth(TestData.MonthTestDataConstants.MONTH_STRING_NON_EXISTING);
 
 		Income updatedIncome = incomeService.updateIncome(testId, updatedIncomeRequest);
 
@@ -170,6 +177,8 @@ public class IncomeServiceTest {
 		assertEquals(updatedIncomeRequest.getType(), updatedIncome.getType());
 		assertEquals(updatedIncomeRequest.getMonth(), updatedIncome.getMonth().toString());
 		
+		Mockito.verify(incomeBudgetSynchronizer, Mockito.times(1))
+				.reapply(Mockito.any(Income.class), Mockito.any(Income.class));
 		Mockito.verify(incomeRepository, Mockito.times(1))
 				.saveAndFlush(Mockito.any(Income.class));
 	}
@@ -180,12 +189,16 @@ public class IncomeServiceTest {
 	void deleteIncome_ValidId_ReturnsNoContent() {
 		Mockito.when(incomeRepository.findById(testId))
 				.thenReturn(Optional.of(testIncome));
+		Mockito.doNothing().when(incomeBudgetSynchronizer)
+				.retract(Mockito.any(Income.class));
 		Mockito.doNothing()
 				.when(incomeRepository)
 				.deleteById(testId);
 		
 		incomeService.deleteIncome(testId);
 
+		Mockito.verify(incomeBudgetSynchronizer, Mockito.times(1))
+				.retract(Mockito.any(Income.class));
 		Mockito.verify(incomeRepository, Mockito.times(1))
 				.findById(testId);
 		Mockito.verify(incomeRepository, Mockito.times(1))
@@ -207,6 +220,8 @@ public class IncomeServiceTest {
 		);
 		
 		assertEquals(errorMessage, exception.getMessage());
+		Mockito.verify(incomeBudgetSynchronizer, Mockito.never())
+				.apply(Mockito.any(Income.class));
 	}
 	
 	@Test
@@ -249,6 +264,8 @@ public class IncomeServiceTest {
 		String errorMessage = String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, testIdNonExistent);
 		Mockito.when(incomeRepository.findById(testIdNonExistent))
 				.thenReturn(Optional.empty());
+		Mockito.doNothing().when(incomeBudgetSynchronizer)
+				.reapply(Mockito.any(Income.class), Mockito.any(Income.class));
 
 		IncomeNotFoundException exception = assertThrows(
 				IncomeNotFoundException.class,
@@ -257,6 +274,8 @@ public class IncomeServiceTest {
 		);
 		
 		assertEquals(errorMessage, exception.getMessage());
+		Mockito.verify(incomeBudgetSynchronizer, Mockito.never())
+				.reapply(Mockito.any(Income.class), Mockito.any(Income.class));
 		Mockito.verify(incomeRepository, Mockito.never())
 				.saveAndFlush(Mockito.any(Income.class));
 	}
@@ -266,6 +285,8 @@ public class IncomeServiceTest {
 		String errorMessage = String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, testIdNonExistent);
 		Mockito.when(incomeRepository.findById(testIdNonExistent))
 				.thenReturn(Optional.empty());
+		Mockito.doNothing().when(incomeBudgetSynchronizer)
+				.retract(Mockito.any(Income.class));
 		
 		IncomeNotFoundException exception = assertThrows(
 				IncomeNotFoundException.class,
@@ -274,7 +295,63 @@ public class IncomeServiceTest {
 		);
 		
 		assertEquals(errorMessage, exception.getMessage());
+		Mockito.verify(incomeBudgetSynchronizer, Mockito.never())
+				.retract(Mockito.any(Income.class));
 		Mockito.verify(incomeRepository, Mockito.never())
 				.deleteById(Mockito.anyLong());
+	}
+
+	// -- Transaction Control Tests --
+
+	@Test
+	void createIncome_BudgetSyncFails_RollsBackIncomeCreation() {
+		Mockito.when(incomeRepository.saveAndFlush(Mockito.any(Income.class)))
+				.thenReturn(testIncome);
+		Mockito.doThrow(new DataIntegrityViolationException("Database error"))
+				.when(incomeBudgetSynchronizer)
+				.apply(Mockito.any(Income.class));
+
+		assertThrows(DataIntegrityViolationException.class, () ->
+			incomeService.createIncome(incomeRequest)
+		);
+
+		Mockito.verify(incomeRepository).saveAndFlush(Mockito.any(Income.class));
+		Mockito.verify(incomeBudgetSynchronizer).apply(testIncome);
+	}
+
+	@Test
+	void updateIncome_BudgetSyncFails_RollsBackIncomeUpdate() {
+		Mockito.when(incomeRepository.findById(testId))
+				.thenReturn(Optional.of(testIncome));
+		Mockito.when(incomeRepository.saveAndFlush(Mockito.any(Income.class)))
+				.thenReturn(testIncome);
+		Mockito.doThrow(new DataIntegrityViolationException("Database error"))
+				.when(incomeBudgetSynchronizer)
+				.reapply(Mockito.any(Income.class), Mockito.any(Income.class));
+
+		assertThrows(DataIntegrityViolationException.class, () ->
+			incomeService.updateIncome(testId, incomeRequest)
+		);
+
+		Mockito.verify(incomeRepository).findById(testId);
+		Mockito.verify(incomeRepository).saveAndFlush(Mockito.any(Income.class));
+		Mockito.verify(incomeBudgetSynchronizer).reapply(Mockito.any(Income.class), Mockito.any(Income.class));
+	}
+
+	@Test
+	void deleteIncome_BudgetSyncFails_RollsBackIncomeDeletion() {
+		Mockito.when(incomeRepository.findById(testId))
+				.thenReturn(Optional.of(testIncome));
+		Mockito.doThrow(new DataIntegrityViolationException("Database error"))
+				.when(incomeBudgetSynchronizer)
+				.retract(Mockito.any(Income.class));
+
+		assertThrows(DataIntegrityViolationException.class, () ->
+			incomeService.deleteIncome(testId)
+		);
+
+		Mockito.verify(incomeRepository).findById(testId);
+		Mockito.verify(incomeBudgetSynchronizer).retract(testIncome);
+		Mockito.verify(incomeRepository, never()).deleteById(testId);
 	}
 }

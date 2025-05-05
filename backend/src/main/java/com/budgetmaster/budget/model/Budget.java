@@ -136,6 +136,16 @@ public class Budget {
 		updateSavings();
 	}
 
+	public void addExpense(BigDecimal expense) {
+		this.totalExpense = this.totalExpense.add(expense);
+		updateSavings();
+	}
+
+	public void subtractExpense(BigDecimal expense) {
+		this.totalExpense = this.totalExpense.subtract(expense);
+		updateSavings();
+	}
+
 	private void updateSavings() {
 		this.savings = this.totalIncome.subtract(this.totalExpense);
 	}

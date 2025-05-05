@@ -6,6 +6,7 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
+import com.budgetmaster.budget.service.logic.ExpenseBudgetSynchronizer;
 import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.expense.dto.ExpenseRequest;
@@ -31,7 +32,8 @@ import static org.mockito.Mockito.mockStatic;
 public class ExpenseServiceTest {
 	// -- Dependencies --
 	private final ExpenseRepository expenseRepository = mock(ExpenseRepository.class);
-	private final ExpenseService expenseService = new ExpenseService(expenseRepository);
+	private final ExpenseBudgetSynchronizer expenseBudgetSynchronizer = mock(ExpenseBudgetSynchronizer.class);
+	private final ExpenseService expenseService = new ExpenseService(expenseRepository, expenseBudgetSynchronizer);
 	
 	// -- Test Data --
 	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;

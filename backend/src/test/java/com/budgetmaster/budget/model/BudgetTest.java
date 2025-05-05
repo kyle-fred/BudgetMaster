@@ -16,7 +16,7 @@ public class BudgetTest {
     private static final YearMonth testMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
     private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
     private static final BigDecimal testIncome = TestData.IncomeTestDataConstants.AMOUNT;
-
+    private static final BigDecimal testExpense = TestData.ExpenseTestDataConstants.AMOUNT;
     // -- Test Objects --
     private Budget testBudget;
 
@@ -50,5 +50,17 @@ public class BudgetTest {
         testBudget.subtractIncome(testIncome);
         assertEquals(testIncome.negate(), testBudget.getTotalIncome());
         assertEquals(testIncome.negate(), testBudget.getSavings());
+    }
+
+    @Test
+    void testAddExpense_WithValidAmount_IncreasesTotalExpense() {
+        testBudget.addExpense(testExpense);
+        assertEquals(testExpense, testBudget.getTotalExpense());
+    }
+
+    @Test
+    void testSubtractExpense_WithValidAmount_DecreasesTotalExpense() {
+        testBudget.subtractExpense(testExpense);
+        assertEquals(testExpense.negate(), testBudget.getTotalExpense());
     }
 }

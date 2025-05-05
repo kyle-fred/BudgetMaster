@@ -1,0 +1,193 @@
+package com.budgetmaster.budget.service.logic;
+
+import java.math.BigDecimal;
+import java.time.YearMonth;
+import java.util.Currency;
+import java.util.Optional;
+
+import com.budgetmaster.budget.exception.BudgetNotFoundException;
+import com.budgetmaster.budget.model.Budget;
+import com.budgetmaster.budget.repository.BudgetRepository;
+import com.budgetmaster.common.enums.TransactionType;
+import com.budgetmaster.expense.enums.ExpenseCategory;
+import com.budgetmaster.expense.model.Expense;
+import com.budgetmaster.money.model.Money;
+import com.budgetmaster.test.constants.TestData;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+public class ExpenseBudgetSynchronizerTest {
+        // -- Dependencies --
+        private final BudgetRepository budgetRepository = mock(BudgetRepository.class);
+        private final ExpenseBudgetSynchronizer expenseBudgetSynchronizer = new ExpenseBudgetSynchronizer(budgetRepository);
+    
+        // -- Test Data --
+        private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;
+        private static final String testName = TestData.ExpenseTestDataConstants.NAME;
+        private static final BigDecimal testAmount = TestData.MoneyDtoTestDataConstants.AMOUNT;
+        private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
+        private static final ExpenseCategory testCategory = TestData.ExpenseTestDataConstants.CATEGORY_MISCELLANEOUS;
+        private static final TransactionType testType = TestData.ExpenseTestDataConstants.TYPE_ONE_TIME;
+        private static final YearMonth testMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
+        private static final YearMonth testMonthUpdated = TestData.MonthTestDataConstants.MONTH_NON_EXISTING;
+    
+        // -- Test Objects --
+        private Expense testExpense;
+        private Budget testBudget;
+    
+        @BeforeEach
+        void setUp() {
+            // Setup Expense
+            testExpense = new Expense();
+            testExpense.setId(testId);
+            testExpense.setName(testName);
+            testExpense.setCategory(testCategory);
+            testExpense.setMoney(Money.of(testAmount, testCurrency));
+            testExpense.setType(testType);
+            testExpense.setMonth(testMonth);
+    
+            // Setup Budget
+            testBudget = Budget.of(testMonth, testCurrency);
+            testBudget.setId(testId);
+        }
+    
+        // -- Apply Tests --
+    
+        @Test
+        void apply_ExistingBudget_UpdatesBudget() {
+            when(budgetRepository.findByMonth(testMonth))
+                .thenReturn(Optional.of(testBudget));
+            when(budgetRepository.save(any(Budget.class)))
+                .thenReturn(testBudget);
+    
+            expenseBudgetSynchronizer.apply(testExpense);
+    
+            verify(budgetRepository).findByMonth(testMonth);
+            verify(budgetRepository).save(testBudget);
+            assertEquals(testAmount, testBudget.getTotalExpense());
+            assertEquals(testAmount.negate(), testBudget.getSavings());
+        }
+    
+        @Test
+        void apply_NoExistingBudget_CreatesNewBudget() {
+            when(budgetRepository.findByMonth(testMonth))
+                .thenReturn(Optional.empty());
+            when(budgetRepository.save(any(Budget.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+    
+            expenseBudgetSynchronizer.apply(testExpense);
+    
+            ArgumentCaptor<Budget> captor = ArgumentCaptor.forClass(Budget.class);
+            verify(budgetRepository).save(captor.capture());
+            Budget budget = captor.getValue();
+    
+            verify(budgetRepository).findByMonth(testMonth);
+            assertEquals(testAmount, budget.getTotalExpense());
+            assertEquals(testAmount.negate(), budget.getSavings());
+        }
+    
+        // -- Reapply Tests --
+    
+        @Test
+        void reapply_SameMonth_UpdatesBudget() {
+            testBudget.addExpense(testExpense.getMoney().getAmount());
+            
+            Expense updatedExpense = testExpense.deepCopy();
+            updatedExpense.setMoney(Money.of(testAmount.multiply(BigDecimal.valueOf(2)), testCurrency));
+    
+            when(budgetRepository.findByMonth(testMonth))
+                .thenReturn(Optional.of(testBudget));
+            when(budgetRepository.save(any(Budget.class)))
+                .thenReturn(testBudget);
+    
+            expenseBudgetSynchronizer.reapply(testExpense, updatedExpense);
+    
+            verify(budgetRepository, times(2)).findByMonth(testMonth);
+            verify(budgetRepository).save(testBudget);
+            assertEquals(testAmount.multiply(BigDecimal.valueOf(2)), testBudget.getTotalExpense());
+            assertEquals(testAmount.multiply(BigDecimal.valueOf(2)).negate(), testBudget.getSavings());
+        }
+    
+        @Test
+        void reapply_DifferentMonth_UpdatesBothBudgets() {
+            testBudget.addExpense(testExpense.getMoney().getAmount());
+            
+            Expense updatedExpense = testExpense.deepCopy();
+            updatedExpense.setMonth(testMonthUpdated);
+    
+            Budget newBudget = Budget.of(testMonthUpdated, testCurrency);
+            newBudget.setId(testId + 1);
+    
+            when(budgetRepository.findByMonth(testMonth))
+                .thenReturn(Optional.of(testBudget));
+            when(budgetRepository.findByMonth(testMonthUpdated))
+                .thenReturn(Optional.of(newBudget));
+            when(budgetRepository.save(any(Budget.class)))
+                .thenReturn(testBudget)
+                .thenReturn(newBudget);
+    
+            expenseBudgetSynchronizer.reapply(testExpense, updatedExpense);
+    
+            verify(budgetRepository).findByMonth(testMonth);
+            verify(budgetRepository).findByMonth(testMonthUpdated);
+            verify(budgetRepository).save(newBudget);
+            assertEquals(0, testBudget.getTotalExpense().compareTo(BigDecimal.ZERO));
+            assertEquals(0, testBudget.getSavings().compareTo(BigDecimal.ZERO));
+            assertEquals(testAmount, newBudget.getTotalExpense());
+            assertEquals(testAmount.negate(), newBudget.getSavings());
+        }
+    
+        @Test
+        void reapply_OriginalBudgetNotFound_ThrowsException() {
+            Expense updatedExpense = testExpense.deepCopy();
+            updatedExpense.setMonth(testMonthUpdated);
+    
+            when(budgetRepository.findByMonth(testMonth))
+                .thenReturn(Optional.empty());
+    
+            assertThrows(BudgetNotFoundException.class, () -> 
+                expenseBudgetSynchronizer.reapply(testExpense, updatedExpense)
+            );
+    
+            verify(budgetRepository).findByMonth(testMonth);
+            verify(budgetRepository, never()).save(any(Budget.class));
+        }
+    
+        // -- Retract Tests --
+    
+        @Test
+        void retract_ExistingBudget_UpdatesBudget() {
+            testBudget.setTotalExpense(testAmount);
+            testBudget.setSavings(testAmount.negate());
+    
+            when(budgetRepository.findByMonth(testMonth))
+                .thenReturn(Optional.of(testBudget));
+            when(budgetRepository.save(any(Budget.class)))
+                .thenReturn(testBudget);
+    
+            expenseBudgetSynchronizer.retract(testExpense);
+    
+            verify(budgetRepository).findByMonth(testMonth);
+            verify(budgetRepository).save(testBudget);
+            assertEquals(0, testBudget.getTotalExpense().compareTo(BigDecimal.ZERO));
+            assertEquals(0, testBudget.getSavings().compareTo(BigDecimal.ZERO));
+        }
+    
+        @Test
+        void retract_BudgetNotFound_ThrowsException() {
+            when(budgetRepository.findByMonth(testMonth))
+                .thenReturn(Optional.empty());
+    
+            assertThrows(BudgetNotFoundException.class, () -> 
+                expenseBudgetSynchronizer.retract(testExpense)
+            );
+    
+            verify(budgetRepository).findByMonth(testMonth);
+            verify(budgetRepository, never()).save(any(Budget.class));
+        }
+}

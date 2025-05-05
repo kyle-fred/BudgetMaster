@@ -71,4 +71,18 @@ public class ExpenseTest {
 		assertEquals(testType, expense.getType());
 		assertEquals(testYearMonth, expense.getMonth());
 	}
+
+	@Test
+	void deepCopy_ReturnsNewExpenseWithSameValues() {
+		Expense expense = Expense.from(expenseRequest);
+		Expense copy = expense.deepCopy();
+
+		assertNotSame(expense, copy);
+		assertEquals(expense.getName(), copy.getName());
+		assertEquals(expense.getMoney().getAmount(), copy.getMoney().getAmount());
+		assertEquals(expense.getMoney().getCurrency(), copy.getMoney().getCurrency());
+		assertEquals(expense.getCategory(), copy.getCategory());
+		assertEquals(expense.getType(), copy.getType());
+		assertEquals(expense.getMonth(), copy.getMonth());
+	}
 }

@@ -84,6 +84,8 @@ public class ExpenseServiceTest {
 	void createExpense_ValidRequest_ReturnsCreated() {
 		Mockito.when(expenseRepository.saveAndFlush(Mockito.any(Expense.class)))
 				.thenReturn(testExpense);
+		Mockito.doNothing().when(expenseBudgetSynchronizer)
+				.apply(Mockito.any(Expense.class));
 		
 		Expense savedExpense = expenseService.createExpense(expenseRequest);
 
@@ -95,6 +97,8 @@ public class ExpenseServiceTest {
 		assertEquals(testType, savedExpense.getType());
 		assertEquals(testYearMonth, savedExpense.getMonth());
 
+		Mockito.verify(expenseBudgetSynchronizer, Mockito.times(1))
+				.apply(Mockito.any(Expense.class));
 		Mockito.verify(expenseRepository, Mockito.times(1))
 				.saveAndFlush(Mockito.any(Expense.class));
 	}
@@ -150,6 +154,8 @@ public class ExpenseServiceTest {
 	void updateExpense_ValidRequest_ReturnsOk() {
 		Mockito.when(expenseRepository.findById(testId))
 				.thenReturn(Optional.of(testExpense));
+		Mockito.doNothing().when(expenseBudgetSynchronizer)
+				.reapply(Mockito.any(Expense.class), Mockito.any(Expense.class));
 		Mockito.when(expenseRepository.saveAndFlush(Mockito.any(Expense.class)))
 				.thenReturn(testExpense);
 
@@ -170,6 +176,8 @@ public class ExpenseServiceTest {
 		assertEquals(updatedExpenseRequest.getType(), updatedExpense.getType());
 		assertEquals(updatedExpenseRequest.getMonth(), updatedExpense.getMonth().toString());
 		
+		Mockito.verify(expenseBudgetSynchronizer, Mockito.times(1))
+				.reapply(Mockito.any(Expense.class), Mockito.any(Expense.class));
 		Mockito.verify(expenseRepository, Mockito.times(1))
 				.saveAndFlush(Mockito.any(Expense.class));
 	}
@@ -180,12 +188,16 @@ public class ExpenseServiceTest {
 	void deleteExpense_ValidId_ReturnsNoContent() {
 		Mockito.when(expenseRepository.findById(testId))
 				.thenReturn(Optional.of(testExpense));
+		Mockito.doNothing().when(expenseBudgetSynchronizer)
+				.retract(Mockito.any(Expense.class));
 		Mockito.doNothing()
 				.when(expenseRepository)
 				.deleteById(testId);
 		
 		expenseService.deleteExpense(testId);
 
+		Mockito.verify(expenseBudgetSynchronizer, Mockito.times(1))
+				.retract(Mockito.any(Expense.class));
 		Mockito.verify(expenseRepository, Mockito.times(1))
 				.findById(testId);
 		Mockito.verify(expenseRepository, Mockito.times(1))
@@ -274,6 +286,8 @@ public class ExpenseServiceTest {
 		);
 		
 		assertEquals(errorMessage, exception.getMessage());
+		Mockito.verify(expenseBudgetSynchronizer, Mockito.never())
+				.retract(Mockito.any(Expense.class));
 		Mockito.verify(expenseRepository, Mockito.never())
 				.deleteById(Mockito.anyLong());
 	}

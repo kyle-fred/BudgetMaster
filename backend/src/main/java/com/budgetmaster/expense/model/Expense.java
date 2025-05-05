@@ -147,4 +147,17 @@ public class Expense {
   	public LocalDateTime getLastUpdatedAt() {
   		return lastUpdatedAt;
   	}
+
+	public Expense deepCopy() {
+		Expense copy = new Expense();
+		copy.id = this.id;
+		copy.name = this.name;
+		copy.money = this.money;
+		copy.category = this.category;
+		copy.type = this.type;
+		copy.month = this.month;
+		copy.createdAt = this.createdAt;
+		copy.lastUpdatedAt = this.lastUpdatedAt;
+		return copy;
+	}
 }

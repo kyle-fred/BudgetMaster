@@ -1,5 +1,6 @@
 package com.budgetmaster.expense.service;
 
+import com.budgetmaster.budget.service.logic.ExpenseBudgetSynchronizer;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
@@ -19,14 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class ExpenseService extends EntityLookupService {
 	
 	private final ExpenseRepository expenseRepository;
+	private final ExpenseBudgetSynchronizer expenseBudgetSynchronizer;
 	
-	public ExpenseService(ExpenseRepository expenseRepository) {
+	public ExpenseService(ExpenseRepository expenseRepository, ExpenseBudgetSynchronizer expenseBudgetSynchronizer) {
 		this.expenseRepository = expenseRepository;
+		this.expenseBudgetSynchronizer = expenseBudgetSynchronizer;
 	}
 	
 	public Expense createExpense(ExpenseRequest request) {
-		Expense expense = Expense.from(request);
-		return expenseRepository.saveAndFlush(expense);
+		Expense expense = expenseRepository.saveAndFlush(Expense.from(request));
+		expenseBudgetSynchronizer.apply(expense);
+		return expense;
 	}
 	
 	public List<Expense> getAllExpensesForMonth(String monthString) {
@@ -46,15 +50,22 @@ public class ExpenseService extends EntityLookupService {
 		);
  	}
 	
+	@Transactional
 	public Expense updateExpense(Long id, ExpenseRequest request) {
  		Expense expense = getExpenseById(id);
+		Expense original = expense.deepCopy();
+
 		expense.updateFrom(request);
-		return expenseRepository.saveAndFlush(expense);
+		expenseRepository.saveAndFlush(expense);
+
+		expenseBudgetSynchronizer.reapply(original, expense);
+		return expense;
 	}
 
 	@Transactional
 	public void deleteExpense(Long id) {
-		getExpenseById(id);
+		Expense expense = getExpenseById(id);
+		expenseBudgetSynchronizer.retract(expense);
 		expenseRepository.deleteById(id);
 	}
 
@@ -63,7 +74,7 @@ public class ExpenseService extends EntityLookupService {
 	 */
 	private Supplier<ExpenseNotFoundException> createIdNotFoundException(Long id) {
 		return () -> new ExpenseNotFoundException(String.format(ErrorMessages.Expense.NOT_FOUND_BY_ID, id));
-		}
+	}
 
 	/**
 	 * Creates a supplier for ExpenseNotFoundException when no entities are found for a given month value.

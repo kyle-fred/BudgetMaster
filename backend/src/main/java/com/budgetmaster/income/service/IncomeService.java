@@ -26,7 +26,6 @@ public class IncomeService extends EntityLookupService {
 		this.incomeRepository = incomeRepository;
 		this.incomeBudgetSynchronizer = incomeBudgetSynchronizer;
 	}
-
 	
 	@Transactional
 	public Income createIncome(IncomeRequest request) {

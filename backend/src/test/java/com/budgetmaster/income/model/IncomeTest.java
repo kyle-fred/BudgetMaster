@@ -70,4 +70,18 @@ public class IncomeTest {
 		assertEquals(testType, income.getType());
 		assertEquals(testYearMonth, income.getMonth());
 	}
+
+	@Test
+	void deepCopy_ReturnsNewIncomeWithSameValues() {
+		Income income = Income.from(incomeRequest);
+		Income copy = income.deepCopy();
+
+		assertNotSame(income, copy);
+		assertEquals(income.getName(), copy.getName());
+		assertEquals(income.getSource(), copy.getSource());
+		assertEquals(income.getMoney().getAmount(), copy.getMoney().getAmount());
+		assertEquals(income.getMoney().getCurrency(), copy.getMoney().getCurrency());
+		assertEquals(income.getType(), copy.getType());
+		assertEquals(income.getMonth(), copy.getMonth());
+	}
 }

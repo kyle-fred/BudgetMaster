@@ -76,13 +76,8 @@ public class ExpenseControllerTest {
 		expenseRequest.setType(testType);
 		expenseRequest.setMonth(testMonth);
 	
-		expense = new Expense();
+		expense = Expense.of(testName, Money.of(testAmount, testCurrency), testCategory, testType, testYearMonth);
 		expense.setId(testId);
-		expense.setName(testName);
-		expense.setMoney(Money.of(testAmount, testCurrency));
-		expense.setCategory(testCategory);
-		expense.setType(testType);
-		expense.setMonth(testYearMonth);
 	}
 	
 	// -- Create Expense Tests --

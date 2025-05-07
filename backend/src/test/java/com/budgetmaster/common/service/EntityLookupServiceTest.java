@@ -36,8 +36,11 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;
 	private static final YearMonth testMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
 	private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
+
 	// -- Test Objects --
 	private Budget testBudget;
+	
+	@Mock
 	private Income testIncome;
 	
 	// -- Setup --
@@ -45,7 +48,6 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	void setUp() {
 		entityLookupService = new EntityLookupService();
 		testBudget = Budget.of(testMonth, testCurrency);
-		testIncome = new Income();
 	}
 	
 	// -- Find By Id Tests --

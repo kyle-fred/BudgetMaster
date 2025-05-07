@@ -69,13 +69,8 @@ public class ExpenseServiceTest {
 		expenseRequest.setMonth(testMonth);
 		
 		// Setup Expense
-		testExpense = new Expense();
+		testExpense = Expense.of(testName, Money.of(testAmount, testCurrency), testCategory, testType, testYearMonth);
 		testExpense.setId(testId);
-		testExpense.setName(testName);
-		testExpense.setMoney(Money.of(testAmount, testCurrency));
-		testExpense.setCategory(testCategory);
-		testExpense.setType(testType);
-		testExpense.setMonth(testYearMonth);
 	}
 	
 	// -- Create Expense Tests --

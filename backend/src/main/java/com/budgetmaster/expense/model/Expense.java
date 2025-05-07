@@ -62,18 +62,20 @@ public class Expense {
 	@Column(name = ColumnNames.Common.LAST_UPDATED_AT, nullable = false, insertable = false)
   	private LocalDateTime lastUpdatedAt;
 	
-	public Expense() {}
-	
-	public Expense(String name, Money money, ExpenseCategory category, TransactionType type, YearMonth month) {
-		this.name = name;
-		this.money = money;
-		this.category = category;
-		this.type = type;
-		this.month = month;
+	protected Expense() {}
+
+	public static Expense of(String name, Money money, ExpenseCategory category, TransactionType type, YearMonth month) {
+		Expense expense = new Expense();
+		expense.name = name;
+		expense.money = money;
+		expense.category = category;
+		expense.type = type;
+		expense.month = month;
+		return expense;
 	}
 
 	public static Expense from(ExpenseRequest request) {
-		return new Expense(
+		return of(
 			request.getName().toUpperCase(),
 			Money.of(request.getMoney().getAmount(), request.getMoney().getCurrency()),
 			request.getCategory(),

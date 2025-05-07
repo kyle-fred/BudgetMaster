@@ -8,6 +8,7 @@ import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.enums.ExpenseCategory;
 import com.budgetmaster.money.dto.MoneyRequest;
+import com.budgetmaster.money.model.Money;
 import com.budgetmaster.test.constants.TestData;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -84,5 +85,19 @@ public class ExpenseTest {
 		assertEquals(expense.getCategory(), copy.getCategory());
 		assertEquals(expense.getType(), copy.getType());
 		assertEquals(expense.getMonth(), copy.getMonth());
+	}
+
+	@Test
+	void of_WithValidParameters_CreatesExpenseWithCorrectValues() {
+		Money money = Money.of(testAmount, testCurrency);
+
+		Expense expense = Expense.of(testName, money, testCategory, testType, testYearMonth);
+
+		assertNotNull(expense);
+		assertEquals(testName, expense.getName());
+		assertEquals(money, expense.getMoney());
+		assertEquals(testCategory, expense.getCategory());
+		assertEquals(testType, expense.getType());
+		assertEquals(testYearMonth, expense.getMonth());
 	}
 }

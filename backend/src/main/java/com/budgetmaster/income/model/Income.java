@@ -60,18 +60,20 @@ public class Income {
 	@Column(name = ColumnNames.Common.LAST_UPDATED_AT, nullable = false, insertable = false)
  	private LocalDateTime lastUpdatedAt;
 	
-	public Income() {}
+	protected Income() {}
 	
-	public Income(String name, String source, Money money, TransactionType type, YearMonth month) {
-		this.name = name;
-		this.source = source;
-		this.money = money;
-		this.type = type;
-		this.month = month;
+	public static Income of(String name, String source, Money money, TransactionType type, YearMonth month) {
+		Income income = new Income();
+		income.name = name;
+		income.source = source;
+		income.money = money;
+		income.type = type;
+		income.month = month;
+		return income;
 	}
 
 	public static Income from(IncomeRequest request) {
-		return new Income(
+		return of(
 			request.getName().toUpperCase(),
 			request.getSource().toUpperCase(),
 			Money.of(request.getMoney().getAmount(), request.getMoney().getCurrency()),

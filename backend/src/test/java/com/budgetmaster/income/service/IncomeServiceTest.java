@@ -67,13 +67,8 @@ public class IncomeServiceTest {
 		incomeRequest.setMonth(testMonth);
 		
 		// Setup Income
-		testIncome = new Income();
+		testIncome = Income.of(testName, testSource, Money.of(testAmount, testCurrency), testType, testYearMonth);
 		testIncome.setId(testId);
-		testIncome.setName(testName);
-		testIncome.setSource(testSource);
-		testIncome.setMoney(Money.of(testAmount, testCurrency));
-		testIncome.setType(testType);
-		testIncome.setMonth(testYearMonth);
 	}
 	
 	// -- Create Income Tests --

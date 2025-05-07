@@ -7,6 +7,7 @@ import java.util.Currency;
 import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.money.dto.MoneyRequest;
+import com.budgetmaster.money.model.Money;
 import com.budgetmaster.test.constants.TestData;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -83,5 +84,19 @@ public class IncomeTest {
 		assertEquals(income.getMoney().getCurrency(), copy.getMoney().getCurrency());
 		assertEquals(income.getType(), copy.getType());
 		assertEquals(income.getMonth(), copy.getMonth());
+	}
+
+	@Test
+	void of_WithValidParameters_CreatesIncomeWithCorrectValues() {
+		Money money = Money.of(testAmount, testCurrency);
+		
+		Income income = Income.of(testName, testSource, money, testType, testYearMonth);
+
+		assertNotNull(income);
+		assertEquals(testName, income.getName());
+		assertEquals(testSource, income.getSource());
+		assertEquals(money, income.getMoney());
+		assertEquals(testType, income.getType());
+		assertEquals(testYearMonth, income.getMonth());
 	}
 }

@@ -42,13 +42,8 @@ public class IncomeBudgetSynchronizerTest {
     @BeforeEach
     void setUp() {
         // Setup Income
-        testIncome = new Income();
+        testIncome = Income.of(testName, testSource, Money.of(testAmount, testCurrency), testType, testMonth);
         testIncome.setId(testId);
-        testIncome.setName(testName);
-        testIncome.setSource(testSource);
-        testIncome.setMoney(Money.of(testAmount, testCurrency));
-        testIncome.setType(testType);
-        testIncome.setMonth(testMonth);
 
         // Setup Budget
         testBudget = Budget.of(testMonth, testCurrency);

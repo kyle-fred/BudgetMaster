@@ -43,13 +43,8 @@ public class ExpenseBudgetSynchronizerTest {
         @BeforeEach
         void setUp() {
             // Setup Expense
-            testExpense = new Expense();
+            testExpense = Expense.of(testName, Money.of(testAmount, testCurrency), testCategory, testType, testMonth);
             testExpense.setId(testId);
-            testExpense.setName(testName);
-            testExpense.setCategory(testCategory);
-            testExpense.setMoney(Money.of(testAmount, testCurrency));
-            testExpense.setType(testType);
-            testExpense.setMonth(testMonth);
     
             // Setup Budget
             testBudget = Budget.of(testMonth, testCurrency);

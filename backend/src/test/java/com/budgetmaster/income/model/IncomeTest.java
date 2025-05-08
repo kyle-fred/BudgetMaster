@@ -1,102 +1,81 @@
 package com.budgetmaster.income.model;
 
-import java.math.BigDecimal;
-import java.time.YearMonth;
-import java.util.Currency;
-
-import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.income.dto.IncomeRequest;
-import com.budgetmaster.money.dto.MoneyRequest;
-import com.budgetmaster.money.model.Money;
-import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.builder.IncomeTestBuilder;
+import com.budgetmaster.test.constants.IncomeTestConstants;
+import com.budgetmaster.test.factory.IncomeTestFactory;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IncomeTest {
-    	// -- Test Data --
-	private static final String testName = TestData.IncomeTestDataConstants.NAME;
-	private static final String testSource = TestData.IncomeTestDataConstants.SOURCE;
-	private static final BigDecimal testAmount = TestData.IncomeTestDataConstants.AMOUNT;
-	private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
-	private static final TransactionType testType = TestData.IncomeTestDataConstants.TYPE_ONE_TIME;
-	private static final String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
-	private static final YearMonth testYearMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
-	
-	// -- Test Objects --
-	private IncomeRequest incomeRequest;
-	private MoneyRequest moneyRequest;
-	
-	// -- Setup --
-	@BeforeEach
-	void setUp() {
-		// Setup MoneyRequest
-		moneyRequest = new MoneyRequest();
-		moneyRequest.setAmount(testAmount);
-		moneyRequest.setCurrency(testCurrency);
-		
-		// Setup IncomeRequest
-		incomeRequest = new IncomeRequest();
-		incomeRequest.setName(testName);
-		incomeRequest.setSource(testSource);
-		incomeRequest.setMoney(moneyRequest);
-		incomeRequest.setType(testType);
-		incomeRequest.setMonth(testMonth);
-	}
-	
-	@Test
-	void from_ValidRequest_ReturnsIncome() {
-		Income income = Income.from(incomeRequest);
-		
-		assertNotNull(income);
-		assertEquals(testName, income.getName());
-		assertEquals(testSource, income.getSource());
-		assertEquals(testAmount, income.getMoney().getAmount());
-		assertEquals(testCurrency, income.getMoney().getCurrency());
-		assertEquals(testType, income.getType());
-		assertEquals(testYearMonth, income.getMonth());
-	}
-	
-	@Test
-	void updateFrom_ValidRequest_UpdatesIncome() {
-		Income income = new Income();
-		income.updateFrom(incomeRequest);
-		
-		assertEquals(testName, income.getName());
-		assertEquals(testSource, income.getSource());
-		assertEquals(testAmount, income.getMoney().getAmount());
-		assertEquals(testCurrency, income.getMoney().getCurrency());
-		assertEquals(testType, income.getType());
-		assertEquals(testYearMonth, income.getMonth());
-	}
+    
+    @Test
+    void from_ValidRequest_ReturnsIncome() {
+        IncomeRequest incomeRequest = IncomeTestFactory.createDefaultIncomeRequest();
+        Income income = Income.from(incomeRequest);
+        
+        assertNotNull(income);
+        assertEquals(IncomeTestConstants.Default.NAME, income.getName());
+        assertEquals(IncomeTestConstants.Default.SOURCE, income.getSource());
+        assertEquals(IncomeTestConstants.Default.AMOUNT, income.getMoney().getAmount());
+        assertEquals(IncomeTestConstants.Default.CURRENCY, income.getMoney().getCurrency());
+        assertEquals(IncomeTestConstants.Default.TYPE, income.getType());
+        assertEquals(IncomeTestConstants.Default.YEAR_MONTH, income.getMonth());
+    }
+    
+    @Test
+    void updateFrom_ValidRequest_UpdatesIncome() {
+        Income income = new Income();
+        IncomeRequest incomeRequest = IncomeTestFactory.createDefaultIncomeRequest();
+        income.updateFrom(incomeRequest);
+        
+        assertEquals(IncomeTestConstants.Default.NAME, income.getName());
+        assertEquals(IncomeTestConstants.Default.SOURCE, income.getSource());
+        assertEquals(IncomeTestConstants.Default.AMOUNT, income.getMoney().getAmount());
+        assertEquals(IncomeTestConstants.Default.CURRENCY, income.getMoney().getCurrency());
+        assertEquals(IncomeTestConstants.Default.TYPE, income.getType());
+        assertEquals(IncomeTestConstants.Default.YEAR_MONTH, income.getMonth());
+    }
 
-	@Test
-	void deepCopy_ReturnsNewIncomeWithSameValues() {
-		Income income = Income.from(incomeRequest);
-		Income copy = income.deepCopy();
+    @Test
+    void deepCopy_ReturnsNewIncomeWithSameValues() {
+        Income income = IncomeTestFactory.createDefaultIncome();
+        Income copy = income.deepCopy();
 
-		assertNotSame(income, copy);
-		assertEquals(income.getName(), copy.getName());
-		assertEquals(income.getSource(), copy.getSource());
-		assertEquals(income.getMoney().getAmount(), copy.getMoney().getAmount());
-		assertEquals(income.getMoney().getCurrency(), copy.getMoney().getCurrency());
-		assertEquals(income.getType(), copy.getType());
-		assertEquals(income.getMonth(), copy.getMonth());
-	}
+        assertNotSame(income, copy);
+        assertEquals(income.getName(), copy.getName());
+        assertEquals(income.getSource(), copy.getSource());
+        assertEquals(income.getMoney().getAmount(), copy.getMoney().getAmount());
+        assertEquals(income.getMoney().getCurrency(), copy.getMoney().getCurrency());
+        assertEquals(income.getType(), copy.getType());
+        assertEquals(income.getMonth(), copy.getMonth());
+    }
 
-	@Test
-	void of_WithValidParameters_CreatesIncomeWithCorrectValues() {
-		Money money = Money.of(testAmount, testCurrency);
-		
-		Income income = Income.of(testName, testSource, money, testType, testYearMonth);
+    @Test
+    void of_WithValidParameters_CreatesIncomeWithCorrectValues() {
+        Income income = IncomeTestFactory.createDefaultIncome();
 
-		assertNotNull(income);
-		assertEquals(testName, income.getName());
-		assertEquals(testSource, income.getSource());
-		assertEquals(money, income.getMoney());
-		assertEquals(testType, income.getType());
-		assertEquals(testYearMonth, income.getMonth());
-	}
+        assertNotNull(income);
+        assertEquals(IncomeTestConstants.Default.NAME, income.getName());
+        assertEquals(IncomeTestConstants.Default.SOURCE, income.getSource());
+        assertEquals(IncomeTestConstants.Default.AMOUNT, income.getMoney().getAmount());
+        assertEquals(IncomeTestConstants.Default.CURRENCY, income.getMoney().getCurrency());
+        assertEquals(IncomeTestConstants.Default.TYPE, income.getType());
+        assertEquals(IncomeTestConstants.Default.YEAR_MONTH, income.getMonth());
+    }
+
+    @Test
+    void of_WithCustomParameters_CreatesIncomeWithCorrectValues() {
+        Income income = IncomeTestBuilder.updatedIncome().build();
+
+        assertNotNull(income);
+        assertEquals(IncomeTestConstants.Updated.NAME, income.getName());
+        assertEquals(IncomeTestConstants.Updated.SOURCE, income.getSource());
+        assertEquals(IncomeTestConstants.Updated.AMOUNT, income.getMoney().getAmount());
+        assertEquals(IncomeTestConstants.Default.CURRENCY, income.getMoney().getCurrency());
+        assertEquals(IncomeTestConstants.Updated.TYPE, income.getType());
+        assertEquals(IncomeTestConstants.Updated.YEAR_MONTH, income.getMonth());
+    }
 }

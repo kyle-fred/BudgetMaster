@@ -1,13 +1,11 @@
 package com.budgetmaster.income.dto;
 
-import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.Set;
 
-import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.money.dto.MoneyRequest;
-import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.builder.IncomeTestBuilder;
+import com.budgetmaster.test.constants.IncomeTestConstants;
 import com.budgetmaster.test.constants.TestMessages;
+import com.budgetmaster.test.factory.IncomeTestFactory;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -15,7 +13,6 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,18 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class IncomeRequestTest {    
     // -- Dependencies --
     private static Validator validator;
-    
-    // -- Test Objects --
-    private IncomeRequest incomeRequest;
-    private MoneyRequest moneyRequest;
-
-    // -- Test Data --
-    private String testName = TestData.IncomeTestDataConstants.NAME;
-    private String testSource = TestData.IncomeTestDataConstants.SOURCE;
-    private BigDecimal testAmount = TestData.IncomeTestDataConstants.AMOUNT;
-    private static final Currency GBP = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
-    private TransactionType testType = TestData.IncomeTestDataConstants.TYPE_ONE_TIME;
-    private String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
 
     // -- Setup --
     @BeforeAll
@@ -43,23 +28,9 @@ public class IncomeRequestTest {
         validator = factory.getValidator();
     }
 
-    @BeforeEach
-    void setUpRequest() {
-        incomeRequest = new IncomeRequest();
-        moneyRequest = new MoneyRequest();
-        moneyRequest.setAmount(testAmount);
-        moneyRequest.setCurrency(GBP);
-    }
-
-    // -- Validation Tests --
-
     @Test
     void testValidIncomeRequest() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(testMonth);
+        IncomeRequest incomeRequest = IncomeTestFactory.createDefaultIncomeRequest();
         
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertTrue(violations.isEmpty());
@@ -67,10 +38,9 @@ public class IncomeRequestTest {
 
     @Test
     void testNullName() {
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(testMonth);
+        IncomeRequest incomeRequest = IncomeTestBuilder.defaultIncome()
+            .withName(null)
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
@@ -79,10 +49,9 @@ public class IncomeRequestTest {
 
     @Test
     void testNullSource() {
-        incomeRequest.setName(testName);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(testMonth);
+        IncomeRequest incomeRequest = IncomeTestBuilder.defaultIncome()
+            .withSource(null)
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
@@ -91,10 +60,8 @@ public class IncomeRequestTest {
 
     @Test
     void testNullMoney() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(testMonth);
+        IncomeRequest incomeRequest = IncomeTestFactory.createDefaultIncomeRequest();
+        incomeRequest.setMoney(null);
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
@@ -103,10 +70,9 @@ public class IncomeRequestTest {
 
     @Test
     void testNullType() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setMonth(testMonth);
+        IncomeRequest incomeRequest = IncomeTestBuilder.defaultIncome()
+            .withType(null)
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
@@ -115,10 +81,9 @@ public class IncomeRequestTest {
 
     @Test
     void testNullMonth() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
+        IncomeRequest incomeRequest = IncomeTestBuilder.defaultIncome()
+            .withNullMonth(null)
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
@@ -127,11 +92,8 @@ public class IncomeRequestTest {
 
     @Test
     void testInvalidMonth() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(TestData.MonthTestDataConstants.MONTH_INVALID);
+        IncomeRequest incomeRequest = IncomeTestFactory.createDefaultIncomeRequest();
+        incomeRequest.setMonth(IncomeTestConstants.Invalid.YEAR_MONTH.toString());
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
@@ -140,11 +102,8 @@ public class IncomeRequestTest {
 
     @Test
     void testInvalidMonthFormat() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(TestData.MonthTestDataConstants.MONTH_INVALID_FORMAT);
+        IncomeRequest incomeRequest = IncomeTestFactory.createDefaultIncomeRequest();
+        incomeRequest.setMonth(IncomeTestConstants.Invalid.YEAR_MONTH_FORMAT);
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());

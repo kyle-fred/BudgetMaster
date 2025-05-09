@@ -4,7 +4,7 @@ import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.income.model.Income;
 import com.budgetmaster.money.dto.MoneyRequest;
 import com.budgetmaster.money.model.Money;
-import com.budgetmaster.test.constants.IncomeTestConstants;
+import com.budgetmaster.test.constants.TestData.IncomeTestConstants;
 
 public final class IncomeTestFactory {
     private IncomeTestFactory() {}
@@ -55,8 +55,6 @@ public final class IncomeTestFactory {
         moneyRequest.setCurrency(IncomeTestConstants.Default.CURRENCY);
 
         IncomeRequest request = new IncomeRequest();
-        request.setName(IncomeTestConstants.Invalid.NAME);
-        request.setSource(IncomeTestConstants.Invalid.SOURCE);
         request.setMoney(moneyRequest);
         request.setType(IncomeTestConstants.Default.TYPE);
         request.setMonth(IncomeTestConstants.Invalid.YEAR_MONTH.toString());

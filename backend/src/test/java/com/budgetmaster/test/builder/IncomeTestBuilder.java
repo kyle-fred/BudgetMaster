@@ -1,25 +1,25 @@
 package com.budgetmaster.test.builder;
 
-import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.income.model.Income;
-import com.budgetmaster.money.dto.MoneyRequest;
 import com.budgetmaster.money.model.Money;
-import com.budgetmaster.test.constants.IncomeTestConstants;
+import com.budgetmaster.test.constants.TestData.IncomeTestConstants;
 
-import java.math.BigDecimal;
 import java.time.YearMonth;
-import java.util.Currency;
 
 import com.budgetmaster.common.enums.TransactionType;
 
 public class IncomeTestBuilder {
+    private Long id = IncomeTestConstants.Default.ID;
     private String name = IncomeTestConstants.Default.NAME;
     private String source = IncomeTestConstants.Default.SOURCE;
-    private BigDecimal amount = IncomeTestConstants.Default.AMOUNT;
-    private Currency currency = IncomeTestConstants.Default.CURRENCY;
+    private Money money = MoneyTestBuilder.defaultIncome().build();
     private TransactionType type = IncomeTestConstants.Default.TYPE;
     private YearMonth month = IncomeTestConstants.Default.YEAR_MONTH;
-    private Long id = IncomeTestConstants.Default.ID;
+
+    public IncomeTestBuilder withId(Long id) {
+        this.id = id;
+        return this;
+    }
 
     public IncomeTestBuilder withName(String name) {
         this.name = name;
@@ -31,13 +31,8 @@ public class IncomeTestBuilder {
         return this;
     }
 
-    public IncomeTestBuilder withAmount(BigDecimal amount) {
-        this.amount = amount;
-        return this;
-    }
-
-    public IncomeTestBuilder withCurrency(Currency currency) {
-        this.currency = currency;
+    public IncomeTestBuilder withMoney(Money money) {
+        this.money = money;
         return this;
     }
 
@@ -51,46 +46,16 @@ public class IncomeTestBuilder {
         return this;
     }
 
-    // Overloaded methods to accomodate for testing invalid/null month's
-    public IncomeTestBuilder withMonth(String month) {
-        this.month = YearMonth.parse(month);
-        return this;
-    }
-
-    public IncomeTestBuilder withNullMonth(String month) {
-        this.month = null;
-        return this;
-    }
-
-    public IncomeTestBuilder withId(Long id) {
-        this.id = id;
-        return this;
-    }
-
     public Income build() {
         Income income = Income.of(
             name,
             source,
-            Money.of(amount, currency),
+            money,
             type,
             month
         );
         income.setId(id);
         return income;
-    }
-
-    public IncomeRequest buildRequest() {
-        MoneyRequest moneyRequest = new MoneyRequest();
-        moneyRequest.setAmount(amount);
-        moneyRequest.setCurrency(currency);
-
-        IncomeRequest request = new IncomeRequest();
-        request.setName(name);
-        request.setSource(source);
-        request.setMoney(moneyRequest);
-        request.setType(type);
-        request.setMonth(month != null ? month.toString() : null);
-        return request;
     }
 
     public static IncomeTestBuilder defaultIncome() {
@@ -101,16 +66,14 @@ public class IncomeTestBuilder {
         return new IncomeTestBuilder()
             .withName(IncomeTestConstants.Updated.NAME)
             .withSource(IncomeTestConstants.Updated.SOURCE)
-            .withAmount(IncomeTestConstants.Updated.AMOUNT)
+            .withMoney(MoneyTestBuilder.updatedMoney().build())
             .withType(IncomeTestConstants.Updated.TYPE)
             .withMonth(IncomeTestConstants.Updated.YEAR_MONTH);
     }
 
     public static IncomeTestBuilder invalidIncome() {
         return new IncomeTestBuilder()
-            .withName(IncomeTestConstants.Invalid.NAME)
-            .withSource(IncomeTestConstants.Invalid.SOURCE)
-            .withAmount(IncomeTestConstants.Invalid.AMOUNT)
-            .withMonth(IncomeTestConstants.Invalid.YEAR_MONTH);
+            .withMoney(MoneyTestBuilder.invalidMoney().build())
+            .withMonth(YearMonth.parse(IncomeTestConstants.Invalid.YEAR_MONTH));
     }
-} 
+}

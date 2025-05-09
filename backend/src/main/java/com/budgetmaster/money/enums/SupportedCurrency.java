@@ -24,7 +24,7 @@ public enum SupportedCurrency {
                 return true;
             }
         }
-        throw new IllegalArgumentException(String.format(ErrorMessages.Currency.UNSUPPORTED, currency));
+        return false;
     }
 
     public static SupportedCurrency fromCurrency(Currency currency) {

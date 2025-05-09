@@ -10,8 +10,10 @@ import com.budgetmaster.budget.exception.BudgetNotFoundException;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.income.exception.IncomeNotFoundException;
 import com.budgetmaster.income.model.Income;
-import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.builder.BudgetTestBuilder;
 import com.budgetmaster.test.constants.TestMessages;
+import com.budgetmaster.test.constants.TestData.BudgetTestConstants;
+import com.budgetmaster.test.factory.BudgetTestFactory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,11 +33,6 @@ public class EntityLookupServiceTest extends EntityLookupService {
 
 	// -- Test Objects --
 	private EntityLookupService entityLookupService;
-	
-	// -- Test Data --
-	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;
-	private static final YearMonth testMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
-	private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
 
 	// -- Test Objects --
 	private Budget testBudget;
@@ -43,59 +40,56 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	@Mock
 	private Income testIncome;
 	
-	// -- Setup --
 	@BeforeEach
 	void setUp() {
 		entityLookupService = new EntityLookupService();
-		testBudget = Budget.of(testMonth, testCurrency);
+		testBudget = BudgetTestFactory.createDefaultBudget();
 	}
 	
-	// -- Find By Id Tests --
 	@Test
 	void findByIdOrThrow_WhenEntityExists_ReturnsEntity() {
-		when(mockRepository.findById(testId))
+		when(mockRepository.findById(BudgetTestConstants.Default.ID))
 				.thenReturn(Optional.of(testBudget));
 		
 		Budget result = entityLookupService.findByIdOrThrow(
 				mockRepository,
-				testId,
+				BudgetTestConstants.Default.ID,
 				() -> new BudgetNotFoundException(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID)
 		);
 		
 		assertEquals(testBudget, result);
 		verify(mockRepository)
-				.findById(testId);
+				.findById(BudgetTestConstants.Default.ID);
 	}
 	
 	@Test
 	void findByIdOrThrow_WhenEntityDoesNotExist_ThrowsException() {
-		when(mockRepository.findById(testId))
+		when(mockRepository.findById(BudgetTestConstants.Default.ID))
 				.thenReturn(Optional.empty());
-		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, testId);
+		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, BudgetTestConstants.Default.ID);
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
 				() -> entityLookupService.findByIdOrThrow(
 						mockRepository,
-						testId,
+						BudgetTestConstants.Default.ID,
 						() -> new BudgetNotFoundException(errorMessage)
 				)
 		);
 		
 		assertEquals(errorMessage, exception.getMessage());
 		verify(mockRepository)
-				.findById(testId);
+				.findById(BudgetTestConstants.Default.ID);
 	}
 	
-	// -- Find By Custom Finder Tests --
 	@Test
 	void findByCustomFinderOrThrow_WhenEntityExists_ReturnsEntity() {
 		Function<YearMonth, Optional<Budget>> finder = month -> Optional.of(testBudget);
 		
 		Budget result = entityLookupService.findByCustomFinderOrThrow(
 				finder,
-				testMonth,
-				() -> new BudgetNotFoundException(String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, testMonth))
+				BudgetTestConstants.Default.YEAR_MONTH,
+				() -> new BudgetNotFoundException(String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, BudgetTestConstants.Default.YEAR_MONTH))
 		);
 		
 		assertEquals(testBudget, result);
@@ -104,13 +98,13 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	@Test
 	void findByCustomFinderOrThrow_WhenEntityDoesNotExist_ThrowsException() {
 		Function<YearMonth, Optional<Budget>> finder = month -> Optional.empty();
-		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, testMonth);
+		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, BudgetTestConstants.Default.YEAR_MONTH);
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
 				() -> entityLookupService.findByCustomFinderOrThrow(
 						finder,
-						testMonth,
+						BudgetTestConstants.Default.YEAR_MONTH,
 						() -> new BudgetNotFoundException(errorMessage)
 				)
 		);
@@ -118,15 +112,14 @@ public class EntityLookupServiceTest extends EntityLookupService {
 		assertEquals(errorMessage, exception.getMessage());
 	}
 
-	// -- Find List By Custom Finder Tests --
 	@Test
 	void findListByCustomFinderOrThrow_WhenEntitiesExists_ReturnsListOfEntities() {
 		Function<YearMonth, List<Income>> finder = month -> List.of(testIncome);
 		
 		List<Income> result = entityLookupService.findListByCustomFinderOrThrow(
 				finder,
-				testMonth,
-				() -> new IncomeNotFoundException(String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_BY_MONTH, testMonth))
+				BudgetTestConstants.Default.YEAR_MONTH,
+				() -> new IncomeNotFoundException(String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_BY_MONTH, BudgetTestConstants.Default.YEAR_MONTH))
 		);
 		
 		assertEquals(List.of(testIncome), result);
@@ -135,13 +128,13 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	@Test
 	void findListByCustomFinderOrThrow_WhenEntitiesDoNotExist_ThrowsException() {
 		Function<YearMonth, List<Income>> finder = month -> List.of();
-		String errorMessage = String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_BY_MONTH, testMonth);
+		String errorMessage = String.format(TestMessages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_BY_MONTH, BudgetTestConstants.Default.YEAR_MONTH);
 
 		IncomeNotFoundException exception = assertThrows(
 				IncomeNotFoundException.class,
 				() -> entityLookupService.findListByCustomFinderOrThrow(
 						finder, 
-						testMonth, 
+						BudgetTestConstants.Default.YEAR_MONTH, 
 						() -> new IncomeNotFoundException(errorMessage)
 				)
 		);

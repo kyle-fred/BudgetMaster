@@ -1,14 +1,10 @@
 package com.budgetmaster.expense.dto;
 
-import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.Set;
 
-import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.expense.enums.ExpenseCategory;
-import com.budgetmaster.money.dto.MoneyRequest;
-import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.builder.ExpenseRequestTestBuilder;
 import com.budgetmaster.test.constants.TestMessages;
+import com.budgetmaster.test.constants.TestData.ExpenseTestConstants;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -16,7 +12,6 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,18 +20,6 @@ public class ExpenseRequestTest {
     // -- Dependencies --
     private static Validator validator;
     
-    // -- Test Objects --
-    private ExpenseRequest expenseRequest;
-    private MoneyRequest moneyRequest;
-
-    // -- Test Data --
-    private String testName = TestData.ExpenseTestDataConstants.NAME;   
-    private ExpenseCategory testCategory = TestData.ExpenseTestDataConstants.CATEGORY_MISCELLANEOUS;
-    private BigDecimal testAmount = TestData.ExpenseTestDataConstants.AMOUNT;
-    private static final Currency GBP = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
-    private TransactionType testType = TestData.ExpenseTestDataConstants.TYPE_ONE_TIME;
-    private String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
-    
     // -- Setup --
     @BeforeAll
     static void setUp() {
@@ -44,23 +27,9 @@ public class ExpenseRequestTest {
         validator = factory.getValidator();
     }
 
-    @BeforeEach
-    void setUpRequest() {
-        expenseRequest = new ExpenseRequest();
-        moneyRequest = new MoneyRequest();
-        moneyRequest.setAmount(testAmount);
-        moneyRequest.setCurrency(GBP);
-    }
-
-    // -- Validation Tests --
-
     @Test
     void testValidExpenseRequest() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(testMonth);
+        ExpenseRequest expenseRequest = ExpenseRequestTestBuilder.defaultExpenseRequest().buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertTrue(violations.isEmpty());
@@ -68,10 +37,9 @@ public class ExpenseRequestTest {
     
     @Test
     void testNullName() {
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(testMonth);
+        ExpenseRequest expenseRequest = ExpenseRequestTestBuilder.defaultExpenseRequest()
+            .withName(null)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
@@ -80,10 +48,9 @@ public class ExpenseRequestTest {
 
     @Test
     void testNullMoney() {
-        expenseRequest.setName(testName);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(testMonth);
+        ExpenseRequest expenseRequest = ExpenseRequestTestBuilder.defaultExpenseRequest()
+            .withMoney(null)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
@@ -92,10 +59,9 @@ public class ExpenseRequestTest {
 
     @Test
     void testNullCategory() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(testMonth);
+        ExpenseRequest expenseRequest = ExpenseRequestTestBuilder.defaultExpenseRequest()
+            .withCategory(null)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
@@ -104,10 +70,9 @@ public class ExpenseRequestTest {
 
     @Test
     void testNullType() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setMonth(testMonth);
+        ExpenseRequest expenseRequest = ExpenseRequestTestBuilder.defaultExpenseRequest()
+            .withType(null)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
@@ -116,10 +81,9 @@ public class ExpenseRequestTest {
 
     @Test
     void testNullMonth() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
+        ExpenseRequest expenseRequest = ExpenseRequestTestBuilder.defaultExpenseRequest()
+            .withMonth(null)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
@@ -128,11 +92,9 @@ public class ExpenseRequestTest {
 
     @Test
     void testInvalidMonth() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(TestData.MonthTestDataConstants.MONTH_INVALID);
+        ExpenseRequest expenseRequest = ExpenseRequestTestBuilder.defaultExpenseRequest()
+            .withMonth(ExpenseTestConstants.Invalid.YEAR_MONTH.toString())
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
@@ -141,11 +103,9 @@ public class ExpenseRequestTest {
 
     @Test
     void testInvalidMonthFormat() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(TestData.MonthTestDataConstants.MONTH_INVALID_FORMAT);
+        ExpenseRequest expenseRequest = ExpenseRequestTestBuilder.defaultExpenseRequest()
+            .withMonth(ExpenseTestConstants.Invalid.YEAR_MONTH_FORMAT)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());

@@ -3,7 +3,8 @@ package com.budgetmaster.money.model;
 import java.math.BigDecimal;
 import java.util.Currency;
 
-import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.constants.TestCommonData;
+import com.budgetmaster.test.constants.TestData.MoneyTestConstants;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,49 +16,49 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MoneyTest {
     // -- Test Data --
-    private static final Currency GBP = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
+    private static final Currency GBP = MoneyTestConstants.GBP;
 
     // -- Creation Methods --
     
     @Test
     void testOfBigDecimal() {
-        Money money = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
+        Money money = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS);
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
         assertEquals(GBP, money.getCurrency());
     }
 
     @Test
     void testOfBigDecimalWithCurrency() {
-        Money money = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS, GBP);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
+        Money money = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS, GBP);
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
         assertEquals(GBP, money.getCurrency());
     }
 
     @Test
     void testOfString() {
-        Money money = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS_STRING);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
+        Money money = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS_STRING);
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
         assertEquals(GBP, money.getCurrency());
     }
 
     @Test
     void testOfStringWithCurrency() {
-        Money money = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS_STRING, GBP);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
+        Money money = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS_STRING, GBP);
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
         assertEquals(GBP, money.getCurrency());
     }
 
     @Test
     void testOfDouble() {
-        Money money = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS_DOUBLE);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
+        Money money = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS_DOUBLE);
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
         assertEquals(GBP, money.getCurrency());
     }
 
     @Test
     void testOfDoubleWithCurrency() {
-        Money money = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS_DOUBLE, GBP);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
+        Money money = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_THREE_DECIMALS_DOUBLE, GBP);
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_TWO_DECIMALS, money.getAmount());
         assertEquals(GBP, money.getCurrency());
     }
 
@@ -81,32 +82,32 @@ public class MoneyTest {
 
     @Test
     void testAdd() {
-        Money money1 = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
-        Money money2 = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_FIFTY);
+        Money money1 = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
+        Money money2 = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_FIFTY);
         Money result = money1.add(money2);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_FIFTY, result.getAmount());
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_FIFTY, result.getAmount());
     }
 
     @Test
     void testSubtract() {
-        Money money1 = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
-        Money money2 = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_FIFTY);
+        Money money1 = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
+        Money money2 = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_FIFTY);
         Money result = money1.subtract(money2);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_FIFTY, result.getAmount());
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_FIFTY, result.getAmount());
     }
 
     @Test
     void testMultiply() {
-        Money money = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
-        Money result = money.multiply(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_POINT_FIVE);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_FIFTY, result.getAmount());
+        Money money = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
+        Money result = money.multiply(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_POINT_FIVE);
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_FIFTY, result.getAmount());
     }
 
     @Test
     void testDivide() {
-        Money money = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
-        Money result = money.divide(TestData.MoneyDtoTestDataConstants.AMOUNT_THREE);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_THIRTY_THREE_RECURRING, result.getAmount());
+        Money money = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
+        Money result = money.divide(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_THREE);
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_THIRTY_THREE_RECURRING, result.getAmount());
     }
 
     // -- Comparison Methods --
@@ -164,9 +165,9 @@ public class MoneyTest {
 
     @Test
     void testEqualsAndHashCode() {
-        Money money1 = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
-        Money money2 = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
-        Money money3 = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_NINETY_NINE_POINT_NINETY_NINE);
+        Money money1 = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
+        Money money2 = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED);
+        Money money3 = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_NINETY_NINE_POINT_NINETY_NINE);
         
         assertEquals(money1, money2);
         assertEquals(money1.hashCode(), money2.hashCode());
@@ -175,13 +176,13 @@ public class MoneyTest {
 
     @Test
     void testToString() {
-        Money money = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_STRING);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_POUNDS_STRING, money.toString());
+        Money money = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_STRING);
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_POUNDS_STRING, money.toString());
     }
 
     @Test
     void testToStringWithCurrency() {
-        Money money = Money.of(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_STRING, GBP);
-        assertEquals(TestData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_POUNDS_STRING, money.toString());
+        Money money = Money.of(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_STRING, GBP);
+        assertEquals(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_ONE_HUNDRED_POUNDS_STRING, money.toString());
     }  
 }

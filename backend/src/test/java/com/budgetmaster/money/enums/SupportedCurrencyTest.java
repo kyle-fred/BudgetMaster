@@ -2,7 +2,7 @@ package com.budgetmaster.money.enums;
 
 import java.util.Currency;
 
-import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.constants.TestData.MoneyTestConstants;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SupportedCurrencyTest {
     // -- Test Data --
-    private static final Currency GBP = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
-    private static final Currency USD = TestData.CurrencyTestDataConstants.CURRENCY_USD;
+    private static final Currency GBP = MoneyTestConstants.GBP;
+    private static final Currency EUR = MoneyTestConstants.InvalidValues.EUR;
 
     // -- Test Methods --
 
@@ -27,7 +27,7 @@ public class SupportedCurrencyTest {
 
     @Test
     void testValidateSupportedCurrency_WithUnsupportedCurrency() {
-        assertThrows(IllegalArgumentException.class, () -> SupportedCurrency.validateSupportedCurrency(USD));
+        assertFalse(SupportedCurrency.validateSupportedCurrency(EUR));
     }
 
     @Test
@@ -37,6 +37,6 @@ public class SupportedCurrencyTest {
 
     @Test
     void testFromCurrency_WithUnsupportedCurrency() {
-        assertThrows(IllegalArgumentException.class, () -> SupportedCurrency.fromCurrency(USD));
+        assertThrows(IllegalArgumentException.class, () -> SupportedCurrency.fromCurrency(EUR));
     }
 } 

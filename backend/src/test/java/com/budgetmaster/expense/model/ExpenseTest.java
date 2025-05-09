@@ -1,81 +1,46 @@
 package com.budgetmaster.expense.model;
 
-import java.math.BigDecimal;
-import java.time.YearMonth;
-import java.util.Currency;
-
-import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.expense.dto.ExpenseRequest;
-import com.budgetmaster.expense.enums.ExpenseCategory;
-import com.budgetmaster.money.dto.MoneyRequest;
-import com.budgetmaster.money.model.Money;
-import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.constants.TestData.ExpenseTestConstants;
+import com.budgetmaster.test.factory.ExpenseTestFactory;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ExpenseTest {
-    // -- Test Data --
-	private static final String testName = TestData.ExpenseTestDataConstants.NAME;
-	private static final BigDecimal testAmount = TestData.ExpenseTestDataConstants.AMOUNT;
-	private static final ExpenseCategory testCategory = TestData.ExpenseTestDataConstants.CATEGORY_MISCELLANEOUS;
-	private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
-	private static final TransactionType testType = TestData.ExpenseTestDataConstants.TYPE_ONE_TIME;
-	private static final String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
-	private static final YearMonth testYearMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
-	
-	// -- Test Objects --
-	private ExpenseRequest expenseRequest;
-	private MoneyRequest moneyRequest;
-	
-	// -- Setup --
-	@BeforeEach
-	void setUp() {
-		// Setup MoneyRequest
-		moneyRequest = new MoneyRequest();
-		moneyRequest.setAmount(testAmount);
-		moneyRequest.setCurrency(testCurrency);
-		
-		// Setup ExpenseRequest
-		expenseRequest = new ExpenseRequest();
-		expenseRequest.setName(testName);
-		expenseRequest.setMoney(moneyRequest);
-		expenseRequest.setCategory(testCategory);
-		expenseRequest.setType(testType);
-		expenseRequest.setMonth(testMonth);
-	}
 	
 	@Test
 	void from_ValidRequest_ReturnsExpense() {
+		ExpenseRequest expenseRequest = ExpenseTestFactory.createDefaultExpenseRequest();
 		Expense expense = Expense.from(expenseRequest);
 		
 		assertNotNull(expense);
-		assertEquals(testName, expense.getName());
-		assertEquals(testAmount, expense.getMoney().getAmount());
-		assertEquals(testCurrency, expense.getMoney().getCurrency());
-		assertEquals(testCategory, expense.getCategory());
-		assertEquals(testType, expense.getType());
-		assertEquals(testYearMonth, expense.getMonth());
+		assertEquals(ExpenseTestConstants.Default.NAME, expense.getName());
+		assertEquals(ExpenseTestConstants.Default.AMOUNT, expense.getMoney().getAmount());
+		assertEquals(ExpenseTestConstants.Default.CURRENCY, expense.getMoney().getCurrency());
+		assertEquals(ExpenseTestConstants.Default.CATEGORY, expense.getCategory());
+		assertEquals(ExpenseTestConstants.Default.TYPE, expense.getType());
+		assertEquals(ExpenseTestConstants.Default.YEAR_MONTH, expense.getMonth());
 	}
 	
 	@Test
 	void updateFrom_ValidRequest_UpdatesExpense() {
 		Expense expense = new Expense();
+		ExpenseRequest expenseRequest = ExpenseTestFactory.createDefaultExpenseRequest();
 		expense.updateFrom(expenseRequest);
 		
-		assertEquals(testName, expense.getName());
-		assertEquals(testAmount, expense.getMoney().getAmount());
-		assertEquals(testCurrency, expense.getMoney().getCurrency());
-		assertEquals(testCategory, expense.getCategory());
-		assertEquals(testType, expense.getType());
-		assertEquals(testYearMonth, expense.getMonth());
+		assertEquals(ExpenseTestConstants.Default.NAME, expense.getName());
+		assertEquals(ExpenseTestConstants.Default.AMOUNT, expense.getMoney().getAmount());
+		assertEquals(ExpenseTestConstants.Default.CURRENCY, expense.getMoney().getCurrency());
+		assertEquals(ExpenseTestConstants.Default.CATEGORY, expense.getCategory());
+		assertEquals(ExpenseTestConstants.Default.TYPE, expense.getType());
+		assertEquals(ExpenseTestConstants.Default.YEAR_MONTH, expense.getMonth());
 	}
 
 	@Test
 	void deepCopy_ReturnsNewExpenseWithSameValues() {
-		Expense expense = Expense.from(expenseRequest);
+		Expense expense = ExpenseTestFactory.createDefaultExpense();
 		Expense copy = expense.deepCopy();
 
 		assertNotSame(expense, copy);
@@ -89,15 +54,14 @@ public class ExpenseTest {
 
 	@Test
 	void of_WithValidParameters_CreatesExpenseWithCorrectValues() {
-		Money money = Money.of(testAmount, testCurrency);
-
-		Expense expense = Expense.of(testName, money, testCategory, testType, testYearMonth);
+		Expense expense = ExpenseTestFactory.createDefaultExpense();
 
 		assertNotNull(expense);
-		assertEquals(testName, expense.getName());
-		assertEquals(money, expense.getMoney());
-		assertEquals(testCategory, expense.getCategory());
-		assertEquals(testType, expense.getType());
-		assertEquals(testYearMonth, expense.getMonth());
+		assertEquals(ExpenseTestConstants.Default.NAME, expense.getName());
+		assertEquals(ExpenseTestConstants.Default.AMOUNT, expense.getMoney().getAmount());
+		assertEquals(ExpenseTestConstants.Default.CURRENCY, expense.getMoney().getCurrency());
+		assertEquals(ExpenseTestConstants.Default.CATEGORY, expense.getCategory());
+		assertEquals(ExpenseTestConstants.Default.TYPE, expense.getType());
+		assertEquals(ExpenseTestConstants.Default.YEAR_MONTH, expense.getMonth());
 	}
 }

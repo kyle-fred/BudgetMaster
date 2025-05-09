@@ -10,8 +10,8 @@ import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.income.exception.IncomeNotFoundException;
 import com.budgetmaster.income.model.Income;
 import com.budgetmaster.income.repository.IncomeRepository;
-import com.budgetmaster.test.constants.IncomeTestConstants;
 import com.budgetmaster.test.constants.TestMessages;
+import com.budgetmaster.test.constants.TestData.IncomeTestConstants;
 import com.budgetmaster.test.factory.IncomeTestFactory;
 
 import org.junit.jupiter.api.BeforeEach;

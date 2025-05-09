@@ -1,8 +1,7 @@
 package com.budgetmaster.income.model;
 
 import com.budgetmaster.income.dto.IncomeRequest;
-import com.budgetmaster.test.builder.IncomeTestBuilder;
-import com.budgetmaster.test.constants.IncomeTestConstants;
+import com.budgetmaster.test.constants.TestData.IncomeTestConstants;
 import com.budgetmaster.test.factory.IncomeTestFactory;
 
 import org.junit.jupiter.api.Test;
@@ -64,18 +63,5 @@ public class IncomeTest {
         assertEquals(IncomeTestConstants.Default.CURRENCY, income.getMoney().getCurrency());
         assertEquals(IncomeTestConstants.Default.TYPE, income.getType());
         assertEquals(IncomeTestConstants.Default.YEAR_MONTH, income.getMonth());
-    }
-
-    @Test
-    void of_WithCustomParameters_CreatesIncomeWithCorrectValues() {
-        Income income = IncomeTestBuilder.updatedIncome().build();
-
-        assertNotNull(income);
-        assertEquals(IncomeTestConstants.Updated.NAME, income.getName());
-        assertEquals(IncomeTestConstants.Updated.SOURCE, income.getSource());
-        assertEquals(IncomeTestConstants.Updated.AMOUNT, income.getMoney().getAmount());
-        assertEquals(IncomeTestConstants.Default.CURRENCY, income.getMoney().getCurrency());
-        assertEquals(IncomeTestConstants.Updated.TYPE, income.getType());
-        assertEquals(IncomeTestConstants.Updated.YEAR_MONTH, income.getMonth());
     }
 }

@@ -8,7 +8,7 @@ import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.expense.enums.ExpenseCategory;
 import com.budgetmaster.money.enums.SupportedCurrency;
 
-public class TestData {
+public class TestCommonData {
     
     public static class CommonTestDataConstants {
         // -- IDs --    

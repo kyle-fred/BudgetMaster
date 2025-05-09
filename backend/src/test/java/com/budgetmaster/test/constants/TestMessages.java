@@ -34,7 +34,7 @@ public class TestMessages {
     public static class MoneyErrorMessageConstants {
         public static final String MONEY_AMOUNT_REQUIRED = "Amount is required.";
         public static final String MONEY_CURRENCY_REQUIRED = "Currency is required.";
-        public static final String MONEY_UNSUPPORTED_CURRENCY = "Unsupported currency.";
+        public static final String MONEY_UNSUPPORTED_CURRENCY = "This currency type is not supported yet";
         public static final String MONEY_NEGATIVE_AMOUNT = "Amount must be non-negative.";
         public static final String MONEY_DETAILS_REQUIRED = "Money details (amount and currency) are required.";
     }

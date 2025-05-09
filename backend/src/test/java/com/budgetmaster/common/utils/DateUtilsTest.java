@@ -1,6 +1,6 @@
 package com.budgetmaster.common.utils;
 
-import com.budgetmaster.test.constants.TestData;
+import com.budgetmaster.test.constants.TestCommonData;
 
 import java.time.YearMonth;
 
@@ -21,15 +21,15 @@ public class DateUtilsTest {
     @Test
     void getValidYearMonth_EmptyInput_ReturnsCurrentYearMonth() {
         YearMonth expected = YearMonth.now();
-        YearMonth actual = DateUtils.getValidYearMonth(TestData.CommonTestDataConstants.EMPTY_STRING);
+        YearMonth actual = DateUtils.getValidYearMonth(TestCommonData.CommonTestDataConstants.EMPTY_STRING);
         assertNotNull(actual);
         assertEquals(expected, actual);
     }
 
     @Test
     void getValidYearMonth_ValidInput_ReturnsParsedYearMonth() {
-        YearMonth expected = TestData.MonthTestDataConstants.MONTH_EXISTING;
-        YearMonth actual = DateUtils.getValidYearMonth(TestData.MonthTestDataConstants.MONTH_STRING_EXISTING);
+        YearMonth expected = TestCommonData.MonthTestDataConstants.MONTH_EXISTING;
+        YearMonth actual = DateUtils.getValidYearMonth(TestCommonData.MonthTestDataConstants.MONTH_STRING_EXISTING);
         assertEquals(expected, actual);
     }
 }

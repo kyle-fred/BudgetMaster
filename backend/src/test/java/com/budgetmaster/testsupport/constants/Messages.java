@@ -53,7 +53,6 @@ public class Messages {
         public static final String ERROR_MESSAGE_NO_ENUM_PREFIX = "No enum constant com.example.Color.BLUEE";
         public static final String ERROR_MESSAGE_ENUM_PART = "com.example.Color.BLUEE";
         public static final String ERROR_MESSAGE_ENUM_CONSTANT = "BLUEE";
-        public static final String ERROR_MESSAGE_INVALID_ENUM_TYPE = "com.example.Color";
 
         // -- Expected Error Responses --
         public static final String ERROR_MESSAGE_INVALID_ENUM_VALUE_RESPONSE = "Invalid value 'YELLOW' for 'color'. Allowed values: [RED, GREEN, BLUE]";

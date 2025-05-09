@@ -1,10 +1,10 @@
-package com.budgetmaster.test.constants.TestData;
+package com.budgetmaster.testsupport.money.constants;
 
 import java.math.BigDecimal;
 import java.util.Currency;
 
-public class MoneyTestConstants {
-    private MoneyTestConstants() {}
+public final class MoneyConstants {
+    private MoneyConstants() {}
 
     public static final Currency GBP = Currency.getInstance("GBP");
 

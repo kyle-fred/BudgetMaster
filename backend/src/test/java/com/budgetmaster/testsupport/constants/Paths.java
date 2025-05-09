@@ -1,6 +1,6 @@
-package com.budgetmaster.test.constants;
+package com.budgetmaster.testsupport.constants;
 
-public class TestPaths {
+public class Paths {
     
     public static class EndpointPathConstants {
         // -- Budget --

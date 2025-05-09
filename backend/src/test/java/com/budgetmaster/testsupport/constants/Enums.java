@@ -1,7 +1,7 @@
-package com.budgetmaster.test.constants.TestData;
+package com.budgetmaster.testsupport.constants;
 
-public final class EnumTestConstants {
-    private EnumTestConstants() {}
+public final class Enums {
+    private Enums() {}
 
     public static final String ERROR_MESSAGE_ENUM_CONSTANT = "BLUEE";
     public static final String ERROR_MESSAGE_INVALID_ENUM_VALUE = "YELLOW";

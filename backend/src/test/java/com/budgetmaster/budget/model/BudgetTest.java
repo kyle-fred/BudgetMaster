@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.income.model.Income;
-import com.budgetmaster.test.builder.BudgetTestBuilder;
-import com.budgetmaster.test.constants.TestData.BudgetTestConstants;
-import com.budgetmaster.test.constants.TestData.IncomeTestConstants;
-import com.budgetmaster.test.factory.BudgetTestFactory;
-import com.budgetmaster.test.factory.ExpenseTestFactory;
-import com.budgetmaster.test.factory.IncomeTestFactory;
+import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;
+import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
+import com.budgetmaster.testsupport.budget.factory.BudgetFactory;
+import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
+import com.budgetmaster.testsupport.income.constants.IncomeConstants;
+import com.budgetmaster.testsupport.income.factory.IncomeFactory;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,16 +20,16 @@ public class BudgetTest {
 
     @Test
     void testOf_WithMonthAndCurrency_ReturnsBudget() {
-        Budget testBudget = BudgetTestFactory.createDefaultBudget();
+        Budget testBudget = BudgetFactory.createDefaultBudget();
 
         assertNotNull(testBudget);
-        assertEquals(BudgetTestConstants.Default.YEAR_MONTH, testBudget.getMonth());
-        assertEquals(BudgetTestConstants.Default.CURRENCY, testBudget.getCurrency());
+        assertEquals(BudgetConstants.Default.YEAR_MONTH, testBudget.getMonth());
+        assertEquals(BudgetConstants.Default.CURRENCY, testBudget.getCurrency());
     }
 
     @Test
     void testOf_WithMonthAndCurrency_SetsZeroValues() {
-        Budget testBudget = BudgetTestFactory.createDefaultBudget();
+        Budget testBudget = BudgetFactory.createDefaultBudget();
 
         assertEquals(BigDecimal.ZERO, testBudget.getTotalIncome());
         assertEquals(BigDecimal.ZERO, testBudget.getTotalExpense());
@@ -38,24 +38,24 @@ public class BudgetTest {
 
     @Test
     void testAddIncome_WithValidAmount_IncreasesTotalIncome() {
-        Budget testBudget = BudgetTestFactory.createDefaultBudget();
-        Income testIncome = IncomeTestFactory.createDefaultIncome();
+        Budget testBudget = BudgetFactory.createDefaultBudget();
+        Income testIncome = IncomeFactory.createDefaultIncome();
 
         testBudget.addIncome(testIncome.getMoney().getAmount());
 
-        assertEquals(IncomeTestConstants.Default.AMOUNT, testBudget.getTotalIncome());
-        assertEquals(IncomeTestConstants.Default.AMOUNT, testBudget.getSavings());
+        assertEquals(IncomeConstants.Default.AMOUNT, testBudget.getTotalIncome());
+        assertEquals(IncomeConstants.Default.AMOUNT, testBudget.getSavings());
     }
 
     @Test
     void testSubtractIncome_WithValidAmount_DecreasesTotalIncome() {
-        Budget testBudget = BudgetTestBuilder.defaultBudget()
-            .withTotalIncome(BudgetTestConstants.Default.TOTAL_INCOME)
+        Budget testBudget = BudgetBuilder.defaultBudget()
+            .withTotalIncome(BudgetConstants.Default.TOTAL_INCOME)
             .withTotalExpense(BigDecimal.ZERO)
-            .withSavings(BudgetTestConstants.Default.TOTAL_INCOME)
+            .withSavings(BudgetConstants.Default.TOTAL_INCOME)
             .build();
 
-        testBudget.subtractIncome(IncomeTestConstants.Default.AMOUNT);
+        testBudget.subtractIncome(IncomeConstants.Default.AMOUNT);
 
         assertEquals(BigDecimal.ZERO.setScale(2), testBudget.getTotalIncome());
         assertEquals(BigDecimal.ZERO.setScale(2), testBudget.getSavings());
@@ -63,33 +63,33 @@ public class BudgetTest {
 
     @Test
     void testAddExpense_WithValidAmount_IncreasesTotalExpense() {
-        Budget testBudget = BudgetTestBuilder.defaultBudget()
-            .withTotalIncome(BudgetTestConstants.Default.TOTAL_INCOME)
+        Budget testBudget = BudgetBuilder.defaultBudget()
+            .withTotalIncome(BudgetConstants.Default.TOTAL_INCOME)
             .withTotalExpense(BigDecimal.ZERO)
-            .withSavings(BudgetTestConstants.Default.TOTAL_INCOME)
+            .withSavings(BudgetConstants.Default.TOTAL_INCOME)
             .build();
 
-        Expense testExpense = ExpenseTestFactory.createDefaultExpense();
+        Expense testExpense = ExpenseFactory.createDefaultExpense();
 
         testBudget.addExpense(testExpense.getMoney().getAmount());
 
-        assertEquals(BudgetTestConstants.Default.TOTAL_EXPENSE, testBudget.getTotalExpense());
-        assertEquals(BudgetTestConstants.Default.SAVINGS, testBudget.getSavings());
+        assertEquals(BudgetConstants.Default.TOTAL_EXPENSE, testBudget.getTotalExpense());
+        assertEquals(BudgetConstants.Default.SAVINGS, testBudget.getSavings());
     }
 
     @Test
     void testSubtractExpense_WithValidAmount_DecreasesTotalExpense() {
-        Budget testBudget = BudgetTestBuilder.defaultBudget()
-            .withTotalIncome(BudgetTestConstants.Default.TOTAL_INCOME)
-            .withTotalExpense(BudgetTestConstants.Default.TOTAL_EXPENSE)
-            .withSavings(BudgetTestConstants.Default.SAVINGS)
+        Budget testBudget = BudgetBuilder.defaultBudget()
+            .withTotalIncome(BudgetConstants.Default.TOTAL_INCOME)
+            .withTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE)
+            .withSavings(BudgetConstants.Default.SAVINGS)
             .build();
 
-        Expense testExpense = ExpenseTestFactory.createDefaultExpense();
+        Expense testExpense = ExpenseFactory.createDefaultExpense();
 
         testBudget.subtractExpense(testExpense.getMoney().getAmount());
 
         assertEquals(BigDecimal.ZERO.setScale(2), testBudget.getTotalExpense());
-        assertEquals(BudgetTestConstants.Default.TOTAL_INCOME, testBudget.getSavings());
+        assertEquals(BudgetConstants.Default.TOTAL_INCOME, testBudget.getSavings());
     }
 }

@@ -1,6 +1,6 @@
-package com.budgetmaster.test.constants;
+package com.budgetmaster.testsupport.constants;
 
-public class TestMessages {
+public class Messages {
 
     public static class CommonErrorMessageConstants {
         public static final String ERROR = "error";

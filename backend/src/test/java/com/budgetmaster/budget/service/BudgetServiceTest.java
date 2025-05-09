@@ -7,9 +7,9 @@ import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.test.builder.BudgetTestBuilder;
-import com.budgetmaster.test.constants.TestMessages;
-import com.budgetmaster.test.constants.TestData.BudgetTestConstants;
+import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;
+import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
+import com.budgetmaster.testsupport.constants.Messages;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,82 +32,82 @@ public class BudgetServiceTest {
 	
 	@BeforeEach
 	void setUp() {
-		testBudget = BudgetTestBuilder.defaultBudget()
-			.withTotalIncome(BudgetTestConstants.Default.TOTAL_INCOME)
-			.withTotalExpense(BudgetTestConstants.Default.TOTAL_EXPENSE)
-			.withSavings(BudgetTestConstants.Default.SAVINGS)
+		testBudget = BudgetBuilder.defaultBudget()
+			.withTotalIncome(BudgetConstants.Default.TOTAL_INCOME)
+			.withTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE)
+			.withSavings(BudgetConstants.Default.SAVINGS)
 			.build();
 	}
 	
 	@Test
 	void getBudget_ValidMonth_ReturnsOk() {
 		try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
-			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(BudgetTestConstants.Default.YEAR_MONTH.toString()))
-					.thenReturn(BudgetTestConstants.Default.YEAR_MONTH);
-			Mockito.when(budgetRepository.findByMonth(BudgetTestConstants.Default.YEAR_MONTH))
+			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
+					.thenReturn(BudgetConstants.Default.YEAR_MONTH);
+			Mockito.when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
 					.thenReturn(Optional.of(testBudget));
 
-			Budget retrievedBudget = budgetService.getBudgetByMonth(BudgetTestConstants.Default.YEAR_MONTH.toString());
+			Budget retrievedBudget = budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
 
 			assertNotNull(retrievedBudget);
-			assertEquals(BudgetTestConstants.Default.TOTAL_INCOME, retrievedBudget.getTotalIncome());
-			assertEquals(BudgetTestConstants.Default.TOTAL_EXPENSE, retrievedBudget.getTotalExpense());
-			assertEquals(BudgetTestConstants.Default.SAVINGS, retrievedBudget.getSavings());
-			assertEquals(BudgetTestConstants.Default.CURRENCY, retrievedBudget.getCurrency());
-			assertEquals(BudgetTestConstants.Default.YEAR_MONTH, retrievedBudget.getMonth());
+			assertEquals(BudgetConstants.Default.TOTAL_INCOME, retrievedBudget.getTotalIncome());
+			assertEquals(BudgetConstants.Default.TOTAL_EXPENSE, retrievedBudget.getTotalExpense());
+			assertEquals(BudgetConstants.Default.SAVINGS, retrievedBudget.getSavings());
+			assertEquals(BudgetConstants.Default.CURRENCY, retrievedBudget.getCurrency());
+			assertEquals(BudgetConstants.Default.YEAR_MONTH, retrievedBudget.getMonth());
 
 			Mockito.verify(budgetRepository, Mockito.times(1))
-					.findByMonth(BudgetTestConstants.Default.YEAR_MONTH);
+					.findByMonth(BudgetConstants.Default.YEAR_MONTH);
 		}
 	}
 	
 	@Test
 	void getBudget_ValidId_ReturnsOk() {
-		Mockito.when(budgetRepository.findById(BudgetTestConstants.Default.ID))
+		Mockito.when(budgetRepository.findById(BudgetConstants.Default.ID))
 				.thenReturn(Optional.of(testBudget));
 		
-		Budget retrievedBudget = budgetService.getBudgetById(BudgetTestConstants.Default.ID);
+		Budget retrievedBudget = budgetService.getBudgetById(BudgetConstants.Default.ID);
 		
 		assertNotNull(retrievedBudget);
-		assertEquals(BudgetTestConstants.Default.TOTAL_INCOME, retrievedBudget.getTotalIncome());
-		assertEquals(BudgetTestConstants.Default.TOTAL_EXPENSE, retrievedBudget.getTotalExpense());
-		assertEquals(BudgetTestConstants.Default.SAVINGS, retrievedBudget.getSavings());
-		assertEquals(BudgetTestConstants.Default.CURRENCY, retrievedBudget.getCurrency());
-		assertEquals(BudgetTestConstants.Default.YEAR_MONTH, retrievedBudget.getMonth());
+		assertEquals(BudgetConstants.Default.TOTAL_INCOME, retrievedBudget.getTotalIncome());
+		assertEquals(BudgetConstants.Default.TOTAL_EXPENSE, retrievedBudget.getTotalExpense());
+		assertEquals(BudgetConstants.Default.SAVINGS, retrievedBudget.getSavings());
+		assertEquals(BudgetConstants.Default.CURRENCY, retrievedBudget.getCurrency());
+		assertEquals(BudgetConstants.Default.YEAR_MONTH, retrievedBudget.getMonth());
 		
 		Mockito.verify(budgetRepository, Mockito.times(1))
-				.findById(BudgetTestConstants.Default.ID);
+				.findById(BudgetConstants.Default.ID);
 	}
 	
 	@Test
 	void deleteBudget_ValidId_ReturnsNoContent() {
-		Mockito.when(budgetRepository.findById(BudgetTestConstants.Default.ID))
+		Mockito.when(budgetRepository.findById(BudgetConstants.Default.ID))
 				.thenReturn(Optional.of(testBudget));
 		Mockito.doNothing()
 				.when(budgetRepository)
-				.deleteById(BudgetTestConstants.Default.ID);
+				.deleteById(BudgetConstants.Default.ID);
 		
-		budgetService.deleteBudget(BudgetTestConstants.Default.ID);
+		budgetService.deleteBudget(BudgetConstants.Default.ID);
 
 		Mockito.verify(budgetRepository, Mockito.times(1))
-				.findById(BudgetTestConstants.Default.ID);
+				.findById(BudgetConstants.Default.ID);
 		Mockito.verify(budgetRepository, Mockito.times(1))
-				.deleteById(BudgetTestConstants.Default.ID);
+				.deleteById(BudgetConstants.Default.ID);
 	}
 	
 	@Test
 	void getBudget_NonExistentMonth_ReturnsNotFound() {
-		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, BudgetTestConstants.Default.YEAR_MONTH);
+		String errorMessage = String.format(Messages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, BudgetConstants.Default.YEAR_MONTH);
 		
 		try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
-			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(BudgetTestConstants.Default.YEAR_MONTH.toString()))
-					.thenReturn(BudgetTestConstants.Default.YEAR_MONTH);
-			Mockito.when(budgetRepository.findByMonth(BudgetTestConstants.Default.YEAR_MONTH))
+			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
+					.thenReturn(BudgetConstants.Default.YEAR_MONTH);
+			Mockito.when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
 					.thenReturn(Optional.empty());
 
 			BudgetNotFoundException exception = assertThrows(
 					BudgetNotFoundException.class,
-					() -> budgetService.getBudgetByMonth(BudgetTestConstants.Default.YEAR_MONTH.toString()),
+					() -> budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString()),
 					errorMessage
 			);
 			
@@ -117,13 +117,13 @@ public class BudgetServiceTest {
 	
 	@Test
 	void getBudget_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, BudgetTestConstants.NonExistent.ID);
-		Mockito.when(budgetRepository.findById(BudgetTestConstants.NonExistent.ID))
+		String errorMessage = String.format(Messages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID);
+		Mockito.when(budgetRepository.findById(BudgetConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
-				() -> budgetService.getBudgetById(BudgetTestConstants.NonExistent.ID),
+				() -> budgetService.getBudgetById(BudgetConstants.NonExistent.ID),
 				errorMessage
 		);
 		
@@ -132,13 +132,13 @@ public class BudgetServiceTest {
 	
 	@Test
 	void deleteBudget_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(TestMessages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, BudgetTestConstants.NonExistent.ID);
-		Mockito.when(budgetRepository.findById(BudgetTestConstants.NonExistent.ID))
+		String errorMessage = String.format(Messages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID);
+		Mockito.when(budgetRepository.findById(BudgetConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
-				() -> budgetService.deleteBudget(BudgetTestConstants.NonExistent.ID),
+				() -> budgetService.deleteBudget(BudgetConstants.NonExistent.ID),
 				errorMessage
 		);
 		

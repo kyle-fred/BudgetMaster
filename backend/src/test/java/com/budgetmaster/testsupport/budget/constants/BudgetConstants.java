@@ -1,11 +1,11 @@
-package com.budgetmaster.test.constants.TestData;
+package com.budgetmaster.testsupport.budget.constants;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Currency;
 
-public final class BudgetTestConstants {
-    private BudgetTestConstants() {}
+public final class BudgetConstants {
+    private BudgetConstants() {}
 
     public static final class Default {
         private Default() {}

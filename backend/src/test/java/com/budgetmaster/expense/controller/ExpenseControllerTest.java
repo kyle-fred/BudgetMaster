@@ -7,10 +7,10 @@ import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.service.ExpenseService;
-import com.budgetmaster.test.constants.TestMessages;
-import com.budgetmaster.test.constants.TestPaths;
-import com.budgetmaster.test.constants.TestData.ExpenseTestConstants;
-import com.budgetmaster.test.factory.ExpenseTestFactory;
+import com.budgetmaster.testsupport.constants.Messages;
+import com.budgetmaster.testsupport.constants.Paths;
+import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
+import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -47,8 +47,8 @@ public class ExpenseControllerTest {
 	// -- Setup --
 	@BeforeEach
 	void setUp() {
-		testExpense = ExpenseTestFactory.createDefaultExpense();
-		testExpenseRequest = ExpenseTestFactory.createDefaultExpenseRequest();
+		testExpense = ExpenseFactory.createDefaultExpense();
+		testExpenseRequest = ExpenseFactory.createDefaultExpenseRequest();
 	}
 	
 	@Test
@@ -56,18 +56,18 @@ public class ExpenseControllerTest {
 		Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
 				.thenReturn(testExpense);	
 				
-		mockMvc.perform(post(TestPaths.EndpointPathConstants.ENDPOINT_EXPENSE)
+		mockMvc.perform(post(Paths.EndpointPathConstants.ENDPOINT_EXPENSE)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(testExpenseRequest)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_NAME).value(ExpenseTestConstants.Default.NAME))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONEY_AMOUNT).value(ExpenseTestConstants.Default.AMOUNT.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONEY_CURRENCY).value(ExpenseTestConstants.Default.CURRENCY.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_CATEGORY).value(ExpenseTestConstants.Default.CATEGORY.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_TYPE).value(ExpenseTestConstants.Default.TYPE.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONTH_YEAR).isArray())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_YEAR).value(ExpenseTestConstants.Default.YEAR))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONTH).value(ExpenseTestConstants.Default.MONTH));
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_NAME).value(ExpenseConstants.Default.NAME))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_AMOUNT).value(ExpenseConstants.Default.AMOUNT.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_CURRENCY).value(ExpenseConstants.Default.CURRENCY.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_CATEGORY).value(ExpenseConstants.Default.CATEGORY.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_TYPE).value(ExpenseConstants.Default.TYPE.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH_YEAR).isArray())
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_YEAR).value(ExpenseConstants.Default.YEAR))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH).value(ExpenseConstants.Default.MONTH));
 				
 		Mockito.verify(expenseService, Mockito.times(1))
 				.createExpense(Mockito.any(ExpenseRequest.class));
@@ -75,55 +75,55 @@ public class ExpenseControllerTest {
 	
 	@Test
 	void getExpense_ValidId_ReturnsOk() throws Exception {
-		Mockito.when(expenseService.getExpenseById(ExpenseTestConstants.Default.ID))
+		Mockito.when(expenseService.getExpenseById(ExpenseConstants.Default.ID))
 				.thenReturn(testExpense);
 				
-		mockMvc.perform(get(TestPaths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseTestConstants.Default.ID)
+		mockMvc.perform(get(Paths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseConstants.Default.ID)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_NAME).value(ExpenseTestConstants.Default.NAME))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONEY_AMOUNT).value(ExpenseTestConstants.Default.AMOUNT.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONEY_CURRENCY).value(ExpenseTestConstants.Default.CURRENCY.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_CATEGORY).value(ExpenseTestConstants.Default.CATEGORY.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_TYPE).value(ExpenseTestConstants.Default.TYPE.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONTH_YEAR).isArray())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_YEAR).value(ExpenseTestConstants.Default.YEAR))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONTH).value(ExpenseTestConstants.Default.MONTH));
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_NAME).value(ExpenseConstants.Default.NAME))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_AMOUNT).value(ExpenseConstants.Default.AMOUNT.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_CURRENCY).value(ExpenseConstants.Default.CURRENCY.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_CATEGORY).value(ExpenseConstants.Default.CATEGORY.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_TYPE).value(ExpenseConstants.Default.TYPE.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH_YEAR).isArray())
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_YEAR).value(ExpenseConstants.Default.YEAR))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH).value(ExpenseConstants.Default.MONTH));
 				
 		Mockito.verify(expenseService, Mockito.times(1))
-				.getExpenseById(ExpenseTestConstants.Default.ID);
+				.getExpenseById(ExpenseConstants.Default.ID);
 	}
 
 	@Test
 	void getExpense_NonExistentId_ReturnsNotFound() throws Exception {
-		Mockito.when(expenseService.getExpenseById(ExpenseTestConstants.NonExistent.ID))
-				.thenThrow(new ExpenseNotFoundException(String.format(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseTestConstants.NonExistent.ID)));
+		Mockito.when(expenseService.getExpenseById(ExpenseConstants.NonExistent.ID))
+				.thenThrow(new ExpenseNotFoundException(String.format(Messages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)));
 				
-		mockMvc.perform(get(TestPaths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseTestConstants.NonExistent.ID)
+		mockMvc.perform(get(Paths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseTestConstants.NonExistent.ID)));
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(Messages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)));
 				
 		Mockito.verify(expenseService, Mockito.times(1))
-				.getExpenseById(ExpenseTestConstants.NonExistent.ID);
+				.getExpenseById(ExpenseConstants.NonExistent.ID);
 	}
 	
 	@Test
 	void getAllExpenses_ValidMonth_ReturnsOk() throws Exception {
 		List<Expense> expenseList = List.of(testExpense, testExpense);
 		
-		Mockito.when(expenseService.getAllExpensesForMonth(ExpenseTestConstants.Default.YEAR_MONTH.toString()))
+		Mockito.when(expenseService.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString()))
 				.thenReturn(expenseList);
 				
-		mockMvc.perform(get(TestPaths.EndpointPathConstants.ENDPOINT_EXPENSE)
-				.param(TestPaths.RequestParamsConstants.REQUEST_PARAM_MONTH, ExpenseTestConstants.Default.YEAR_MONTH.toString())
+		mockMvc.perform(get(Paths.EndpointPathConstants.ENDPOINT_EXPENSE)
+				.param(Paths.RequestParamsConstants.REQUEST_PARAM_MONTH, ExpenseConstants.Default.YEAR_MONTH.toString())
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_NAME_0).value(ExpenseTestConstants.Default.NAME))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_NAME_1).value(ExpenseTestConstants.Default.NAME));
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_NAME_0).value(ExpenseConstants.Default.NAME))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_NAME_1).value(ExpenseConstants.Default.NAME));
 				
 		Mockito.verify(expenseService, Mockito.times(1))
-				.getAllExpensesForMonth(ExpenseTestConstants.Default.YEAR_MONTH.toString());
+				.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString());
 	}
 	
 	@Test
@@ -131,18 +131,18 @@ public class ExpenseControllerTest {
 		Mockito.when(expenseService.updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class)))
 				.thenReturn(testExpense);
 				
-		mockMvc.perform(put(TestPaths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseTestConstants.Default.ID)
+		mockMvc.perform(put(Paths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseConstants.Default.ID)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(testExpenseRequest)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_NAME).value(ExpenseTestConstants.Default.NAME))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONEY_AMOUNT).value(ExpenseTestConstants.Default.AMOUNT.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONEY_CURRENCY).value(ExpenseTestConstants.Default.CURRENCY.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_CATEGORY).value(ExpenseTestConstants.Default.CATEGORY.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_TYPE).value(ExpenseTestConstants.Default.TYPE.toString()))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONTH_YEAR).isArray())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_YEAR).value(ExpenseTestConstants.Default.YEAR))
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_MONTH).value(ExpenseTestConstants.Default.MONTH));
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_NAME).value(ExpenseConstants.Default.NAME))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_AMOUNT).value(ExpenseConstants.Default.AMOUNT.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_CURRENCY).value(ExpenseConstants.Default.CURRENCY.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_CATEGORY).value(ExpenseConstants.Default.CATEGORY.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_TYPE).value(ExpenseConstants.Default.TYPE.toString()))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH_YEAR).isArray())
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_YEAR).value(ExpenseConstants.Default.YEAR))
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH).value(ExpenseConstants.Default.MONTH));
 				
 		Mockito.verify(expenseService, Mockito.times(1))
 				.updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class));
@@ -151,13 +151,13 @@ public class ExpenseControllerTest {
 	@Test
 	void updateExpense_NonExistentId_ReturnsNotFound() throws Exception {
 		Mockito.when(expenseService.updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class)))
-				.thenThrow(new ExpenseNotFoundException(String.format(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseTestConstants.NonExistent.ID)));
+				.thenThrow(new ExpenseNotFoundException(String.format(Messages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)));
 				
-		mockMvc.perform(put(TestPaths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseTestConstants.NonExistent.ID)
+		mockMvc.perform(put(Paths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(testExpenseRequest)))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseTestConstants.NonExistent.ID)));
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(Messages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)));
 				
 		Mockito.verify(expenseService, Mockito.times(1))
 				.updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class));
@@ -167,39 +167,39 @@ public class ExpenseControllerTest {
 	void deleteExpense_ValidId_ReturnsNoContent() throws Exception {
 		Mockito.doNothing()
 				.when(expenseService)
-				.deleteExpense(ExpenseTestConstants.Default.ID);
+				.deleteExpense(ExpenseConstants.Default.ID);
 				
-		mockMvc.perform(delete(TestPaths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseTestConstants.Default.ID))
+		mockMvc.perform(delete(Paths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseConstants.Default.ID))
 				.andExpect(status().isNoContent());
 				
 		Mockito.verify(expenseService, Mockito.times(1))
-				.deleteExpense(ExpenseTestConstants.Default.ID);
+				.deleteExpense(ExpenseConstants.Default.ID);
 	}
 	
 	@Test
 	void deleteExpense_NonExistentId_ReturnsNotFound() throws Exception {
-		Mockito.doThrow(new ExpenseNotFoundException(String.format(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseTestConstants.NonExistent.ID)))
+		Mockito.doThrow(new ExpenseNotFoundException(String.format(Messages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)))
 				.when(expenseService)
-				.deleteExpense(ExpenseTestConstants.NonExistent.ID);
+				.deleteExpense(ExpenseConstants.NonExistent.ID);
 				
-		mockMvc.perform(delete(TestPaths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseTestConstants.NonExistent.ID))
+		mockMvc.perform(delete(Paths.EndpointPathConstants.ENDPOINT_EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseTestConstants.NonExistent.ID)));
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(Messages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)));
 				
 		Mockito.verify(expenseService, Mockito.times(1))
-				.deleteExpense(ExpenseTestConstants.NonExistent.ID);
+				.deleteExpense(ExpenseConstants.NonExistent.ID);
 	}
 	
 	@Test
 	void createExpense_ServiceError_ReturnsInternalServerError() throws Exception {
 		Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
-				.thenThrow(new RuntimeException(TestMessages.CommonErrorMessageConstants.SERVICE_FAILURE));
+				.thenThrow(new RuntimeException(Messages.CommonErrorMessageConstants.SERVICE_FAILURE));
 				
-		mockMvc.perform(post(TestPaths.EndpointPathConstants.ENDPOINT_EXPENSE)
+		mockMvc.perform(post(Paths.EndpointPathConstants.ENDPOINT_EXPENSE)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(testExpenseRequest)))
 				.andExpect(status().isInternalServerError())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_EMPTY).value(TestMessages.CommonErrorMessageConstants.UNEXPECTED_ERROR));
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_EMPTY).value(Messages.CommonErrorMessageConstants.UNEXPECTED_ERROR));
 				
 		Mockito.verify(expenseService, Mockito.times(1))
 				.createExpense(Mockito.any(ExpenseRequest.class));
@@ -208,13 +208,13 @@ public class ExpenseControllerTest {
 	@Test
 	void createExpense_DataIntegrityViolation_ReturnsConflict() throws Exception {
 		Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
-				.thenThrow(new DataIntegrityViolationException(TestMessages.CommonErrorMessageConstants.DATABASE_CONSTRAINT));
+				.thenThrow(new DataIntegrityViolationException(Messages.CommonErrorMessageConstants.DATABASE_CONSTRAINT));
 				
-		mockMvc.perform(post(TestPaths.EndpointPathConstants.ENDPOINT_EXPENSE)
+		mockMvc.perform(post(Paths.EndpointPathConstants.ENDPOINT_EXPENSE)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(testExpenseRequest)))
 				.andExpect(status().isConflict())
-				.andExpect(jsonPath(TestPaths.JsonPathConstants.JSON_PATH_EMPTY).value(TestMessages.CommonErrorMessageConstants.DATABASE_CONSTRAINT));
+				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_EMPTY).value(Messages.CommonErrorMessageConstants.DATABASE_CONSTRAINT));
 				
 		Mockito.verify(expenseService, Mockito.times(1))
 				.createExpense(Mockito.any(ExpenseRequest.class));

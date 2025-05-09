@@ -1,7 +1,7 @@
-package com.budgetmaster.test.constants.TestData;
+package com.budgetmaster.testsupport.constants;
 
-public final class StringTestConstants {
-    private StringTestConstants() {}
+public final class Strings {
+    private Strings() {}
 
     public static final String EMPTY_STRING = "";
     public static final String TEST_STRING = "test string";

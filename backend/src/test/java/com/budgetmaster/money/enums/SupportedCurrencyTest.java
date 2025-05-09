@@ -2,16 +2,16 @@ package com.budgetmaster.money.enums;
 
 import java.util.Currency;
 
-import com.budgetmaster.test.constants.TestData.MoneyTestConstants;
-
 import org.junit.jupiter.api.Test;
+
+import com.budgetmaster.testsupport.money.constants.MoneyConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SupportedCurrencyTest {
     // -- Test Data --
-    private static final Currency GBP = MoneyTestConstants.GBP;
-    private static final Currency EUR = MoneyTestConstants.InvalidValues.EUR;
+    private static final Currency GBP = MoneyConstants.GBP;
+    private static final Currency EUR = MoneyConstants.InvalidValues.EUR;
 
     // -- Test Methods --
 

@@ -71,10 +71,4 @@ public class ExpenseBuilder {
             .withType(ExpenseConstants.Updated.TYPE)
             .withMonth(ExpenseConstants.Updated.YEAR_MONTH);
     }
-
-    public static ExpenseBuilder invalidExpense() {
-        return new ExpenseBuilder()
-            .withMoney(MoneyBuilder.invalidMoney().build())
-            .withMonth(YearMonth.parse(ExpenseConstants.Invalid.YEAR_MONTH));
-    }
 }

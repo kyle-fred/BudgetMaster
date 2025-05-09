@@ -61,10 +61,4 @@ public class ExpenseRequestBuilder {
             .withType(ExpenseConstants.Updated.TYPE)
             .withMonth(ExpenseConstants.Updated.YEAR_MONTH.toString());
     }
-
-    public static ExpenseRequestBuilder invalidExpenseRequest() {
-        return new ExpenseRequestBuilder()
-            .withMoney(MoneyRequestBuilder.invalidMoney().buildRequest())
-            .withMonth(ExpenseConstants.Invalid.YEAR_MONTH);
-    }
 }

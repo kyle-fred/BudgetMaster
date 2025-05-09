@@ -71,10 +71,4 @@ public class IncomeBuilder {
             .withType(IncomeConstants.Updated.TYPE)
             .withMonth(IncomeConstants.Updated.YEAR_MONTH);
     }
-
-    public static IncomeBuilder invalidIncome() {
-        return new IncomeBuilder()
-            .withMoney(MoneyBuilder.invalidMoney().build())
-            .withMonth(YearMonth.parse(IncomeConstants.Invalid.YEAR_MONTH));
-    }
 }

@@ -43,10 +43,4 @@ public class MoneyBuilder {
             .withAmount(MoneyConstants.Updated.AMOUNT)
             .withCurrency(MoneyConstants.Updated.CURRENCY);
     }
-
-    public static MoneyBuilder invalidMoney() {
-        return new MoneyBuilder()
-            .withAmount(MoneyConstants.InvalidValues.AMOUNT)
-            .withCurrency(MoneyConstants.InvalidValues.EUR);
-    }
 }

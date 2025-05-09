@@ -31,8 +31,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 
 	// -- Test Objects --
 	private EntityLookupService entityLookupService;
-
-	// -- Test Objects --
+	
 	private Budget testBudget;
 	
 	@Mock

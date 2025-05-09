@@ -60,10 +60,4 @@ public class IncomeRequestBuilder {
             .withType(IncomeConstants.Updated.TYPE)
             .withMonth(IncomeConstants.Updated.YEAR_MONTH.toString());
     }
-
-    public static IncomeRequestBuilder invalidIncomeRequest() {
-        return new IncomeRequestBuilder()
-            .withMoney(MoneyRequestBuilder.invalidMoney().buildRequest())
-            .withMonth(IncomeConstants.Invalid.YEAR_MONTH);
-    }
 }

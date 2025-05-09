@@ -1,79 +1,46 @@
 package com.budgetmaster.expense.service;
 
-import java.math.BigDecimal;
-import java.time.YearMonth;
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
 import com.budgetmaster.budget.service.logic.ExpenseBudgetSynchronizer;
-import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.common.utils.DateUtils;
+import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.expense.dto.ExpenseRequest;
-import com.budgetmaster.expense.enums.ExpenseCategory;
 import com.budgetmaster.expense.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.repository.ExpenseRepository;
-import com.budgetmaster.money.dto.MoneyRequest;
-import com.budgetmaster.money.model.Money;
-import com.budgetmaster.test.constants.TestData;
-import com.budgetmaster.test.constants.TestMessages;
+import com.budgetmaster.testsupport.constants.Messages;
+import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
+import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
+@Import(JacksonConfig.class)
 public class ExpenseServiceTest {
 	// -- Dependencies --
 	private final ExpenseRepository expenseRepository = mock(ExpenseRepository.class);
 	private final ExpenseBudgetSynchronizer expenseBudgetSynchronizer = mock(ExpenseBudgetSynchronizer.class);
 	private final ExpenseService expenseService = new ExpenseService(expenseRepository, expenseBudgetSynchronizer);
 	
-	// -- Test Data --
-	private static final Long testId = TestData.CommonTestDataConstants.ID_EXISTING;
-	private static final Long testIdNonExistent = TestData.CommonTestDataConstants.ID_NON_EXISTING;
-	private static final String testName = TestData.ExpenseTestDataConstants.NAME;
-	private static final BigDecimal testAmount = TestData.MoneyDtoTestDataConstants.AMOUNT;
-	private static final Currency testCurrency = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
-	private static final ExpenseCategory testCategory = TestData.ExpenseTestDataConstants.CATEGORY_MISCELLANEOUS;
-	private static final TransactionType testType = TestData.ExpenseTestDataConstants.TYPE_ONE_TIME;
-	private static final String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
-	private static final YearMonth testYearMonth = TestData.MonthTestDataConstants.MONTH_EXISTING;
-	
 	// -- Test Objects --
 	private ExpenseRequest expenseRequest;
 	private Expense testExpense;
-	private MoneyRequest moneyRequest;
-	
-	// -- Setup --
 	
 	@BeforeEach
 	void setUp() {
-		// Setup MoneyRequest
-		moneyRequest = new MoneyRequest();
-		moneyRequest.setAmount(testAmount);
-		moneyRequest.setCurrency(testCurrency);
-		
-		// Setup ExpenseRequest
-		expenseRequest = new ExpenseRequest();
-		expenseRequest.setName(testName);
-		expenseRequest.setMoney(moneyRequest);
-		expenseRequest.setCategory(testCategory);
-		expenseRequest.setType(testType);
-		expenseRequest.setMonth(testMonth);
-		
-		// Setup Expense
-		testExpense = Expense.of(testName, Money.of(testAmount, testCurrency), testCategory, testType, testYearMonth);
-		testExpense.setId(testId);
+		testExpense = ExpenseFactory.createDefaultExpense();
+		expenseRequest = ExpenseFactory.createDefaultExpenseRequest();
 	}
-	
-	// -- Create Expense Tests --
 	
 	@Test
 	void createExpense_ValidRequest_ReturnsCreated() {
@@ -85,12 +52,12 @@ public class ExpenseServiceTest {
 		Expense savedExpense = expenseService.createExpense(expenseRequest);
 
 		assertNotNull(savedExpense);
-		assertEquals(testName, savedExpense.getName());
-		assertEquals(testAmount, savedExpense.getMoney().getAmount());
-		assertEquals(testCurrency, savedExpense.getMoney().getCurrency());
-		assertEquals(testCategory, savedExpense.getCategory());
-		assertEquals(testType, savedExpense.getType());
-		assertEquals(testYearMonth, savedExpense.getMonth());
+		assertEquals(ExpenseConstants.Default.NAME, savedExpense.getName());
+		assertEquals(ExpenseConstants.Default.AMOUNT, savedExpense.getMoney().getAmount());
+		assertEquals(ExpenseConstants.Default.CURRENCY, savedExpense.getMoney().getCurrency());
+		assertEquals(ExpenseConstants.Default.CATEGORY, savedExpense.getCategory());
+		assertEquals(ExpenseConstants.Default.TYPE, savedExpense.getType());
+		assertEquals(ExpenseConstants.Default.YEAR_MONTH, savedExpense.getMonth());
 
 		Mockito.verify(expenseBudgetSynchronizer, Mockito.times(1))
 				.apply(Mockito.any(Expense.class));
@@ -98,70 +65,59 @@ public class ExpenseServiceTest {
 				.saveAndFlush(Mockito.any(Expense.class));
 	}
 	
-	// -- Get All Expenses Tests --
-	
 	@Test
 	void getAllExpenses_ValidMonth_ReturnsOk() {
 		List<Expense> expenses = List.of(testExpense, testExpense);
 		
 		try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
-			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(testMonth))
-					.thenReturn(testYearMonth);
-			Mockito.when(expenseRepository.findByMonth(testYearMonth))
+			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(ExpenseConstants.Default.YEAR_MONTH.toString()))
+					.thenReturn(ExpenseConstants.Default.YEAR_MONTH);
+			Mockito.when(expenseRepository.findByMonth(ExpenseConstants.Default.YEAR_MONTH))
 					.thenReturn(expenses);
 
-			List<Expense> result = expenseService.getAllExpensesForMonth(testMonth);
+			List<Expense> result = expenseService.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString());
 
 			assertNotNull(result);
 			assertEquals(2, result.size());
-			assertEquals(testName, result.get(0).getName());
-			assertEquals(testName, result.get(1).getName());
+			assertEquals(ExpenseConstants.Default.NAME, result.get(0).getName());
+			assertEquals(ExpenseConstants.Default.NAME, result.get(1).getName());
 
 			Mockito.verify(expenseRepository, Mockito.times(1))
-					.findByMonth(testYearMonth);
+					.findByMonth(ExpenseConstants.Default.YEAR_MONTH);
 		}
 	}
 	
-	// -- Get Expense Tests --
-	
 	@Test
 	void getExpense_ValidId_ReturnsOk() {
-		Mockito.when(expenseRepository.findById(testId))
+		Mockito.when(expenseRepository.findById(ExpenseConstants.Default.ID))
 				.thenReturn(Optional.of(testExpense));
 		
-		Expense retrievedExpense = expenseService.getExpenseById(testId);
+		Expense retrievedExpense = expenseService.getExpenseById(ExpenseConstants.Default.ID);
 		
 		assertNotNull(retrievedExpense);
-		assertEquals(testName, retrievedExpense.getName());
-		assertEquals(testAmount, retrievedExpense.getMoney().getAmount());
-		assertEquals(testCurrency, retrievedExpense.getMoney().getCurrency());
-		assertEquals(testCategory, retrievedExpense.getCategory());
-		assertEquals(testType, retrievedExpense.getType());
-		assertEquals(testYearMonth, retrievedExpense.getMonth());
+		assertEquals(ExpenseConstants.Default.NAME, retrievedExpense.getName());
+		assertEquals(ExpenseConstants.Default.AMOUNT, retrievedExpense.getMoney().getAmount());
+		assertEquals(ExpenseConstants.Default.CURRENCY, retrievedExpense.getMoney().getCurrency());
+		assertEquals(ExpenseConstants.Default.CATEGORY, retrievedExpense.getCategory());
+		assertEquals(ExpenseConstants.Default.TYPE, retrievedExpense.getType());
+		assertEquals(ExpenseConstants.Default.YEAR_MONTH, retrievedExpense.getMonth());
 		
 		Mockito.verify(expenseRepository, Mockito.times(1))
-				.findById(testId);
+				.findById(ExpenseConstants.Default.ID);
 	}
-	
-	// -- Update Expense Tests --
 	
 	@Test
 	void updateExpense_ValidRequest_ReturnsOk() {
-		Mockito.when(expenseRepository.findById(testId))
+		ExpenseRequest updatedExpenseRequest = ExpenseFactory.createUpdatedExpenseRequest();
+
+		Mockito.when(expenseRepository.findById(ExpenseConstants.Default.ID))
 				.thenReturn(Optional.of(testExpense));
 		Mockito.doNothing().when(expenseBudgetSynchronizer)
 				.reapply(Mockito.any(Expense.class), Mockito.any(Expense.class));
 		Mockito.when(expenseRepository.saveAndFlush(Mockito.any(Expense.class)))
 				.thenReturn(testExpense);
 
-		ExpenseRequest updatedExpenseRequest = new ExpenseRequest();
-		updatedExpenseRequest.setName(TestData.ExpenseTestDataConstants.NAME_UPDATED);
-		updatedExpenseRequest.setMoney(moneyRequest);
-		updatedExpenseRequest.setCategory(TestData.ExpenseTestDataConstants.CATEGORY_UPDATED);
-		updatedExpenseRequest.setType(TestData.ExpenseTestDataConstants.TYPE_UPDATED);
-		updatedExpenseRequest.setMonth(TestData.MonthTestDataConstants.MONTH_STRING_NON_EXISTING);
-
-		Expense updatedExpense = expenseService.updateExpense(testId, updatedExpenseRequest);
+		Expense updatedExpense = expenseService.updateExpense(ExpenseConstants.Default.ID, updatedExpenseRequest);
 
 		assertNotNull(updatedExpense);
 		assertEquals(updatedExpenseRequest.getName(), updatedExpense.getName());
@@ -177,33 +133,29 @@ public class ExpenseServiceTest {
 				.saveAndFlush(Mockito.any(Expense.class));
 	}
 	
-	// -- Delete Expense Tests --
-	
 	@Test
 	void deleteExpense_ValidId_ReturnsNoContent() {
-		Mockito.when(expenseRepository.findById(testId))
+		Mockito.when(expenseRepository.findById(ExpenseConstants.Default.ID))
 				.thenReturn(Optional.of(testExpense));
 		Mockito.doNothing().when(expenseBudgetSynchronizer)
 				.retract(Mockito.any(Expense.class));
 		Mockito.doNothing()
 				.when(expenseRepository)
-				.deleteById(testId);
+				.deleteById(ExpenseConstants.Default.ID);
 		
-		expenseService.deleteExpense(testId);
+		expenseService.deleteExpense(ExpenseConstants.Default.ID);
 
 		Mockito.verify(expenseBudgetSynchronizer, Mockito.times(1))
 				.retract(Mockito.any(Expense.class));
 		Mockito.verify(expenseRepository, Mockito.times(1))
-				.findById(testId);
+				.findById(ExpenseConstants.Default.ID);
 		Mockito.verify(expenseRepository, Mockito.times(1))
-				.deleteById(testId);
+				.deleteById(ExpenseConstants.Default.ID);
 	}
-	
-	// -- Error Handling Tests --
 	
 	@Test
 	void createExpense_ServiceError_ReturnsInternalServerError() {
-		String errorMessage = TestMessages.CommonErrorMessageConstants.DUPLICATE_ENTRY;
+		String errorMessage = Messages.CommonErrorMessageConstants.DUPLICATE_ENTRY;
 		Mockito.when(expenseRepository.saveAndFlush(Mockito.any(Expense.class)))
 				.thenThrow(new DataIntegrityViolationException(errorMessage));
 		
@@ -218,13 +170,13 @@ public class ExpenseServiceTest {
 	
 	@Test
 	void getExpense_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, testIdNonExistent);
-		Mockito.when(expenseRepository.findById(testIdNonExistent))
+		String errorMessage = String.format(Messages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
+		Mockito.when(expenseRepository.findById(ExpenseConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		
 		ExpenseNotFoundException exception = assertThrows(
 				ExpenseNotFoundException.class,
-				() -> expenseService.getExpenseById(testIdNonExistent),
+				() -> expenseService.getExpenseById(ExpenseConstants.NonExistent.ID),
 				errorMessage
 		);
 		
@@ -233,17 +185,17 @@ public class ExpenseServiceTest {
 	
 	@Test
 	void getAllExpenses_NoExpenses_ReturnsNotFound() {
-		String errorMessage = String.format(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_BY_MONTH, testYearMonth);
+		String errorMessage = String.format(Messages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_BY_MONTH, ExpenseConstants.Default.YEAR_MONTH.toString());
 		
 		try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
-			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(testMonth))
-					.thenReturn(testYearMonth);
-			Mockito.when(expenseRepository.findByMonth(testYearMonth))
+			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(ExpenseConstants.Default.YEAR_MONTH.toString()))
+					.thenReturn(ExpenseConstants.Default.YEAR_MONTH);
+			Mockito.when(expenseRepository.findByMonth(ExpenseConstants.Default.YEAR_MONTH))
 					.thenThrow(new ExpenseNotFoundException(errorMessage));
 
 			ExpenseNotFoundException exception = assertThrows(
 					ExpenseNotFoundException.class,
-					() -> expenseService.getAllExpensesForMonth(testMonth),
+					() -> expenseService.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString()),
 					errorMessage
 			);
 			
@@ -253,13 +205,13 @@ public class ExpenseServiceTest {
 	
 	@Test
 	void updateExpense_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, testIdNonExistent);
-		Mockito.when(expenseRepository.findById(testIdNonExistent))
+		String errorMessage = String.format(Messages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
+		Mockito.when(expenseRepository.findById(ExpenseConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 
 		ExpenseNotFoundException exception = assertThrows(
 				ExpenseNotFoundException.class,
-				() -> expenseService.updateExpense(testIdNonExistent, expenseRequest),
+				() -> expenseService.updateExpense(ExpenseConstants.NonExistent.ID, expenseRequest),
 				errorMessage
 		);
 		
@@ -270,13 +222,13 @@ public class ExpenseServiceTest {
 	
 	@Test
 	void deleteExpense_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, testIdNonExistent);
-		Mockito.when(expenseRepository.findById(testIdNonExistent))
+		String errorMessage = String.format(Messages.ExpenseErrorMessageConstants.EXPENSE_NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
+		Mockito.when(expenseRepository.findById(ExpenseConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		
 		ExpenseNotFoundException exception = assertThrows(
 				ExpenseNotFoundException.class,
-				() -> expenseService.deleteExpense(testIdNonExistent),
+				() -> expenseService.deleteExpense(ExpenseConstants.NonExistent.ID),
 				errorMessage
 		);
 		

@@ -1,35 +1,25 @@
 package com.budgetmaster.money.dto;
 
-import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.Set;
-
-import com.budgetmaster.test.constants.TestData;
-import com.budgetmaster.test.constants.TestMessages;
+import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
-import jakarta.validation.ValidationException;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.budgetmaster.testsupport.constants.Messages;
+import com.budgetmaster.testsupport.money.builder.MoneyRequestBuilder;
+import com.budgetmaster.testsupport.money.constants.MoneyConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MoneyRequestTest {
     // -- Dependencies --
     private static Validator validator;
-    
-    // -- Test Objects --
-    private MoneyRequest request;
-
-    // -- Test Data --
-    private BigDecimal testAmount = TestData.MoneyDtoTestDataConstants.AMOUNT;
-    private static final Currency GBP = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
-    private static final Currency USD = TestData.CurrencyTestDataConstants.CURRENCY_USD;
 
     // -- Setup --
     @BeforeAll
@@ -38,17 +28,9 @@ public class MoneyRequestTest {
         validator = factory.getValidator();
     }
 
-    @BeforeEach
-    void setUpRequest() {
-        request = new MoneyRequest();
-    }
-
-    // -- Validation Tests --
-
     @Test
     void testValidMoneyRequest() {
-        request.setAmount(testAmount);
-        request.setCurrency(GBP);
+        MoneyRequest request = MoneyRequestBuilder.defaultIncome().buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertTrue(violations.isEmpty());
@@ -56,43 +38,68 @@ public class MoneyRequestTest {
 
     @Test
     void testNullAmount() {
-        request.setCurrency(GBP);
+        MoneyRequest request = MoneyRequestBuilder.defaultIncome()
+            .withAmount(null)
+            .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MoneyErrorMessageConstants.MONEY_AMOUNT_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.MoneyErrorMessageConstants.MONEY_AMOUNT_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testNullCurrency() {
-        request.setAmount(testAmount);
+        MoneyRequest request = MoneyRequestBuilder.defaultIncome()
+            .withCurrency(null)
+            .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MoneyErrorMessageConstants.MONEY_CURRENCY_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.MoneyErrorMessageConstants.MONEY_CURRENCY_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testUnsupportedCurrency() {
-        request.setAmount(testAmount);
-        request.setCurrency(USD);
-        assertThrows(ValidationException.class, () -> validator.validate(request));
+        MoneyRequest request = MoneyRequestBuilder.defaultIncome()
+            .withCurrency(MoneyConstants.InvalidValues.EUR)
+            .buildRequest();
+
+        Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
+        assertEquals(1, violations.size());
+        assertEquals(Messages.MoneyErrorMessageConstants.MONEY_UNSUPPORTED_CURRENCY, violations.iterator().next().getMessage());
     }
 
     @Test
     void testNegativeAmount() {
-        request.setAmount(testAmount.negate());
-        request.setCurrency(GBP);
+        MoneyRequest request = MoneyRequestBuilder.defaultIncome()
+            .withAmount(MoneyConstants.InvalidValues.AMOUNT)
+            .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MoneyErrorMessageConstants.MONEY_NEGATIVE_AMOUNT, violations.iterator().next().getMessage());
+        assertEquals(Messages.MoneyErrorMessageConstants.MONEY_NEGATIVE_AMOUNT, violations.iterator().next().getMessage());
+    }
+
+    @Test
+    void testInvalidMoney() {
+        MoneyRequest request = MoneyRequestBuilder.invalidMoney()
+            .buildRequest();
+
+        Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
+        assertEquals(2, violations.size());
+
+        Set<String> messages = violations.stream()
+            .map(ConstraintViolation::getMessage)
+            .collect(Collectors.toSet());
+
+        assertTrue(messages.contains(Messages.MoneyErrorMessageConstants.MONEY_NEGATIVE_AMOUNT));
+        assertTrue(messages.contains(Messages.MoneyErrorMessageConstants.MONEY_UNSUPPORTED_CURRENCY));
     }
 
     @Test
     void testZeroAmount() {
-        request.setAmount(BigDecimal.ZERO);
-        request.setCurrency(GBP);
+        MoneyRequest request = MoneyRequestBuilder.defaultZero()
+            .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertTrue(violations.isEmpty());
@@ -100,8 +107,9 @@ public class MoneyRequestTest {
 
     @Test
     void testLargeAmount() {
-        request.setAmount(TestData.MoneyDtoTestDataConstants.AMOUNT_LARGE);
-        request.setCurrency(GBP);
+        MoneyRequest request = MoneyRequestBuilder.defaultIncome()
+            .withAmount(MoneyConstants.Miscellaneous.LARGE_AMOUNT)
+            .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertTrue(violations.isEmpty());
@@ -109,10 +117,10 @@ public class MoneyRequestTest {
 
     @Test
     void testGettersAndSetters() {
-        request.setAmount(testAmount);
-        request.setCurrency(GBP);
+        MoneyRequest request = MoneyRequestBuilder.defaultIncome()
+            .buildRequest();
 
-        assertEquals(testAmount, request.getAmount());
-        assertEquals(GBP, request.getCurrency());
+        assertEquals(MoneyConstants.IncomeDefaults.AMOUNT, request.getAmount());
+        assertEquals(MoneyConstants.IncomeDefaults.CURRENCY, request.getCurrency());
     }
 }

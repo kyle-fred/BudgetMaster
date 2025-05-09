@@ -1,14 +1,6 @@
 package com.budgetmaster.expense.dto;
 
-import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.Set;
-
-import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.expense.enums.ExpenseCategory;
-import com.budgetmaster.money.dto.MoneyRequest;
-import com.budgetmaster.test.constants.TestData;
-import com.budgetmaster.test.constants.TestMessages;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -16,26 +8,17 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.budgetmaster.testsupport.constants.Messages;
+import com.budgetmaster.testsupport.expense.builder.ExpenseRequestBuilder;
+import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ExpenseRequestTest {
     // -- Dependencies --
     private static Validator validator;
-    
-    // -- Test Objects --
-    private ExpenseRequest expenseRequest;
-    private MoneyRequest moneyRequest;
-
-    // -- Test Data --
-    private String testName = TestData.ExpenseTestDataConstants.NAME;   
-    private ExpenseCategory testCategory = TestData.ExpenseTestDataConstants.CATEGORY_MISCELLANEOUS;
-    private BigDecimal testAmount = TestData.ExpenseTestDataConstants.AMOUNT;
-    private static final Currency GBP = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
-    private TransactionType testType = TestData.ExpenseTestDataConstants.TYPE_ONE_TIME;
-    private String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
     
     // -- Setup --
     @BeforeAll
@@ -44,23 +27,9 @@ public class ExpenseRequestTest {
         validator = factory.getValidator();
     }
 
-    @BeforeEach
-    void setUpRequest() {
-        expenseRequest = new ExpenseRequest();
-        moneyRequest = new MoneyRequest();
-        moneyRequest.setAmount(testAmount);
-        moneyRequest.setCurrency(GBP);
-    }
-
-    // -- Validation Tests --
-
     @Test
     void testValidExpenseRequest() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(testMonth);
+        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertTrue(violations.isEmpty());
@@ -68,87 +37,78 @@ public class ExpenseRequestTest {
     
     @Test
     void testNullName() {
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(testMonth);
+        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+            .withName(null)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.ExpenseErrorMessageConstants.EXPENSE_NAME_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.ExpenseErrorMessageConstants.EXPENSE_NAME_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testNullMoney() {
-        expenseRequest.setName(testName);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(testMonth);
+        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+            .withMoney(null)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MoneyErrorMessageConstants.MONEY_DETAILS_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.MoneyErrorMessageConstants.MONEY_DETAILS_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testNullCategory() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(testMonth);
+        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+            .withCategory(null)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.ExpenseErrorMessageConstants.EXPENSE_CATEGORY_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.ExpenseErrorMessageConstants.EXPENSE_CATEGORY_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testNullType() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setMonth(testMonth);
+        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+            .withType(null)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.ExpenseErrorMessageConstants.EXPENSE_TYPE_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.ExpenseErrorMessageConstants.EXPENSE_TYPE_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testNullMonth() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
+        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+            .withMonth(null)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MonthErrorMessageConstants.MONTH_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.MonthErrorMessageConstants.MONTH_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testInvalidMonth() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(TestData.MonthTestDataConstants.MONTH_INVALID);
+        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+            .withMonth(ExpenseConstants.Invalid.YEAR_MONTH.toString())
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MonthErrorMessageConstants.MONTH_INVALID_FORMAT, violations.iterator().next().getMessage());
+        assertEquals(Messages.MonthErrorMessageConstants.MONTH_INVALID_FORMAT, violations.iterator().next().getMessage());
     }
 
     @Test
     void testInvalidMonthFormat() {
-        expenseRequest.setName(testName);
-        expenseRequest.setMoney(moneyRequest);
-        expenseRequest.setCategory(testCategory);
-        expenseRequest.setType(testType);
-        expenseRequest.setMonth(TestData.MonthTestDataConstants.MONTH_INVALID_FORMAT);
+        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+            .withMonth(ExpenseConstants.Invalid.YEAR_MONTH_FORMAT)
+            .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MonthErrorMessageConstants.MONTH_INVALID_FORMAT, violations.iterator().next().getMessage());
+        assertEquals(Messages.MonthErrorMessageConstants.MONTH_INVALID_FORMAT, violations.iterator().next().getMessage());
     }
 }

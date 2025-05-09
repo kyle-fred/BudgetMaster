@@ -1,13 +1,6 @@
 package com.budgetmaster.income.dto;
 
-import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.Set;
-
-import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.money.dto.MoneyRequest;
-import com.budgetmaster.test.constants.TestData;
-import com.budgetmaster.test.constants.TestMessages;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -15,26 +8,17 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.budgetmaster.testsupport.constants.Messages;
+import com.budgetmaster.testsupport.income.builder.IncomeRequestBuilder;
+import com.budgetmaster.testsupport.income.constants.IncomeConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IncomeRequestTest {    
     // -- Dependencies --
     private static Validator validator;
-    
-    // -- Test Objects --
-    private IncomeRequest incomeRequest;
-    private MoneyRequest moneyRequest;
-
-    // -- Test Data --
-    private String testName = TestData.IncomeTestDataConstants.NAME;
-    private String testSource = TestData.IncomeTestDataConstants.SOURCE;
-    private BigDecimal testAmount = TestData.IncomeTestDataConstants.AMOUNT;
-    private static final Currency GBP = TestData.CurrencyTestDataConstants.CURRENCY_GBP;
-    private TransactionType testType = TestData.IncomeTestDataConstants.TYPE_ONE_TIME;
-    private String testMonth = TestData.MonthTestDataConstants.MONTH_STRING_EXISTING;
 
     // -- Setup --
     @BeforeAll
@@ -43,23 +27,9 @@ public class IncomeRequestTest {
         validator = factory.getValidator();
     }
 
-    @BeforeEach
-    void setUpRequest() {
-        incomeRequest = new IncomeRequest();
-        moneyRequest = new MoneyRequest();
-        moneyRequest.setAmount(testAmount);
-        moneyRequest.setCurrency(GBP);
-    }
-
-    // -- Validation Tests --
-
     @Test
     void testValidIncomeRequest() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(testMonth);
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
         
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertTrue(violations.isEmpty());
@@ -67,87 +37,78 @@ public class IncomeRequestTest {
 
     @Test
     void testNullName() {
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(testMonth);
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest()
+            .withName(null)
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.IncomeErrorMessageConstants.INCOME_NAME_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.IncomeErrorMessageConstants.INCOME_NAME_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testNullSource() {
-        incomeRequest.setName(testName);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(testMonth);
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest()
+            .withSource(null)
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.IncomeErrorMessageConstants.INCOME_SOURCE_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.IncomeErrorMessageConstants.INCOME_SOURCE_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testNullMoney() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(testMonth);
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest()
+            .withMoney(null)
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MoneyErrorMessageConstants.MONEY_DETAILS_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.MoneyErrorMessageConstants.MONEY_DETAILS_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testNullType() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setMonth(testMonth);
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest()
+            .withType(null)
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.IncomeErrorMessageConstants.INCOME_TYPE_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.IncomeErrorMessageConstants.INCOME_TYPE_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testNullMonth() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest()
+            .withMonth(null)
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MonthErrorMessageConstants.MONTH_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.MonthErrorMessageConstants.MONTH_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
     void testInvalidMonth() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(TestData.MonthTestDataConstants.MONTH_INVALID);
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest()
+            .withMonth(IncomeConstants.Invalid.YEAR_MONTH.toString())
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MonthErrorMessageConstants.MONTH_INVALID_FORMAT, violations.iterator().next().getMessage());
+        assertEquals(Messages.MonthErrorMessageConstants.MONTH_INVALID_FORMAT, violations.iterator().next().getMessage());
     }
 
     @Test
     void testInvalidMonthFormat() {
-        incomeRequest.setName(testName);
-        incomeRequest.setSource(testSource);
-        incomeRequest.setMoney(moneyRequest);
-        incomeRequest.setType(testType);
-        incomeRequest.setMonth(TestData.MonthTestDataConstants.MONTH_INVALID_FORMAT);
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest()
+            .withMonth(IncomeConstants.Invalid.YEAR_MONTH_FORMAT)
+            .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
         assertEquals(1, violations.size());
-        assertEquals(TestMessages.MonthErrorMessageConstants.MONTH_INVALID_FORMAT, violations.iterator().next().getMessage());
+        assertEquals(Messages.MonthErrorMessageConstants.MONTH_INVALID_FORMAT, violations.iterator().next().getMessage());
     }
 }

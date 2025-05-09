@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import com.budgetmaster.test.constants.TestData;
-import com.budgetmaster.test.constants.TestMessages;
+import com.budgetmaster.testsupport.constants.Enums;
+import com.budgetmaster.testsupport.constants.Messages;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,14 +30,14 @@ public class EnumExceptionUtilsTest {
 
     @Test
     void testExtractInvalidEnumValue_ValidExceptionMessage_ReturnsEnumConstant() {
-        String message = TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_FULL_EXCEPTION_INVALID_ENUM;
+        String message = Messages.EnumErrorMessageConstants.ERROR_MESSAGE_FULL_EXCEPTION_INVALID_ENUM;
         String extracted = EnumExceptionUtils.extractInvalidEnumValue(message);
-        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT, extracted);
+        assertEquals(Messages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT, extracted);
     }
 
     @Test
     void testExtractInvalidEnumValue_NoEnumPrefix_ReturnsNull() {
-        String message = TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_FULL_EXCEPTION_OTHER;
+        String message = Messages.EnumErrorMessageConstants.ERROR_MESSAGE_FULL_EXCEPTION_OTHER;
         String extracted = EnumExceptionUtils.extractInvalidEnumValue(message);
         assertNull(extracted);
     }
@@ -46,39 +46,39 @@ public class EnumExceptionUtilsTest {
 
     @Test
     void testExtractEnumPart_ValidMessage_ReturnsEnumPart() {
-        String message = TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_NO_ENUM_PREFIX;
+        String message = Messages.EnumErrorMessageConstants.ERROR_MESSAGE_NO_ENUM_PREFIX;
         String extracted = EnumExceptionUtils.extractEnumPart(message, 17);
-        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_PART, extracted);
+        assertEquals(Messages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_PART, extracted);
     }
 
     // -- Extract Enum Constant Tests --
 
     @Test
     void testExtractEnumConstant_ValidEnumPart_ReturnsConstant() {
-        String enumPart = TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_PART;
+        String enumPart = Messages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_PART;
         String extracted = EnumExceptionUtils.extractEnumConstant(enumPart);
-        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT, extracted);
+        assertEquals(Messages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT, extracted);
     }
 
     @Test
     void testExtractEnumConstant_NoDot_ReturnsSameString() {
-        String enumPart = TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT;
+        String enumPart = Messages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT;
         String extracted = EnumExceptionUtils.extractEnumConstant(enumPart);
-        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT, extracted);
+        assertEquals(Messages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT, extracted);
     }
 
     // -- Create Error Response Tests --
     
     @Test
     void testCreateErrorResponse_ValidInputs_ReturnsCorrectErrorMap() {
-        Map<String, Object> errorResponse = EnumExceptionUtils.createErrorResonse(  TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_VALUE, 
-                                                                                    TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD, 
+        Map<String, Object> errorResponse = EnumExceptionUtils.createErrorResonse(  Enums.ERROR_MESSAGE_INVALID_ENUM_VALUE, 
+                                                                                    Enums.ERROR_MESSAGE_INVALID_ENUM_FIELD, 
                                                                                     SampleEnum.class);
         
         assertNotNull(errorResponse);
-        assertTrue(errorResponse.containsKey(TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD));
-        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_INVALID_ENUM_VALUE_RESPONSE,
-                     errorResponse.get(TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD));
+        assertTrue(errorResponse.containsKey(Enums.ERROR_MESSAGE_INVALID_ENUM_FIELD));
+        assertEquals(Messages.EnumErrorMessageConstants.ERROR_MESSAGE_INVALID_ENUM_VALUE_RESPONSE,
+                     errorResponse.get(Enums.ERROR_MESSAGE_INVALID_ENUM_FIELD));
     }
 
     // -- Create Fallback Response Tests --
@@ -87,22 +87,22 @@ public class EnumExceptionUtilsTest {
     void testCreateFallbackResponse_ReturnsDefaultError() {
         Map<String, Object> fallbackResponse = EnumExceptionUtils.createFallbackResponse();
         assertNotNull(fallbackResponse);
-        assertTrue(fallbackResponse.containsKey(TestMessages.CommonErrorMessageConstants.ERROR));
-        assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_FALLBACK_MESSAGE, fallbackResponse.get(TestMessages.CommonErrorMessageConstants.ERROR));
+        assertTrue(fallbackResponse.containsKey(Messages.CommonErrorMessageConstants.ERROR));
+        assertEquals(Messages.EnumErrorMessageConstants.ERROR_MESSAGE_FALLBACK_MESSAGE, fallbackResponse.get(Messages.CommonErrorMessageConstants.ERROR));
     }
 
     // -- Find Enum Type Tests --
     
     @Test
     void testFindEnumType_ValidField_ReturnsEnumClass() {
-        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD);
+        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, Enums.ERROR_MESSAGE_INVALID_ENUM_FIELD);
         assertTrue(enumType.isPresent());
         assertEquals(SampleEnum.class, enumType.get());
     }
     
     @Test
     void testFindEnumType_InvalidField_ReturnsEmptyOptional() {
-        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, TestData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_FIELD_NAME);
+        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, Enums.ERROR_MESSAGE_INVALID_FIELD_NAME);
         assertTrue(enumType.isEmpty());
     }
 }

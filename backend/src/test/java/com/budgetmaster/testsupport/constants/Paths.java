@@ -1,6 +1,6 @@
-package com.budgetmaster.test.constants;
+package com.budgetmaster.testsupport.constants;
 
-public class TestPaths {
+public class Paths {
     
     public static class EndpointPathConstants {
         // -- Budget --
@@ -20,13 +20,15 @@ public class TestPaths {
         // -- Common --
         public static final String JSON_PATH_ID = "$.id";
         public static final String JSON_PATH_ERROR = "$.error";
-        public static final String JSON_PATH_MONTH = "$.month";
+        public static final String JSON_PATH_MONTH_YEAR = "$.month";
+        public static final String JSON_PATH_YEAR = "$.month[0]";
+        public static final String JSON_PATH_MONTH = "$.month[1]";
         public static final String JSON_PATH_CURRENCY = "$.currency";
         public static final String JSON_PATH_EMPTY = "$";
 
         // -- Budget --
-        public static final String JSON_PATH_TOTAL_INCOME = "$.total-income";
-        public static final String JSON_PATH_TOTAL_EXPENSE = "$.total-expense";
+        public static final String JSON_PATH_TOTAL_INCOME = "$.totalIncome";
+        public static final String JSON_PATH_TOTAL_EXPENSE = "$.totalExpense";
         public static final String JSON_PATH_SAVINGS = "$.savings";
 
         // -- Expense & Income --

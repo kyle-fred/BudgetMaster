@@ -32,11 +32,7 @@ public class BudgetServiceTest {
 	
 	@BeforeEach
 	void setUp() {
-		testBudget = BudgetBuilder.defaultBudget()
-			.withTotalIncome(BudgetConstants.Default.TOTAL_INCOME)
-			.withTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE)
-			.withSavings(BudgetConstants.Default.SAVINGS)
-			.build();
+		testBudget = BudgetBuilder.defaultBudget().build();
 	}
 	
 	@Test

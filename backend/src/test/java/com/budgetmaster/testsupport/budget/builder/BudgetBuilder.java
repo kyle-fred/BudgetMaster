@@ -61,10 +61,10 @@ public class BudgetBuilder {
         return new BudgetBuilder();
     }
 
-    public static BudgetBuilder updatedBudget() {
+    public static BudgetBuilder zeroedBudget() {
         return new BudgetBuilder()
-            .withTotalIncome(BudgetConstants.Updated.TOTAL_INCOME)
-            .withTotalExpense(BudgetConstants.Updated.TOTAL_EXPENSE)
-            .withSavings(BudgetConstants.Updated.SAVINGS);
+            .withTotalIncome(BigDecimal.ZERO)
+            .withTotalExpense(BigDecimal.ZERO)
+            .withSavings(BigDecimal.ZERO);
     }
 }

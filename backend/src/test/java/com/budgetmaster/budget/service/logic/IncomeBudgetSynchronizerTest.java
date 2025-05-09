@@ -1,6 +1,5 @@
 package com.budgetmaster.budget.service.logic;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 import com.budgetmaster.budget.exception.BudgetNotFoundException;
@@ -35,11 +34,7 @@ public class IncomeBudgetSynchronizerTest {
     @BeforeEach
     void setUp() {
         testIncome = IncomeFactory.createDefaultIncome();
-        testBudget = BudgetBuilder.defaultBudget()
-            .withTotalIncome(BudgetConstants.Default.TOTAL_INCOME)
-            .withTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE)
-            .withSavings(BudgetConstants.Default.SAVINGS)
-            .build();
+        testBudget = BudgetBuilder.defaultBudget().build();
     }
 
     @Test
@@ -53,8 +48,8 @@ public class IncomeBudgetSynchronizerTest {
 
         verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
         verify(budgetRepository).save(testBudget);
-        assertEquals(BudgetConstants.AfterIncomeApplied.TOTAL_INCOME, testBudget.getTotalIncome());
-        assertEquals(BudgetConstants.AfterIncomeApplied.SAVINGS, testBudget.getSavings());
+        assertEquals(BudgetConstants.AfterAddIncome_WhenBudgetExists.TOTAL_INCOME, testBudget.getTotalIncome());
+        assertEquals(BudgetConstants.AfterAddIncome_WhenBudgetExists.SAVINGS, testBudget.getSavings());
     }
 
     @Test
@@ -71,8 +66,8 @@ public class IncomeBudgetSynchronizerTest {
 		Budget budget = captor.getValue();
 
         verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
-        assertEquals(BudgetConstants.Default.TOTAL_INCOME, budget.getTotalIncome());
-        assertEquals(BudgetConstants.Default.TOTAL_INCOME, budget.getSavings());
+        assertEquals(BudgetConstants.AfterAddIncome_WhenNoBudgetExists.TOTAL_INCOME, budget.getTotalIncome());
+        assertEquals(BudgetConstants.AfterAddIncome_WhenNoBudgetExists.TOTAL_INCOME, budget.getSavings());
     }
 
     @Test
@@ -90,8 +85,8 @@ public class IncomeBudgetSynchronizerTest {
 
 		verify(budgetRepository, times(2)).findByMonth(BudgetConstants.Default.YEAR_MONTH);
         verify(budgetRepository).save(testBudget);
-        assertEquals(BudgetConstants.AfterIncomeUpdatedSameMonth.TOTAL_INCOME, testBudget.getTotalIncome());
-        assertEquals(BudgetConstants.AfterIncomeUpdatedSameMonth.SAVINGS, testBudget.getSavings());
+        assertEquals(BudgetConstants.AfterReapplyIncome_SameMonth.TOTAL_INCOME, testBudget.getTotalIncome());
+        assertEquals(BudgetConstants.AfterReapplyIncome_SameMonth.SAVINGS, testBudget.getSavings());
     }
 
     @Test
@@ -100,11 +95,8 @@ public class IncomeBudgetSynchronizerTest {
             .withMonth(IncomeConstants.Updated.YEAR_MONTH)
             .build();
 
-        Budget newBudget = BudgetBuilder.defaultBudget()
-            .withId(testBudget.getId() + 1)
-            .withTotalIncome(BigDecimal.ZERO)
-            .withTotalExpense(BigDecimal.ZERO)
-            .withSavings(BigDecimal.ZERO)
+        Budget newBudget = BudgetBuilder.zeroedBudget()
+            .withId(BudgetConstants.NonExistent.ID)
             .withMonth(BudgetConstants.Updated.YEAR_MONTH)
             .build();
 
@@ -119,12 +111,12 @@ public class IncomeBudgetSynchronizerTest {
         incomeBudgetSynchronizer.reapply(testIncome, updatedIncome);
 
         verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
-        verify(budgetRepository).findByMonth(IncomeConstants.Updated.YEAR_MONTH);
+        verify(budgetRepository).findByMonth(BudgetConstants.Updated.YEAR_MONTH);
         verify(budgetRepository).save(newBudget);
-        assertEquals(BigDecimal.ZERO.setScale(2), testBudget.getTotalIncome());
-        assertEquals(BudgetConstants.Default.TOTAL_EXPENSE.negate(), testBudget.getSavings());
-        assertEquals(BudgetConstants.AfterIncomeMovedToDifferentMonth.TOTAL_INCOME, newBudget.getTotalIncome());
-        assertEquals(BudgetConstants.AfterIncomeMovedToDifferentMonth.SAVINGS, newBudget.getSavings());
+        assertEquals(BudgetConstants.AfterReapplyIncome_DifferentMonth.ExistingBudget.TOTAL_INCOME, testBudget.getTotalIncome());
+        assertEquals(BudgetConstants.AfterReapplyIncome_DifferentMonth.ExistingBudget.SAVINGS, testBudget.getSavings());
+        assertEquals(BudgetConstants.AfterReapplyIncome_DifferentMonth.NewBudget.TOTAL_INCOME, newBudget.getTotalIncome());
+        assertEquals(BudgetConstants.AfterReapplyIncome_DifferentMonth.NewBudget.SAVINGS, newBudget.getSavings());
     }
 
     @Test
@@ -133,7 +125,7 @@ public class IncomeBudgetSynchronizerTest {
             .withMonth(IncomeConstants.Updated.YEAR_MONTH)
             .build();
 
-        when(budgetRepository.findByMonth(IncomeConstants.Default.YEAR_MONTH))
+        when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
             .thenReturn(Optional.empty());
 
         assertThrows(BudgetNotFoundException.class, () -> 
@@ -155,8 +147,8 @@ public class IncomeBudgetSynchronizerTest {
 
         verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
         verify(budgetRepository).save(testBudget);
-        assertEquals(BigDecimal.ZERO.setScale(2), testBudget.getTotalIncome());
-        assertEquals(BudgetConstants.Default.TOTAL_EXPENSE.negate(), testBudget.getSavings());
+        assertEquals(BudgetConstants.AfterRetractIncome.TOTAL_INCOME, testBudget.getTotalIncome());
+        assertEquals(BudgetConstants.AfterRetractIncome.SAVINGS, testBudget.getSavings());
     }
 
     @Test

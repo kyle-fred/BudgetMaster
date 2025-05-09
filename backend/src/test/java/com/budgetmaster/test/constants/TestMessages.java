@@ -1,7 +1,7 @@
 package com.budgetmaster.test.constants;
 
 public class TestMessages {
-    
+
     public static class CommonErrorMessageConstants {
         public static final String ERROR = "error";
         public static final String SERVICE_FAILURE = "Service failure";
@@ -48,18 +48,18 @@ public class TestMessages {
         // -- Test Exception Messages --
         public static final String ERROR_MESSAGE_FULL_EXCEPTION_INVALID_ENUM = "java.lang.IllegalArgumentException: No enum constant com.example.Color.BLUEE";
         public static final String ERROR_MESSAGE_FULL_EXCEPTION_OTHER = "java.lang.IllegalArgumentException: Some other error";
-    
+
         // -- Enum Extraction Parts --
         public static final String ERROR_MESSAGE_NO_ENUM_PREFIX = "No enum constant com.example.Color.BLUEE";
         public static final String ERROR_MESSAGE_ENUM_PART = "com.example.Color.BLUEE";
         public static final String ERROR_MESSAGE_ENUM_CONSTANT = "BLUEE";
         public static final String ERROR_MESSAGE_INVALID_ENUM_TYPE = "com.example.Color";
-    
+
         // -- Expected Error Responses --
         public static final String ERROR_MESSAGE_INVALID_ENUM_VALUE_RESPONSE = "Invalid value 'YELLOW' for 'color'. Allowed values: [RED, GREEN, BLUE]";
-    
+
         // -- Fallback Messages --
         public static final String ERROR_MESSAGE_FALLBACK_MESSAGE = "Invalid enum value.";
     }
-    
+
 }

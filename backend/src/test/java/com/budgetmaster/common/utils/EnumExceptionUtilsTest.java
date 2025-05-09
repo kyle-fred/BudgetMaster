@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import com.budgetmaster.test.constants.TestCommonData;
+import com.budgetmaster.test.constants.TestData.EnumTestConstants;
 import com.budgetmaster.test.constants.TestMessages;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,14 +71,14 @@ public class EnumExceptionUtilsTest {
     
     @Test
     void testCreateErrorResponse_ValidInputs_ReturnsCorrectErrorMap() {
-        Map<String, Object> errorResponse = EnumExceptionUtils.createErrorResonse(  TestCommonData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_VALUE, 
-                                                                                    TestCommonData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD, 
+        Map<String, Object> errorResponse = EnumExceptionUtils.createErrorResonse(  EnumTestConstants.ERROR_MESSAGE_INVALID_ENUM_VALUE, 
+                                                                                    EnumTestConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD, 
                                                                                     SampleEnum.class);
         
         assertNotNull(errorResponse);
-        assertTrue(errorResponse.containsKey(TestCommonData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD));
+        assertTrue(errorResponse.containsKey(EnumTestConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD));
         assertEquals(TestMessages.EnumErrorMessageConstants.ERROR_MESSAGE_INVALID_ENUM_VALUE_RESPONSE,
-                     errorResponse.get(TestCommonData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD));
+                     errorResponse.get(EnumTestConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD));
     }
 
     // -- Create Fallback Response Tests --
@@ -95,14 +95,14 @@ public class EnumExceptionUtilsTest {
     
     @Test
     void testFindEnumType_ValidField_ReturnsEnumClass() {
-        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, TestCommonData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD);
+        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, EnumTestConstants.ERROR_MESSAGE_INVALID_ENUM_FIELD);
         assertTrue(enumType.isPresent());
         assertEquals(SampleEnum.class, enumType.get());
     }
     
     @Test
     void testFindEnumType_InvalidField_ReturnsEmptyOptional() {
-        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, TestCommonData.EnumExceptionUtilsTestDataConstants.ERROR_MESSAGE_INVALID_FIELD_NAME);
+        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, EnumTestConstants.ERROR_MESSAGE_INVALID_FIELD_NAME);
         assertTrue(enumType.isEmpty());
     }
 }

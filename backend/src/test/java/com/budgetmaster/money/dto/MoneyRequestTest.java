@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.budgetmaster.test.builder.MoneyRequestTestBuilder;
-import com.budgetmaster.test.constants.TestCommonData;
 import com.budgetmaster.test.constants.TestMessages;
 import com.budgetmaster.test.constants.TestData.MoneyTestConstants;
 
@@ -109,7 +108,7 @@ public class MoneyRequestTest {
     @Test
     void testLargeAmount() {
         MoneyRequest request = MoneyRequestTestBuilder.defaultIncome()
-            .withAmount(TestCommonData.MoneyDtoTestDataConstants.AMOUNT_LARGE)
+            .withAmount(MoneyTestConstants.Miscellaneous.LARGE_AMOUNT)
             .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);

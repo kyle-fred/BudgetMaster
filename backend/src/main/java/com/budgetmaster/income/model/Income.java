@@ -2,7 +2,6 @@ package com.budgetmaster.income.model;
 
 import com.budgetmaster.common.constants.database.ColumnNames;
 import com.budgetmaster.common.constants.database.TableNames;
-import com.budgetmaster.common.constants.date.DateFormats;
 import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.income.dto.IncomeRequest;
@@ -13,8 +12,6 @@ import java.time.YearMonth;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -51,12 +48,10 @@ public class Income {
  	private YearMonth month;
  	
 	@CreationTimestamp
-	@JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	@Column(name = ColumnNames.Common.CREATED_AT, nullable = false, updatable = false, insertable = false)
  	private LocalDateTime createdAt;
  	
 	@UpdateTimestamp
-	@JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	@Column(name = ColumnNames.Common.LAST_UPDATED_AT, nullable = false, insertable = false)
  	private LocalDateTime lastUpdatedAt;
 	

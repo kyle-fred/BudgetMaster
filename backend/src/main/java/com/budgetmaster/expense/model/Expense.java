@@ -2,12 +2,10 @@ package com.budgetmaster.expense.model;
 
 import com.budgetmaster.common.constants.database.ColumnNames;
 import com.budgetmaster.common.constants.database.TableNames;
-import com.budgetmaster.common.constants.date.DateFormats;
 import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.enums.ExpenseCategory;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -53,12 +51,10 @@ public class Expense {
   	private YearMonth month;
   	
 	@CreationTimestamp
-	@JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	@Column(name = ColumnNames.Common.CREATED_AT, nullable = false, updatable = false, insertable = false)
   	private LocalDateTime createdAt;
   	
 	@UpdateTimestamp
-	@JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	@Column(name = ColumnNames.Common.LAST_UPDATED_AT, nullable = false, insertable = false)
   	private LocalDateTime lastUpdatedAt;
 	

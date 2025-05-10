@@ -27,8 +27,8 @@ public class Paths {
         public static final String JSON_PATH_EMPTY = "$";
 
         // -- Budget --
-        public static final String JSON_PATH_TOTAL_INCOME = "$.totalIncome";
-        public static final String JSON_PATH_TOTAL_EXPENSE = "$.totalExpense";
+        public static final String JSON_PATH_TOTAL_INCOME = "$.total-income";
+        public static final String JSON_PATH_TOTAL_EXPENSE = "$.total-expense";
         public static final String JSON_PATH_SAVINGS = "$.savings";
 
         // -- Expense & Income --

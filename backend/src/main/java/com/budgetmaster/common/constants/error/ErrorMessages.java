@@ -36,5 +36,8 @@ public class ErrorMessages {
         public static final String UNSUPPORTED_FOR_CONSTRAINT_ANNOTATION = "This currency type is not supported yet";
         public static final String MISMATCH = "Currency mismatch: %s vs %s";
     }
-}
 
+    public static class Serialization {
+        public static final String INVALID_BIG_DECIMAL_VALUE = "Invalid BigDecimal value: '%s'. Must be a valid decimal number.";
+    }
+}

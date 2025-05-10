@@ -12,15 +12,15 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import com.budgetmaster.json.serialization.BigDecimalToStringSerializer;
+import com.budgetmaster.common.constants.date.DateFormats;
 import com.budgetmaster.json.deserialization.BigDecimalToStringDeserializer;
 import com.budgetmaster.json.serialization.YearMonthSerializer;
-import com.budgetmaster.json.deserialization.YearMonthDeserializer;
 
 @Configuration
 public class JacksonConfig {
 
     public static final DateTimeFormatter STANDARD_DATE_TIME_FORMATTER =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter.ofPattern(DateFormats.STANDARD_DATE_TIME);
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
@@ -29,7 +29,7 @@ public class JacksonConfig {
             .serializationInclusion(JsonInclude.Include.NON_NULL)
             .propertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE)
             
-            // Date/Time and BigDecimal serialization
+            // Custom serializations
             .serializers(
                 new LocalDateTimeSerializer(STANDARD_DATE_TIME_FORMATTER),
                 new BigDecimalToStringSerializer(),
@@ -37,8 +37,7 @@ public class JacksonConfig {
             )
             .deserializers(
                 new LocalDateTimeDeserializer(STANDARD_DATE_TIME_FORMATTER),
-                new BigDecimalToStringDeserializer(),
-                new YearMonthDeserializer()
+                new BigDecimalToStringDeserializer()
             );
     }
 }

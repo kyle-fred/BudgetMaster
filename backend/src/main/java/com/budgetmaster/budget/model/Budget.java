@@ -3,7 +3,6 @@ package com.budgetmaster.budget.model;
 import com.budgetmaster.common.constants.database.ColumnConstraints;
 import com.budgetmaster.common.constants.database.ColumnNames;
 import com.budgetmaster.common.constants.database.TableNames;
-// import com.budgetmaster.common.constants.date.DateFormats;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,8 +11,6 @@ import java.util.Currency;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-// import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,12 +47,10 @@ public class Budget {
 	
 	@CreationTimestamp
 	@Column(name = ColumnNames.Common.CREATED_AT, nullable = false, updatable = false, insertable = false)
-	// @JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	private LocalDateTime createdAt;
 	
 	@UpdateTimestamp
 	@Column(name = ColumnNames.Common.LAST_UPDATED_AT, nullable = false, insertable = false)
-	// @JsonFormat(pattern = DateFormats.STANDARD_DATE_TIME)
 	private LocalDateTime lastUpdatedAt;
 	
 	protected Budget() {}

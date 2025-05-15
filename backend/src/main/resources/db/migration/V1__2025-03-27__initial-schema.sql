@@ -1,4 +1,4 @@
--- Create Budget Table with savings as a generated column
+-- Create Budget Table
 CREATE TABLE public.BUDGETS (
     ID BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     TOTAL_INCOME NUMERIC(19, 2) NOT NULL DEFAULT 0,

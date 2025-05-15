@@ -10,15 +10,13 @@ public final class ExpenseFactory {
     private ExpenseFactory() {}
 
     public static Expense createDefaultExpense() {
-        Expense expense = Expense.of(
+        return Expense.of(
             ExpenseConstants.Default.NAME,
             Money.of(ExpenseConstants.Default.AMOUNT, ExpenseConstants.Default.CURRENCY),
             ExpenseConstants.Default.CATEGORY,
             ExpenseConstants.Default.TYPE,
             ExpenseConstants.Default.YEAR_MONTH
         );
-        expense.setId(ExpenseConstants.Default.ID);
-        return expense;
     }
 
     public static ExpenseRequest createDefaultExpenseRequest() {

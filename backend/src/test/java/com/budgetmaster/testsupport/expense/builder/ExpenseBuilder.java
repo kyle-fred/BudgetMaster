@@ -7,6 +7,7 @@ import com.budgetmaster.expense.enums.ExpenseCategory;
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.money.model.Money;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
+import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
 import com.budgetmaster.testsupport.money.builder.MoneyBuilder;
 
 public class ExpenseBuilder {
@@ -48,13 +49,12 @@ public class ExpenseBuilder {
     }
 
     public Expense build() {
-        Expense expense = Expense.of(
-            name,
-            money,
-            category,
-            type,
-            month
-        );
+        Expense expense = ExpenseFactory.createDefaultExpense();
+        expense.setName(name);
+        expense.setCategory(category);
+        expense.setMoney(money);
+        expense.setType(type);
+        expense.setMonth(month);
         expense.setId(id);
         return expense;
     }

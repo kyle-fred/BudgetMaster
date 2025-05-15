@@ -1,16 +1,15 @@
 package com.budgetmaster.income.repository;
 
-import com.budgetmaster.config.TestContainersConfig;
-import com.budgetmaster.income.model.Income;
 import com.budgetmaster.common.enums.TransactionType;
+import com.budgetmaster.income.model.Income;
 import com.budgetmaster.money.model.Money;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -18,42 +17,45 @@ import java.util.Currency;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Testcontainers
 @DataJpaTest
-@Import(TestContainersConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
 class IncomeRepositoryTest {
+
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
 
     @Autowired
     private IncomeRepository incomeRepository;
 
-    @BeforeEach
-    void setUp() {
-        incomeRepository.deleteAll();
+    @Test
+    void connectionEstablished() {
+        assertThat(postgres.isCreated()).isTrue();
+        assertThat(postgres.isRunning()).isTrue();
     }
 
     @Test
-    void shouldSaveIncomeSuccessfully() {
+    void shouldSaveAndRetrieveIncome() {
         // Given
         Income income = Income.of(
-            "SALARY",
-            "EMPLOYER",
+            "Test Income",
+            "Test Source",
             Money.of(new BigDecimal("1000.00"), Currency.getInstance("USD")),
             TransactionType.RECURRING,
-            YearMonth.now()
+            YearMonth.of(2024, 5)
         );
 
         // When
         Income savedIncome = incomeRepository.save(income);
+        Income retrievedIncome = incomeRepository.findById(savedIncome.getId()).orElse(null);
 
         // Then
-        assertThat(savedIncome).isNotNull();
-        assertThat(savedIncome.getId()).isNotNull();
-        assertThat(savedIncome.getName()).isEqualTo("SALARY");
-        assertThat(savedIncome.getSource()).isEqualTo("EMPLOYER");
-        assertThat(savedIncome.getMoney().getAmount()).isEqualTo(new BigDecimal("1000.00"));
-        assertThat(savedIncome.getMoney().getCurrency()).isEqualTo(Currency.getInstance("USD"));
-        assertThat(savedIncome.getType()).isEqualTo(TransactionType.RECURRING);
-        assertThat(savedIncome.getMonth()).isEqualTo(YearMonth.now());
+        assertThat(retrievedIncome).isNotNull();
+        assertThat(retrievedIncome.getName()).isEqualTo("Test Income");
+        assertThat(retrievedIncome.getSource()).isEqualTo("Test Source");
+        assertThat(retrievedIncome.getMoney().getAmount()).isEqualByComparingTo(new BigDecimal("1000.00"));
+        assertThat(retrievedIncome.getMoney().getCurrency()).isEqualTo(Currency.getInstance("USD"));
+        assertThat(retrievedIncome.getType()).isEqualTo(TransactionType.RECURRING);
+        assertThat(retrievedIncome.getMonth()).isEqualTo(YearMonth.of(2024, 5));
     }
 } 

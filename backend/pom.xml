@@ -99,12 +99,6 @@
 			<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
 
-		<!-- Spring Data JDBC -->
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jdbc</artifactId>
-		</dependency>
-
 		<!-- TestContainers -->
 		<dependency>
 			<groupId>org.testcontainers</groupId>

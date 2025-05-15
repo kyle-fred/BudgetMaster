@@ -10,15 +10,13 @@ public final class IncomeFactory {
     private IncomeFactory() {}
 
     public static Income createDefaultIncome() {
-        Income income = Income.of(
+        return Income.of(
             IncomeConstants.Default.NAME,
             IncomeConstants.Default.SOURCE,
             Money.of(IncomeConstants.Default.AMOUNT, IncomeConstants.Default.CURRENCY),
             IncomeConstants.Default.TYPE,
             IncomeConstants.Default.YEAR_MONTH
         );
-        income.setId(IncomeConstants.Default.ID);
-        return income;
     }
 
     public static IncomeRequest createDefaultIncomeRequest() {

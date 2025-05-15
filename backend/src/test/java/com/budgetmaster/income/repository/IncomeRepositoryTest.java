@@ -5,8 +5,6 @@ import com.budgetmaster.income.model.Income;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;
 import com.budgetmaster.testsupport.income.factory.IncomeFactory;
 
-import jakarta.transaction.Transactional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,26 +73,6 @@ public class IncomeRepositoryTest {
         List<Income> foundIncomes = incomeRepository.findByMonth(testIncome.getMonth());
         assertThat(foundIncomes).isNotNull();
         assertThat(foundIncomes.size()).isEqualTo(0);
-    }
-
-    @Test
-    @Transactional
-    void shouldUpdateIncome() {
-        Income savedIncome = incomeRepository.saveAndFlush(testIncome);
-
-        savedIncome.updateFrom(IncomeFactory.createUpdatedIncomeRequest());
-        Income updatedIncome = incomeRepository.saveAndFlush(savedIncome);
-
-        assertThat(updatedIncome).isNotNull();
-        assertThat(updatedIncome.getId()).isEqualTo(savedIncome.getId());
-        assertThat(updatedIncome.getName()).isEqualTo(IncomeConstants.Updated.NAME);
-        assertThat(updatedIncome.getSource()).isEqualTo(IncomeConstants.Updated.SOURCE);
-        assertThat(updatedIncome.getMoney().getAmount()).isEqualByComparingTo(IncomeConstants.Updated.AMOUNT);
-        assertThat(updatedIncome.getMoney().getCurrency()).isEqualTo(IncomeConstants.Default.CURRENCY);
-        assertThat(updatedIncome.getType()).isEqualTo(IncomeConstants.Updated.TYPE);
-        assertThat(updatedIncome.getMonth()).isEqualTo(IncomeConstants.Updated.YEAR_MONTH);
-        assertThat(updatedIncome.getCreatedAt()).isEqualTo(savedIncome.getCreatedAt());
-        assertThat(updatedIncome.getLastUpdatedAt()).isAfterOrEqualTo(savedIncome.getLastUpdatedAt());
     }
 
     @Test

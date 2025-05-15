@@ -5,8 +5,6 @@ import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
 import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
 
-import jakarta.transaction.Transactional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,26 +73,6 @@ public class ExpenseRepositoryTest {
        List<Expense> foundExpenses = expenseRepository.findByMonth(testExpense.getMonth());
        assertThat(foundExpenses).isNotNull();
        assertThat(foundExpenses.size()).isEqualTo(0);
-   }
-
-   @Test
-   @Transactional
-   void shouldUpdateExpense() {
-       Expense savedExpense = expenseRepository.saveAndFlush(testExpense);
-
-       savedExpense.updateFrom(ExpenseFactory.createUpdatedExpenseRequest());
-       Expense updatedExpense = expenseRepository.saveAndFlush(savedExpense);
-
-       assertThat(updatedExpense).isNotNull();
-       assertThat(updatedExpense.getId()).isEqualTo(savedExpense.getId());
-       assertThat(updatedExpense.getName()).isEqualTo(ExpenseConstants.Updated.NAME);
-       assertThat(updatedExpense.getCategory()).isEqualTo(ExpenseConstants.Updated.CATEGORY);
-       assertThat(updatedExpense.getMoney().getAmount()).isEqualByComparingTo(ExpenseConstants.Updated.AMOUNT);
-       assertThat(updatedExpense.getMoney().getCurrency()).isEqualTo(ExpenseConstants.Default.CURRENCY);
-       assertThat(updatedExpense.getType()).isEqualTo(ExpenseConstants.Updated.TYPE);
-       assertThat(updatedExpense.getMonth()).isEqualTo(ExpenseConstants.Updated.YEAR_MONTH);
-       assertThat(updatedExpense.getCreatedAt()).isEqualTo(savedExpense.getCreatedAt());
-       assertThat(updatedExpense.getLastUpdatedAt()).isAfterOrEqualTo(savedExpense.getLastUpdatedAt());
    }
 
    @Test

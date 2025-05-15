@@ -7,11 +7,9 @@ public final class BudgetFactory {
     private BudgetFactory() {}
 
     public static Budget createDefaultBudget() {
-        Budget budget = Budget.of(
+        return Budget.of(
             BudgetConstants.Default.YEAR_MONTH,
             BudgetConstants.Default.CURRENCY
         );
-        budget.setId(BudgetConstants.Default.ID);
-        return budget;
     }
 }

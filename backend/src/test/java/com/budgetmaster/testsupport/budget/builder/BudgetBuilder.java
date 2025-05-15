@@ -6,6 +6,7 @@ import java.util.Currency;
 
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
+import com.budgetmaster.testsupport.budget.factory.BudgetFactory;
 
 public class BudgetBuilder {
     private Long id = BudgetConstants.Default.ID;
@@ -46,11 +47,10 @@ public class BudgetBuilder {
     }
 
     public Budget build() {
-        Budget budget = Budget.of(
-            month,
-            currency
-        );
+        Budget budget = BudgetFactory.createDefaultBudget();
         budget.setId(id);
+        budget.setCurrency(currency);
+        budget.setMonth(month);
         budget.setTotalIncome(totalIncome);
         budget.setTotalExpense(totalExpense);
         budget.setSavings(savings);

@@ -3,6 +3,7 @@ package com.budgetmaster.testsupport.income.builder;
 import com.budgetmaster.income.model.Income;
 import com.budgetmaster.money.model.Money;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;
+import com.budgetmaster.testsupport.income.factory.IncomeFactory;
 import com.budgetmaster.testsupport.money.builder.MoneyBuilder;
 
 import java.time.YearMonth;
@@ -48,14 +49,13 @@ public class IncomeBuilder {
     }
 
     public Income build() {
-        Income income = Income.of(
-            name,
-            source,
-            money,
-            type,
-            month
-        );
+        Income income = IncomeFactory.createDefaultIncome();
         income.setId(id);
+        income.setName(name);
+        income.setSource(source);
+        income.setMoney(money);
+        income.setType(type);
+        income.setMonth(month);
         return income;
     }
 

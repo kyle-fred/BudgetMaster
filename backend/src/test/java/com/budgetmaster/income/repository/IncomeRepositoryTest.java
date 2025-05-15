@@ -23,7 +23,7 @@ import java.util.List;
 @DataJpaTest
 @Import(TestContainersConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class IncomeRepositoryTest {
+public class IncomeRepositoryTest {
     // -- Dependencies --
     @Autowired
     private IncomeRepository incomeRepository;

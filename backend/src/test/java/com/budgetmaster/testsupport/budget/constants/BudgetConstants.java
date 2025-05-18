@@ -17,6 +17,7 @@ public final class BudgetConstants {
         public static final int YEAR = 2000;
         public static final int MONTH = 1;
         public static final YearMonth YEAR_MONTH = YearMonth.of(YEAR, MONTH);
+        public static final String YEAR_MONTH_STRING = YEAR_MONTH.toString();
         public static final Long ID = 1L;
     }
 
@@ -26,6 +27,9 @@ public final class BudgetConstants {
         public static final int YEAR = 1999;
         public static final int MONTH = 12;
         public static final YearMonth YEAR_MONTH = YearMonth.of(YEAR, MONTH);
+        public static final BigDecimal TOTAL_INCOME = new BigDecimal("750.00");
+        public static final BigDecimal TOTAL_EXPENSE = new BigDecimal("750.00");
+        public static final BigDecimal SAVINGS = new BigDecimal("0.00");
     }
 
     public static final class NonExistent {
@@ -35,6 +39,7 @@ public final class BudgetConstants {
         public static final int YEAR = 3000;
         public static final int MONTH = 1;
         public static final YearMonth YEAR_MONTH = YearMonth.of(YEAR, MONTH);
+        public static final String YEAR_MONTH_STRING = YEAR_MONTH.toString();
     }
 
     public static final class ZeroValues {

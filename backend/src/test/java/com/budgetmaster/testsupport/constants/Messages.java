@@ -8,6 +8,7 @@ public class Messages {
         public static final String UNEXPECTED_ERROR = "An unexpected error occurred.";
         public static final String DATABASE_CONSTRAINT = "A database constraint was violated.";
         public static final String DUPLICATE_ENTRY = "Duplicate Entry";
+        public static final String SYNCHRONIZATION_FAILED = "Synchronization failed";
     }
 
     public static class BudgetErrorMessageConstants {

@@ -20,7 +20,7 @@ public final class IncomeConstants {
         public static final int YEAR = 2000;
         public static final int MONTH = 1;
         public static final YearMonth YEAR_MONTH = YearMonth.of(YEAR, MONTH);
-        public static final String YEAR_MONTH_STRING = "2000-01";
+        public static final String YEAR_MONTH_STRING = YEAR_MONTH.toString();
         public static final Long ID = 1L;
     }
 
@@ -51,5 +51,6 @@ public final class IncomeConstants {
         public static final int YEAR = 3000;
         public static final int MONTH = 1;
         public static final YearMonth YEAR_MONTH = YearMonth.of(YEAR, MONTH);
+        public static final String YEAR_MONTH_STRING = YEAR_MONTH.toString();
     }
 } 

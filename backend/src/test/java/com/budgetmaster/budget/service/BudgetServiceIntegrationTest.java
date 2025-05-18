@@ -38,9 +38,6 @@ public class BudgetServiceIntegrationTest {
     @Autowired
     private IncomeRepository incomeRepository;
 
-    // -- Test Objects --
-    // private Income income;
-
     @BeforeEach
     void setUp() {
         incomeRepository.deleteAll();

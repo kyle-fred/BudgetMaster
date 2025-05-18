@@ -8,6 +8,7 @@ import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.repository.ExpenseRepository;
+import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.constants.Fields;
 import com.budgetmaster.testsupport.constants.Messages;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
@@ -22,8 +23,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -79,9 +78,9 @@ public class ExpenseServiceIntegrationTest {
             .ignoringFields(Fields.Audit.CREATED_AT, Fields.Audit.LAST_UPDATED_AT)
             .isEqualTo(result);
         
-        Budget budget = budgetRepository.findByMonth(result.getMonth()).orElse(null);
+        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
         assertThat(budget).isNotNull();
-        assertThat(budget.getTotalExpense()).isEqualByComparingTo(ExpenseConstants.Default.AMOUNT);
+        assertThat(budget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_EXPENSE);
     }
     
     @Test
@@ -107,9 +106,9 @@ public class ExpenseServiceIntegrationTest {
             .ignoringFields(Fields.Audit.CREATED_AT, Fields.Audit.LAST_UPDATED_AT)
             .isEqualTo(result);
         
-        Budget budget = budgetRepository.findByMonth(result.getMonth()).orElse(null);
+        Budget budget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
         assertThat(budget).isNotNull();
-        assertThat(budget.getTotalExpense()).isEqualByComparingTo(ExpenseConstants.Updated.AMOUNT);
+        assertThat(budget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.Updated.TOTAL_EXPENSE);
     }
 
     @Test
@@ -119,13 +118,13 @@ public class ExpenseServiceIntegrationTest {
         
         expenseService.updateExpense(expense.getId(), updateRequest);
         
-        Budget oldBudget = budgetRepository.findByMonth(ExpenseConstants.Default.YEAR_MONTH).orElse(null);
+        Budget oldBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
         assertThat(oldBudget).isNotNull();
-        assertThat(oldBudget.getTotalExpense()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(oldBudget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
         
-        Budget newBudget = budgetRepository.findByMonth(ExpenseConstants.Updated.YEAR_MONTH).orElse(null);
+        Budget newBudget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
         assertThat(newBudget).isNotNull();
-        assertThat(newBudget.getTotalExpense()).isEqualByComparingTo(ExpenseConstants.Updated.AMOUNT);
+        assertThat(newBudget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.Updated.TOTAL_EXPENSE);
     }
     
     @Test
@@ -136,9 +135,9 @@ public class ExpenseServiceIntegrationTest {
         
         assertThat(expenseRepository.findById(expense.getId())).isEmpty();
         
-        Budget budget = budgetRepository.findByMonth(expense.getMonth()).orElse(null);
+        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
         assertThat(budget).isNotNull();
-        assertThat(budget.getTotalExpense()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(budget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
     }
     
     // -- Transaction Rollback Tests --
@@ -153,7 +152,7 @@ public class ExpenseServiceIntegrationTest {
             .hasMessageContaining(Messages.CommonErrorMessageConstants.SYNCHRONIZATION_FAILED);
 
         assertThat(expenseRepository.findAll()).isEmpty();
-        Budget budget = budgetRepository.findByMonth(ExpenseConstants.Default.YEAR_MONTH).orElse(null);
+        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
         assertThat(budget).isNull();
     }
 
@@ -176,9 +175,9 @@ public class ExpenseServiceIntegrationTest {
             .ignoringFields(Fields.Audit.CREATED_AT, Fields.Audit.LAST_UPDATED_AT)
             .isEqualTo(original);
 
-        Budget budget = budgetRepository.findByMonth(ExpenseConstants.Default.YEAR_MONTH).orElse(null);
+        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
         assertThat(budget).isNotNull();
-        assertThat(budget.getTotalExpense()).isEqualByComparingTo(ExpenseConstants.Default.AMOUNT);
+        assertThat(budget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_EXPENSE);
     }
 
     @Test
@@ -193,9 +192,9 @@ public class ExpenseServiceIntegrationTest {
             .hasMessageContaining(Messages.CommonErrorMessageConstants.SYNCHRONIZATION_FAILED);
 
         assertThat(expenseRepository.findById(expense.getId())).isPresent();
-        Budget budget = budgetRepository.findByMonth(ExpenseConstants.Default.YEAR_MONTH).orElse(null);
+        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
         assertThat(budget).isNotNull();
-        assertThat(budget.getTotalExpense()).isEqualByComparingTo(ExpenseConstants.Default.AMOUNT);
+        assertThat(budget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_EXPENSE);
     }
     
     // -- Read and Exception Tests --

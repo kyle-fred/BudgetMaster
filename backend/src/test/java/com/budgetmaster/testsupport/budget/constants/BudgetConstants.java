@@ -27,6 +27,9 @@ public final class BudgetConstants {
         public static final int YEAR = 1999;
         public static final int MONTH = 12;
         public static final YearMonth YEAR_MONTH = YearMonth.of(YEAR, MONTH);
+        public static final BigDecimal TOTAL_INCOME = new BigDecimal("750.00");
+        public static final BigDecimal TOTAL_EXPENSE = new BigDecimal("750.00");
+        public static final BigDecimal SAVINGS = new BigDecimal("0.00");
     }
 
     public static final class NonExistent {

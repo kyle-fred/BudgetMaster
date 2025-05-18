@@ -33,7 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 @SpringBootTest
 @Import(TestContainersConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class IncomeServiceIntegrationTests {
+public class IncomeServiceIntegrationTest {
     // -- Dependencies --
     @SpyBean
     private IncomeBudgetSynchronizer incomeBudgetSynchronizer;

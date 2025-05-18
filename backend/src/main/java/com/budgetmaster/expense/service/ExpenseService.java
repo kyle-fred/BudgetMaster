@@ -27,6 +27,7 @@ public class ExpenseService extends EntityLookupService {
 		this.expenseBudgetSynchronizer = expenseBudgetSynchronizer;
 	}
 	
+	@Transactional
 	public Expense createExpense(ExpenseRequest request) {
 		Expense expense = expenseRepository.saveAndFlush(Expense.from(request));
 		expenseBudgetSynchronizer.apply(expense);

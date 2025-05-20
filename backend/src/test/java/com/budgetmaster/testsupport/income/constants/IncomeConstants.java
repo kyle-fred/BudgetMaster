@@ -47,7 +47,7 @@ public final class IncomeConstants {
     public static final class NonExistent {
         private NonExistent() {}
 
-        public static final Long ID = 999L;
+        public static final Long ID = 999999L;
         public static final int YEAR = 3000;
         public static final int MONTH = 1;
         public static final YearMonth YEAR_MONTH = YearMonth.of(YEAR, MONTH);

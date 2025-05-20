@@ -16,7 +16,7 @@ import com.budgetmaster.testsupport.income.constants.IncomeConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class IncomeRequestTest {    
+public class IncomeRequestTest {
     // -- Dependencies --
     private static Validator validator;
 

@@ -2,13 +2,6 @@ package com.budgetmaster.common.constants.error;
 
 public class ErrorMessages {
 
-    public static class Common {
-        public static final String ERROR = "error";
-        public static final String INVALID_REQUEST = "Invalid request format.";
-        public static final String UNEXPECTED_ERROR = "An unexpected error occurred.";
-        public static final String DATABASE_CONSTRAINT_VIOLATION = "A database constraint was violated.";
-    }
-
     public static class Budget {
         public static final String NOT_FOUND_BY_ID = "Budget not found with id: %s";
         public static final String NOT_FOUND_BY_MONTH = "Budget not found for month: %s";
@@ -17,7 +10,6 @@ public class ErrorMessages {
     }
 
     public static class Enum {
-        public static final String INVALID_VALUE = "Invalid enum value.";
         public static final String INVALID_VALUE_FORMAT = "Invalid value '%s' for '%s'. Allowed values: [%s]";
     }
 
@@ -40,4 +32,5 @@ public class ErrorMessages {
     public static class Serialization {
         public static final String INVALID_BIG_DECIMAL_VALUE = "Invalid BigDecimal value: '%s'. Must be a valid decimal number.";
     }
+    
 }

@@ -3,11 +3,7 @@ package com.budgetmaster.testsupport.constants;
 public class Messages {
 
     public static class CommonErrorMessageConstants {
-        public static final String ERROR = "error";
-        public static final String SERVICE_FAILURE = "Service failure";
-        public static final String UNEXPECTED_ERROR = "An unexpected error occurred.";
-        public static final String DATABASE_CONSTRAINT = "A database constraint was violated.";
-        public static final String DUPLICATE_ENTRY = "Duplicate Entry";
+        public static final String DUPLICATE_ENTRY = "Duplicate entry";
         public static final String SYNCHRONIZATION_FAILED = "Synchronization failed";
     }
 
@@ -47,19 +43,13 @@ public class Messages {
 
     public static class EnumErrorMessageConstants {
         // -- Test Exception Messages --
-        public static final String ERROR_MESSAGE_FULL_EXCEPTION_INVALID_ENUM = "java.lang.IllegalArgumentException: No enum constant com.example.Color.BLUEE";
-        public static final String ERROR_MESSAGE_FULL_EXCEPTION_OTHER = "java.lang.IllegalArgumentException: Some other error";
+        public static final String FULL_EXCEPTION_INVALID_ENUM = "java.lang.IllegalArgumentException: No enum constant com.example.Color.BLUEE";
+        public static final String FULL_EXCEPTION_OTHER = "java.lang.IllegalArgumentException: Some other error";
 
         // -- Enum Extraction Parts --
-        public static final String ERROR_MESSAGE_NO_ENUM_PREFIX = "No enum constant com.example.Color.BLUEE";
-        public static final String ERROR_MESSAGE_ENUM_PART = "com.example.Color.BLUEE";
-        public static final String ERROR_MESSAGE_ENUM_CONSTANT = "BLUEE";
-
-        // -- Expected Error Responses --
-        public static final String ERROR_MESSAGE_INVALID_ENUM_VALUE_RESPONSE = "Invalid value 'YELLOW' for 'color'. Allowed values: [RED, GREEN, BLUE]";
-
-        // -- Fallback Messages --
-        public static final String ERROR_MESSAGE_FALLBACK_MESSAGE = "Invalid enum value.";
+        public static final String NO_ENUM_PREFIX = "No enum constant com.example.Color.BLUEE";
+        public static final String ENUM_PART = "com.example.Color.BLUEE";
+        public static final String ENUM_CONSTANT = "BLUEE";
     }
 
 }

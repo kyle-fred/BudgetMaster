@@ -8,13 +8,6 @@ public enum ErrorCode {
     VALIDATION_ERROR("Validation error"),
     INVALID_INPUT("Invalid input"),
     INVALID_ENUM_VALUE("Invalid enum value"),
-    INVALID_DATE_FORMAT("Invalid date format"),
-    INVALID_CURRENCY("Invalid currency"),
-    INVALID_AMOUNT("Invalid amount"),
-    
-    // Business logic errors
-    CURRENCY_MISMATCH("Currency mismatch"),
-    DUPLICATE_RESOURCE("Duplicate resource"),
     
     // System errors
     INTERNAL_SERVER_ERROR("Internal server error"),

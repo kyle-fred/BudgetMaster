@@ -47,19 +47,20 @@ public class Messages {
 
     public static class EnumErrorMessageConstants {
         // -- Test Exception Messages --
-        public static final String ERROR_MESSAGE_FULL_EXCEPTION_INVALID_ENUM = "java.lang.IllegalArgumentException: No enum constant com.example.Color.BLUEE";
-        public static final String ERROR_MESSAGE_FULL_EXCEPTION_OTHER = "java.lang.IllegalArgumentException: Some other error";
+        public static final String FULL_EXCEPTION_INVALID_ENUM = "java.lang.IllegalArgumentException: No enum constant com.example.Color.BLUEE";
+        public static final String FULL_EXCEPTION_OTHER = "java.lang.IllegalArgumentException: Some other error";
 
         // -- Enum Extraction Parts --
-        public static final String ERROR_MESSAGE_NO_ENUM_PREFIX = "No enum constant com.example.Color.BLUEE";
-        public static final String ERROR_MESSAGE_ENUM_PART = "com.example.Color.BLUEE";
-        public static final String ERROR_MESSAGE_ENUM_CONSTANT = "BLUEE";
+        public static final String NO_ENUM_PREFIX = "No enum constant com.example.Color.BLUEE";
+        public static final String ENUM_PART = "com.example.Color.BLUEE";
+        public static final String ENUM_CONSTANT = "BLUEE";
 
         // -- Expected Error Responses --
-        public static final String ERROR_MESSAGE_INVALID_ENUM_VALUE_RESPONSE = "Invalid value 'YELLOW' for 'color'. Allowed values: [RED, GREEN, BLUE]";
+        public static final String LIST_OF_ENUM_VALUES = "RED, GREEN, BLUE";
+        public static final String INVALID_ENUM_VALUE_RESPONSE = "Invalid value 'YELLOW' for 'color'. Allowed values: [RED, GREEN, BLUE]";
 
         // -- Fallback Messages --
-        public static final String ERROR_MESSAGE_FALLBACK_MESSAGE = "Invalid enum value.";
+        public static final String FALLBACK_MESSAGE = "Invalid enum value.";
     }
 
 }

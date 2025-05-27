@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleValidationExceptions(
 			MethodArgumentNotValidException ex, 
 			WebRequest request) {
-		ErrorResponseBuilder builder = new ErrorResponseBuilder()
+		ErrorResponseBuilder responseBuilder = new ErrorResponseBuilder()
 			.status(HttpStatus.BAD_REQUEST.value())
 			.errorCode(ErrorCode.VALIDATION_ERROR)
 			.message(ErrorCode.VALIDATION_ERROR.getMessage())
@@ -43,17 +43,17 @@ public class GlobalExceptionHandler {
 		ex.getBindingResult().getAllErrors().forEach((error) -> {
 			String fieldName = ((FieldError) error).getField();
 			String errorMessage = error.getDefaultMessage();
-			builder.addError(fieldName, errorMessage);
+			responseBuilder.addError(fieldName, errorMessage);
 		});
 
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(builder.build());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBuilder.build());
 	}
 	
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<ErrorResponse> handleConstraintViolation(
 			ConstraintViolationException ex, 
 			WebRequest request) {
-		ErrorResponseBuilder builder = new ErrorResponseBuilder()
+		ErrorResponseBuilder responseBuilder = new ErrorResponseBuilder()
 			.status(HttpStatus.BAD_REQUEST.value())
 			.errorCode(ErrorCode.VALIDATION_ERROR)
 			.message(ErrorCode.VALIDATION_ERROR.getMessage())
@@ -63,10 +63,10 @@ public class GlobalExceptionHandler {
 			String fieldName = violation.getPropertyPath().toString();
 			fieldName = fieldName.substring(fieldName.lastIndexOf(StringConstants.Punctuation.DOT) + 1);
 			String errorMessage = violation.getMessage();
-			builder.addError(fieldName, errorMessage);
+			responseBuilder.addError(fieldName, errorMessage);
 		});
 
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(builder.build());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBuilder.build());
 	}
 	
 	@ExceptionHandler(HttpMessageNotReadableException.class)

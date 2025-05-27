@@ -47,6 +47,6 @@ public class ErrorResponseBuilder {
     }
 
     public ErrorResponse build() {
-        return new ErrorResponse(this);
+        return ErrorResponse.of(this.status, this.errorCode, this.message, this.path, this.errors);
     }
 }

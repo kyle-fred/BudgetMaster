@@ -1,0 +1,52 @@
+package com.budgetmaster.common.dto.builder;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.budgetmaster.common.dto.ErrorResponse;
+import com.budgetmaster.common.dto.ValidationError;
+import com.budgetmaster.common.enums.ErrorCode;
+
+public class ErrorResponseBuilder {
+    public LocalDateTime timestamp;
+    public int status;
+    public ErrorCode errorCode;
+    public String message;
+    public String path;
+    public List<ValidationError> errors;
+
+    public ErrorResponseBuilder() {
+        this.timestamp = LocalDateTime.now();
+        this.errors = new ArrayList<>();
+    }
+
+    public ErrorResponseBuilder status(int status) {
+        this.status = status;
+        return this;
+    }
+
+    public ErrorResponseBuilder errorCode(ErrorCode errorCode) {
+        this.errorCode = errorCode;
+        return this;
+    }
+
+    public ErrorResponseBuilder message(String message) {
+        this.message = message;
+        return this;
+    }
+
+    public ErrorResponseBuilder path(String path) {
+        this.path = path;
+        return this;
+    }
+
+    public ErrorResponseBuilder addError(String field, String message) {
+        this.errors.add(new ValidationError(field, message));
+        return this;
+    }
+
+    public ErrorResponse build() {
+        return new ErrorResponse(this);
+    }
+}

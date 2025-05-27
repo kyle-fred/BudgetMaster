@@ -1,6 +1,5 @@
 package com.budgetmaster.common.utils;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -9,7 +8,6 @@ import com.budgetmaster.testsupport.constants.Enums;
 import com.budgetmaster.testsupport.constants.Messages;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -65,30 +63,6 @@ public class EnumExceptionUtilsTest {
         String enumPart = Messages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT;
         String extracted = EnumExceptionUtils.extractEnumConstant(enumPart);
         assertEquals(Messages.EnumErrorMessageConstants.ERROR_MESSAGE_ENUM_CONSTANT, extracted);
-    }
-
-    // -- Create Error Response Tests --
-    
-    @Test
-    void testCreateErrorResponse_ValidInputs_ReturnsCorrectErrorMap() {
-        Map<String, Object> errorResponse = EnumExceptionUtils.createErrorResonse(  Enums.ERROR_MESSAGE_INVALID_ENUM_VALUE, 
-                                                                                    Enums.ERROR_MESSAGE_INVALID_ENUM_FIELD, 
-                                                                                    SampleEnum.class);
-        
-        assertNotNull(errorResponse);
-        assertTrue(errorResponse.containsKey(Enums.ERROR_MESSAGE_INVALID_ENUM_FIELD));
-        assertEquals(Messages.EnumErrorMessageConstants.ERROR_MESSAGE_INVALID_ENUM_VALUE_RESPONSE,
-                     errorResponse.get(Enums.ERROR_MESSAGE_INVALID_ENUM_FIELD));
-    }
-
-    // -- Create Fallback Response Tests --
-    
-    @Test
-    void testCreateFallbackResponse_ReturnsDefaultError() {
-        Map<String, Object> fallbackResponse = EnumExceptionUtils.createFallbackResponse();
-        assertNotNull(fallbackResponse);
-        assertTrue(fallbackResponse.containsKey(Messages.CommonErrorMessageConstants.ERROR));
-        assertEquals(Messages.EnumErrorMessageConstants.ERROR_MESSAGE_FALLBACK_MESSAGE, fallbackResponse.get(Messages.CommonErrorMessageConstants.ERROR));
     }
 
     // -- Find Enum Type Tests --

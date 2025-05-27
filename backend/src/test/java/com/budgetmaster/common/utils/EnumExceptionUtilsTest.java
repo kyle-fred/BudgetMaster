@@ -70,21 +70,21 @@ public class EnumExceptionUtilsTest {
     @Test
     void testGetEnumValuesAsString_MultipleEnumValues_ReturnsCommaSeparatedString() {
         String values = EnumExceptionUtils.getEnumValuesAsString(SampleEnum.class);
-        assertEquals(Messages.EnumErrorMessageConstants.LIST_OF_ENUM_VALUES, values);
+        assertEquals(Enums.LIST_OF_ENUM_VALUES, values);
     }
 
     // -- Find Enum Type Tests --
     
     @Test
     void testFindEnumType_ValidField_ReturnsEnumClass() {
-        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, Enums.ERROR_MESSAGE_INVALID_ENUM_FIELD);
+        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, Enums.INVALID_ENUM_FIELD);
         assertTrue(enumType.isPresent());
         assertEquals(SampleEnum.class, enumType.get());
     }
     
     @Test
     void testFindEnumType_InvalidField_ReturnsEmptyOptional() {
-        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, Enums.ERROR_MESSAGE_INVALID_FIELD_NAME);
+        Optional<Class<? extends Enum<?>>> enumType = EnumExceptionUtils.findEnumType(ModelClass.class, Enums.INVALID_FIELD_NAME);
         assertTrue(enumType.isEmpty());
     }
 }

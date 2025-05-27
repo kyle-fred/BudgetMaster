@@ -3,11 +3,7 @@ package com.budgetmaster.testsupport.constants;
 public class Messages {
 
     public static class CommonErrorMessageConstants {
-        public static final String ERROR = "error";
-        public static final String SERVICE_FAILURE = "Service failure";
-        public static final String UNEXPECTED_ERROR = "An unexpected error occurred.";
-        public static final String DATABASE_CONSTRAINT = "A database constraint was violated.";
-        public static final String DUPLICATE_ENTRY = "Duplicate Entry";
+        public static final String DUPLICATE_ENTRY = "Duplicate entry";
         public static final String SYNCHRONIZATION_FAILED = "Synchronization failed";
     }
 
@@ -54,13 +50,6 @@ public class Messages {
         public static final String NO_ENUM_PREFIX = "No enum constant com.example.Color.BLUEE";
         public static final String ENUM_PART = "com.example.Color.BLUEE";
         public static final String ENUM_CONSTANT = "BLUEE";
-
-        // -- Expected Error Responses --
-        public static final String LIST_OF_ENUM_VALUES = "RED, GREEN, BLUE";
-        public static final String INVALID_ENUM_VALUE_RESPONSE = "Invalid value 'YELLOW' for 'color'. Allowed values: [RED, GREEN, BLUE]";
-
-        // -- Fallback Messages --
-        public static final String FALLBACK_MESSAGE = "Invalid enum value.";
     }
 
 }

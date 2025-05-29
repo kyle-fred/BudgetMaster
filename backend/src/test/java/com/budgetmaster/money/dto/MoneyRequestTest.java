@@ -11,7 +11,7 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.budgetmaster.testsupport.constants.Messages;
+import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.money.builder.MoneyRequestBuilder;
 import com.budgetmaster.testsupport.money.constants.MoneyConstants;
 
@@ -44,7 +44,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Messages.Money.AMOUNT_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Error.Money.AMOUNT_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Messages.Money.CURRENCY_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Error.Money.CURRENCY_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Messages.Money.UNSUPPORTED_CURRENCY, violations.iterator().next().getMessage());
+        assertEquals(Error.Money.UNSUPPORTED_CURRENCY, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Messages.Money.NEGATIVE_AMOUNT, violations.iterator().next().getMessage());
+        assertEquals(Error.Money.NEGATIVE_AMOUNT, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -92,8 +92,8 @@ public class MoneyRequestTest {
             .map(ConstraintViolation::getMessage)
             .collect(Collectors.toSet());
 
-        assertTrue(messages.contains(Messages.Money.NEGATIVE_AMOUNT));
-        assertTrue(messages.contains(Messages.Money.UNSUPPORTED_CURRENCY));
+        assertTrue(messages.contains(Error.Money.NEGATIVE_AMOUNT));
+        assertTrue(messages.contains(Error.Money.UNSUPPORTED_CURRENCY));
     }
 
     @Test

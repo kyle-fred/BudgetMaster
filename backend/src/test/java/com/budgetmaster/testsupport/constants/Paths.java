@@ -5,14 +5,45 @@ public class Paths {
     public static class Endpoints {
         private Endpoints() {}
 
-        public static final String BUDGET = "/api/budgets";
+        public static final String BASE = "/api";
+        public static final String TEST = BASE + "/test";
+
+        public static final String BUDGET = BASE + "/budgets";
         public static final String BUDGET_WITH_ID = BUDGET + "/{id}";
 
-        public static final String EXPENSE = "/api/expenses";
+        public static final String EXPENSE = BASE + "/expenses";
         public static final String EXPENSE_WITH_ID = EXPENSE + "/{id}";
 
-        public static final String INCOME = "/api/incomes";
+        public static final String INCOME = BASE + "/incomes";
         public static final String INCOME_WITH_ID = INCOME + "/{id}";
+    }
+
+    public static class Error {
+        private Error() {}
+
+        public static final String URI_BASE = "uri=";
+
+        public static class Budget {
+            private Budget() {}
+
+            public static final String URI = URI_BASE + Endpoints.BUDGET;
+            public static final String URI_WITH_ID = URI + "/%s";
+        }
+
+        public static class Expense {
+            private Expense() {}
+
+            public static final String URI = URI_BASE + Endpoints.EXPENSE;
+            public static final String URI_WITH_ID = URI + "/%s";
+        }
+
+        public static class Income {
+            private Income() {}
+
+            public static final String URI = URI_BASE + Endpoints.INCOME;
+            public static final String URI_WITH_ID = URI + "/%s";
+        }
+        
     }
 
     public static class JsonProperties {
@@ -70,11 +101,19 @@ public class Paths {
         public static class Error {
             private Error() {}
 
-            // public static final String ERROR = "$.error";
+            public static final String TIMESTAMP = "$.timestamp";
+            public static final String STATUS = "$.status";
+            public static final String ERROR_CODE = "$.error-code";
+            public static final String MESSAGE = "$.message";
+            public static final String PATH = "$.path";
+            public static final String ERRORS = "$.errors";
         }
     }
 
     public static class RequestParams {
+        private RequestParams() {}
+        
         public static final String MONTH = "month";
     }
+    
 }

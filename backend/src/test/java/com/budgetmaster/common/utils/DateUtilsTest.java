@@ -21,7 +21,7 @@ public class DateUtilsTest {
     @Test
     void getValidYearMonth_EmptyInput_ReturnsCurrentYearMonth() {
         YearMonth expected = YearMonth.now();
-        YearMonth actual = DateUtils.getValidYearMonth(Strings.EMPTY_STRING);
+        YearMonth actual = DateUtils.getValidYearMonth(Strings.EMPTY);
         assertNotNull(actual);
         assertEquals(expected, actual);
     }

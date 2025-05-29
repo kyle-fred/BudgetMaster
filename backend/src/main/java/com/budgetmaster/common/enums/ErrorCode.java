@@ -11,6 +11,7 @@ public enum ErrorCode {
     
     // System errors
     INTERNAL_SERVER_ERROR("Internal server error"),
+    SYNCHRONIZATION_FAILED("Synchronization failed"),
     DATABASE_ERROR("Database error");
 
     private final String message;

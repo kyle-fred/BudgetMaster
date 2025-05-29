@@ -3,6 +3,7 @@ package com.budgetmaster.income.service;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.budget.service.logic.IncomeBudgetSynchronizer;
+import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.config.TestContainersConfig;
 import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.income.exception.IncomeNotFoundException;
@@ -10,7 +11,6 @@ import com.budgetmaster.income.model.Income;
 import com.budgetmaster.income.repository.IncomeRepository;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.constants.Fields;
-import com.budgetmaster.testsupport.constants.Messages;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;
 import com.budgetmaster.testsupport.income.factory.IncomeFactory;
 
@@ -144,12 +144,12 @@ public class IncomeServiceIntegrationTest {
     
     @Test
     void createIncome_SynchronizationFails_RollsBackTransaction() {
-        Mockito.doThrow(new RuntimeException(Messages.Error.SYNCHRONIZATION_FAILED))
+        Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                 .when(incomeBudgetSynchronizer).apply(any(Income.class));
 
         assertThatThrownBy(() -> incomeService.createIncome(defaultRequest))
             .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining(Messages.Error.SYNCHRONIZATION_FAILED);
+            .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
         assertThat(incomeRepository.findAll()).isEmpty();
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
@@ -161,12 +161,12 @@ public class IncomeServiceIntegrationTest {
         Income original = incomeService.createIncome(defaultRequest);
         IncomeRequest updatedRequest = IncomeFactory.createUpdatedIncomeRequest();
         
-        Mockito.doThrow(new RuntimeException(Messages.Error.SYNCHRONIZATION_FAILED))
+        Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
             .when(incomeBudgetSynchronizer).reapply(any(Income.class), any(Income.class));
 
         assertThatThrownBy(() -> incomeService.updateIncome(original.getId(), updatedRequest))
             .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining(Messages.Error.SYNCHRONIZATION_FAILED);
+            .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
         Income persisted = incomeRepository.findById(original.getId()).orElse(null);
         assertThat(persisted).isNotNull();
@@ -184,12 +184,12 @@ public class IncomeServiceIntegrationTest {
     void deleteIncome_SynchronizationFails_RollsBackTransaction() {
         Income income = incomeService.createIncome(defaultRequest);
         
-        Mockito.doThrow(new RuntimeException(Messages.Error.SYNCHRONIZATION_FAILED))
+        Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
             .when(incomeBudgetSynchronizer).retract(any(Income.class));
 
         assertThatThrownBy(() -> incomeService.deleteIncome(income.getId()))
             .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining(Messages.Error.SYNCHRONIZATION_FAILED);
+            .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
         assertThat(incomeRepository.findById(income.getId())).isPresent();
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);

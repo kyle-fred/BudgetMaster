@@ -98,10 +98,12 @@ public class GlobalExceptionHandlerTest {
         HttpMessageNotReadableException ex = mock(HttpMessageNotReadableException.class);
         ValueInstantiationException valueEx = mock(ValueInstantiationException.class);
         JsonMappingException.Reference reference = mock(JsonMappingException.Reference.class);
+        Object from = new Object();
         
         when(ex.getCause()).thenReturn(valueEx);
         when(valueEx.getPath()).thenReturn(List.of(reference));
         when(reference.getFieldName()).thenReturn("field");
+        when(reference.getFrom()).thenReturn(from);
         when(valueEx.getMessage()).thenReturn("Invalid enum value: INVALID");
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleInvalidRequest(ex, webRequest);

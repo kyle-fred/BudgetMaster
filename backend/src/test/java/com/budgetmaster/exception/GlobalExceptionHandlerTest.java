@@ -25,6 +25,7 @@ import com.budgetmaster.common.dto.ErrorResponse;
 import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.expense.exception.ExpenseNotFoundException;
 import com.budgetmaster.income.exception.IncomeNotFoundException;
+import com.budgetmaster.testsupport.constants.ExceptionTest;
 import com.budgetmaster.testsupport.constants.Paths;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -49,7 +50,11 @@ public class GlobalExceptionHandlerTest {
     void handleValidationExceptions_WithFieldErrors_ReturnsBadRequestWithValidationErrors() {
         MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
         BindingResult bindingResult = mock(BindingResult.class);
-        FieldError fieldError = new FieldError("object", "field", "error message");
+        FieldError fieldError = new FieldError(
+            ExceptionTest.Validation.OBJECT_NAME, 
+            ExceptionTest.Validation.FIELD_NAME, 
+            ExceptionTest.Validation.ERROR_MESSAGE
+        );
         
         when(ex.getBindingResult()).thenReturn(bindingResult);
         when(bindingResult.getAllErrors()).thenReturn(List.of(fieldError));
@@ -64,8 +69,8 @@ public class GlobalExceptionHandlerTest {
         assertEquals(ErrorCode.VALIDATION_ERROR.getMessage(), response.getBody().getMessage());
         assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
         assertEquals(1, response.getBody().getErrors().size());
-        assertEquals("field", response.getBody().getErrors().get(0).getField());
-        assertEquals("error message", response.getBody().getErrors().get(0).getMessage());
+        assertEquals(ExceptionTest.Validation.FIELD_NAME, response.getBody().getErrors().get(0).getField());
+        assertEquals(ExceptionTest.Validation.ERROR_MESSAGE, response.getBody().getErrors().get(0).getMessage());
     }
     
     @Test
@@ -76,8 +81,8 @@ public class GlobalExceptionHandlerTest {
         
         when(ex.getConstraintViolations()).thenReturn(Set.of(violation));
         when(violation.getPropertyPath()).thenReturn(path);
-        when(path.toString()).thenReturn("object.field");
-        when(violation.getMessage()).thenReturn("error message");
+        when(path.toString()).thenReturn(ExceptionTest.Validation.FIELD_PATH);
+        when(violation.getMessage()).thenReturn(ExceptionTest.Validation.ERROR_MESSAGE);
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleConstraintViolation(ex, webRequest);
         
@@ -89,8 +94,8 @@ public class GlobalExceptionHandlerTest {
         assertEquals(ErrorCode.VALIDATION_ERROR.getMessage(), response.getBody().getMessage());
         assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
         assertEquals(1, response.getBody().getErrors().size());
-        assertEquals("field", response.getBody().getErrors().get(0).getField());
-        assertEquals("error message", response.getBody().getErrors().get(0).getMessage());
+        assertEquals(ExceptionTest.Validation.FIELD_NAME, response.getBody().getErrors().get(0).getField());
+        assertEquals(ExceptionTest.Validation.ERROR_MESSAGE, response.getBody().getErrors().get(0).getMessage());
     }
     
     @Test
@@ -102,9 +107,9 @@ public class GlobalExceptionHandlerTest {
         
         when(ex.getCause()).thenReturn(valueEx);
         when(valueEx.getPath()).thenReturn(List.of(reference));
-        when(reference.getFieldName()).thenReturn("field");
+        when(reference.getFieldName()).thenReturn(ExceptionTest.Validation.FIELD_NAME);
         when(reference.getFrom()).thenReturn(from);
-        when(valueEx.getMessage()).thenReturn("Invalid enum value: INVALID");
+        when(valueEx.getMessage()).thenReturn(ExceptionTest.Enum.INVALID_VALUE_MESSAGE);
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleInvalidRequest(ex, webRequest);
         

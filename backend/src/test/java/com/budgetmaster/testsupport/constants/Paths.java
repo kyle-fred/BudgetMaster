@@ -75,6 +75,9 @@ public class Paths {
     }
 
     public static class RequestParams {
+        private RequestParams() {}
+        
         public static final String MONTH = "month";
     }
+    
 }

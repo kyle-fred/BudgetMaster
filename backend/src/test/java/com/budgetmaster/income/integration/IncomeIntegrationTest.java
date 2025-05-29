@@ -1,10 +1,10 @@
 package com.budgetmaster.income.integration;
 
+import com.budgetmaster.application.controller.IncomeController;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.config.TestContainersConfig;
 import com.budgetmaster.exception.IncomeNotFoundException;
-import com.budgetmaster.income.controller.IncomeController;
 import com.budgetmaster.income.dto.IncomeRequest;
 import com.budgetmaster.income.model.Income;
 import com.budgetmaster.income.repository.IncomeRepository;

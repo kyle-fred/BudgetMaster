@@ -2,6 +2,7 @@ package com.budgetmaster.income.controller;
 
 import java.util.List;
 
+import com.budgetmaster.application.controller.IncomeController;
 import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.exception.IncomeNotFoundException;

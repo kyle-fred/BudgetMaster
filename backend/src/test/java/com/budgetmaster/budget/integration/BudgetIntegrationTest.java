@@ -1,12 +1,12 @@
 package com.budgetmaster.budget.integration;
 
+import com.budgetmaster.application.controller.BudgetController;
+import com.budgetmaster.application.controller.ExpenseController;
+import com.budgetmaster.application.controller.IncomeController;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.config.TestContainersConfig;
 import com.budgetmaster.exception.BudgetNotFoundException;
-import com.budgetmaster.expense.controller.ExpenseController;
-import com.budgetmaster.income.controller.IncomeController;
-import com.budgetmaster.budget.controller.BudgetController;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
 import com.budgetmaster.testsupport.income.factory.IncomeFactory;

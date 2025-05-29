@@ -1,5 +1,6 @@
 package com.budgetmaster.budget.controller;
 
+import com.budgetmaster.application.controller.BudgetController;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.service.BudgetService;
 import com.budgetmaster.common.enums.ErrorCode;

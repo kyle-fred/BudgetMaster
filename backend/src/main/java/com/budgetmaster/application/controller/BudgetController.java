@@ -1,4 +1,4 @@
-package com.budgetmaster.budget.controller;
+package com.budgetmaster.application.controller;
 
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.service.BudgetService;

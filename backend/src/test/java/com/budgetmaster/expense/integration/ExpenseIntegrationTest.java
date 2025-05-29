@@ -1,10 +1,10 @@
 package com.budgetmaster.expense.integration;
 
+import com.budgetmaster.application.controller.ExpenseController;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.config.TestContainersConfig;
 import com.budgetmaster.exception.ExpenseNotFoundException;
-import com.budgetmaster.expense.controller.ExpenseController;
 import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.repository.ExpenseRepository;

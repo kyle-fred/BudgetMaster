@@ -1,4 +1,4 @@
-package com.budgetmaster.income.controller;
+package com.budgetmaster.application.controller;
 
 import com.budgetmaster.common.constants.api.ApiMessages;
 import com.budgetmaster.common.constants.api.ApiPaths;

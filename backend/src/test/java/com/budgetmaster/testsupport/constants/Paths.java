@@ -6,6 +6,7 @@ public class Paths {
         private Endpoints() {}
 
         public static final String BASE = "/api";
+        public static final String TEST = BASE + "/test";
 
         public static final String BUDGET = BASE + "/budgets";
         public static final String BUDGET_WITH_ID = BUDGET + "/{id}";

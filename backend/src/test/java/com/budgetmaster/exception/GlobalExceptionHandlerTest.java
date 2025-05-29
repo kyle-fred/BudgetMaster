@@ -22,6 +22,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.budgetmaster.budget.exception.BudgetNotFoundException;
 import com.budgetmaster.common.dto.ErrorResponse;
+import com.budgetmaster.common.dto.ValidationError;
 import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.expense.exception.ExpenseNotFoundException;
 import com.budgetmaster.income.exception.IncomeNotFoundException;
@@ -34,6 +35,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 
+@SuppressWarnings("null") // We are explicitly testing validation error handling which may involve nulls
 public class GlobalExceptionHandlerTest {
     
     private GlobalExceptionHandler globalExceptionHandler;
@@ -61,16 +63,12 @@ public class GlobalExceptionHandlerTest {
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleValidationExceptions(ex, webRequest);
         
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getBody().getStatus());
-        assertEquals(ErrorCode.VALIDATION_ERROR, response.getBody().getErrorCode());
-        assertEquals(ErrorCode.VALIDATION_ERROR.getMessage(), response.getBody().getMessage());
-        assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
-        assertEquals(1, response.getBody().getErrors().size());
-        assertEquals(ExceptionTest.Validation.FIELD_NAME, response.getBody().getErrors().get(0).getField());
-        assertEquals(ExceptionTest.Validation.ERROR_MESSAGE, response.getBody().getErrors().get(0).getMessage());
+        assertErrorResponse(response, HttpStatus.BAD_REQUEST, ErrorCode.VALIDATION_ERROR);
+        assertValidationError(
+            response.getBody().getErrors().get(0), 
+            ExceptionTest.Validation.FIELD_NAME, 
+            ExceptionTest.Validation.ERROR_MESSAGE
+        );
     }
     
     @Test
@@ -86,16 +84,12 @@ public class GlobalExceptionHandlerTest {
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleConstraintViolation(ex, webRequest);
         
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getBody().getStatus());
-        assertEquals(ErrorCode.VALIDATION_ERROR, response.getBody().getErrorCode());
-        assertEquals(ErrorCode.VALIDATION_ERROR.getMessage(), response.getBody().getMessage());
-        assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
-        assertEquals(1, response.getBody().getErrors().size());
-        assertEquals(ExceptionTest.Validation.FIELD_NAME, response.getBody().getErrors().get(0).getField());
-        assertEquals(ExceptionTest.Validation.ERROR_MESSAGE, response.getBody().getErrors().get(0).getMessage());
+        assertErrorResponse(response, HttpStatus.BAD_REQUEST, ErrorCode.VALIDATION_ERROR);
+        assertValidationError(
+            response.getBody().getErrors().get(0), 
+            ExceptionTest.Validation.FIELD_NAME, 
+            ExceptionTest.Validation.ERROR_MESSAGE
+        );
     }
     
     @Test
@@ -113,13 +107,7 @@ public class GlobalExceptionHandlerTest {
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleInvalidRequest(ex, webRequest);
         
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getBody().getStatus());
-        assertEquals(ErrorCode.INVALID_ENUM_VALUE, response.getBody().getErrorCode());
-        assertEquals(ErrorCode.INVALID_ENUM_VALUE.getMessage(), response.getBody().getMessage());
-        assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
+        assertErrorResponse(response, HttpStatus.BAD_REQUEST, ErrorCode.INVALID_ENUM_VALUE);
         assertTrue(response.getBody().getErrors().isEmpty());
     }
     
@@ -129,13 +117,7 @@ public class GlobalExceptionHandlerTest {
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleGenericException(ex, webRequest);
         
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getBody().getStatus());
-        assertEquals(ErrorCode.INTERNAL_SERVER_ERROR, response.getBody().getErrorCode());
-        assertEquals(ErrorCode.INTERNAL_SERVER_ERROR.getMessage(), response.getBody().getMessage());
-        assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
+        assertErrorResponse(response, HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.INTERNAL_SERVER_ERROR);
         assertTrue(response.getBody().getErrors().isEmpty());
     }
     
@@ -145,13 +127,7 @@ public class GlobalExceptionHandlerTest {
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleDataIntegrityViolation(ex, webRequest);
         
-        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
-        assertEquals(HttpStatus.CONFLICT.value(), response.getBody().getStatus());
-        assertEquals(ErrorCode.DATABASE_ERROR, response.getBody().getErrorCode());
-        assertEquals(ErrorCode.DATABASE_ERROR.getMessage(), response.getBody().getMessage());
-        assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
+        assertErrorResponse(response, HttpStatus.CONFLICT, ErrorCode.DATABASE_ERROR);
         assertTrue(response.getBody().getErrors().isEmpty());
     }
     
@@ -162,13 +138,7 @@ public class GlobalExceptionHandlerTest {
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleBudgetNotFound(ex, webRequest);
         
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
-        assertEquals(HttpStatus.NOT_FOUND.value(), response.getBody().getStatus());
-        assertEquals(ErrorCode.RESOURCE_NOT_FOUND, response.getBody().getErrorCode());
-        assertEquals(errorMessage, response.getBody().getMessage());
-        assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
+        assertErrorResponse(response, HttpStatus.NOT_FOUND, ErrorCode.RESOURCE_NOT_FOUND, errorMessage);
         assertTrue(response.getBody().getErrors().isEmpty());
     }
     
@@ -179,13 +149,7 @@ public class GlobalExceptionHandlerTest {
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleIncomeNotFound(ex, webRequest);
         
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertNotNull(response.getBody().getTimestamp());
-        assertEquals(HttpStatus.NOT_FOUND.value(), response.getBody().getStatus());
-        assertEquals(ErrorCode.RESOURCE_NOT_FOUND, response.getBody().getErrorCode());
-        assertEquals(errorMessage, response.getBody().getMessage());
-        assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
+        assertErrorResponse(response, HttpStatus.NOT_FOUND, ErrorCode.RESOURCE_NOT_FOUND, errorMessage);
         assertTrue(response.getBody().getErrors().isEmpty());
     }
     
@@ -196,13 +160,30 @@ public class GlobalExceptionHandlerTest {
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleExpenseNotFound(ex, webRequest);
         
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertErrorResponse(response, HttpStatus.NOT_FOUND, ErrorCode.RESOURCE_NOT_FOUND, errorMessage);
+        assertTrue(response.getBody().getErrors().isEmpty());
+    }
+
+    // -- Helper methods --
+
+    private void assertErrorResponse(ResponseEntity<ErrorResponse> response, HttpStatus expectedStatus, ErrorCode expectedErrorCode) {
+        assertErrorResponse(response, expectedStatus, expectedErrorCode, expectedErrorCode.getMessage());
+    }
+
+    private void assertErrorResponse(ResponseEntity<ErrorResponse> response, HttpStatus expectedStatus, ErrorCode expectedErrorCode, String expectedMessage) {
+        assertEquals(expectedStatus, response.getStatusCode());
         assertNotNull(response.getBody());
         assertNotNull(response.getBody().getTimestamp());
-        assertEquals(HttpStatus.NOT_FOUND.value(), response.getBody().getStatus());
-        assertEquals(ErrorCode.RESOURCE_NOT_FOUND, response.getBody().getErrorCode());
-        assertEquals(errorMessage, response.getBody().getMessage());
+        assertEquals(expectedStatus.value(), response.getBody().getStatus());
+        assertEquals(expectedErrorCode, response.getBody().getErrorCode());
+        assertEquals(expectedMessage, response.getBody().getMessage());
         assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
-        assertTrue(response.getBody().getErrors().isEmpty());
+        assertNotNull(response.getBody().getErrors());
+    }
+
+    private void assertValidationError(ValidationError validationError, String expectedField, String expectedMessage) {
+        assertNotNull(validationError);
+        assertEquals(expectedField, validationError.getField());
+        assertEquals(expectedMessage, validationError.getMessage());
     }
 } 

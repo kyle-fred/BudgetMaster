@@ -11,7 +11,6 @@ import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.repository.ExpenseRepository;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.constants.Fields;
-import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
 import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
 

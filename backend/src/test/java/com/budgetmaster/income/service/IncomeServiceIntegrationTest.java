@@ -11,7 +11,6 @@ import com.budgetmaster.income.model.Income;
 import com.budgetmaster.income.repository.IncomeRepository;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.constants.Fields;
-import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;
 import com.budgetmaster.testsupport.income.factory.IncomeFactory;
 

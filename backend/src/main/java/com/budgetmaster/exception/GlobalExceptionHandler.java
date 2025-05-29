@@ -12,15 +12,12 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.context.request.WebRequest;
 
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
-import com.budgetmaster.budget.exception.BudgetNotFoundException;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.constants.string.StringConstants;
-import com.budgetmaster.common.dto.ErrorResponse;
-import com.budgetmaster.common.dto.builder.ErrorResponseBuilder;
 import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.common.utils.EnumExceptionUtils;
-import com.budgetmaster.expense.exception.ExpenseNotFoundException;
-import com.budgetmaster.income.exception.IncomeNotFoundException;
+import com.budgetmaster.exception.dto.ErrorResponse;
+import com.budgetmaster.exception.dto.ErrorResponseBuilder;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.util.Optional;

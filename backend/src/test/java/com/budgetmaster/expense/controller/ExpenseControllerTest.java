@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.config.JacksonConfig;
+import com.budgetmaster.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.dto.ExpenseRequest;
-import com.budgetmaster.expense.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.service.ExpenseService;
 import com.budgetmaster.testsupport.constants.Error;

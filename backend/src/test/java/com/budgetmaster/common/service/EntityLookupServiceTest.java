@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import com.budgetmaster.budget.exception.BudgetNotFoundException;
 import com.budgetmaster.budget.model.Budget;
-import com.budgetmaster.income.exception.IncomeNotFoundException;
+import com.budgetmaster.exception.BudgetNotFoundException;
+import com.budgetmaster.exception.IncomeNotFoundException;
 import com.budgetmaster.income.model.Income;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.budget.factory.BudgetFactory;

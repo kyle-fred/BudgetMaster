@@ -1,14 +1,13 @@
-package com.budgetmaster.common.dto.builder;
+package com.budgetmaster.exception.dto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.budgetmaster.common.dto.ErrorResponse;
-import com.budgetmaster.common.dto.ValidationError;
 import com.budgetmaster.common.enums.ErrorCode;
 
 public class ErrorResponseBuilder {
+    
     public LocalDateTime timestamp;
     public int status;
     public ErrorCode errorCode;

@@ -20,12 +20,9 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 
-import com.budgetmaster.budget.exception.BudgetNotFoundException;
-import com.budgetmaster.common.dto.ErrorResponse;
-import com.budgetmaster.common.dto.ValidationError;
 import com.budgetmaster.common.enums.ErrorCode;
-import com.budgetmaster.expense.exception.ExpenseNotFoundException;
-import com.budgetmaster.income.exception.IncomeNotFoundException;
+import com.budgetmaster.exception.dto.ErrorResponse;
+import com.budgetmaster.exception.dto.ValidationError;
 import com.budgetmaster.testsupport.constants.ExceptionTest;
 import com.budgetmaster.testsupport.constants.Paths;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;

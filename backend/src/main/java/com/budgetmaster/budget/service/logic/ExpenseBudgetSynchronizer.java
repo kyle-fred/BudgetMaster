@@ -1,9 +1,9 @@
 package com.budgetmaster.budget.service.logic;
 
-import com.budgetmaster.budget.exception.BudgetNotFoundException;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.common.constants.error.ErrorMessages;
+import com.budgetmaster.exception.BudgetNotFoundException;
 import com.budgetmaster.expense.model.Expense;
 
 import org.springframework.stereotype.Service;

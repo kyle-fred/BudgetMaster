@@ -4,8 +4,8 @@ import com.budgetmaster.budget.service.logic.ExpenseBudgetSynchronizer;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
+import com.budgetmaster.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.dto.ExpenseRequest;
-import com.budgetmaster.expense.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.repository.ExpenseRepository;
 

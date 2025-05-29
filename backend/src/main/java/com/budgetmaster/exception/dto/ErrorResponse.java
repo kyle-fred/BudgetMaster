@@ -1,4 +1,4 @@
-package com.budgetmaster.common.dto;
+package com.budgetmaster.exception.dto;
 
 import com.budgetmaster.common.enums.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,6 +9,7 @@ import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
 public class ErrorResponse {
+
     private LocalDateTime timestamp;
     private int status;
     private ErrorCode errorCode;
@@ -52,4 +53,5 @@ public class ErrorResponse {
     public List<ValidationError> getErrors() {
         return errors;
     }
+    
 } 

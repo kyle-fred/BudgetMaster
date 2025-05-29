@@ -4,8 +4,8 @@ import com.budgetmaster.budget.service.logic.IncomeBudgetSynchronizer;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
+import com.budgetmaster.exception.IncomeNotFoundException;
 import com.budgetmaster.income.dto.IncomeRequest;
-import com.budgetmaster.income.exception.IncomeNotFoundException;
 import com.budgetmaster.income.model.Income;
 import com.budgetmaster.income.repository.IncomeRepository;
 

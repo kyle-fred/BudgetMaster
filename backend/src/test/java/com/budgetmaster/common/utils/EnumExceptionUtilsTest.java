@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.application.util.EnumExceptionUtils;
 import com.budgetmaster.testsupport.constants.Enums;
 import com.budgetmaster.testsupport.constants.Error;
 

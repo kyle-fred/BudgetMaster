@@ -5,7 +5,7 @@ import java.util.Optional;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.service.BudgetService;
-import com.budgetmaster.common.utils.DateUtils;
+import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.exception.BudgetNotFoundException;
 import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;

@@ -2,6 +2,7 @@ package com.budgetmaster.budget.service;
 
 import java.util.Optional;
 
+import com.budgetmaster.application.service.BudgetService;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.common.utils.DateUtils;

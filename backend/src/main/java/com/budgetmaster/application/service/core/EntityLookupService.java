@@ -1,4 +1,4 @@
-package com.budgetmaster.common.service;
+package com.budgetmaster.application.service.core;
 
 import java.util.List;
 import java.util.Optional;

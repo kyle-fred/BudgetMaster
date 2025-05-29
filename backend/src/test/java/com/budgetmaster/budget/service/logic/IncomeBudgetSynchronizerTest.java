@@ -2,6 +2,7 @@ package com.budgetmaster.budget.service.logic;
 
 import java.util.Optional;
 
+import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.config.JacksonConfig;

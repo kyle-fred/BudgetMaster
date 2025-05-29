@@ -3,12 +3,12 @@ package com.budgetmaster.expense.controller;
 import java.util.List;
 
 import com.budgetmaster.application.controller.ExpenseController;
+import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.model.Expense;
-import com.budgetmaster.expense.service.ExpenseService;
 import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.constants.Paths;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;

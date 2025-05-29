@@ -1,8 +1,9 @@
 package com.budgetmaster.income.service;
 
+import com.budgetmaster.application.service.IncomeService;
+import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
-import com.budgetmaster.budget.service.logic.IncomeBudgetSynchronizer;
 import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.config.TestContainersConfig;
 import com.budgetmaster.exception.IncomeNotFoundException;

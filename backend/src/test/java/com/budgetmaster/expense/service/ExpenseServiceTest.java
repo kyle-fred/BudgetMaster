@@ -3,7 +3,8 @@ package com.budgetmaster.expense.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.budgetmaster.budget.service.logic.ExpenseBudgetSynchronizer;
+import com.budgetmaster.application.service.ExpenseService;
+import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchronizer;
 import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.config.JacksonConfig;

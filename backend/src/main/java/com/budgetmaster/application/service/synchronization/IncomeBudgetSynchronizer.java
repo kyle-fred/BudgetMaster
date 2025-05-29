@@ -1,4 +1,4 @@
-package com.budgetmaster.budget.service.logic;
+package com.budgetmaster.application.service.synchronization;
 
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;

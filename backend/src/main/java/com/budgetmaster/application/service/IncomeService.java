@@ -1,8 +1,8 @@
-package com.budgetmaster.income.service;
+package com.budgetmaster.application.service;
 
-import com.budgetmaster.budget.service.logic.IncomeBudgetSynchronizer;
+import com.budgetmaster.application.service.core.EntityLookupService;
+import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
 import com.budgetmaster.common.constants.error.ErrorMessages;
-import com.budgetmaster.common.service.EntityLookupService;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.exception.IncomeNotFoundException;
 import com.budgetmaster.income.dto.IncomeRequest;

@@ -2,46 +2,46 @@ package com.budgetmaster.testsupport.constants;
 
 public class Messages {
 
-    public static class CommonErrorMessageConstants {
+    public static class Error {
         public static final String DUPLICATE_ENTRY = "Duplicate entry";
         public static final String SYNCHRONIZATION_FAILED = "Synchronization failed";
     }
 
-    public static class BudgetErrorMessageConstants {
-        public static final String BUDGET_NOT_FOUND_FOR_MONTH = "Budget not found for month: %s";
-        public static final String BUDGET_NOT_FOUND_WITH_ID = "Budget not found with id: %s";
+    public static class Budget {
+        public static final String NOT_FOUND_FOR_MONTH = "Budget not found for month: %s";
+        public static final String NOT_FOUND_WITH_ID = "Budget not found with id: %s";
     }
 
-    public static class ExpenseErrorMessageConstants {
-        public static final String EXPENSE_NOT_FOUND_WITH_ID = "Expense not found with id: %s";
-        public static final String EXPENSE_NOT_FOUND_BY_MONTH = "No expenses found for month: %s";
-        public static final String EXPENSE_NAME_REQUIRED = "Expense name is required.";
-        public static final String EXPENSE_CATEGORY_REQUIRED = "Expense category is required.";
-        public static final String EXPENSE_TYPE_REQUIRED = "The transaction type is required.";
+    public static class Expense {
+        public static final String NOT_FOUND_WITH_ID = "Expense not found with id: %s";
+        public static final String NOT_FOUND_BY_MONTH = "No expenses found for month: %s";
+        public static final String NAME_REQUIRED = "Expense name is required.";
+        public static final String CATEGORY_REQUIRED = "Expense category is required.";
+        public static final String TYPE_REQUIRED = "The transaction type is required.";
     }
 
-    public static class IncomeErrorMessageConstants {
-        public static final String INCOME_NOT_FOUND_WITH_ID = "Income not found with id: %s";
-        public static final String INCOME_NOT_FOUND_BY_MONTH = "No incomes found for month: %s";
-        public static final String INCOME_NAME_REQUIRED = "Income name is required.";
-        public static final String INCOME_SOURCE_REQUIRED = "Income source is required.";
-        public static final String INCOME_TYPE_REQUIRED = "The transaction type is required.";
+    public static class Income {
+        public static final String NOT_FOUND_WITH_ID = "Income not found with id: %s";
+        public static final String NOT_FOUND_BY_MONTH = "No incomes found for month: %s";
+        public static final String NAME_REQUIRED = "Income name is required.";
+        public static final String SOURCE_REQUIRED = "Income source is required.";
+        public static final String TYPE_REQUIRED = "The transaction type is required.";
     }
 
-    public static class MoneyErrorMessageConstants {
-        public static final String MONEY_AMOUNT_REQUIRED = "Amount is required.";
-        public static final String MONEY_CURRENCY_REQUIRED = "Currency is required.";
-        public static final String MONEY_UNSUPPORTED_CURRENCY = "This currency type is not supported yet";
-        public static final String MONEY_NEGATIVE_AMOUNT = "Amount must be non-negative.";
-        public static final String MONEY_DETAILS_REQUIRED = "Money details (amount and currency) are required.";
+    public static class Money {
+        public static final String AMOUNT_REQUIRED = "Amount is required.";
+        public static final String CURRENCY_REQUIRED = "Currency is required.";
+        public static final String UNSUPPORTED_CURRENCY = "This currency type is not supported yet";
+        public static final String NEGATIVE_AMOUNT = "Amount must be non-negative.";
+        public static final String DETAILS_REQUIRED = "Money details (amount and currency) are required.";
     }
 
-    public static class MonthErrorMessageConstants {
-        public static final String MONTH_REQUIRED = "Month is required.";
-        public static final String MONTH_INVALID_FORMAT = "Invalid month format. Please use the format YYYY-MM.";
+    public static class Month {
+        public static final String REQUIRED = "Month is required.";
+        public static final String INVALID_FORMAT = "Invalid month format. Please use the format YYYY-MM.";
     }
 
-    public static class EnumErrorMessageConstants {
+    public static class Enum {
         // -- Test Exception Messages --
         public static final String FULL_EXCEPTION_INVALID_ENUM = "java.lang.IllegalArgumentException: No enum constant com.example.Color.BLUEE";
         public static final String FULL_EXCEPTION_OTHER = "java.lang.IllegalArgumentException: Some other error";

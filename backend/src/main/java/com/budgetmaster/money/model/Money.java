@@ -19,10 +19,10 @@ public final class Money {
     private static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.HALF_EVEN;
     private static final Currency DEFAULT_CURRENCY = SupportedCurrency.GBP.getCurrency();
 
-    @Column(name = ColumnNames.Transaction.AMOUNT, nullable = false)
+    @Column(name = ColumnNames.Money.AMOUNT, nullable = false)
     private BigDecimal amount;
 
-    @Column(name = ColumnNames.Transaction.CURRENCY, nullable = false)
+    @Column(name = ColumnNames.Money.CURRENCY, nullable = false)
     private Currency currency;
     
     protected Money() {}

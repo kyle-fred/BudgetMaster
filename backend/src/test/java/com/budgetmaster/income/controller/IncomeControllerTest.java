@@ -55,18 +55,18 @@ public class IncomeControllerTest {
 		Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
 				.thenReturn(testIncome);
 		
-		mockMvc.perform(post(Paths.EndpointPathConstants.ENDPOINT_INCOME)
+		mockMvc.perform(post(Paths.Endpoints.INCOME)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(incomeRequest)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_NAME).value(IncomeConstants.Default.NAME))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_SOURCE).value(IncomeConstants.Default.SOURCE))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_AMOUNT).value(IncomeConstants.Default.AMOUNT.toString()))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_CURRENCY).value(IncomeConstants.Default.CURRENCY.toString()))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_TYPE).value(IncomeConstants.Default.TYPE.toString()))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH_YEAR).isArray())
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_YEAR).value(IncomeConstants.Default.YEAR))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH).value(IncomeConstants.Default.MONTH));
+				.andExpect(jsonPath(Paths.JsonProperties.Income.NAME).value(IncomeConstants.Default.NAME))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.SOURCE).value(IncomeConstants.Default.SOURCE))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONEY_AMOUNT).value(IncomeConstants.Default.AMOUNT.toString()))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONEY_CURRENCY).value(IncomeConstants.Default.CURRENCY.toString()))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.TYPE).value(IncomeConstants.Default.TYPE.toString()))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONTH_YEAR).isArray())
+				.andExpect(jsonPath(Paths.JsonProperties.Income.YEAR).value(IncomeConstants.Default.YEAR))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONTH).value(IncomeConstants.Default.MONTH));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 				.createIncome(Mockito.any(IncomeRequest.class));
@@ -77,17 +77,17 @@ public class IncomeControllerTest {
 		Mockito.when(incomeService.getIncomeById(IncomeConstants.Default.ID))
 				.thenReturn(testIncome);
 		
-		mockMvc.perform(get(Paths.EndpointPathConstants.ENDPOINT_INCOME_WITH_ID, IncomeConstants.Default.ID)
+		mockMvc.perform(get(Paths.Endpoints.INCOME_WITH_ID, IncomeConstants.Default.ID)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_NAME).value(IncomeConstants.Default.NAME))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_SOURCE).value(IncomeConstants.Default.SOURCE))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_AMOUNT).value(IncomeConstants.Default.AMOUNT.toString()))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_CURRENCY).value(IncomeConstants.Default.CURRENCY.toString()))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_TYPE).value(IncomeConstants.Default.TYPE.toString()))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH_YEAR).isArray())
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_YEAR).value(IncomeConstants.Default.YEAR))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH).value(IncomeConstants.Default.MONTH));
+				.andExpect(jsonPath(Paths.JsonProperties.Income.NAME).value(IncomeConstants.Default.NAME))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.SOURCE).value(IncomeConstants.Default.SOURCE))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONEY_AMOUNT).value(IncomeConstants.Default.AMOUNT.toString()))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONEY_CURRENCY).value(IncomeConstants.Default.CURRENCY.toString()))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.TYPE).value(IncomeConstants.Default.TYPE.toString()))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONTH_YEAR).isArray())
+				.andExpect(jsonPath(Paths.JsonProperties.Income.YEAR).value(IncomeConstants.Default.YEAR))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONTH).value(IncomeConstants.Default.MONTH));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 				.getIncomeById(IncomeConstants.Default.ID);
@@ -98,10 +98,10 @@ public class IncomeControllerTest {
 	// 	Mockito.when(incomeService.getIncomeById(IncomeConstants.NonExistent.ID))
 	// 			.thenThrow(new IncomeNotFoundException(String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)));
 
-	// 	mockMvc.perform(get(Paths.EndpointPathConstants.ENDPOINT_INCOME_WITH_ID, IncomeConstants.NonExistent.ID)
+	// 	mockMvc.perform(get(Paths.Endpoints.INCOME_WITH_ID, IncomeConstants.NonExistent.ID)
 	// 			.contentType(MediaType.APPLICATION_JSON))
 	// 			.andExpect(status().isNotFound())
-	// 			.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)));
+	// 			.andExpect(jsonPath(Paths.JsonProperties.Error.ERROR).value(String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)));
 
 	// 	Mockito.verify(incomeService, Mockito.times(1))
 	// 			.getIncomeById(IncomeConstants.NonExistent.ID);
@@ -114,12 +114,12 @@ public class IncomeControllerTest {
 		Mockito.when(incomeService.getAllIncomesForMonth(IncomeConstants.Default.YEAR_MONTH.toString()))
 				.thenReturn(incomeList);
 		
-		mockMvc.perform(get(Paths.EndpointPathConstants.ENDPOINT_INCOME)
-				.param(Paths.RequestParamsConstants.REQUEST_PARAM_MONTH, IncomeConstants.Default.YEAR_MONTH.toString())
+		mockMvc.perform(get(Paths.Endpoints.INCOME)
+				.param(Paths.RequestParams.MONTH, IncomeConstants.Default.YEAR_MONTH.toString())
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_NAME_0).value(IncomeConstants.Default.NAME))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_NAME_1).value(IncomeConstants.Default.NAME));
+				.andExpect(jsonPath(Paths.JsonProperties.Income.FIRST_NAME).value(IncomeConstants.Default.NAME))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.SECOND_NAME).value(IncomeConstants.Default.NAME));
 				
 		Mockito.verify(incomeService, Mockito.times(1))
 				.getAllIncomesForMonth(IncomeConstants.Default.YEAR_MONTH.toString());
@@ -130,18 +130,18 @@ public class IncomeControllerTest {
 		Mockito.when(incomeService.updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class)))
 				.thenReturn(testIncome);
 		
-		mockMvc.perform(put(Paths.EndpointPathConstants.ENDPOINT_INCOME_WITH_ID, IncomeConstants.Default.ID)
+		mockMvc.perform(put(Paths.Endpoints.INCOME_WITH_ID, IncomeConstants.Default.ID)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(incomeRequest)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_NAME).value(IncomeConstants.Default.NAME))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_SOURCE).value(IncomeConstants.Default.SOURCE))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_AMOUNT).value(IncomeConstants.Default.AMOUNT.toString()))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONEY_CURRENCY).value(IncomeConstants.Default.CURRENCY.toString()))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_TYPE).value(IncomeConstants.Default.TYPE.toString()))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH_YEAR).isArray())
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_YEAR).value(IncomeConstants.Default.YEAR))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH).value(IncomeConstants.Default.MONTH));
+				.andExpect(jsonPath(Paths.JsonProperties.Income.NAME).value(IncomeConstants.Default.NAME))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.SOURCE).value(IncomeConstants.Default.SOURCE))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONEY_AMOUNT).value(IncomeConstants.Default.AMOUNT.toString()))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONEY_CURRENCY).value(IncomeConstants.Default.CURRENCY.toString()))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.TYPE).value(IncomeConstants.Default.TYPE.toString()))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONTH_YEAR).isArray())
+				.andExpect(jsonPath(Paths.JsonProperties.Income.YEAR).value(IncomeConstants.Default.YEAR))
+				.andExpect(jsonPath(Paths.JsonProperties.Income.MONTH).value(IncomeConstants.Default.MONTH));
 		
 		Mockito.verify(incomeService, Mockito.times(1))
 				.updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class));
@@ -152,11 +152,11 @@ public class IncomeControllerTest {
 	// 	Mockito.when(incomeService.updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class)))
 	// 			.thenThrow(new IncomeNotFoundException(String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)));
 		
-	// 	mockMvc.perform(put(Paths.EndpointPathConstants.ENDPOINT_INCOME_WITH_ID, IncomeConstants.NonExistent.ID)
+	// 	mockMvc.perform(put(Paths.Endpoints.INCOME_WITH_ID, IncomeConstants.NonExistent.ID)
 	// 			.contentType(MediaType.APPLICATION_JSON)
 	// 			.content(objectMapper.writeValueAsString(incomeRequest)))
 	// 			.andExpect(status().isNotFound())
-	// 			.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)));
+	// 			.andExpect(jsonPath(Paths.JsonProperties.Error.ERROR).value(String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)));
 		
 	// 	Mockito.verify(incomeService, Mockito.times(1))
 	// 			.updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class));
@@ -168,7 +168,7 @@ public class IncomeControllerTest {
 				.when(incomeService)
 				.deleteIncome(IncomeConstants.Default.ID);
 		
-		mockMvc.perform(delete(Paths.EndpointPathConstants.ENDPOINT_INCOME_WITH_ID, IncomeConstants.Default.ID))
+		mockMvc.perform(delete(Paths.Endpoints.INCOME_WITH_ID, IncomeConstants.Default.ID))
 				.andExpect(status().isNoContent());
 		
 		Mockito.verify(incomeService, Mockito.times(1))
@@ -181,9 +181,9 @@ public class IncomeControllerTest {
 	// 			.when(incomeService)
 	// 			.deleteIncome(IncomeConstants.NonExistent.ID);
 		
-	// 	mockMvc.perform(delete(Paths.EndpointPathConstants.ENDPOINT_INCOME_WITH_ID, IncomeConstants.NonExistent.ID))
+	// 	mockMvc.perform(delete(Paths.Endpoints.INCOME_WITH_ID, IncomeConstants.NonExistent.ID))
 	// 			.andExpect(status().isNotFound())
-	// 			.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)));
+	// 			.andExpect(jsonPath(Paths.JsonProperties.Error.ERROR).value(String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)));
 		
 	// 	Mockito.verify(incomeService, Mockito.times(1))
 	// 			.deleteIncome(IncomeConstants.NonExistent.ID);
@@ -194,11 +194,11 @@ public class IncomeControllerTest {
 	// 	Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
 	// 			.thenThrow(new RuntimeException(Messages.CommonErrorMessageConstants.SERVICE_FAILURE));
 
-	// 	mockMvc.perform(post(Paths.EndpointPathConstants.ENDPOINT_INCOME)
+	// 	mockMvc.perform(post(Paths.Endpoints.INCOME)
 	// 			.contentType(MediaType.APPLICATION_JSON)
 	// 			.content(objectMapper.writeValueAsString(incomeRequest)))
 	// 			.andExpect(status().isInternalServerError())
-	// 			.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_EMPTY).value(Messages.CommonErrorMessageConstants.UNEXPECTED_ERROR));
+	// 			.andExpect(jsonPath(Paths.JsonProperties.Error.ERROR).value(Messages.CommonErrorMessageConstants.UNEXPECTED_ERROR));
 
 	// 	Mockito.verify(incomeService, Mockito.times(1))
 	// 			.createIncome(Mockito.any(IncomeRequest.class));
@@ -209,11 +209,11 @@ public class IncomeControllerTest {
 	// 	Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
 	// 			.thenThrow(new DataIntegrityViolationException(Messages.CommonErrorMessageConstants.DATABASE_CONSTRAINT));
 		
-	// 	mockMvc.perform(post(Paths.EndpointPathConstants.ENDPOINT_INCOME)
+	// 	mockMvc.perform(post(Paths.Endpoints.INCOME)
 	// 			.contentType(MediaType.APPLICATION_JSON)
 	// 			.content(objectMapper.writeValueAsString(incomeRequest)))
 	// 			.andExpect(status().isConflict())
-	// 			.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_EMPTY).value(Messages.CommonErrorMessageConstants.DATABASE_CONSTRAINT));
+	// 			.andExpect(jsonPath(Paths.JsonProperties.Error.ERROR).value(Messages.CommonErrorMessageConstants.DATABASE_CONSTRAINT));
 		
 	// 	Mockito.verify(incomeService, Mockito.times(1))
 	// 			.createIncome(Mockito.any(IncomeRequest.class));

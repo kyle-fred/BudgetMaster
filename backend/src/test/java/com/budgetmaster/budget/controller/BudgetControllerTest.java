@@ -44,17 +44,17 @@ public class BudgetControllerTest {
 		Mockito.when(budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
 				.thenReturn(testBudget);
 
-		mockMvc.perform(get(Paths.EndpointPathConstants.ENDPOINT_BUDGET)
-				.param(Paths.RequestParamsConstants.REQUEST_PARAM_MONTH, BudgetConstants.Default.YEAR_MONTH.toString()))
+		mockMvc.perform(get(Paths.Endpoints.BUDGET)
+				.param(Paths.RequestParams.MONTH, BudgetConstants.Default.YEAR_MONTH.toString()))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_ID).value(BudgetConstants.Default.ID))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_TOTAL_INCOME).value(BudgetConstants.Default.TOTAL_INCOME))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_TOTAL_EXPENSE).value(BudgetConstants.Default.TOTAL_EXPENSE))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_SAVINGS).value(BudgetConstants.Default.SAVINGS))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_CURRENCY).value(BudgetConstants.Default.CURRENCY.getCurrencyCode()))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH_YEAR).isArray())
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_YEAR).value(BudgetConstants.Default.YEAR))
-				.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_MONTH).value(BudgetConstants.Default.MONTH));
+				.andExpect(jsonPath(Paths.JsonProperties.Budget.ID).value(BudgetConstants.Default.ID))
+				.andExpect(jsonPath(Paths.JsonProperties.Budget.TOTAL_INCOME).value(BudgetConstants.Default.TOTAL_INCOME))
+				.andExpect(jsonPath(Paths.JsonProperties.Budget.TOTAL_EXPENSE).value(BudgetConstants.Default.TOTAL_EXPENSE))
+				.andExpect(jsonPath(Paths.JsonProperties.Budget.SAVINGS).value(BudgetConstants.Default.SAVINGS))
+				.andExpect(jsonPath(Paths.JsonProperties.Budget.CURRENCY).value(BudgetConstants.Default.CURRENCY.getCurrencyCode()))
+				.andExpect(jsonPath(Paths.JsonProperties.Budget.MONTH_YEAR).isArray())
+				.andExpect(jsonPath(Paths.JsonProperties.Budget.YEAR).value(BudgetConstants.Default.YEAR))
+				.andExpect(jsonPath(Paths.JsonProperties.Budget.MONTH).value(BudgetConstants.Default.MONTH));
 
 		Mockito.verify(budgetService, Mockito.times(1))
 				.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
@@ -65,10 +65,10 @@ public class BudgetControllerTest {
 	// 	Mockito.when(budgetService.getBudgetByMonth(BudgetConstants.NonExistent.YEAR_MONTH.toString()))
 	// 			.thenThrow(new BudgetNotFoundException(String.format(Messages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, BudgetConstants.NonExistent.YEAR_MONTH)));
 
-	// 	mockMvc.perform(get(Paths.EndpointPathConstants.ENDPOINT_BUDGET)
-	// 			.param(Paths.RequestParamsConstants.REQUEST_PARAM_MONTH, BudgetConstants.NonExistent.YEAR_MONTH.toString()))
+	// 	mockMvc.perform(get(Paths.Endpoints.BUDGET)
+	// 			.param(Paths.RequestParams.MONTH, BudgetConstants.NonExistent.YEAR_MONTH.toString()))
 	// 			.andExpect(status().isNotFound())
-	// 			.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(Messages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, BudgetConstants.NonExistent.YEAR_MONTH)));
+	// 			.andExpect(jsonPath(Paths.JsonProperties.Error.ERROR).value(String.format(Messages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_FOR_MONTH, BudgetConstants.NonExistent.YEAR_MONTH)));
 
 	// 	Mockito.verify(budgetService, Mockito.times(1))
 	// 			.getBudgetByMonth(BudgetConstants.NonExistent.YEAR_MONTH.toString());
@@ -80,7 +80,7 @@ public class BudgetControllerTest {
 				.when(budgetService)
 				.deleteBudget(BudgetConstants.Default.ID);
 		
-		mockMvc.perform(delete(Paths.EndpointPathConstants.ENDPOINT_BUDGET_WITH_ID, BudgetConstants.Default.ID))
+		mockMvc.perform(delete(Paths.Endpoints.BUDGET_WITH_ID, BudgetConstants.Default.ID))
 				.andExpect(status().isNoContent());
 
 		Mockito.verify(budgetService, Mockito.times(1))
@@ -93,9 +93,9 @@ public class BudgetControllerTest {
 	// 			.when(budgetService)
 	// 			.deleteBudget(BudgetConstants.NonExistent.ID);
 
-	// 	mockMvc.perform(delete(Paths.EndpointPathConstants.ENDPOINT_BUDGET_WITH_ID, BudgetConstants.NonExistent.ID))
+	// 	mockMvc.perform(delete(Paths.Endpoints.BUDGET_WITH_ID, BudgetConstants.NonExistent.ID))
 	// 			.andExpect(status().isNotFound())
-	// 			.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_ERROR).value(String.format(Messages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID)));
+	// 			.andExpect(jsonPath(Paths.JsonProperties.Error.ERROR).value(String.format(Messages.BudgetErrorMessageConstants.BUDGET_NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID)));
 
 	// 	Mockito.verify(budgetService, Mockito.times(1))
 	// 			.deleteBudget(BudgetConstants.NonExistent.ID);
@@ -106,10 +106,10 @@ public class BudgetControllerTest {
 	// 	Mockito.when(budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
 	// 			.thenThrow(new RuntimeException(Messages.CommonErrorMessageConstants.SERVICE_FAILURE));
 				
-	// 	mockMvc.perform(get(Paths.EndpointPathConstants.ENDPOINT_BUDGET)
-	// 			.param(Paths.RequestParamsConstants.REQUEST_PARAM_MONTH, BudgetConstants.Default.YEAR_MONTH.toString()))
+	// 	mockMvc.perform(get(Paths.Endpoints.BUDGET)
+	// 			.param(Paths.RequestParams.MONTH, BudgetConstants.Default.YEAR_MONTH.toString()))
 	// 			.andExpect(status().isInternalServerError())
-	// 			.andExpect(jsonPath(Paths.JsonPathConstants.JSON_PATH_EMPTY).value(Messages.CommonErrorMessageConstants.UNEXPECTED_ERROR));
+	// 			.andExpect(jsonPath(Paths.JsonProperties.Error.ERROR).value(Messages.CommonErrorMessageConstants.UNEXPECTED_ERROR));
 
 	// 	Mockito.verify(budgetService, Mockito.times(1))
 	// 			.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());

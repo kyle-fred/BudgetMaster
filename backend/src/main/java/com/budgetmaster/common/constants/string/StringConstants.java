@@ -3,6 +3,8 @@ package com.budgetmaster.common.constants.string;
 public class StringConstants {
 
     public static class Punctuation {
+        private Punctuation() {}
+        
         public static final String EMPTY = "";
         public static final String SPACE = " ";
         public static final String UNDERSCORE = "_";
@@ -12,6 +14,8 @@ public class StringConstants {
     }
 
     public static class ExceptionMessages {
+        private ExceptionMessages() {}
+        
         public static final String NO_ENUM_CONSTANT_PREFIX = "No enum constant ";
     }
     

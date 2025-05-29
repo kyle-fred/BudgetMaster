@@ -1,4 +1,4 @@
-package com.budgetmaster.expense.repository;
+package com.budgetmaster.application.repository;
 
 import java.time.YearMonth;
 import java.util.List;

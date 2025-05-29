@@ -1,6 +1,7 @@
 package com.budgetmaster.expense.repository;
 
 import com.budgetmaster.application.model.Expense;
+import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.config.TestContainersConfig;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
 import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;

@@ -1,13 +1,13 @@
 package com.budgetmaster.application.service;
 
 import com.budgetmaster.application.model.Income;
+import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.application.service.core.EntityLookupService;
 import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.exception.IncomeNotFoundException;
 import com.budgetmaster.income.dto.IncomeRequest;
-import com.budgetmaster.income.repository.IncomeRepository;
 
 import java.time.YearMonth;
 import java.util.List;

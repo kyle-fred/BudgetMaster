@@ -1,6 +1,6 @@
 package com.budgetmaster.exception.dto;
 
-import com.budgetmaster.application.enums.ErrorCode;
+import com.budgetmaster.exception.codes.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 

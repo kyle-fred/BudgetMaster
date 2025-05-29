@@ -1,4 +1,4 @@
-package com.budgetmaster.money.validation;
+package com.budgetmaster.application.validation;
 
 import com.budgetmaster.application.dto.MoneyRequest;
 import com.budgetmaster.application.enums.SupportedCurrency;

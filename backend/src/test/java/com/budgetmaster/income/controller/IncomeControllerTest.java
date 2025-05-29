@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.budgetmaster.application.controller.IncomeController;
 import com.budgetmaster.application.dto.IncomeRequest;
-import com.budgetmaster.application.enums.ErrorCode;
 import com.budgetmaster.application.model.Income;
 import com.budgetmaster.application.service.IncomeService;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.exception.IncomeNotFoundException;
+import com.budgetmaster.exception.codes.ErrorCode;
 import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.constants.Paths;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;

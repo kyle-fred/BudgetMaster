@@ -1,7 +1,6 @@
 package com.budgetmaster.expense.service;
 
 import com.budgetmaster.application.dto.ExpenseRequest;
-import com.budgetmaster.application.enums.ErrorCode;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.repository.BudgetRepository;
@@ -10,6 +9,7 @@ import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchronizer;
 import com.budgetmaster.config.TestContainersConfig;
 import com.budgetmaster.exception.ExpenseNotFoundException;
+import com.budgetmaster.exception.codes.ErrorCode;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.constants.Fields;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;

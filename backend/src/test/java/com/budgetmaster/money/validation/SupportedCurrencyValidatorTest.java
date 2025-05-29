@@ -1,6 +1,7 @@
 package com.budgetmaster.money.validation;
 
 import com.budgetmaster.application.dto.MoneyRequest;
+import com.budgetmaster.application.validation.SupportedCurrencyValidator;
 import com.budgetmaster.testsupport.money.builder.MoneyRequestBuilder;
 import com.budgetmaster.testsupport.money.constants.MoneyConstants;
 

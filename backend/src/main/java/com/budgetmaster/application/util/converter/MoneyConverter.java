@@ -1,4 +1,4 @@
-package com.budgetmaster.common.converter;
+package com.budgetmaster.application.util.converter;
 
 import java.math.BigDecimal;
 

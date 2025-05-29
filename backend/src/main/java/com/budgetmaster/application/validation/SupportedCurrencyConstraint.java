@@ -1,4 +1,4 @@
-package com.budgetmaster.money.validation;
+package com.budgetmaster.application.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

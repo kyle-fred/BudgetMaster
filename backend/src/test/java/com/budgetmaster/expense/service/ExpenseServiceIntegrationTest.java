@@ -1,14 +1,14 @@
 package com.budgetmaster.expense.service;
 
+import com.budgetmaster.application.model.Budget;
+import com.budgetmaster.application.model.Expense;
+import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchronizer;
-import com.budgetmaster.budget.model.Budget;
-import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.config.TestContainersConfig;
 import com.budgetmaster.exception.ExpenseNotFoundException;
 import com.budgetmaster.expense.dto.ExpenseRequest;
-import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.repository.ExpenseRepository;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.constants.Fields;

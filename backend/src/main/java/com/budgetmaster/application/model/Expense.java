@@ -1,4 +1,4 @@
-package com.budgetmaster.expense.model;
+package com.budgetmaster.application.model;
 
 import com.budgetmaster.common.constants.database.ColumnNames;
 import com.budgetmaster.common.constants.database.TableNames;
@@ -12,8 +12,6 @@ import java.time.YearMonth;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import com.budgetmaster.money.model.Money;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

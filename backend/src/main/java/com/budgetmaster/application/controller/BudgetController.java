@@ -1,7 +1,7 @@
 package com.budgetmaster.application.controller;
 
+import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.service.BudgetService;
-import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.common.constants.api.ApiMessages;
 import com.budgetmaster.common.constants.api.ApiPaths;
 import com.budgetmaster.common.constants.validation.ValidationPatterns;

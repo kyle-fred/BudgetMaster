@@ -1,4 +1,4 @@
-package com.budgetmaster.money.model;
+package com.budgetmaster.application.model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

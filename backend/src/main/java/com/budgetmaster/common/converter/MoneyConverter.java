@@ -2,7 +2,7 @@ package com.budgetmaster.common.converter;
 
 import java.math.BigDecimal;
 
-import com.budgetmaster.money.model.Money;
+import com.budgetmaster.application.model.Money;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

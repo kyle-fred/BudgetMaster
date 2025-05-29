@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Currency;
 
-import com.budgetmaster.budget.model.Budget;
+import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.budget.factory.BudgetFactory;
 

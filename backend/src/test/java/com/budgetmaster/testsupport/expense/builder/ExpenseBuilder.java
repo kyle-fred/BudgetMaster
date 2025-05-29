@@ -2,10 +2,10 @@ package com.budgetmaster.testsupport.expense.builder;
 
 import java.time.YearMonth;
 
+import com.budgetmaster.application.model.Expense;
+import com.budgetmaster.application.model.Money;
 import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.expense.enums.ExpenseCategory;
-import com.budgetmaster.expense.model.Expense;
-import com.budgetmaster.money.model.Money;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
 import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
 import com.budgetmaster.testsupport.money.builder.MoneyBuilder;

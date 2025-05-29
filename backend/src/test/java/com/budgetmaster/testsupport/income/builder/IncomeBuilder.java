@@ -1,13 +1,13 @@
 package com.budgetmaster.testsupport.income.builder;
 
-import com.budgetmaster.income.model.Income;
-import com.budgetmaster.money.model.Money;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;
 import com.budgetmaster.testsupport.income.factory.IncomeFactory;
 import com.budgetmaster.testsupport.money.builder.MoneyBuilder;
 
 import java.time.YearMonth;
 
+import com.budgetmaster.application.model.Income;
+import com.budgetmaster.application.model.Money;
 import com.budgetmaster.common.enums.TransactionType;
 
 public class IncomeBuilder {

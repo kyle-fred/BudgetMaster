@@ -1,9 +1,9 @@
 package com.budgetmaster.budget.service;
 
+import com.budgetmaster.application.model.Budget;
+import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.service.BudgetService;
 import com.budgetmaster.application.service.IncomeService;
-import com.budgetmaster.budget.model.Budget;
-import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.config.TestContainersConfig;
 import com.budgetmaster.exception.BudgetNotFoundException;
 import com.budgetmaster.income.repository.IncomeRepository;

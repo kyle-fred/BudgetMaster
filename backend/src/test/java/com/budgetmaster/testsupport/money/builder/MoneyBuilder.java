@@ -1,6 +1,6 @@
 package com.budgetmaster.testsupport.money.builder;
 
-import com.budgetmaster.money.model.Money;
+import com.budgetmaster.application.model.Money;
 import com.budgetmaster.testsupport.money.constants.MoneyConstants;
 
 import java.math.BigDecimal;

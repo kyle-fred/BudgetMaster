@@ -2,12 +2,12 @@ package com.budgetmaster.budget.service.logic;
 
 import java.util.Optional;
 
+import com.budgetmaster.application.model.Budget;
+import com.budgetmaster.application.model.Income;
+import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
-import com.budgetmaster.budget.model.Budget;
-import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.exception.BudgetNotFoundException;
-import com.budgetmaster.income.model.Income;
 import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.income.builder.IncomeBuilder;

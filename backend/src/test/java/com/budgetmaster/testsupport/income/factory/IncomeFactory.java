@@ -1,9 +1,9 @@
 package com.budgetmaster.testsupport.income.factory;
 
+import com.budgetmaster.application.model.Income;
+import com.budgetmaster.application.model.Money;
 import com.budgetmaster.income.dto.IncomeRequest;
-import com.budgetmaster.income.model.Income;
 import com.budgetmaster.money.dto.MoneyRequest;
-import com.budgetmaster.money.model.Money;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;
 
 public final class IncomeFactory {

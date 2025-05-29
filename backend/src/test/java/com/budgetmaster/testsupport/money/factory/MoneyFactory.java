@@ -1,6 +1,6 @@
 package com.budgetmaster.testsupport.money.factory;
 
-import com.budgetmaster.money.model.Money;
+import com.budgetmaster.application.model.Money;
 import com.budgetmaster.testsupport.money.constants.MoneyConstants;
 
 public final class MoneyFactory {

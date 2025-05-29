@@ -1,7 +1,8 @@
 package com.budgetmaster.budget.repository;
 
+import com.budgetmaster.application.model.Budget;
+import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.config.TestContainersConfig;
-import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 

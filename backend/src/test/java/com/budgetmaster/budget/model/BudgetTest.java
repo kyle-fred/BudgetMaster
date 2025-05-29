@@ -1,7 +1,8 @@
 package com.budgetmaster.budget.model;
 
-import com.budgetmaster.expense.model.Expense;
-import com.budgetmaster.income.model.Income;
+import com.budgetmaster.application.model.Budget;
+import com.budgetmaster.application.model.Expense;
+import com.budgetmaster.application.model.Income;
 import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.budget.factory.BudgetFactory;

@@ -1,7 +1,7 @@
 package com.budgetmaster.income.repository;
 
+import com.budgetmaster.application.model.Income;
 import com.budgetmaster.config.TestContainersConfig;
-import com.budgetmaster.income.model.Income;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;
 import com.budgetmaster.testsupport.income.factory.IncomeFactory;
 

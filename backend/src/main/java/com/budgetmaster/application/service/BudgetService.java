@@ -1,8 +1,8 @@
 package com.budgetmaster.application.service;
 
+import com.budgetmaster.application.model.Budget;
+import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.service.core.EntityLookupService;
-import com.budgetmaster.budget.model.Budget;
-import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.exception.BudgetNotFoundException;

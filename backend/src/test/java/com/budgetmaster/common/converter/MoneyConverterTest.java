@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import com.budgetmaster.money.model.Money;
+import com.budgetmaster.application.model.Money;
 import com.budgetmaster.testsupport.money.constants.MoneyConstants;
 import com.budgetmaster.testsupport.money.factory.MoneyFactory;
 

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.budgetmaster.income.model.Income;
+import com.budgetmaster.application.model.Income;
 
 public interface IncomeRepository extends JpaRepository<Income, Long> {
 	List<Income> findByMonth(YearMonth month);

@@ -1,4 +1,4 @@
-package com.budgetmaster.budget.model;
+package com.budgetmaster.application.model;
 
 import com.budgetmaster.common.constants.database.ColumnConstraints;
 import com.budgetmaster.common.constants.database.ColumnNames;

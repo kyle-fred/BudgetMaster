@@ -1,10 +1,10 @@
-package com.budgetmaster.exception.dto;
+package com.budgetmaster.application.exception.dto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.budgetmaster.exception.codes.ErrorCode;
+import com.budgetmaster.application.exception.codes.ErrorCode;
 
 public class ErrorResponseBuilder {
     

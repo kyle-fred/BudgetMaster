@@ -4,7 +4,7 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
-import com.budgetmaster.common.constants.error.ErrorMessages;
+import com.budgetmaster.constants.error.ErrorMessages;
 
 @Documented
 @Constraint(validatedBy = SupportedCurrencyValidator.class)

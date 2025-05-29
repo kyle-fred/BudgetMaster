@@ -1,4 +1,4 @@
-package com.budgetmaster.common.constants.database;
+package com.budgetmaster.constants.database;
 
 public class TableNames {
     

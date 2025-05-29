@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.budgetmaster.common.constants.string.StringConstants;
+import com.budgetmaster.constants.string.StringConstants;
 
 public class EnumExceptionUtils {
     

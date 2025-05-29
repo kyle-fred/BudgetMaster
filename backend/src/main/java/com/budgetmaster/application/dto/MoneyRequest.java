@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 import com.budgetmaster.application.validation.SupportedCurrencyConstraint;
-import com.budgetmaster.common.constants.validation.ValidationConstraints;
-import com.budgetmaster.common.constants.validation.ValidationMessages;
+import com.budgetmaster.constants.validation.ValidationConstraints;
+import com.budgetmaster.constants.validation.ValidationMessages;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;

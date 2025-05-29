@@ -2,9 +2,9 @@ package com.budgetmaster.application.controller;
 
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.service.BudgetService;
-import com.budgetmaster.common.constants.api.ApiMessages;
-import com.budgetmaster.common.constants.api.ApiPaths;
-import com.budgetmaster.common.constants.validation.ValidationPatterns;
+import com.budgetmaster.constants.api.ApiMessages;
+import com.budgetmaster.constants.api.ApiPaths;
+import com.budgetmaster.constants.validation.ValidationPatterns;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

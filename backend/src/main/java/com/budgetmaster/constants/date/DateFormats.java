@@ -1,4 +1,4 @@
-package com.budgetmaster.common.constants.date;
+package com.budgetmaster.constants.date;
 
 public class DateFormats {
     

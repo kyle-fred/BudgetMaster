@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import com.budgetmaster.application.dto.ExpenseRequest;
+import com.budgetmaster.application.exception.ExpenseNotFoundException;
+import com.budgetmaster.application.exception.codes.ErrorCode;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchronizer;
 import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.exception.ExpenseNotFoundException;
-import com.budgetmaster.exception.codes.ErrorCode;
 import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
 import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;

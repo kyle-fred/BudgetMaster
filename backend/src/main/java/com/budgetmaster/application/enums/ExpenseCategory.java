@@ -1,6 +1,6 @@
 package com.budgetmaster.application.enums;
 
-import com.budgetmaster.common.constants.string.StringConstants;
+import com.budgetmaster.constants.string.StringConstants;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 

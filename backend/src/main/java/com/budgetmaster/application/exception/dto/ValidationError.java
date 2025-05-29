@@ -1,4 +1,4 @@
-package com.budgetmaster.exception.dto;
+package com.budgetmaster.application.exception.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

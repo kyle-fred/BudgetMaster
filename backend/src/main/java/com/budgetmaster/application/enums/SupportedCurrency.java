@@ -2,8 +2,8 @@ package com.budgetmaster.application.enums;
 
 import java.util.Currency;
 
-import com.budgetmaster.common.constants.error.ErrorMessages;
-import com.budgetmaster.common.constants.money.CurrencyConstants;
+import com.budgetmaster.constants.error.ErrorMessages;
+import com.budgetmaster.constants.money.CurrencyConstants;
 
 public enum SupportedCurrency {
     GBP(Currency.getInstance(CurrencyConstants.Codes.GBP));

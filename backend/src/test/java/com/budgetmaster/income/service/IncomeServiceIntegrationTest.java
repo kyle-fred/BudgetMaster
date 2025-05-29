@@ -1,6 +1,8 @@
 package com.budgetmaster.income.service;
 
 import com.budgetmaster.application.dto.IncomeRequest;
+import com.budgetmaster.application.exception.IncomeNotFoundException;
+import com.budgetmaster.application.exception.codes.ErrorCode;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.model.Income;
 import com.budgetmaster.application.repository.BudgetRepository;
@@ -8,8 +10,6 @@ import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.application.service.IncomeService;
 import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
 import com.budgetmaster.config.TestContainersConfig;
-import com.budgetmaster.exception.IncomeNotFoundException;
-import com.budgetmaster.exception.codes.ErrorCode;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.constants.Fields;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;

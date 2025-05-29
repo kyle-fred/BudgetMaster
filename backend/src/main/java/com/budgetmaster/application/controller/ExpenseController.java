@@ -3,9 +3,9 @@ package com.budgetmaster.application.controller;
 import com.budgetmaster.application.dto.ExpenseRequest;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.service.ExpenseService;
-import com.budgetmaster.common.constants.api.ApiMessages;
-import com.budgetmaster.common.constants.api.ApiPaths;
-import com.budgetmaster.common.constants.validation.ValidationPatterns;
+import com.budgetmaster.constants.api.ApiMessages;
+import com.budgetmaster.constants.api.ApiPaths;
+import com.budgetmaster.constants.validation.ValidationPatterns;
 
 import java.util.List;
 

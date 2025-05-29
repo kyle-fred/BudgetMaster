@@ -2,12 +2,12 @@ package com.budgetmaster.budget.service.logic;
 
 import java.util.Optional;
 
+import com.budgetmaster.application.exception.BudgetNotFoundException;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchronizer;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.exception.BudgetNotFoundException;
 import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.expense.builder.ExpenseBuilder;

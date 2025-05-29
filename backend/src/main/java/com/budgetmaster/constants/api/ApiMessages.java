@@ -1,4 +1,4 @@
-package com.budgetmaster.common.constants.api;
+package com.budgetmaster.constants.api;
 
 public class ApiMessages {
     

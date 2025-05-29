@@ -12,7 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import com.budgetmaster.json.serialization.BigDecimalToStringSerializer;
-import com.budgetmaster.common.constants.date.DateFormats;
+import com.budgetmaster.constants.date.DateFormats;
 import com.budgetmaster.json.deserialization.BigDecimalToStringDeserializer;
 import com.budgetmaster.json.serialization.YearMonthSerializer;
 

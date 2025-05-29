@@ -1,4 +1,4 @@
-package com.budgetmaster.common.constants.money;
+package com.budgetmaster.constants.money;
 
 public class CurrencyConstants {
 

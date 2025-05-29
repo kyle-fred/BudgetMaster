@@ -1,4 +1,4 @@
-package com.budgetmaster.exception;
+package com.budgetmaster.application.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -12,12 +12,12 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.context.request.WebRequest;
 
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
+import com.budgetmaster.application.exception.codes.ErrorCode;
+import com.budgetmaster.application.exception.dto.ErrorResponse;
+import com.budgetmaster.application.exception.dto.ErrorResponseBuilder;
 import com.budgetmaster.application.util.EnumExceptionUtils;
-import com.budgetmaster.common.constants.error.ErrorMessages;
-import com.budgetmaster.common.constants.string.StringConstants;
-import com.budgetmaster.exception.codes.ErrorCode;
-import com.budgetmaster.exception.dto.ErrorResponse;
-import com.budgetmaster.exception.dto.ErrorResponseBuilder;
+import com.budgetmaster.constants.error.ErrorMessages;
+import com.budgetmaster.constants.string.StringConstants;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.util.Optional;

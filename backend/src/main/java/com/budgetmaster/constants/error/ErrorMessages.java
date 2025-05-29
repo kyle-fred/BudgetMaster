@@ -1,4 +1,4 @@
-package com.budgetmaster.common.constants.error;
+package com.budgetmaster.constants.error;
 
 public class ErrorMessages {
 

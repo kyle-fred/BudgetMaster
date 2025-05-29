@@ -1,8 +1,8 @@
 package com.budgetmaster.application.dto;
 
 import com.budgetmaster.application.enums.TransactionType;
-import com.budgetmaster.common.constants.validation.ValidationMessages;
-import com.budgetmaster.common.constants.validation.ValidationPatterns;
+import com.budgetmaster.constants.validation.ValidationMessages;
+import com.budgetmaster.constants.validation.ValidationPatterns;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

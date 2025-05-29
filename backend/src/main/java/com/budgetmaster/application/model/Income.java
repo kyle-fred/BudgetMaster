@@ -3,8 +3,8 @@ package com.budgetmaster.application.model;
 import com.budgetmaster.application.dto.IncomeRequest;
 import com.budgetmaster.application.enums.TransactionType;
 import com.budgetmaster.application.util.DateUtils;
-import com.budgetmaster.common.constants.database.ColumnNames;
-import com.budgetmaster.common.constants.database.TableNames;
+import com.budgetmaster.constants.database.ColumnNames;
+import com.budgetmaster.constants.database.TableNames;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;

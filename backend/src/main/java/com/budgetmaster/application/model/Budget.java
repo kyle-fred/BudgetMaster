@@ -1,9 +1,5 @@
 package com.budgetmaster.application.model;
 
-import com.budgetmaster.common.constants.database.ColumnConstraints;
-import com.budgetmaster.common.constants.database.ColumnNames;
-import com.budgetmaster.common.constants.database.TableNames;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -11,6 +7,10 @@ import java.util.Currency;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.budgetmaster.constants.database.ColumnConstraints;
+import com.budgetmaster.constants.database.ColumnNames;
+import com.budgetmaster.constants.database.TableNames;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

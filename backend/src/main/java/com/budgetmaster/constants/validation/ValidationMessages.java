@@ -1,4 +1,4 @@
-package com.budgetmaster.common.constants.validation;
+package com.budgetmaster.constants.validation;
 
 public class ValidationMessages {
     

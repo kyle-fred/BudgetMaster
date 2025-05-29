@@ -1,11 +1,11 @@
 package com.budgetmaster.budget.controller;
 
 import com.budgetmaster.application.controller.BudgetController;
+import com.budgetmaster.application.exception.BudgetNotFoundException;
+import com.budgetmaster.application.exception.codes.ErrorCode;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.service.BudgetService;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.exception.BudgetNotFoundException;
-import com.budgetmaster.exception.codes.ErrorCode;
 import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.constants.Error;

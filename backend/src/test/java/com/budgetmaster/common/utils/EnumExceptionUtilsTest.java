@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import com.budgetmaster.testsupport.constants.Enums;
-import com.budgetmaster.testsupport.constants.Messages;
+import com.budgetmaster.testsupport.constants.Error;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -28,14 +28,14 @@ public class EnumExceptionUtilsTest {
 
     @Test
     void testExtractInvalidEnumValue_ValidExceptionMessage_ReturnsEnumConstant() {
-        String message = Messages.Enum.FULL_EXCEPTION_INVALID_ENUM;
+        String message = Error.Enum.FULL_EXCEPTION_INVALID_ENUM;
         String extracted = EnumExceptionUtils.extractInvalidEnumValue(message);
-        assertEquals(Messages.Enum.ENUM_CONSTANT, extracted);
+        assertEquals(Error.Enum.ENUM_CONSTANT, extracted);
     }
 
     @Test
     void testExtractInvalidEnumValue_NoEnumPrefix_ReturnsNull() {
-        String message = Messages.Enum.FULL_EXCEPTION_OTHER;
+        String message = Error.Enum.FULL_EXCEPTION_OTHER;
         String extracted = EnumExceptionUtils.extractInvalidEnumValue(message);
         assertNull(extracted);
     }
@@ -44,25 +44,25 @@ public class EnumExceptionUtilsTest {
 
     @Test
     void testExtractEnumPart_ValidMessage_ReturnsEnumPart() {
-        String message = Messages.Enum.NO_ENUM_PREFIX;
+        String message = Error.Enum.NO_ENUM_PREFIX;
         String extracted = EnumExceptionUtils.extractEnumPart(message, 17);
-        assertEquals(Messages.Enum.ENUM_PART, extracted);
+        assertEquals(Error.Enum.ENUM_PART, extracted);
     }
 
     // -- Extract Enum Constant Tests --
 
     @Test
     void testExtractEnumConstant_ValidEnumPart_ReturnsConstant() {
-        String enumPart = Messages.Enum.ENUM_PART;
+        String enumPart = Error.Enum.ENUM_PART;
         String extracted = EnumExceptionUtils.extractEnumConstant(enumPart);
-        assertEquals(Messages.Enum.ENUM_CONSTANT, extracted);
+        assertEquals(Error.Enum.ENUM_CONSTANT, extracted);
     }
 
     @Test
     void testExtractEnumConstant_NoDot_ReturnsSameString() {
-        String enumPart = Messages.Enum.ENUM_CONSTANT;
+        String enumPart = Error.Enum.ENUM_CONSTANT;
         String extracted = EnumExceptionUtils.extractEnumConstant(enumPart);
-        assertEquals(Messages.Enum.ENUM_CONSTANT, extracted);
+        assertEquals(Error.Enum.ENUM_CONSTANT, extracted);
     }
 
     // -- Get Enum Values as String Tests --

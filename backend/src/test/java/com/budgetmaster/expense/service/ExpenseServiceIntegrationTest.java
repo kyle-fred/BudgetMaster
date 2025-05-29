@@ -3,6 +3,7 @@ package com.budgetmaster.expense.service;
 import com.budgetmaster.budget.model.Budget;
 import com.budgetmaster.budget.repository.BudgetRepository;
 import com.budgetmaster.budget.service.logic.ExpenseBudgetSynchronizer;
+import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.config.TestContainersConfig;
 import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.exception.ExpenseNotFoundException;
@@ -10,7 +11,7 @@ import com.budgetmaster.expense.model.Expense;
 import com.budgetmaster.expense.repository.ExpenseRepository;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.constants.Fields;
-import com.budgetmaster.testsupport.constants.Messages;
+import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
 import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
 
@@ -144,12 +145,12 @@ public class ExpenseServiceIntegrationTest {
     
     @Test
     void createExpense_SynchronizationFails_RollsBackTransaction() {
-        Mockito.doThrow(new RuntimeException(Messages.Error.SYNCHRONIZATION_FAILED))
+        Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                 .when(expenseBudgetSynchronizer).apply(any(Expense.class));
 
         assertThatThrownBy(() -> expenseService.createExpense(defaultRequest))
             .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining(Messages.Error.SYNCHRONIZATION_FAILED);
+            .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
         assertThat(expenseRepository.findAll()).isEmpty();
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
@@ -161,12 +162,12 @@ public class ExpenseServiceIntegrationTest {
         Expense original = expenseService.createExpense(defaultRequest);
         ExpenseRequest updatedRequest = ExpenseFactory.createUpdatedExpenseRequest();
         
-        Mockito.doThrow(new RuntimeException(Messages.Error.SYNCHRONIZATION_FAILED))
+        Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
             .when(expenseBudgetSynchronizer).reapply(any(Expense.class), any(Expense.class));
 
         assertThatThrownBy(() -> expenseService.updateExpense(original.getId(), updatedRequest))
             .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining(Messages.Error.SYNCHRONIZATION_FAILED);
+            .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
         Expense persisted = expenseRepository.findById(original.getId()).orElse(null);
         assertThat(persisted).isNotNull();
@@ -184,12 +185,12 @@ public class ExpenseServiceIntegrationTest {
     void deleteExpense_SynchronizationFails_RollsBackTransaction() {
         Expense expense = expenseService.createExpense(defaultRequest);
         
-        Mockito.doThrow(new RuntimeException(Messages.Error.SYNCHRONIZATION_FAILED))
+        Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
             .when(expenseBudgetSynchronizer).retract(any(Expense.class));
 
         assertThatThrownBy(() -> expenseService.deleteExpense(expense.getId()))
             .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining(Messages.Error.SYNCHRONIZATION_FAILED);
+            .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
         assertThat(expenseRepository.findById(expense.getId())).isPresent();
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);

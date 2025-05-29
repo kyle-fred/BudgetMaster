@@ -9,7 +9,7 @@ import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;
 import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
-import com.budgetmaster.testsupport.constants.Messages;
+import com.budgetmaster.testsupport.constants.Error;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -93,7 +93,7 @@ public class BudgetServiceTest {
 	
 	@Test
 	void getBudget_NonExistentMonth_ReturnsNotFound() {
-		String errorMessage = String.format(Messages.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.Default.YEAR_MONTH);
+		String errorMessage = String.format(Error.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.Default.YEAR_MONTH);
 		
 		try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
@@ -113,7 +113,7 @@ public class BudgetServiceTest {
 	
 	@Test
 	void getBudget_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(Messages.Budget.NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID);
+		String errorMessage = String.format(Error.Budget.NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID);
 		Mockito.when(budgetRepository.findById(BudgetConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		
@@ -128,7 +128,7 @@ public class BudgetServiceTest {
 	
 	@Test
 	void deleteBudget_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(Messages.Budget.NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID);
+		String errorMessage = String.format(Error.Budget.NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID);
 		Mockito.when(budgetRepository.findById(BudgetConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		

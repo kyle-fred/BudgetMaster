@@ -1,13 +1,6 @@
 package com.budgetmaster.testsupport.constants;
 
-public class Messages {
-
-    public static class Error {
-        private Error() {}
-        
-        public static final String DUPLICATE_ENTRY = "Duplicate entry";
-        public static final String SYNCHRONIZATION_FAILED = "Synchronization failed";
-    }
+public class Error {
 
     public static class Budget {
         private Budget() {}

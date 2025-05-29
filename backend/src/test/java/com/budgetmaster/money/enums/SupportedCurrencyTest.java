@@ -4,6 +4,7 @@ import java.util.Currency;
 
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.application.enums.SupportedCurrency;
 import com.budgetmaster.testsupport.money.constants.MoneyConstants;
 
 import static org.junit.jupiter.api.Assertions.*;

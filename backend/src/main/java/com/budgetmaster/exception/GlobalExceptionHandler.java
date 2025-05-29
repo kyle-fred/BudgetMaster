@@ -12,10 +12,10 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.context.request.WebRequest;
 
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
+import com.budgetmaster.application.enums.ErrorCode;
 import com.budgetmaster.application.util.EnumExceptionUtils;
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.constants.string.StringConstants;
-import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.exception.dto.ErrorResponse;
 import com.budgetmaster.exception.dto.ErrorResponseBuilder;
 import com.fasterxml.jackson.databind.JsonMappingException;

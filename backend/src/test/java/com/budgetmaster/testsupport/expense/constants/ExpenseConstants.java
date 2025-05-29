@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Currency;
 
-import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.expense.enums.ExpenseCategory;
+import com.budgetmaster.application.enums.ExpenseCategory;
+import com.budgetmaster.application.enums.TransactionType;
 
 public final class ExpenseConstants {
     private ExpenseConstants() {}

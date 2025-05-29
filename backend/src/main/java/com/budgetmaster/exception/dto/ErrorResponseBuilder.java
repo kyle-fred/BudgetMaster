@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.budgetmaster.common.enums.ErrorCode;
+import com.budgetmaster.application.enums.ErrorCode;
 
 public class ErrorResponseBuilder {
     

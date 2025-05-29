@@ -1,9 +1,9 @@
 package com.budgetmaster.application.dto;
 
+import com.budgetmaster.application.enums.ExpenseCategory;
+import com.budgetmaster.application.enums.TransactionType;
 import com.budgetmaster.common.constants.validation.ValidationMessages;
 import com.budgetmaster.common.constants.validation.ValidationPatterns;
-import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.expense.enums.ExpenseCategory;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

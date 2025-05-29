@@ -1,4 +1,4 @@
-package com.budgetmaster.expense.enums;
+package com.budgetmaster.application.enums;
 
 import com.budgetmaster.common.constants.string.StringConstants;
 import com.fasterxml.jackson.annotation.JsonCreator;

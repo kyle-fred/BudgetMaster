@@ -1,11 +1,11 @@
 package com.budgetmaster.application.model;
 
 import com.budgetmaster.application.dto.ExpenseRequest;
+import com.budgetmaster.application.enums.ExpenseCategory;
+import com.budgetmaster.application.enums.TransactionType;
 import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.common.constants.database.ColumnNames;
 import com.budgetmaster.common.constants.database.TableNames;
-import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.expense.enums.ExpenseCategory;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;

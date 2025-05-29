@@ -1,7 +1,7 @@
 package com.budgetmaster.money.validation;
 
 import com.budgetmaster.application.dto.MoneyRequest;
-import com.budgetmaster.money.enums.SupportedCurrency;
+import com.budgetmaster.application.enums.SupportedCurrency;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

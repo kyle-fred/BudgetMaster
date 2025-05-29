@@ -6,9 +6,9 @@ import com.budgetmaster.testsupport.money.builder.MoneyBuilder;
 
 import java.time.YearMonth;
 
+import com.budgetmaster.application.enums.TransactionType;
 import com.budgetmaster.application.model.Income;
 import com.budgetmaster.application.model.Money;
-import com.budgetmaster.common.enums.TransactionType;
 
 public class IncomeBuilder {
     private Long id = IncomeConstants.Default.ID;

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Currency;
 
-import com.budgetmaster.common.enums.TransactionType;
+import com.budgetmaster.application.enums.TransactionType;
 
 public final class IncomeConstants {
     private IncomeConstants() {}

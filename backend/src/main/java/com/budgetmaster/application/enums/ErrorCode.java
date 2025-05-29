@@ -1,4 +1,4 @@
-package com.budgetmaster.common.enums;
+package com.budgetmaster.application.enums;
 
 public enum ErrorCode {
     // Resource not found errors

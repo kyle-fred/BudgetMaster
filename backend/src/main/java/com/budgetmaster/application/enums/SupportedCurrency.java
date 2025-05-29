@@ -1,4 +1,4 @@
-package com.budgetmaster.money.enums;
+package com.budgetmaster.application.enums;
 
 import java.util.Currency;
 

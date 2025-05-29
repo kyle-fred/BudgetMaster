@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.budgetmaster.application.dto.IncomeRequest;
+import com.budgetmaster.application.enums.ErrorCode;
 import com.budgetmaster.application.model.Income;
 import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.application.service.IncomeService;
 import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
 import com.budgetmaster.application.util.DateUtils;
-import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.exception.IncomeNotFoundException;
 import com.budgetmaster.testsupport.constants.Error;

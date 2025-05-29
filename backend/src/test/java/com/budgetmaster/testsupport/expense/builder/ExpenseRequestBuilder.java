@@ -2,8 +2,8 @@ package com.budgetmaster.testsupport.expense.builder;
 
 import com.budgetmaster.application.dto.ExpenseRequest;
 import com.budgetmaster.application.dto.MoneyRequest;
-import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.expense.enums.ExpenseCategory;
+import com.budgetmaster.application.enums.ExpenseCategory;
+import com.budgetmaster.application.enums.TransactionType;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
 import com.budgetmaster.testsupport.money.builder.MoneyRequestBuilder;
 

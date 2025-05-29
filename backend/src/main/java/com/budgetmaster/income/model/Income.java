@@ -28,10 +28,10 @@ import jakarta.persistence.Table;
 public class Income {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = ColumnNames.Common.ID)
+	@Column(name = ColumnNames.Audit.ID)
 	private Long id;
 	
-	@Column(name = ColumnNames.Transaction.NAME, nullable = false)
+	@Column(name = ColumnNames.Income.NAME, nullable = false)
 	private String name;
 	
 	@Column(name = ColumnNames.Income.SOURCE, nullable = false)
@@ -41,18 +41,18 @@ public class Income {
 	private Money money;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = ColumnNames.Transaction.TYPE, nullable = false)
+	@Column(name = ColumnNames.Income.TYPE, nullable = false)
 	private TransactionType type;
 	
-	@Column(name = ColumnNames.Common.MONTH, nullable = false)
+	@Column(name = ColumnNames.Income.MONTH, nullable = false)
  	private YearMonth month;
  	
 	@CreationTimestamp
-	@Column(name = ColumnNames.Common.CREATED_AT, nullable = false, updatable = false, insertable = false)
+	@Column(name = ColumnNames.Audit.CREATED_AT, nullable = false, updatable = false, insertable = false)
  	private LocalDateTime createdAt;
  	
 	@UpdateTimestamp
-	@Column(name = ColumnNames.Common.LAST_UPDATED_AT, nullable = false, insertable = false)
+	@Column(name = ColumnNames.Audit.LAST_UPDATED_AT, nullable = false, insertable = false)
  	private LocalDateTime lastUpdatedAt;
 	
 	protected Income() {}

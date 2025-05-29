@@ -44,7 +44,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Messages.MoneyErrorMessageConstants.MONEY_AMOUNT_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.Money.AMOUNT_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Messages.MoneyErrorMessageConstants.MONEY_CURRENCY_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(Messages.Money.CURRENCY_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Messages.MoneyErrorMessageConstants.MONEY_UNSUPPORTED_CURRENCY, violations.iterator().next().getMessage());
+        assertEquals(Messages.Money.UNSUPPORTED_CURRENCY, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Messages.MoneyErrorMessageConstants.MONEY_NEGATIVE_AMOUNT, violations.iterator().next().getMessage());
+        assertEquals(Messages.Money.NEGATIVE_AMOUNT, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -92,8 +92,8 @@ public class MoneyRequestTest {
             .map(ConstraintViolation::getMessage)
             .collect(Collectors.toSet());
 
-        assertTrue(messages.contains(Messages.MoneyErrorMessageConstants.MONEY_NEGATIVE_AMOUNT));
-        assertTrue(messages.contains(Messages.MoneyErrorMessageConstants.MONEY_UNSUPPORTED_CURRENCY));
+        assertTrue(messages.contains(Messages.Money.NEGATIVE_AMOUNT));
+        assertTrue(messages.contains(Messages.Money.UNSUPPORTED_CURRENCY));
     }
 
     @Test

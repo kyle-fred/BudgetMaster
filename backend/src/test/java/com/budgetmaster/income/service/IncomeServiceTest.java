@@ -156,7 +156,7 @@ public class IncomeServiceTest {
 	
 	@Test
 	void createIncome_ServiceError_ReturnsInternalServerError() {
-		String errorMessage = Messages.CommonErrorMessageConstants.DUPLICATE_ENTRY;
+		String errorMessage = Messages.Error.DUPLICATE_ENTRY;
 		Mockito.when(incomeRepository.saveAndFlush(Mockito.any(Income.class)))
 				.thenThrow(new DataIntegrityViolationException(errorMessage));
 		
@@ -173,7 +173,7 @@ public class IncomeServiceTest {
 	
 	@Test
 	void getIncome_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID);
+		String errorMessage = String.format(Messages.Income.NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID);
 		Mockito.when(incomeRepository.findById(IncomeConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		
@@ -188,7 +188,7 @@ public class IncomeServiceTest {
 	
 	@Test
 	void getAllIncomes_NoIncomes_ReturnsNotFound() {
-		String errorMessage = String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_BY_MONTH, IncomeConstants.NonExistent.YEAR_MONTH);
+		String errorMessage = String.format(Messages.Income.NOT_FOUND_BY_MONTH, IncomeConstants.NonExistent.YEAR_MONTH);
 		
 		try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(IncomeConstants.NonExistent.YEAR_MONTH.toString()))
@@ -208,7 +208,7 @@ public class IncomeServiceTest {
 	
 	@Test
 	void updateIncome_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID);
+		String errorMessage = String.format(Messages.Income.NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID);
 		Mockito.when(incomeRepository.findById(IncomeConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		Mockito.doNothing().when(incomeBudgetSynchronizer)
@@ -229,7 +229,7 @@ public class IncomeServiceTest {
 	
 	@Test
 	void deleteIncome_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(Messages.IncomeErrorMessageConstants.INCOME_NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID);
+		String errorMessage = String.format(Messages.Income.NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID);
 		Mockito.when(incomeRepository.findById(IncomeConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		Mockito.doNothing().when(incomeBudgetSynchronizer)

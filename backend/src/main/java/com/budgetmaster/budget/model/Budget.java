@@ -22,9 +22,10 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = TableNames.BUDGETS)
 public class Budget {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = ColumnNames.Common.ID)
+	@Column(name = ColumnNames.Audit.ID)
 	private Long id;
 	
 	@Column(name = ColumnNames.Budget.TOTAL_INCOME, 
@@ -39,18 +40,18 @@ public class Budget {
 			precision = ColumnConstraints.Amount.PRECISION, scale = ColumnConstraints.Amount.SCALE)
 	private BigDecimal savings;
 
-	@Column(name = ColumnNames.Transaction.CURRENCY, nullable = false, length = 3)
+	@Column(name = ColumnNames.Budget.CURRENCY, nullable = false, length = 3)
 	private Currency currency;
 	
-	@Column(name = ColumnNames.Common.MONTH, nullable = false, unique=true)
+	@Column(name = ColumnNames.Budget.MONTH, nullable = false, unique=true)
 	private YearMonth month;
 	
 	@CreationTimestamp
-	@Column(name = ColumnNames.Common.CREATED_AT, nullable = false, updatable = false, insertable = false)
+	@Column(name = ColumnNames.Audit.CREATED_AT, nullable = false, updatable = false, insertable = false)
 	private LocalDateTime createdAt;
 	
 	@UpdateTimestamp
-	@Column(name = ColumnNames.Common.LAST_UPDATED_AT, nullable = false, insertable = false)
+	@Column(name = ColumnNames.Audit.LAST_UPDATED_AT, nullable = false, insertable = false)
 	private LocalDateTime lastUpdatedAt;
 	
 	protected Budget() {}
@@ -144,4 +145,5 @@ public class Budget {
 	private void updateSavings() {
 		this.savings = this.totalIncome.subtract(this.totalExpense);
 	}
+
 }

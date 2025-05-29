@@ -10,6 +10,7 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.application.dto.ExpenseRequest;
 import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.expense.builder.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;

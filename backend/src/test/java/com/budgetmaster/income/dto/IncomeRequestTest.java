@@ -10,6 +10,7 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.application.dto.IncomeRequest;
 import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.income.builder.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;

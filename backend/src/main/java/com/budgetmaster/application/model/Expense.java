@@ -1,10 +1,10 @@
 package com.budgetmaster.application.model;
 
+import com.budgetmaster.application.dto.ExpenseRequest;
 import com.budgetmaster.common.constants.database.ColumnNames;
 import com.budgetmaster.common.constants.database.TableNames;
 import com.budgetmaster.common.enums.TransactionType;
 import com.budgetmaster.common.utils.DateUtils;
-import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.expense.enums.ExpenseCategory;
 
 import java.time.LocalDateTime;

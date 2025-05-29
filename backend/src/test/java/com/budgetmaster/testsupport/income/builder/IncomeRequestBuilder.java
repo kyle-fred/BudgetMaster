@@ -1,8 +1,8 @@
 package com.budgetmaster.testsupport.income.builder;
 
+import com.budgetmaster.application.dto.IncomeRequest;
+import com.budgetmaster.application.dto.MoneyRequest;
 import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.income.dto.IncomeRequest;
-import com.budgetmaster.money.dto.MoneyRequest;
 import com.budgetmaster.testsupport.income.constants.IncomeConstants;
 import com.budgetmaster.testsupport.money.builder.MoneyRequestBuilder;
 

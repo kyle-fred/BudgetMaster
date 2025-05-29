@@ -1,9 +1,9 @@
 package com.budgetmaster.testsupport.expense.factory;
 
+import com.budgetmaster.application.dto.ExpenseRequest;
+import com.budgetmaster.application.dto.MoneyRequest;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.model.Money;
-import com.budgetmaster.expense.dto.ExpenseRequest;
-import com.budgetmaster.money.dto.MoneyRequest;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
 
 public final class ExpenseFactory {

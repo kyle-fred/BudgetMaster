@@ -3,7 +3,7 @@ package com.budgetmaster.testsupport.money.builder;
 import java.math.BigDecimal;
 import java.util.Currency;
 
-import com.budgetmaster.money.dto.MoneyRequest;
+import com.budgetmaster.application.dto.MoneyRequest;
 import com.budgetmaster.testsupport.money.constants.MoneyConstants;
 
 public class MoneyRequestBuilder {

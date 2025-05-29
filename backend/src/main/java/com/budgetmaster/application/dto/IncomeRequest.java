@@ -1,26 +1,24 @@
-package com.budgetmaster.expense.dto;
+package com.budgetmaster.application.dto;
 
 import com.budgetmaster.common.constants.validation.ValidationMessages;
 import com.budgetmaster.common.constants.validation.ValidationPatterns;
 import com.budgetmaster.common.enums.TransactionType;
-import com.budgetmaster.expense.enums.ExpenseCategory;
-import com.budgetmaster.money.dto.MoneyRequest;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public class ExpenseRequest {
-	@NotBlank(message = ValidationMessages.Expense.REQUIRED_NAME)
+public class IncomeRequest {
+	@NotBlank(message = ValidationMessages.Income.REQUIRED_NAME)
 	private String name;
 	
+	@NotBlank(message = ValidationMessages.Income.REQUIRED_SOURCE)
+	private String source;
+
 	@NotNull(message = ValidationMessages.Common.REQUIRED_MONEY)
 	@Valid
 	private MoneyRequest money;
-	
-	@NotNull(message = ValidationMessages.Expense.REQUIRED_CATEGORY)
-	private ExpenseCategory category;
 	
 	@NotNull(message = ValidationMessages.Common.REQUIRED_TYPE)
 	private TransactionType type;
@@ -38,20 +36,20 @@ public class ExpenseRequest {
 		this.name = name;
 	}
 	
+	public String getSource() {
+		return source;
+	}
+	
+	public void setSource(String source) {
+		this.source = source;
+	}
+	
 	public MoneyRequest getMoney() {
 		return money;
 	}
 	
 	public void setMoney(MoneyRequest money) {
 		this.money = money;
-	}
-	
-	public ExpenseCategory getCategory() {
-		return category;
-	}
-	
-	public void setCategory(ExpenseCategory category) {
-		this.category = category;
 	}
 	
 	public TransactionType getType() {

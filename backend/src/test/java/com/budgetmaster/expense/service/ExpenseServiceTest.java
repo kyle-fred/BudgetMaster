@@ -3,6 +3,7 @@ package com.budgetmaster.expense.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.budgetmaster.application.dto.ExpenseRequest;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.application.service.ExpenseService;
@@ -11,7 +12,6 @@ import com.budgetmaster.common.enums.ErrorCode;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.exception.ExpenseNotFoundException;
-import com.budgetmaster.expense.dto.ExpenseRequest;
 import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
 import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;

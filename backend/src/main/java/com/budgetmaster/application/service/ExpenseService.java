@@ -1,5 +1,6 @@
 package com.budgetmaster.application.service;
 
+import com.budgetmaster.application.dto.ExpenseRequest;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.application.service.core.EntityLookupService;
@@ -7,7 +8,6 @@ import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchro
 import com.budgetmaster.common.constants.error.ErrorMessages;
 import com.budgetmaster.common.utils.DateUtils;
 import com.budgetmaster.exception.ExpenseNotFoundException;
-import com.budgetmaster.expense.dto.ExpenseRequest;
 
 import java.time.YearMonth;
 import java.util.List;

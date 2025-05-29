@@ -1,4 +1,4 @@
-package com.budgetmaster.money.dto;
+package com.budgetmaster.application.dto;
 
 import java.math.BigDecimal;
 import java.util.Currency;

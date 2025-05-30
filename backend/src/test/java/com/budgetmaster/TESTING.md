@@ -1,10 +1,15 @@
 # **BudgetMaster: Testing Standards**
 
 ## **1.📁 Readability**
+<br>
 
 #### **1.1 Naming Convention**
+<br><br>
+
 ✅ Method Naming
-- Format: `methodName_condition_expectedResult`<br><br>
+- Format: `methodName_condition_expectedResult`
+<br><br>
+
 #### **1.2 Display Name**
 ✅ JUnit `@DisplayName`:
 - Use in controller tests and integration tests to clarify HTTP interactions.
@@ -12,7 +17,9 @@
 @DisplayName("GET /budget returns 200 for valid month")
 @Test
 void getBudget_validMonth_returnsOk() { ... }
-```<br><br>
+```
+<br><br>
+
 #### **1.3 Test Structure**
 ✅ Use `@Nested` classes to group tests logically
 ```java
@@ -25,10 +32,12 @@ class GetBudget {
 ```
 ❌ **Avoid mixing unrelated methods in one test class without separation.**  
 ❌ **Avoid duplicating function name in the test name, and test class.**
-
+<br>
 ---
+<br>
 
 ## **2.✅ Assertions**
+<br>
 
 #### **2.1 Assert Syntax**
 Use:
@@ -38,13 +47,19 @@ assertThat(actual).isEqualTo(expected);
 Not:
 ```java
 assertThat(expected).isEqualTo(actual); // Confusing failure messages
-```<br><br>
+```
+<br><br>
+
 #### **2.2 Assertion Helpers**
 ✅ Create assertion helper classes for each domain in testsupport/assertions/  
-❌ Avoid repeating long assertion chains.<br><br>
+❌ Avoid repeating long assertion chains.
+<br><br>
+
 #### **2.3 Controller `.andExpect()` chains**
 ✅ Move long repetitive mockMvc.perform(...) chains into ControllerTestHelper.java files in testsupport/controller  
-❌ Avoid repeating long .andExpect(...) chains.<br><br>
+❌ Avoid repeating long .andExpect(...) chains.
+<br><br>
+
 #### **2.4 `isEqualTo()` vs `isEqualByComparingTo()`**
 - `isEqualByComparingTo()` is used for BigDecimal value-based comparisons, ignoring scale.
 - `isEqualTo()` compares exact object equality.
@@ -53,9 +68,12 @@ assertThat(expected).isEqualTo(actual); // Confusing failure messages
 - For BigDecimal: Always use `.isEqualByComparingTo(...)`
 - For strings, enums, primitives: Use `.isEqualTo(...)`
 
+<br>
 ---
+<br>
 
 ## **3.🔢 Constants Management**
+<br>
 
 #### **3.1 Structure**
 ✅ Split constants by concern and domain
@@ -65,7 +83,9 @@ errorMessage/
 ├── IncomeMessages.java
 └── GlobalErrorMessages.java
 ```
-❌ Avoid deep nested classes like ErrorMessage.Budget.SOMETHING.<br><br>
+❌ Avoid deep nested classes like ErrorMessage.Budget.SOMETHING.
+<br><br>
+
 #### **3.2 Formatting**
 ✅ Align = signs for readability:
 ```java
@@ -74,8 +94,9 @@ public static final String ERROR_TWO   = "...";
 public static final String LONGER_ONE  = "...";
 ```
 ✅ Can use the 'Align' extension in VSCode to do this.
-
+<br>
 ---
+<br>
 
 ## **4.🏗 Builders vs Factories**
 

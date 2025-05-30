@@ -2,12 +2,12 @@
 
 ## **1.📁 Readability**
 
-#### **1.1 Naming Convention**
+### **1.1 Naming Convention**
 ✅ Method Naming
 - Format: `methodName_condition_expectedResult`
 <br><br>
 
-#### **1.2 Display Name**
+### **1.2 Display Name**
 ✅ JUnit `@DisplayName`:
 - Use in controller tests and integration tests to clarify HTTP interactions.
 ```java
@@ -17,7 +17,7 @@ void getBudget_validMonth_returnsOk() { ... }
 ```
 <br>
 
-#### **1.3 Test Structure**
+### **1.3 Test Structure**
 ✅ Use `@Nested` classes to group tests logically
 ```java
 @Nested
@@ -34,7 +34,7 @@ class GetBudget {
 
 ## **2.✅ Assertions**
 
-#### **2.1 Assert Syntax**
+### **2.1 Assert Syntax**
 Use:
 ```java
 assertThat(actual).isEqualTo(expected);
@@ -45,19 +45,19 @@ assertThat(expected).isEqualTo(actual); // Confusing failure messages
 ```
 <br>
 
-#### **2.2 Assertion Helpers**
+### **2.2 Assertion Helpers**
 ✅ Create assertion helper classes for each domain in testsupport/assertions/  
 ❌ Avoid repeating long assertion chains.
 
 <br>
 
-#### **2.3 Controller `.andExpect()` chains**
+### **2.3 Controller `.andExpect()` chains**
 ✅ Move long repetitive mockMvc.perform(...) chains into ControllerTestHelper.java files in testsupport/controller  
 ❌ Avoid repeating long .andExpect(...) chains.
 
 <br>
 
-#### **2.4 `isEqualTo()` vs `isEqualByComparingTo()`**
+### **2.4 `isEqualTo()` vs `isEqualByComparingTo()`**
 - `isEqualByComparingTo()` is used for BigDecimal value-based comparisons, ignoring scale.
 - `isEqualTo()` compares exact object equality.
 
@@ -69,9 +69,8 @@ assertThat(expected).isEqualTo(actual); // Confusing failure messages
 
 
 ## **3.🔢 Constants Management**
-<br>
 
-#### **3.1 Structure**
+### **3.1 Structure**
 ✅ Split constants by concern and domain
 ```java
 errorMessage/
@@ -82,7 +81,7 @@ errorMessage/
 ❌ Avoid deep nested classes like ErrorMessage.Budget.SOMETHING.  
 <br>
 
-#### **3.2 Formatting**
+### **3.2 Formatting**
 ✅ Align = signs for readability:
 ```java
 public static final String ERROR_ONE   = "...";

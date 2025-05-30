@@ -5,8 +5,7 @@
 #### **1.1 Naming Convention**
 ✅ Method Naming
 - Format: `methodName_condition_expectedResult`
-
-
+<br>
 #### **1.2 Display Name**
 ✅ JUnit `@DisplayName`:
 - Use in controller tests and integration tests to clarify HTTP interactions.
@@ -15,8 +14,7 @@
 @Test
 void getBudget_validMonth_returnsOk() { ... }
 ```
-
-
+<br>
 #### **1.3 Test Structure**
 ✅ Use `@Nested` classes to group tests logically
 ```java
@@ -43,18 +41,15 @@ Not:
 ```java
 assertThat(expected).isEqualTo(actual); // Confusing failure messages
 ```
-
-
+<br>
 #### **2.2 Assertion Helpers**
 ✅ Create assertion helper classes for each domain in testsupport/assertions/  
 ❌ Avoid repeating long assertion chains.
-
-
+<br>
 #### **2.3 Controller `.andExpect()` chains**
 ✅ Move long repetitive mockMvc.perform(...) chains into ControllerTestHelper.java files in testsupport/controller  
 ❌ Avoid repeating long .andExpect(...) chains.
-
-
+<br>
 #### **2.4 `isEqualTo()` vs `isEqualByComparingTo()`**
 - `isEqualByComparingTo()` is used for BigDecimal value-based comparisons, ignoring scale.
 - `isEqualTo()` compares exact object equality.
@@ -76,7 +71,7 @@ errorMessage/
 └── GlobalErrorMessages.java
 ```
 ❌ Avoid deep nested classes like ErrorMessage.Budget.SOMETHING.
-
+<br>
 #### **3.2 Formatting**
 ✅ Align = signs for readability:
 ```java

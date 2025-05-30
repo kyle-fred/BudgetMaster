@@ -4,8 +4,6 @@
 <br>
 
 #### **1.1 Naming Convention**
-<br><br>
-
 ✅ Method Naming
 - Format: `methodName_condition_expectedResult`
 <br><br>
@@ -18,7 +16,7 @@
 @Test
 void getBudget_validMonth_returnsOk() { ... }
 ```
-<br><br>
+<br>
 
 #### **1.3 Test Structure**
 ✅ Use `@Nested` classes to group tests logically
@@ -32,12 +30,10 @@ class GetBudget {
 ```
 ❌ **Avoid mixing unrelated methods in one test class without separation.**  
 ❌ **Avoid duplicating function name in the test name, and test class.**
-<br>
+
 ---
-<br>
 
 ## **2.✅ Assertions**
-<br>
 
 #### **2.1 Assert Syntax**
 Use:
@@ -48,17 +44,17 @@ Not:
 ```java
 assertThat(expected).isEqualTo(actual); // Confusing failure messages
 ```
-<br><br>
+<br>
 
 #### **2.2 Assertion Helpers**
 ✅ Create assertion helper classes for each domain in testsupport/assertions/  
 ❌ Avoid repeating long assertion chains.
-<br><br>
+<br>
 
 #### **2.3 Controller `.andExpect()` chains**
 ✅ Move long repetitive mockMvc.perform(...) chains into ControllerTestHelper.java files in testsupport/controller  
 ❌ Avoid repeating long .andExpect(...) chains.
-<br><br>
+<br>
 
 #### **2.4 `isEqualTo()` vs `isEqualByComparingTo()`**
 - `isEqualByComparingTo()` is used for BigDecimal value-based comparisons, ignoring scale.
@@ -68,9 +64,8 @@ assertThat(expected).isEqualTo(actual); // Confusing failure messages
 - For BigDecimal: Always use `.isEqualByComparingTo(...)`
 - For strings, enums, primitives: Use `.isEqualTo(...)`
 
-<br>
 ---
-<br>
+
 
 ## **3.🔢 Constants Management**
 <br>

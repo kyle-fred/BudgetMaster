@@ -1,7 +1,6 @@
 # **BudgetMaster: Testing Standards**
 
 ## **1.📁 Readability**
-<br>
 
 #### **1.1 Naming Convention**
 ✅ Method Naming
@@ -49,11 +48,13 @@ assertThat(expected).isEqualTo(actual); // Confusing failure messages
 #### **2.2 Assertion Helpers**
 ✅ Create assertion helper classes for each domain in testsupport/assertions/  
 ❌ Avoid repeating long assertion chains.
+
 <br>
 
 #### **2.3 Controller `.andExpect()` chains**
 ✅ Move long repetitive mockMvc.perform(...) chains into ControllerTestHelper.java files in testsupport/controller  
 ❌ Avoid repeating long .andExpect(...) chains.
+
 <br>
 
 #### **2.4 `isEqualTo()` vs `isEqualByComparingTo()`**
@@ -78,8 +79,8 @@ errorMessage/
 ├── IncomeMessages.java
 └── GlobalErrorMessages.java
 ```
-❌ Avoid deep nested classes like ErrorMessage.Budget.SOMETHING.
-<br><br>
+❌ Avoid deep nested classes like ErrorMessage.Budget.SOMETHING.  
+<br>
 
 #### **3.2 Formatting**
 ✅ Align = signs for readability:
@@ -89,9 +90,8 @@ public static final String ERROR_TWO   = "...";
 public static final String LONGER_ONE  = "...";
 ```
 ✅ Can use the 'Align' extension in VSCode to do this.
-<br>
+
 ---
-<br>
 
 ## **4.🏗 Builders vs Factories**
 

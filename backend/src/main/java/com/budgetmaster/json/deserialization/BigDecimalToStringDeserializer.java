@@ -3,7 +3,7 @@ package com.budgetmaster.json.deserialization;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import com.budgetmaster.common.constants.error.ErrorMessages;
+import com.budgetmaster.constants.error.ErrorMessages;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;

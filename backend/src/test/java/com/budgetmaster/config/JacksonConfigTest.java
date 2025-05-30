@@ -12,9 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.budgetmaster.testsupport.config.DummyConfigEntity;
-import com.budgetmaster.testsupport.config.builder.DummyConfigEntityBuilder;
-import com.budgetmaster.testsupport.config.constants.DummyConfigConstants;
+import com.budgetmaster.testsupport.builder.DummyConfigEntityBuilder;
+import com.budgetmaster.testsupport.constants.domain.DummyConfigConstants;
+import com.budgetmaster.testsupport.mockentity.DummyConfigEntity;
 
 @SpringBootTest
 @Import(JacksonConfig.class)

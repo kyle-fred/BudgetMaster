@@ -4,19 +4,21 @@
 
 ### **1.1 Naming Convention**
 ✅ Method Naming
-- Format: methodName_condition_expectedResult
+- Format: `methodName_condition_expectedResult`
+<br><br>
 
 ### **1.2 Display Name**
-✅ JUnit @DisplayName:
+✅ JUnit `@DisplayName`:
 - Use in controller tests and integration tests to clarify HTTP interactions.
 ```java
 @DisplayName("GET /budget returns 200 for valid month")
 @Test
 void getBudget_validMonth_returnsOk() { ... }
 ```
+<br>
 
 ### **1.3 Test Structure**
-✅ Use @Nested classes to group tests logically
+✅ Use `@Nested` classes to group tests logically
 ```java
 @Nested
 @DisplayName("GET /budget returns 200 for valid month")
@@ -25,7 +27,7 @@ class GetBudget {
     void returnsOk_forValidMonth() { ... }
 }
 ```
-❌ **Avoid mixing unrelated methods in one test class without separation.**
+❌ **Avoid mixing unrelated methods in one test class without separation.**  
 ❌ **Avoid duplicating function name in the test name, and test class.**
 
 ---
@@ -41,15 +43,19 @@ Not:
 ```java
 assertThat(expected).isEqualTo(actual); // Confusing failure messages
 ```
+<br>
 
 ### **2.2 Assertion Helpers**
-✅ Create assertion helper classes for each domain in testsupport/assertions/
+✅ Create assertion helper classes for each domain in testsupport/assertions/  
 ❌ Avoid repeating long assertion chains.
 
+<br>
 
 ### **2.3 Controller `.andExpect()` chains**
-✅ Move long repetitive mockMvc.perform(...) chains into ControllerTestHelper.java files in testsupport/controller
+✅ Move long repetitive mockMvc.perform(...) chains into ControllerTestHelper.java files in testsupport/controller  
 ❌ Avoid repeating long .andExpect(...) chains.
+
+<br>
 
 ### **2.4 `isEqualTo()` vs `isEqualByComparingTo()`**
 - `isEqualByComparingTo()` is used for BigDecimal value-based comparisons, ignoring scale.
@@ -61,6 +67,7 @@ assertThat(expected).isEqualTo(actual); // Confusing failure messages
 
 ---
 
+
 ## **3.🔢 Constants Management**
 
 ### **3.1 Structure**
@@ -71,7 +78,8 @@ errorMessage/
 ├── IncomeMessages.java
 └── GlobalErrorMessages.java
 ```
-❌ Avoid deep nested classes like ErrorMessage.Budget.SOMETHING.
+❌ Avoid deep nested classes like ErrorMessage.Budget.SOMETHING.  
+<br>
 
 ### **3.2 Formatting**
 ✅ Align = signs for readability:
@@ -86,12 +94,12 @@ public static final String LONGER_ONE  = "...";
 
 ## **4.🏗 Builders vs Factories**
 
-### ✅ Prefer Builder pattern over Factories
+#### ✅ Prefer Builder pattern over Factories
 - Provides fine-grained control
 - Cleaner for nested object creation
 - Encourages chaining
 
-### 📁 Keep all builder classes in testsupport/builder/
+#### 📁 Keep all builder classes in testsupport/builder/
 ```java
 Income income = IncomeBuilder.anIncome().withAmount(...).withDate(...).build();
 ```
@@ -100,7 +108,7 @@ Income income = IncomeBuilder.anIncome().withAmount(...).withDate(...).build();
 
 ## **5.🚫 Warnings**
 
-✅ Use @SuppressWarnings only with justification in the form of a comment.
+✅ Use @SuppressWarnings only with justification in the form of a comment.  
 ✅ Suppress the minimal scope necessary (null, unchecked, etc).
 - Prevents real warnings being lost
 
@@ -122,7 +130,7 @@ Helps when running test groups:
 @Tag("integration")
 @Tag("unit")
 ```
-
+Then run with:
 ```bash
 mvn test -Dgroups=unit
 ```

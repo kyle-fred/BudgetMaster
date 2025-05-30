@@ -12,7 +12,7 @@ import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchro
 import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.testsupport.builder.ExpenseFactory;
-import com.budgetmaster.testsupport.constants.Error;
+import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -171,7 +171,7 @@ public class ExpenseServiceTest {
 	
 	@Test
 	void getExpense_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(Error.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
+		String errorMessage = String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
 		Mockito.when(expenseRepository.findById(ExpenseConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		
@@ -186,7 +186,7 @@ public class ExpenseServiceTest {
 	
 	@Test
 	void getAllExpenses_NoExpenses_ReturnsNotFound() {
-		String errorMessage = String.format(Error.Expense.NOT_FOUND_BY_MONTH, ExpenseConstants.Default.YEAR_MONTH.toString());
+		String errorMessage = String.format(ErrorConstants.Expense.NOT_FOUND_BY_MONTH, ExpenseConstants.Default.YEAR_MONTH.toString());
 		
 		try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 			mockedDateUtils.when(() -> DateUtils.getValidYearMonth(ExpenseConstants.Default.YEAR_MONTH.toString()))
@@ -206,7 +206,7 @@ public class ExpenseServiceTest {
 	
 	@Test
 	void updateExpense_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(Error.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
+		String errorMessage = String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
 		Mockito.when(expenseRepository.findById(ExpenseConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 
@@ -223,7 +223,7 @@ public class ExpenseServiceTest {
 	
 	@Test
 	void deleteExpense_NonExistentId_ReturnsNotFound() {
-		String errorMessage = String.format(Error.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
+		String errorMessage = String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
 		Mockito.when(expenseRepository.findById(ExpenseConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		

@@ -4,7 +4,7 @@ import java.time.YearMonth;
 
 import org.junit.jupiter.api.Test;
 
-import com.budgetmaster.testsupport.constants.Strings;
+import com.budgetmaster.testsupport.constants.StringConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +21,7 @@ public class DateUtilsTest {
     @Test
     void getValidYearMonth_EmptyInput_ReturnsCurrentYearMonth() {
         YearMonth expected = YearMonth.now();
-        YearMonth actual = DateUtils.getValidYearMonth(Strings.EMPTY);
+        YearMonth actual = DateUtils.getValidYearMonth(StringConstants.EMPTY);
         assertNotNull(actual);
         assertEquals(expected, actual);
     }

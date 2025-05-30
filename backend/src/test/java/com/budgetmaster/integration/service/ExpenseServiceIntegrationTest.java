@@ -11,7 +11,7 @@ import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchronizer;
 import com.budgetmaster.integration.config.TestContainersConfig;
 import com.budgetmaster.testsupport.builder.ExpenseFactory;
-import com.budgetmaster.testsupport.constants.Fields;
+import com.budgetmaster.testsupport.constants.FieldConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
@@ -76,7 +76,7 @@ public class ExpenseServiceIntegrationTest {
         assertThat(persisted).isNotNull();
         assertThat(persisted)
             .usingRecursiveComparison()
-            .ignoringFields(Fields.Audit.CREATED_AT, Fields.Audit.LAST_UPDATED_AT)
+            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
             .isEqualTo(result);
         
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
@@ -104,7 +104,7 @@ public class ExpenseServiceIntegrationTest {
         assertThat(persisted).isNotNull();
         assertThat(persisted)
             .usingRecursiveComparison()
-            .ignoringFields(Fields.Audit.CREATED_AT, Fields.Audit.LAST_UPDATED_AT)
+            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
             .isEqualTo(result);
         
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
@@ -173,7 +173,7 @@ public class ExpenseServiceIntegrationTest {
         assertThat(persisted).isNotNull();
         assertThat(persisted)
             .usingRecursiveComparison()
-            .ignoringFields(Fields.Audit.CREATED_AT, Fields.Audit.LAST_UPDATED_AT)
+            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
             .isEqualTo(original);
 
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);

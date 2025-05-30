@@ -10,7 +10,7 @@ import com.budgetmaster.application.exception.BudgetNotFoundException;
 import com.budgetmaster.application.exception.IncomeNotFoundException;
 import com.budgetmaster.application.model.Income;
 import com.budgetmaster.testsupport.builder.BudgetFactory;
-import com.budgetmaster.testsupport.constants.Error;
+import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +48,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 		Budget result = findByIdOrThrow(
 				mockRepository,
 				BudgetConstants.Default.ID,
-				() -> new BudgetNotFoundException(Error.Budget.NOT_FOUND_WITH_ID)
+				() -> new BudgetNotFoundException(ErrorConstants.Budget.NOT_FOUND_WITH_ID)
 		);
 		
 		assertEquals(testBudget, result);
@@ -60,7 +60,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	void findByIdOrThrow_WhenEntityDoesNotExist_ThrowsException() {
 		when(mockRepository.findById(BudgetConstants.Default.ID))
 				.thenReturn(Optional.empty());
-		String errorMessage = String.format(Error.Budget.NOT_FOUND_WITH_ID, BudgetConstants.Default.ID);
+		String errorMessage = String.format(ErrorConstants.Budget.NOT_FOUND_WITH_ID, BudgetConstants.Default.ID);
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
@@ -83,7 +83,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 		Budget result = findByCustomFinderOrThrow(
 				finder,
 				BudgetConstants.Default.YEAR_MONTH,
-				() -> new BudgetNotFoundException(String.format(Error.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.Default.YEAR_MONTH))
+				() -> new BudgetNotFoundException(String.format(ErrorConstants.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.Default.YEAR_MONTH))
 		);
 		
 		assertEquals(testBudget, result);
@@ -92,7 +92,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	@Test
 	void findByCustomFinderOrThrow_WhenEntityDoesNotExist_ThrowsException() {
 		Function<YearMonth, Optional<Budget>> finder = month -> Optional.empty();
-		String errorMessage = String.format(Error.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.Default.YEAR_MONTH);
+		String errorMessage = String.format(ErrorConstants.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.Default.YEAR_MONTH);
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
@@ -113,7 +113,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 		List<Income> result = findListByCustomFinderOrThrow(
 				finder,
 				BudgetConstants.Default.YEAR_MONTH,
-				() -> new IncomeNotFoundException(String.format(Error.Income.NOT_FOUND_BY_MONTH, BudgetConstants.Default.YEAR_MONTH))
+				() -> new IncomeNotFoundException(String.format(ErrorConstants.Income.NOT_FOUND_BY_MONTH, BudgetConstants.Default.YEAR_MONTH))
 		);
 		
 		assertEquals(List.of(testIncome), result);
@@ -122,7 +122,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	@Test
 	void findListByCustomFinderOrThrow_WhenEntitiesDoNotExist_ThrowsException() {
 		Function<YearMonth, List<Income>> finder = month -> List.of();
-		String errorMessage = String.format(Error.Income.NOT_FOUND_BY_MONTH, BudgetConstants.Default.YEAR_MONTH);
+		String errorMessage = String.format(ErrorConstants.Income.NOT_FOUND_BY_MONTH, BudgetConstants.Default.YEAR_MONTH);
 
 		IncomeNotFoundException exception = assertThrows(
 				IncomeNotFoundException.class,

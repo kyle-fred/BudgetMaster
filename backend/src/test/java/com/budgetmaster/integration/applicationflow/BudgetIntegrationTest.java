@@ -1,4 +1,4 @@
-package com.budgetmaster.integration;
+package com.budgetmaster.integration.applicationflow;
 
 import com.budgetmaster.application.controller.BudgetController;
 import com.budgetmaster.application.controller.ExpenseController;

@@ -3,8 +3,8 @@ package com.budgetmaster.testsupport.builder;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.budgetmaster.testsupport.config.DummyConfigEntity;
 import com.budgetmaster.testsupport.constants.domain.DummyConfigConstants;
+import com.budgetmaster.testsupport.mockentity.DummyConfigEntity;
 
 public class DummyConfigEntityBuilder {
     

@@ -1,7 +1,7 @@
 package com.budgetmaster.testsupport.constants;
 
-public final class ExceptionTest {
-    private ExceptionTest() {}
+public final class ExceptionConstants {
+    private ExceptionConstants() {}
 
     public static class Validation {
         private Validation() {}

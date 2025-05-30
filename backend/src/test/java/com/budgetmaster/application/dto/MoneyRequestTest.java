@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.budgetmaster.testsupport.builder.MoneyRequestBuilder;
-import com.budgetmaster.testsupport.constants.Error;
+import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,7 +44,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Error.Money.AMOUNT_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(ErrorConstants.Money.AMOUNT_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Error.Money.CURRENCY_REQUIRED, violations.iterator().next().getMessage());
+        assertEquals(ErrorConstants.Money.CURRENCY_REQUIRED, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Error.Money.UNSUPPORTED_CURRENCY, violations.iterator().next().getMessage());
+        assertEquals(ErrorConstants.Money.UNSUPPORTED_CURRENCY, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class MoneyRequestTest {
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
-        assertEquals(Error.Money.NEGATIVE_AMOUNT, violations.iterator().next().getMessage());
+        assertEquals(ErrorConstants.Money.NEGATIVE_AMOUNT, violations.iterator().next().getMessage());
     }
 
     @Test
@@ -92,8 +92,8 @@ public class MoneyRequestTest {
             .map(ConstraintViolation::getMessage)
             .collect(Collectors.toSet());
 
-        assertTrue(messages.contains(Error.Money.NEGATIVE_AMOUNT));
-        assertTrue(messages.contains(Error.Money.UNSUPPORTED_CURRENCY));
+        assertTrue(messages.contains(ErrorConstants.Money.NEGATIVE_AMOUNT));
+        assertTrue(messages.contains(ErrorConstants.Money.UNSUPPORTED_CURRENCY));
     }
 
     @Test

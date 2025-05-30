@@ -1,7 +1,7 @@
 package com.budgetmaster.testsupport.constants;
 
-public final class Enums {
-    private Enums() {}
+public final class EnumConstants {
+    private EnumConstants() {}
 
     public static class Invalid {
         private Invalid() {}

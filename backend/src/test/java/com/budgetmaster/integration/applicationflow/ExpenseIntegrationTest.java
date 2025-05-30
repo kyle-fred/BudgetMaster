@@ -1,4 +1,4 @@
-package com.budgetmaster.integration;
+package com.budgetmaster.integration.applicationflow;
 
 import com.budgetmaster.application.controller.ExpenseController;
 import com.budgetmaster.application.dto.ExpenseRequest;
@@ -9,7 +9,7 @@ import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.integration.config.TestContainersConfig;
 import com.budgetmaster.testsupport.builder.ExpenseFactory;
-import com.budgetmaster.testsupport.constants.Fields;
+import com.budgetmaster.testsupport.constants.FieldConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
@@ -68,7 +68,7 @@ public class ExpenseIntegrationTest {
         assertThat(persisted).isNotNull();
         assertThat(persisted)
             .usingRecursiveComparison()
-            .ignoringFields(Fields.Audit.CREATED_AT, Fields.Audit.LAST_UPDATED_AT)
+            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
             .isEqualTo(response);
 
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
@@ -96,7 +96,7 @@ public class ExpenseIntegrationTest {
         assertThat(persisted).isNotNull();
         assertThat(persisted)
             .usingRecursiveComparison()
-            .ignoringFields(Fields.Audit.CREATED_AT, Fields.Audit.LAST_UPDATED_AT)
+            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
             .isEqualTo(response);
 
         Budget oldBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
@@ -135,7 +135,7 @@ public class ExpenseIntegrationTest {
         assertThat(response).hasSize(1);
         assertThat(response.get(0))
             .usingRecursiveComparison()
-            .ignoringFields(Fields.Audit.CREATED_AT, Fields.Audit.LAST_UPDATED_AT)
+            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
             .isEqualTo(expense);
     }
 

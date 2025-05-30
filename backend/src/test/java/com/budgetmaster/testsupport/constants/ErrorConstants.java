@@ -1,6 +1,6 @@
 package com.budgetmaster.testsupport.constants;
 
-public class Error {
+public class ErrorConstants {
 
     public static class Budget {
         private Budget() {}

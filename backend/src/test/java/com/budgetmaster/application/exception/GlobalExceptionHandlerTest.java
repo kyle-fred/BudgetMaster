@@ -23,8 +23,8 @@ import org.springframework.web.context.request.WebRequest;
 import com.budgetmaster.application.exception.codes.ErrorCode;
 import com.budgetmaster.application.exception.dto.ErrorResponse;
 import com.budgetmaster.application.exception.dto.ValidationError;
-import com.budgetmaster.testsupport.constants.ExceptionTest;
-import com.budgetmaster.testsupport.constants.Paths;
+import com.budgetmaster.testsupport.constants.ExceptionConstants;
+import com.budgetmaster.testsupport.constants.PathConstants;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -42,7 +42,7 @@ public class GlobalExceptionHandlerTest {
     void setUp() {
         globalExceptionHandler = new GlobalExceptionHandler();
         webRequest = mock(WebRequest.class);
-        when(webRequest.getDescription(false)).thenReturn(Paths.Endpoints.TEST);
+        when(webRequest.getDescription(false)).thenReturn(PathConstants.Endpoints.TEST);
     }
     
     @Test
@@ -50,9 +50,9 @@ public class GlobalExceptionHandlerTest {
         MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
         BindingResult bindingResult = mock(BindingResult.class);
         FieldError fieldError = new FieldError(
-            ExceptionTest.Validation.OBJECT_NAME, 
-            ExceptionTest.Validation.FIELD_NAME, 
-            ExceptionTest.Validation.ERROR_MESSAGE
+            ExceptionConstants.Validation.OBJECT_NAME, 
+            ExceptionConstants.Validation.FIELD_NAME, 
+            ExceptionConstants.Validation.ERROR_MESSAGE
         );
         
         when(ex.getBindingResult()).thenReturn(bindingResult);
@@ -63,8 +63,8 @@ public class GlobalExceptionHandlerTest {
         assertErrorResponse(response, HttpStatus.BAD_REQUEST, ErrorCode.VALIDATION_ERROR);
         assertValidationError(
             response.getBody().getErrors().get(0), 
-            ExceptionTest.Validation.FIELD_NAME, 
-            ExceptionTest.Validation.ERROR_MESSAGE
+            ExceptionConstants.Validation.FIELD_NAME, 
+            ExceptionConstants.Validation.ERROR_MESSAGE
         );
     }
     
@@ -76,16 +76,16 @@ public class GlobalExceptionHandlerTest {
         
         when(ex.getConstraintViolations()).thenReturn(Set.of(violation));
         when(violation.getPropertyPath()).thenReturn(path);
-        when(path.toString()).thenReturn(ExceptionTest.Validation.FIELD_PATH);
-        when(violation.getMessage()).thenReturn(ExceptionTest.Validation.ERROR_MESSAGE);
+        when(path.toString()).thenReturn(ExceptionConstants.Validation.FIELD_PATH);
+        when(violation.getMessage()).thenReturn(ExceptionConstants.Validation.ERROR_MESSAGE);
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleConstraintViolation(ex, webRequest);
         
         assertErrorResponse(response, HttpStatus.BAD_REQUEST, ErrorCode.VALIDATION_ERROR);
         assertValidationError(
             response.getBody().getErrors().get(0), 
-            ExceptionTest.Validation.FIELD_NAME, 
-            ExceptionTest.Validation.ERROR_MESSAGE
+            ExceptionConstants.Validation.FIELD_NAME, 
+            ExceptionConstants.Validation.ERROR_MESSAGE
         );
     }
     
@@ -98,9 +98,9 @@ public class GlobalExceptionHandlerTest {
         
         when(ex.getCause()).thenReturn(valueEx);
         when(valueEx.getPath()).thenReturn(List.of(reference));
-        when(reference.getFieldName()).thenReturn(ExceptionTest.Validation.FIELD_NAME);
+        when(reference.getFieldName()).thenReturn(ExceptionConstants.Validation.FIELD_NAME);
         when(reference.getFrom()).thenReturn(from);
-        when(valueEx.getMessage()).thenReturn(ExceptionTest.Enum.INVALID_VALUE_MESSAGE);
+        when(valueEx.getMessage()).thenReturn(ExceptionConstants.Enum.INVALID_VALUE_MESSAGE);
         
         ResponseEntity<ErrorResponse> response = globalExceptionHandler.handleInvalidRequest(ex, webRequest);
         
@@ -174,7 +174,7 @@ public class GlobalExceptionHandlerTest {
         assertEquals(expectedStatus.value(), response.getBody().getStatus());
         assertEquals(expectedErrorCode, response.getBody().getErrorCode());
         assertEquals(expectedMessage, response.getBody().getMessage());
-        assertEquals(Paths.Endpoints.TEST, response.getBody().getPath());
+        assertEquals(PathConstants.Endpoints.TEST, response.getBody().getPath());
         assertNotNull(response.getBody().getErrors());
     }
 

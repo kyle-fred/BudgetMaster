@@ -1,6 +1,6 @@
 package com.budgetmaster.testsupport.constants;
 
-public class Fields {
+public class FieldConstants {
 
     public static class Audit {
         private Audit() {}

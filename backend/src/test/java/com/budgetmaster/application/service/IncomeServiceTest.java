@@ -11,9 +11,9 @@ import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
 import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
+import com.budgetmaster.testsupport.builder.IncomeFactory;
 import com.budgetmaster.testsupport.constants.Error;
-import com.budgetmaster.testsupport.income.constants.IncomeConstants;
-import com.budgetmaster.testsupport.income.factory.IncomeFactory;
+import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -7,11 +7,11 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;
-import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
-import com.budgetmaster.testsupport.expense.builder.ExpenseBuilder;
-import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
-import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
+import com.budgetmaster.testsupport.builder.BudgetBuilder;
+import com.budgetmaster.testsupport.builder.ExpenseBuilder;
+import com.budgetmaster.testsupport.builder.ExpenseFactory;
+import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
+import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

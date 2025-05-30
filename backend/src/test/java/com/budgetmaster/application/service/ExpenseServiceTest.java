@@ -11,9 +11,9 @@ import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchronizer;
 import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
+import com.budgetmaster.testsupport.builder.ExpenseFactory;
 import com.budgetmaster.testsupport.constants.Error;
-import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
-import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
+import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

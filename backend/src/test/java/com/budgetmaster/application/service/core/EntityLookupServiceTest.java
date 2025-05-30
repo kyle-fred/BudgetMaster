@@ -9,9 +9,9 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.exception.BudgetNotFoundException;
 import com.budgetmaster.application.exception.IncomeNotFoundException;
 import com.budgetmaster.application.model.Income;
-import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
-import com.budgetmaster.testsupport.budget.factory.BudgetFactory;
+import com.budgetmaster.testsupport.builder.BudgetFactory;
 import com.budgetmaster.testsupport.constants.Error;
+import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

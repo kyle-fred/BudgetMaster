@@ -4,7 +4,7 @@ import java.util.Currency;
 
 import org.junit.jupiter.api.Test;
 
-import com.budgetmaster.testsupport.money.constants.MoneyConstants;
+import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
 

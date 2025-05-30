@@ -8,10 +8,10 @@ import com.budgetmaster.application.exception.codes.ErrorCode;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.config.JacksonConfig;
+import com.budgetmaster.testsupport.builder.ExpenseFactory;
 import com.budgetmaster.testsupport.constants.Error;
 import com.budgetmaster.testsupport.constants.Paths;
-import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
-import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
+import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.BeforeEach;

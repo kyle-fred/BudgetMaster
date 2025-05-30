@@ -10,8 +10,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import com.budgetmaster.application.model.Money;
-import com.budgetmaster.testsupport.money.constants.MoneyConstants;
-import com.budgetmaster.testsupport.money.factory.MoneyFactory;
+import com.budgetmaster.testsupport.builder.MoneyFactory;
+import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 
 class MoneyConverterTest {
     // -- Test Objects --

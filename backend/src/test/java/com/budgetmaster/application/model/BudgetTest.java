@@ -1,10 +1,10 @@
 package com.budgetmaster.application.model;
 
-import com.budgetmaster.testsupport.budget.builder.BudgetBuilder;
-import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
-import com.budgetmaster.testsupport.budget.factory.BudgetFactory;
-import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
-import com.budgetmaster.testsupport.income.factory.IncomeFactory;
+import com.budgetmaster.testsupport.builder.BudgetBuilder;
+import com.budgetmaster.testsupport.builder.BudgetFactory;
+import com.budgetmaster.testsupport.builder.ExpenseFactory;
+import com.budgetmaster.testsupport.builder.IncomeFactory;
+import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import org.junit.jupiter.api.Test;
 

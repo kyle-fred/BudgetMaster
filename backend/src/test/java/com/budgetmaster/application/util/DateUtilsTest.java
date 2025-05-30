@@ -4,8 +4,8 @@ import java.time.YearMonth;
 
 import org.junit.jupiter.api.Test;
 
-import com.budgetmaster.testsupport.budget.constants.BudgetConstants;
 import com.budgetmaster.testsupport.constants.Strings;
+import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
 

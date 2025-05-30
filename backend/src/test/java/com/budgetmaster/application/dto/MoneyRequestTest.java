@@ -11,9 +11,9 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.testsupport.builder.MoneyRequestBuilder;
 import com.budgetmaster.testsupport.constants.Error;
-import com.budgetmaster.testsupport.money.builder.MoneyRequestBuilder;
-import com.budgetmaster.testsupport.money.constants.MoneyConstants;
+import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
 

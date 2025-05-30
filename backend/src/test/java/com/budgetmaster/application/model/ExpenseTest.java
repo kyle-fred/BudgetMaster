@@ -1,8 +1,8 @@
 package com.budgetmaster.application.model;
 
 import com.budgetmaster.application.dto.ExpenseRequest;
-import com.budgetmaster.testsupport.expense.constants.ExpenseConstants;
-import com.budgetmaster.testsupport.expense.factory.ExpenseFactory;
+import com.budgetmaster.testsupport.builder.ExpenseFactory;
+import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 import org.junit.jupiter.api.Test;
 

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import com.budgetmaster.testsupport.income.constants.IncomeConstants;
+import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 public class YearMonthConverterTest {
     // -- Test Objects --

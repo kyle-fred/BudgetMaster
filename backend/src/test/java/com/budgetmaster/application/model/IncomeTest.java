@@ -1,8 +1,8 @@
 package com.budgetmaster.application.model;
 
 import com.budgetmaster.application.dto.IncomeRequest;
-import com.budgetmaster.testsupport.income.constants.IncomeConstants;
-import com.budgetmaster.testsupport.income.factory.IncomeFactory;
+import com.budgetmaster.testsupport.builder.IncomeFactory;
+import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 import org.junit.jupiter.api.Test;
 

@@ -10,9 +10,9 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.testsupport.builder.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.constants.Error;
-import com.budgetmaster.testsupport.income.builder.IncomeRequestBuilder;
-import com.budgetmaster.testsupport.income.constants.IncomeConstants;
+import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 import static org.junit.jupiter.api.Assertions.*;
 

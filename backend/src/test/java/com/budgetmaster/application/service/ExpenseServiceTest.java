@@ -11,7 +11,8 @@ import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchronizer;
 import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.testsupport.builder.ExpenseFactory;
+import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
+import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
@@ -39,8 +40,8 @@ public class ExpenseServiceTest {
 	
 	@BeforeEach
 	void setUp() {
-		testExpense = ExpenseFactory.createDefaultExpense();
-		expenseRequest = ExpenseFactory.createDefaultExpenseRequest();
+		testExpense = ExpenseBuilder.defaultExpense().build();
+		expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 	}
 	
 	@Test
@@ -109,7 +110,7 @@ public class ExpenseServiceTest {
 	
 	@Test
 	void updateExpense_ValidRequest_ReturnsOk() {
-		ExpenseRequest updatedExpenseRequest = ExpenseFactory.createUpdatedExpenseRequest();
+		ExpenseRequest updatedExpenseRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
 
 		Mockito.when(expenseRepository.findById(ExpenseConstants.Default.ID))
 				.thenReturn(Optional.of(testExpense));

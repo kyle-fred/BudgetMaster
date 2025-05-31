@@ -9,7 +9,7 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.exception.BudgetNotFoundException;
 import com.budgetmaster.application.exception.IncomeNotFoundException;
 import com.budgetmaster.application.model.Income;
-import com.budgetmaster.testsupport.builder.BudgetFactory;
+import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
@@ -37,7 +37,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 	
 	@BeforeEach
 	void setUp() {
-		testBudget = BudgetFactory.createDefaultBudget();
+		testBudget = BudgetBuilder.defaultBudget().build();
 	}
 	
 	@Test

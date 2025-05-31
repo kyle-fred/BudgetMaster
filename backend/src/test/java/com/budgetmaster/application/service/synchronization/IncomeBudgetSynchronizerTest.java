@@ -7,9 +7,9 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.model.Income;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.testsupport.builder.BudgetBuilder;
 import com.budgetmaster.testsupport.builder.IncomeBuilder;
 import com.budgetmaster.testsupport.builder.IncomeFactory;
+import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 

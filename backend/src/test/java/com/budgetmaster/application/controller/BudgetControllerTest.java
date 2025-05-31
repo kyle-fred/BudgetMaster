@@ -5,7 +5,7 @@ import com.budgetmaster.application.exception.codes.ErrorCode;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.service.BudgetService;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.testsupport.builder.BudgetBuilder;
+import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.PathConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;

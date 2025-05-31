@@ -2,7 +2,7 @@ package com.budgetmaster.application.repository;
 
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.integration.config.TestContainersConfig;
-import com.budgetmaster.testsupport.builder.ExpenseFactory;
+import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ public class ExpenseRepositoryTest {
 
    @BeforeEach
    void setUp() {
-       testExpense = ExpenseFactory.createDefaultExpense();
+       testExpense = ExpenseBuilder.defaultExpense().build();
        expenseRepository.deleteAll();
    }
 

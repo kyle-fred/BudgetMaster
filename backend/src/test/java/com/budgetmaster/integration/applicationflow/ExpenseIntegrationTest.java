@@ -8,7 +8,7 @@ import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.integration.config.TestContainersConfig;
-import com.budgetmaster.testsupport.builder.ExpenseFactory;
+import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.constants.FieldConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
@@ -46,7 +46,7 @@ public class ExpenseIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        defaultExpenseRequest = ExpenseFactory.createDefaultExpenseRequest();
+        defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
         expenseRepository.deleteAll();
         budgetRepository.deleteAll();
     }
@@ -79,7 +79,7 @@ public class ExpenseIntegrationTest {
     @Test
     void updateExpense_ValidRequest_ProperlyUpdatesAndSynchronizes() {
         Expense original = expenseController.createExpense(defaultExpenseRequest).getBody();
-        ExpenseRequest updateRequest = ExpenseFactory.createUpdatedExpenseRequest();
+        ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
 
         Expense response = expenseController.updateExpense(original.getId(), updateRequest).getBody();
 

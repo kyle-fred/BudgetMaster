@@ -1,9 +1,10 @@
-package com.budgetmaster.testsupport.builder;
+package com.budgetmaster.testsupport.builder.dto;
 
 import com.budgetmaster.application.dto.ExpenseRequest;
 import com.budgetmaster.application.dto.MoneyRequest;
 import com.budgetmaster.application.enums.ExpenseCategory;
 import com.budgetmaster.application.enums.TransactionType;
+import com.budgetmaster.testsupport.builder.MoneyRequestBuilder;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 public class ExpenseRequestBuilder {

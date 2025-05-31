@@ -7,9 +7,8 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.testsupport.builder.BudgetBuilder;
-import com.budgetmaster.testsupport.builder.ExpenseBuilder;
-import com.budgetmaster.testsupport.builder.ExpenseFactory;
+import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
+import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
@@ -33,7 +32,7 @@ public class ExpenseBudgetSynchronizerTest {
 
     @BeforeEach
     void setUp() {
-        testExpense = ExpenseFactory.createDefaultExpense();
+        testExpense = ExpenseBuilder.defaultExpense().build();
         testBudget = BudgetBuilder.defaultBudget().build();
     }
 

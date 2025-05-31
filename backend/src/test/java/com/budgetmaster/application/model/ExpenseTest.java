@@ -1,7 +1,8 @@
 package com.budgetmaster.application.model;
 
 import com.budgetmaster.application.dto.ExpenseRequest;
-import com.budgetmaster.testsupport.builder.ExpenseFactory;
+import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
+import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ public class ExpenseTest {
 	
 	@Test
 	void from_ValidRequest_ReturnsExpense() {
-		ExpenseRequest expenseRequest = ExpenseFactory.createDefaultExpenseRequest();
+		ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 		Expense expense = Expense.from(expenseRequest);
 		
 		assertNotNull(expense);
@@ -27,7 +28,7 @@ public class ExpenseTest {
 	@Test
 	void updateFrom_ValidRequest_UpdatesExpense() {
 		Expense expense = new Expense();
-		ExpenseRequest expenseRequest = ExpenseFactory.createDefaultExpenseRequest();
+		ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 		expense.updateFrom(expenseRequest);
 		
 		assertEquals(ExpenseConstants.Default.NAME, expense.getName());
@@ -40,7 +41,7 @@ public class ExpenseTest {
 
 	@Test
 	void deepCopy_ReturnsNewExpenseWithSameValues() {
-		Expense expense = ExpenseFactory.createDefaultExpense();
+		Expense expense = ExpenseBuilder.defaultExpense().build();
 		Expense copy = expense.deepCopy();
 
 		assertNotSame(expense, copy);
@@ -54,7 +55,7 @@ public class ExpenseTest {
 
 	@Test
 	void of_WithValidParameters_CreatesExpenseWithCorrectValues() {
-		Expense expense = ExpenseFactory.createDefaultExpense();
+		Expense expense = ExpenseBuilder.defaultExpense().build();
 
 		assertNotNull(expense);
 		assertEquals(ExpenseConstants.Default.NAME, expense.getName());

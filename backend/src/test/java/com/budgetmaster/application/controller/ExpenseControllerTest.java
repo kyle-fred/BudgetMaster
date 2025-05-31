@@ -8,7 +8,8 @@ import com.budgetmaster.application.exception.codes.ErrorCode;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.testsupport.builder.ExpenseFactory;
+import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
+import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.PathConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
@@ -49,8 +50,8 @@ public class ExpenseControllerTest {
 	// -- Setup --
 	@BeforeEach
 	void setUp() {
-		testExpense = ExpenseFactory.createDefaultExpense();
-		testExpenseRequest = ExpenseFactory.createDefaultExpenseRequest();
+		testExpense = ExpenseBuilder.defaultExpense().build();
+		testExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 	}
 	
 	@Test

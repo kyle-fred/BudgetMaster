@@ -10,7 +10,7 @@ import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.application.service.IncomeService;
 import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
 import com.budgetmaster.integration.config.TestContainersConfig;
-import com.budgetmaster.testsupport.builder.IncomeFactory;
+import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.constants.FieldConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
@@ -52,7 +52,7 @@ public class IncomeServiceIntegrationTest {
     
     @BeforeEach
     void setUp() {
-        defaultRequest = IncomeFactory.createDefaultIncomeRequest();
+        defaultRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
         incomeRepository.deleteAll();
         budgetRepository.deleteAll();
     }
@@ -87,7 +87,7 @@ public class IncomeServiceIntegrationTest {
     @Test
     void updateIncome_ValidRequest_ProperlyUpdatesAndSynchronizes() {
         Income original = incomeService.createIncome(defaultRequest);
-        IncomeRequest updateRequest = IncomeFactory.createUpdatedIncomeRequest();
+        IncomeRequest updateRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
         
         Income result = incomeService.updateIncome(original.getId(), updateRequest);
         
@@ -115,7 +115,7 @@ public class IncomeServiceIntegrationTest {
     @Test
     void updateIncome_ChangesMonth_ProperlySynchronizesBothBudgets() {
         Income income = incomeService.createIncome(defaultRequest);
-        IncomeRequest updateRequest = IncomeFactory.createUpdatedIncomeRequest();
+        IncomeRequest updateRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
         
         incomeService.updateIncome(income.getId(), updateRequest);
         
@@ -160,7 +160,7 @@ public class IncomeServiceIntegrationTest {
     @Test
     void updateIncome_SynchronizationFails_RollsBackTransaction() {
         Income original = incomeService.createIncome(defaultRequest);
-        IncomeRequest updatedRequest = IncomeFactory.createUpdatedIncomeRequest();
+        IncomeRequest updatedRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
         
         Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
             .when(incomeBudgetSynchronizer).reapply(any(Income.class), any(Income.class));

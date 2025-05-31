@@ -1,4 +1,4 @@
-package com.budgetmaster.testsupport.builder;
+package com.budgetmaster.testsupport.builder.dto;
 
 import com.budgetmaster.application.dto.ExpenseRequest;
 import com.budgetmaster.application.dto.MoneyRequest;

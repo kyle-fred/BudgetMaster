@@ -2,7 +2,7 @@ package com.budgetmaster.application.repository;
 
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.integration.config.TestContainersConfig;
-import com.budgetmaster.testsupport.builder.BudgetBuilder;
+import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import org.junit.jupiter.api.BeforeEach;

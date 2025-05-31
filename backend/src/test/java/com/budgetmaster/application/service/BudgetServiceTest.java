@@ -7,7 +7,7 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.testsupport.builder.BudgetBuilder;
+import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 

@@ -1,4 +1,4 @@
-package com.budgetmaster.testsupport.builder;
+package com.budgetmaster.testsupport.builder.model;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -8,6 +8,7 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 public class BudgetBuilder {
+    
     private Long id = BudgetConstants.Default.ID;
     private BigDecimal totalIncome = BudgetConstants.Default.TOTAL_INCOME;
     private BigDecimal totalExpense = BudgetConstants.Default.TOTAL_EXPENSE;
@@ -46,10 +47,8 @@ public class BudgetBuilder {
     }
 
     public Budget build() {
-        Budget budget = BudgetFactory.createDefaultBudget();
+        Budget budget = Budget.of(month, currency);
         budget.setId(id);
-        budget.setCurrency(currency);
-        budget.setMonth(month);
         budget.setTotalIncome(totalIncome);
         budget.setTotalExpense(totalExpense);
         budget.setSavings(savings);

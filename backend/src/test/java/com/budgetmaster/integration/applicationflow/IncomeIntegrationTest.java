@@ -8,7 +8,7 @@ import com.budgetmaster.application.model.Income;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.integration.config.TestContainersConfig;
-import com.budgetmaster.testsupport.builder.IncomeFactory;
+import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.constants.FieldConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
@@ -46,7 +46,7 @@ public class IncomeIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        defaultIncomeRequest = IncomeFactory.createDefaultIncomeRequest();
+        defaultIncomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
         incomeRepository.deleteAll();
         budgetRepository.deleteAll();
     }
@@ -79,7 +79,7 @@ public class IncomeIntegrationTest {
     @Test
     void updateIncome_ValidRequest_ProperlyUpdatesAndSynchronizes() {
         Income original = incomeController.createIncome(defaultIncomeRequest).getBody();
-        IncomeRequest updateRequest = IncomeFactory.createUpdatedIncomeRequest();
+        IncomeRequest updateRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
 
         Income response = incomeController.updateIncome(original.getId(), updateRequest).getBody();
 

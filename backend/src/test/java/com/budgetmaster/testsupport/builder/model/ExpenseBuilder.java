@@ -1,4 +1,4 @@
-package com.budgetmaster.testsupport.builder;
+package com.budgetmaster.testsupport.builder.model;
 
 import java.time.YearMonth;
 
@@ -9,17 +9,12 @@ import com.budgetmaster.application.model.Money;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 public class ExpenseBuilder {
-    private Long id = ExpenseConstants.Default.ID;
+
     private String name = ExpenseConstants.Default.NAME;
-    private ExpenseCategory category = ExpenseConstants.Default.CATEGORY;
     private Money money = MoneyBuilder.defaultExpense().build();
+    private ExpenseCategory category = ExpenseConstants.Default.CATEGORY;
     private TransactionType type = ExpenseConstants.Default.TYPE;
     private YearMonth month = ExpenseConstants.Default.YEAR_MONTH;
-
-    public ExpenseBuilder withId(Long id) {
-        this.id = id;
-        return this;
-    }
 
     public ExpenseBuilder withName(String name) {
         this.name = name;
@@ -47,13 +42,7 @@ public class ExpenseBuilder {
     }
 
     public Expense build() {
-        Expense expense = ExpenseFactory.createDefaultExpense();
-        expense.setName(name);
-        expense.setCategory(category);
-        expense.setMoney(money);
-        expense.setType(type);
-        expense.setMonth(month);
-        expense.setId(id);
+        Expense expense = Expense.of(name, money, category, type, month);
         return expense;
     }
 

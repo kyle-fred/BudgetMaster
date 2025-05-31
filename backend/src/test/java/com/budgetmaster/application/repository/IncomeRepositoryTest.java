@@ -2,7 +2,7 @@ package com.budgetmaster.application.repository;
 
 import com.budgetmaster.application.model.Income;
 import com.budgetmaster.integration.config.TestContainersConfig;
-import com.budgetmaster.testsupport.builder.IncomeFactory;
+import com.budgetmaster.testsupport.builder.model.IncomeBuilder;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ public class IncomeRepositoryTest {
     
     @BeforeEach
     void setUp() {
-        testIncome = IncomeFactory.createDefaultIncome();
+        testIncome = IncomeBuilder.defaultIncome().build();
         incomeRepository.deleteAll();
     }
 

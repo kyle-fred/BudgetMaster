@@ -1,4 +1,4 @@
-package com.budgetmaster.testsupport.builder;
+package com.budgetmaster.testsupport.builder.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

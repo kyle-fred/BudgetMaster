@@ -1,7 +1,7 @@
 package com.budgetmaster.application.validation;
 
 import com.budgetmaster.application.dto.MoneyRequest;
-import com.budgetmaster.testsupport.builder.MoneyRequestBuilder;
+import com.budgetmaster.testsupport.builder.dto.MoneyRequestBuilder;
 import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 
 import jakarta.validation.ConstraintValidatorContext;

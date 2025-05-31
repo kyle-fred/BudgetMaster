@@ -10,7 +10,7 @@ import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchronizer;
 import com.budgetmaster.integration.config.TestContainersConfig;
-import com.budgetmaster.testsupport.builder.ExpenseFactory;
+import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.constants.FieldConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
@@ -52,7 +52,7 @@ public class ExpenseServiceIntegrationTest {
     
     @BeforeEach
     void setUp() {
-        defaultRequest = ExpenseFactory.createDefaultExpenseRequest();
+        defaultRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
         expenseRepository.deleteAll();
         budgetRepository.deleteAll();
     }
@@ -87,7 +87,7 @@ public class ExpenseServiceIntegrationTest {
     @Test
     void updateExpense_ValidRequest_ProperlyUpdatesAndSynchronizes() {
         Expense original = expenseService.createExpense(defaultRequest);
-        ExpenseRequest updateRequest = ExpenseFactory.createUpdatedExpenseRequest();
+        ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
         
         Expense result = expenseService.updateExpense(original.getId(), updateRequest);
         
@@ -115,7 +115,7 @@ public class ExpenseServiceIntegrationTest {
     @Test
     void updateExpense_ChangesMonth_ProperlySynchronizesBothBudgets() {
         Expense expense = expenseService.createExpense(defaultRequest);
-        ExpenseRequest updateRequest = ExpenseFactory.createUpdatedExpenseRequest();
+        ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
         
         expenseService.updateExpense(expense.getId(), updateRequest);
         
@@ -160,7 +160,7 @@ public class ExpenseServiceIntegrationTest {
     @Test
     void updateExpense_SynchronizationFails_RollsBackTransaction() {
         Expense original = expenseService.createExpense(defaultRequest);
-        ExpenseRequest updatedRequest = ExpenseFactory.createUpdatedExpenseRequest();
+        ExpenseRequest updatedRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
         
         Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
             .when(expenseBudgetSynchronizer).reapply(any(Expense.class), any(Expense.class));

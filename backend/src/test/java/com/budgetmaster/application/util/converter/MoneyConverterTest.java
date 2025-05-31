@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import com.budgetmaster.application.model.Money;
-import com.budgetmaster.testsupport.builder.MoneyFactory;
+import com.budgetmaster.testsupport.builder.model.MoneyBuilder;
 import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 
 class MoneyConverterTest {
@@ -22,7 +22,7 @@ class MoneyConverterTest {
     @BeforeEach
     void setUp() {
         converter = new MoneyConverter();
-        testMoney = MoneyFactory.createIncomeMoney();
+        testMoney = MoneyBuilder.defaultIncome().build();
     }
 
     @Test

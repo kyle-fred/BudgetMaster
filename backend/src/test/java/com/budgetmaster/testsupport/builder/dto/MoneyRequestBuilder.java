@@ -1,4 +1,4 @@
-package com.budgetmaster.testsupport.builder;
+package com.budgetmaster.testsupport.builder.dto;
 
 import java.math.BigDecimal;
 import java.util.Currency;

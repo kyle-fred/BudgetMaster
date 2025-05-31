@@ -1,4 +1,4 @@
-package com.budgetmaster.testsupport.builder;
+package com.budgetmaster.testsupport.builder.model;
 
 import com.budgetmaster.application.model.Money;
 import com.budgetmaster.testsupport.constants.domain.MoneyConstants;

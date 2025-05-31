@@ -6,7 +6,6 @@ import com.budgetmaster.application.enums.ExpenseCategory;
 import com.budgetmaster.application.enums.TransactionType;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.model.Money;
-import com.budgetmaster.testsupport.builder.MoneyBuilder;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 public class ExpenseBuilder {

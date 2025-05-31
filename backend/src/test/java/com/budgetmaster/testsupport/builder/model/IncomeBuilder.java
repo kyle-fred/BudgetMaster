@@ -1,6 +1,5 @@
 package com.budgetmaster.testsupport.builder.model;
 
-import com.budgetmaster.testsupport.builder.MoneyBuilder;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 import java.time.YearMonth;

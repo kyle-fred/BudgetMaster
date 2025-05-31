@@ -1,8 +1,9 @@
-package com.budgetmaster.testsupport.builder;
+package com.budgetmaster.testsupport.builder.dto;
 
 import com.budgetmaster.application.dto.IncomeRequest;
 import com.budgetmaster.application.dto.MoneyRequest;
 import com.budgetmaster.application.enums.TransactionType;
+import com.budgetmaster.testsupport.builder.MoneyRequestBuilder;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 public class IncomeRequestBuilder {

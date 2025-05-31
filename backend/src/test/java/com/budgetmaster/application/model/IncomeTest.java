@@ -1,7 +1,8 @@
 package com.budgetmaster.application.model;
 
 import com.budgetmaster.application.dto.IncomeRequest;
-import com.budgetmaster.testsupport.builder.IncomeFactory;
+import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
+import com.budgetmaster.testsupport.builder.model.IncomeBuilder;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ public class IncomeTest {
     
     @Test
     void from_ValidRequest_ReturnsIncome() {
-        IncomeRequest incomeRequest = IncomeFactory.createDefaultIncomeRequest();
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
         Income income = Income.from(incomeRequest);
         
         assertNotNull(income);
@@ -27,7 +28,7 @@ public class IncomeTest {
     @Test
     void updateFrom_ValidRequest_UpdatesIncome() {
         Income income = new Income();
-        IncomeRequest incomeRequest = IncomeFactory.createDefaultIncomeRequest();
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
         income.updateFrom(incomeRequest);
         
         assertEquals(IncomeConstants.Default.NAME, income.getName());
@@ -40,7 +41,7 @@ public class IncomeTest {
 
     @Test
     void deepCopy_ReturnsNewIncomeWithSameValues() {
-        Income income = IncomeFactory.createDefaultIncome();
+        Income income = IncomeBuilder.defaultIncome().build();
         Income copy = income.deepCopy();
 
         assertNotSame(income, copy);
@@ -54,7 +55,7 @@ public class IncomeTest {
 
     @Test
     void of_WithValidParameters_CreatesIncomeWithCorrectValues() {
-        Income income = IncomeFactory.createDefaultIncome();
+        Income income = IncomeBuilder.defaultIncome().build();
 
         assertNotNull(income);
         assertEquals(IncomeConstants.Default.NAME, income.getName());

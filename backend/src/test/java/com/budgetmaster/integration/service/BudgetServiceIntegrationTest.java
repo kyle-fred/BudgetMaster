@@ -7,7 +7,7 @@ import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.application.service.BudgetService;
 import com.budgetmaster.application.service.IncomeService;
 import com.budgetmaster.integration.config.TestContainersConfig;
-import com.budgetmaster.testsupport.builder.IncomeFactory;
+import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ public class BudgetServiceIntegrationTest {
     void setUp() {
         incomeRepository.deleteAll();
         budgetRepository.deleteAll();
-        incomeService.createIncome(IncomeFactory.createDefaultIncomeRequest());
+        incomeService.createIncome(IncomeRequestBuilder.defaultIncomeRequest().buildRequest());
     }
 
     // -- Happy Path Tests --

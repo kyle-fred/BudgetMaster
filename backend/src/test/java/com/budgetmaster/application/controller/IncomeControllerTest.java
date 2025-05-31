@@ -8,7 +8,8 @@ import com.budgetmaster.application.exception.codes.ErrorCode;
 import com.budgetmaster.application.model.Income;
 import com.budgetmaster.application.service.IncomeService;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.testsupport.builder.IncomeFactory;
+import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
+import com.budgetmaster.testsupport.builder.model.IncomeBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.PathConstants;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
@@ -48,8 +49,8 @@ public class IncomeControllerTest {
 	
 	@BeforeEach
 	void setUp() {
-		testIncome = IncomeFactory.createDefaultIncome();
-		incomeRequest = IncomeFactory.createDefaultIncomeRequest();
+		testIncome = IncomeBuilder.defaultIncome().build();
+		incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
 	}
 	
 	@Test

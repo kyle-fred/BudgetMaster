@@ -1,5 +1,6 @@
-package com.budgetmaster.testsupport.builder;
+package com.budgetmaster.testsupport.builder.model;
 
+import com.budgetmaster.testsupport.builder.MoneyBuilder;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 import java.time.YearMonth;
@@ -9,17 +10,12 @@ import com.budgetmaster.application.model.Income;
 import com.budgetmaster.application.model.Money;
 
 public class IncomeBuilder {
-    private Long id = IncomeConstants.Default.ID;
+
     private String name = IncomeConstants.Default.NAME;
     private String source = IncomeConstants.Default.SOURCE;
     private Money money = MoneyBuilder.defaultIncome().build();
     private TransactionType type = IncomeConstants.Default.TYPE;
     private YearMonth month = IncomeConstants.Default.YEAR_MONTH;
-
-    public IncomeBuilder withId(Long id) {
-        this.id = id;
-        return this;
-    }
 
     public IncomeBuilder withName(String name) {
         this.name = name;
@@ -47,13 +43,7 @@ public class IncomeBuilder {
     }
 
     public Income build() {
-        Income income = IncomeFactory.createDefaultIncome();
-        income.setId(id);
-        income.setName(name);
-        income.setSource(source);
-        income.setMoney(money);
-        income.setType(type);
-        income.setMonth(month);
+        Income income = Income.of(name, source, money, type, month);
         return income;
     }
 

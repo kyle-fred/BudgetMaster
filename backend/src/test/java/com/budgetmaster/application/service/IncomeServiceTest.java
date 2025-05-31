@@ -11,7 +11,8 @@ import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
 import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
-import com.budgetmaster.testsupport.builder.IncomeFactory;
+import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
+import com.budgetmaster.testsupport.builder.model.IncomeBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
@@ -39,8 +40,8 @@ public class IncomeServiceTest {
 	
 	@BeforeEach
 	void setUp() {
-		testIncome = IncomeFactory.createDefaultIncome();
-		incomeRequest = IncomeFactory.createDefaultIncomeRequest();
+		testIncome = IncomeBuilder.defaultIncome().build();
+		incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
 	}
 	
 	@Test
@@ -109,7 +110,7 @@ public class IncomeServiceTest {
 	
 	@Test
 	void updateIncome_ValidRequest_ReturnsOk() {
-		IncomeRequest updatedRequest = IncomeFactory.createUpdatedIncomeRequest();
+		IncomeRequest updatedRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
 
 		Mockito.when(incomeRepository.findById(IncomeConstants.Default.ID))
 				.thenReturn(Optional.of(testIncome));

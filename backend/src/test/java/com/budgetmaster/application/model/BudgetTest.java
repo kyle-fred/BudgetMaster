@@ -1,8 +1,8 @@
 package com.budgetmaster.application.model;
 
-import com.budgetmaster.testsupport.builder.IncomeFactory;
 import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
+import com.budgetmaster.testsupport.builder.model.IncomeBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ public class BudgetTest {
 
     @Test
     void testAddIncome_WithValidAmount_IncreasesTotalIncome() {
-        Income testIncome = IncomeFactory.createDefaultIncome();
+        Income testIncome = IncomeBuilder.defaultIncome().build();
 
         budget.addIncome(testIncome.getMoney().getAmount());
 

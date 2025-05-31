@@ -7,8 +7,8 @@ import com.budgetmaster.application.exception.BudgetNotFoundException;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.integration.config.TestContainersConfig;
-import com.budgetmaster.testsupport.builder.IncomeFactory;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
+import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ public class BudgetIntegrationTest {
     @BeforeEach
     void setUp() {
         budgetRepository.deleteAll();
-        incomeController.createIncome(IncomeFactory.createDefaultIncomeRequest());
+        incomeController.createIncome(IncomeRequestBuilder.defaultIncomeRequest().buildRequest());
         expenseController.createExpense(ExpenseRequestBuilder.defaultExpenseRequest().buildRequest());
     }
 

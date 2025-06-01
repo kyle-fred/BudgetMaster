@@ -10,6 +10,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @TestConfiguration
 public class TestContainersConfig {
 
+    @SuppressWarnings("resource")
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("testdb")
             .withUsername("test")

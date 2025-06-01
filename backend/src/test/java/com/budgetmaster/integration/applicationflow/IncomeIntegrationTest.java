@@ -30,6 +30,7 @@ import java.util.List;
 @SpringBootTest
 @Import(TestContainersConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@SuppressWarnings("null") // We are explicitly testing validation error handling which may involve nulls
 public class IncomeIntegrationTest {
     // -- Dependencies --
     @Autowired

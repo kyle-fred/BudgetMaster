@@ -35,6 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class IncomeServiceIntegrationTest {
     // -- Dependencies --
+    @SuppressWarnings("removal")
     @SpyBean
     private IncomeBudgetSynchronizer incomeBudgetSynchronizer;
 

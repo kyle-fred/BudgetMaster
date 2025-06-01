@@ -40,6 +40,7 @@ public class ExpenseControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 	
+	@SuppressWarnings("removal")
 	@MockBean
     private ExpenseService expenseService;
 

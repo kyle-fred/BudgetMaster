@@ -40,6 +40,7 @@ public class IncomeControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 	
+	@SuppressWarnings("removal")
 	@MockBean
 	private IncomeService incomeService;
 	

@@ -30,6 +30,7 @@ public class BudgetControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	
+	@SuppressWarnings("removal")
 	@MockBean
     private BudgetService budgetService;
 

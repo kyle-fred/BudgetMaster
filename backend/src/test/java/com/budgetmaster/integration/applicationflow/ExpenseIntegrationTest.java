@@ -8,6 +8,9 @@ import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.integration.config.TestContainersConfig;
+import com.budgetmaster.testsupport.assertions.integration.BudgetIntegrationAssertions;
+import com.budgetmaster.testsupport.assertions.integration.ExpenseIntegrationAssertions;
+import com.budgetmaster.testsupport.assertions.integration.list.ExpenseIntegrationListAssertions;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.constants.FieldConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
@@ -30,9 +33,8 @@ import java.util.List;
 @SpringBootTest
 @Import(TestContainersConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@SuppressWarnings("null") // We are explicitly testing validation error handling which may involve nulls
 public class ExpenseIntegrationTest {
-    // -- Dependencies --
+
     @Autowired
     private ExpenseController expenseController;
 
@@ -42,83 +44,61 @@ public class ExpenseIntegrationTest {
     @Autowired
     private BudgetRepository budgetRepository;
 
-    // -- Test Objects --
+    private Expense createdExpense;
     private ExpenseRequest defaultExpenseRequest;
 
     @BeforeEach
     void setUp() {
-        defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
         expenseRepository.deleteAll();
         budgetRepository.deleteAll();
+        defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
+        createdExpense = expenseController.createExpense(defaultExpenseRequest).getBody();
     }
 
     @Test
     void createExpense_ValidRequest_ProperlyPersistsAndSynchronizes() {
-        Expense response = expenseController.createExpense(defaultExpenseRequest).getBody();
+        ExpenseIntegrationAssertions.assertExpense(createdExpense)
+            .isDefaultExpense();
 
-        assertThat(response).isNotNull();
-        assertThat(response.getId()).isNotNull();
-        assertThat(response.getName()).isEqualTo(ExpenseConstants.Default.NAME);
-        assertThat(response.getCategory()).isEqualTo(ExpenseConstants.Default.CATEGORY);
-        assertThat(response.getMoney().getAmount()).isEqualByComparingTo(ExpenseConstants.Default.AMOUNT);
-        assertThat(response.getMoney().getCurrency()).isEqualTo(ExpenseConstants.Default.CURRENCY);
-        assertThat(response.getType()).isEqualTo(ExpenseConstants.Default.TYPE);
-        assertThat(response.getMonth()).isEqualTo(ExpenseConstants.Default.YEAR_MONTH);
-
-        Expense persisted = expenseRepository.findById(response.getId()).orElse(null);
-        assertThat(persisted).isNotNull();
-        assertThat(persisted)
-            .usingRecursiveComparison()
-            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
-            .isEqualTo(response);
+        Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
+        ExpenseIntegrationAssertions.assertExpense(persisted)
+            .isEqualTo(createdExpense);
 
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        assertThat(budget).isNotNull();
-        assertThat(budget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_EXPENSE);
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .hasTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE);
     }
 
     @Test
     void updateExpense_ValidRequest_ProperlyUpdatesAndSynchronizes() {
-        Expense original = expenseController.createExpense(defaultExpenseRequest).getBody();
         ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
 
-        Expense response = expenseController.updateExpense(original.getId(), updateRequest).getBody();
+        Expense updatedExpense = expenseController.updateExpense(createdExpense.getId(), updateRequest).getBody();
+        ExpenseIntegrationAssertions.assertExpense(updatedExpense)
+            .hasId(createdExpense.getId())
+            .isUpdatedExpense();
 
-        assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo(original.getId());
-        assertThat(response.getName()).isEqualTo(ExpenseConstants.Updated.NAME);
-        assertThat(response.getCategory()).isEqualTo(ExpenseConstants.Updated.CATEGORY);
-        assertThat(response.getMoney().getAmount()).isEqualByComparingTo(ExpenseConstants.Updated.AMOUNT);
-        assertThat(response.getMoney().getCurrency()).isEqualTo(ExpenseConstants.Default.CURRENCY);
-        assertThat(response.getType()).isEqualTo(ExpenseConstants.Updated.TYPE);
-        assertThat(response.getMonth()).isEqualTo(ExpenseConstants.Updated.YEAR_MONTH);
-
-        Expense persisted = expenseRepository.findById(response.getId()).orElse(null);
-        assertThat(persisted).isNotNull();
-        assertThat(persisted)
-            .usingRecursiveComparison()
-            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
-            .isEqualTo(response);
+        Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
+        ExpenseIntegrationAssertions.assertExpense(persisted)
+            .isEqualTo(updatedExpense);
 
         Budget oldBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        assertThat(oldBudget).isNotNull();
-        assertThat(oldBudget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
+        BudgetIntegrationAssertions.assertBudget(oldBudget)
+            .hasTotalExpense(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
 
         Budget newBudget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
-        assertThat(newBudget).isNotNull();
-        assertThat(newBudget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.Updated.TOTAL_EXPENSE);
+        BudgetIntegrationAssertions.assertBudget(newBudget)
+            .hasTotalExpense(BudgetConstants.Updated.TOTAL_EXPENSE);
     }
 
     @Test
     void deleteExpense_ValidId_ProperlyDeletesAndSynchronizes() {
-        Expense expense = expenseController.createExpense(defaultExpenseRequest).getBody();
-        expenseController.deleteExpense(expense.getId());
-
-        assertThat(expenseRepository.findById(expense.getId())).isEmpty();
+        expenseController.deleteExpense(createdExpense.getId());
+        ExpenseIntegrationAssertions.assertExpenseDeleted(createdExpense, expenseRepository);
 
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        assertThat(budget).isNotNull();
-        assertThat(budget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .hasTotalExpense(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
     }
 
     @Test
@@ -130,14 +110,12 @@ public class ExpenseIntegrationTest {
 
     @Test
     void getAllExpensesForMonth_WithExpenses_ReturnsCorrectList() {
-        Expense expense = expenseController.createExpense(defaultExpenseRequest).getBody();
+        Expense secondExpense = expenseController.createExpense(defaultExpenseRequest).getBody();
         List<Expense> response = expenseController.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH_STRING).getBody();
 
-        assertThat(response).hasSize(1);
-        assertThat(response.get(0))
-            .usingRecursiveComparison()
-            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
-            .isEqualTo(expense);
+        ExpenseIntegrationListAssertions.assertExpenses(response)
+            .hasSize(2)
+            .contains(createdExpense, secondExpense);
     }
 
     @Test

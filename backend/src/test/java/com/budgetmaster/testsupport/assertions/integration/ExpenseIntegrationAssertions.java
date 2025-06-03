@@ -35,6 +35,11 @@ public class ExpenseIntegrationAssertions {
         return this;
     }
 
+    public ExpenseIntegrationAssertions hasId(Long expectedId) {
+        assertThat(actual.getId()).isEqualTo(expectedId);
+        return this;
+    }
+
     public ExpenseIntegrationAssertions hasName(String expectedName) {
         assertThat(actual.getName()).isEqualTo(expectedName);
         return this;
@@ -77,6 +82,17 @@ public class ExpenseIntegrationAssertions {
             .hasCategory(ExpenseConstants.Default.CATEGORY)
             .hasType(ExpenseConstants.Default.TYPE)
             .hasMonth(ExpenseConstants.Default.YEAR_MONTH)
+            .hasCreatedAt()
+            .hasUpdatedAt();
+    }
+
+    public ExpenseIntegrationAssertions isUpdatedExpense() {
+        return hasId()
+            .hasName(ExpenseConstants.Updated.NAME)
+            .hasMoney(MoneyBuilder.updatedMoney().build())
+            .hasCategory(ExpenseConstants.Updated.CATEGORY)
+            .hasType(ExpenseConstants.Updated.TYPE)
+            .hasMonth(ExpenseConstants.Updated.YEAR_MONTH)
             .hasCreatedAt()
             .hasUpdatedAt();
     }

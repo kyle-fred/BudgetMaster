@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.testsupport.assertions.integration.ExpenseIntegrationAssertions;
+import com.budgetmaster.testsupport.constants.FieldConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +26,11 @@ public class ExpenseIntegrationListAssertions {
         return this;
     }
 
-    public ExpenseIntegrationAssertions first() {
-        return new ExpenseIntegrationAssertions(actualList.get(0));
+    public ExpenseIntegrationListAssertions contains(Expense... expectedExpenses) {
+        assertThat(actualList)
+            .usingRecursiveComparison()
+            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
+            .isEqualTo(List.of(expectedExpenses));
+        return this;
     }
 }

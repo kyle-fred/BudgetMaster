@@ -56,8 +56,7 @@ public class ExpenseRepositoryTest {
 
        ExpenseIntegrationListAssertions.assertExpenses(foundExpenses)
             .hasSize(1)
-            .first()
-            .isEqualTo(savedExpense);
+            .contains(savedExpense);
    }
 
    @Test

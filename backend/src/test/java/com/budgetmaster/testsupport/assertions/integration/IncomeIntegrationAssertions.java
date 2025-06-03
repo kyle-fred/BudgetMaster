@@ -8,9 +8,9 @@ import com.budgetmaster.testsupport.builder.model.MoneyBuilder;
 import com.budgetmaster.testsupport.constants.FieldConstants;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.time.YearMonth;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class IncomeIntegrationAssertions {
     

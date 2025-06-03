@@ -11,6 +11,8 @@ import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.application.service.synchronization.ExpenseBudgetSynchronizer;
 import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
+import com.budgetmaster.testsupport.assertions.model.ExpenseModelAssertions;
+import com.budgetmaster.testsupport.assertions.model.list.ExpenseListAssertions;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
@@ -29,14 +31,13 @@ import static org.mockito.Mockito.mockStatic;
 
 @Import(JacksonConfig.class)
 public class ExpenseServiceTest {
-	// -- Dependencies --
+
 	private final ExpenseRepository expenseRepository = mock(ExpenseRepository.class);
 	private final ExpenseBudgetSynchronizer expenseBudgetSynchronizer = mock(ExpenseBudgetSynchronizer.class);
 	private final ExpenseService expenseService = new ExpenseService(expenseRepository, expenseBudgetSynchronizer);
 	
-	// -- Test Objects --
-	private ExpenseRequest expenseRequest;
 	private Expense testExpense;
+	private ExpenseRequest expenseRequest;
 	
 	@BeforeEach
 	void setUp() {
@@ -53,13 +54,8 @@ public class ExpenseServiceTest {
 		
 		Expense savedExpense = expenseService.createExpense(expenseRequest);
 
-		assertNotNull(savedExpense);
-		assertEquals(ExpenseConstants.Default.NAME, savedExpense.getName());
-		assertEquals(ExpenseConstants.Default.AMOUNT, savedExpense.getMoney().getAmount());
-		assertEquals(ExpenseConstants.Default.CURRENCY, savedExpense.getMoney().getCurrency());
-		assertEquals(ExpenseConstants.Default.CATEGORY, savedExpense.getCategory());
-		assertEquals(ExpenseConstants.Default.TYPE, savedExpense.getType());
-		assertEquals(ExpenseConstants.Default.YEAR_MONTH, savedExpense.getMonth());
+		ExpenseModelAssertions.assertExpense(savedExpense)
+			.isDefaultExpense();
 
 		Mockito.verify(expenseBudgetSynchronizer, Mockito.times(1))
 				.apply(Mockito.any(Expense.class));
@@ -79,10 +75,10 @@ public class ExpenseServiceTest {
 
 			List<Expense> result = expenseService.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString());
 
-			assertNotNull(result);
-			assertEquals(2, result.size());
-			assertEquals(ExpenseConstants.Default.NAME, result.get(0).getName());
-			assertEquals(ExpenseConstants.Default.NAME, result.get(1).getName());
+			ExpenseListAssertions.assertExpenses(result)
+				.hasSize(2)
+				.first()
+				.isDefaultExpense();
 
 			Mockito.verify(expenseRepository, Mockito.times(1))
 					.findByMonth(ExpenseConstants.Default.YEAR_MONTH);
@@ -96,13 +92,8 @@ public class ExpenseServiceTest {
 		
 		Expense retrievedExpense = expenseService.getExpenseById(ExpenseConstants.Default.ID);
 		
-		assertNotNull(retrievedExpense);
-		assertEquals(ExpenseConstants.Default.NAME, retrievedExpense.getName());
-		assertEquals(ExpenseConstants.Default.AMOUNT, retrievedExpense.getMoney().getAmount());
-		assertEquals(ExpenseConstants.Default.CURRENCY, retrievedExpense.getMoney().getCurrency());
-		assertEquals(ExpenseConstants.Default.CATEGORY, retrievedExpense.getCategory());
-		assertEquals(ExpenseConstants.Default.TYPE, retrievedExpense.getType());
-		assertEquals(ExpenseConstants.Default.YEAR_MONTH, retrievedExpense.getMonth());
+		ExpenseModelAssertions.assertExpense(retrievedExpense)
+			.isDefaultExpense();
 		
 		Mockito.verify(expenseRepository, Mockito.times(1))
 				.findById(ExpenseConstants.Default.ID);
@@ -121,13 +112,8 @@ public class ExpenseServiceTest {
 
 		Expense updatedExpense = expenseService.updateExpense(ExpenseConstants.Default.ID, updatedExpenseRequest);
 
-		assertNotNull(updatedExpense);
-		assertEquals(updatedExpenseRequest.getName(), updatedExpense.getName());
-		assertEquals(updatedExpenseRequest.getMoney().getAmount(), updatedExpense.getMoney().getAmount());
-		assertEquals(updatedExpenseRequest.getMoney().getCurrency(), updatedExpense.getMoney().getCurrency());
-		assertEquals(updatedExpenseRequest.getCategory(), updatedExpense.getCategory());
-		assertEquals(updatedExpenseRequest.getType(), updatedExpense.getType());
-		assertEquals(updatedExpenseRequest.getMonth(), updatedExpense.getMonth().toString());
+		ExpenseModelAssertions.assertExpense(updatedExpense)
+			.isUpdatedExpense();
 		
 		Mockito.verify(expenseBudgetSynchronizer, Mockito.times(1))
 				.reapply(Mockito.any(Expense.class), Mockito.any(Expense.class));
@@ -158,6 +144,7 @@ public class ExpenseServiceTest {
 	@Test
 	void createExpense_ServiceError_ReturnsInternalServerError() {
 		String errorMessage = ErrorCode.DATABASE_ERROR.getMessage();
+
 		Mockito.when(expenseRepository.saveAndFlush(Mockito.any(Expense.class)))
 				.thenThrow(new DataIntegrityViolationException(errorMessage));
 		
@@ -168,11 +155,15 @@ public class ExpenseServiceTest {
 		);
 		
 		assertEquals(errorMessage, exception.getMessage());
+
+		Mockito.verify(expenseBudgetSynchronizer, Mockito.never())
+				.apply(Mockito.any(Expense.class));
 	}
 	
 	@Test
 	void getExpense_NonExistentId_ReturnsNotFound() {
 		String errorMessage = String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
+		
 		Mockito.when(expenseRepository.findById(ExpenseConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
 		
@@ -208,8 +199,11 @@ public class ExpenseServiceTest {
 	@Test
 	void updateExpense_NonExistentId_ReturnsNotFound() {
 		String errorMessage = String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
+		
 		Mockito.when(expenseRepository.findById(ExpenseConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
+		Mockito.doNothing().when(expenseBudgetSynchronizer)
+				.reapply(Mockito.any(Expense.class), Mockito.any(Expense.class));
 
 		ExpenseNotFoundException exception = assertThrows(
 				ExpenseNotFoundException.class,
@@ -218,6 +212,9 @@ public class ExpenseServiceTest {
 		);
 		
 		assertEquals(errorMessage, exception.getMessage());
+
+		Mockito.verify(expenseBudgetSynchronizer, Mockito.never())
+				.reapply(Mockito.any(Expense.class), Mockito.any(Expense.class));
 		Mockito.verify(expenseRepository, Mockito.never())
 				.saveAndFlush(Mockito.any(Expense.class));
 	}
@@ -225,8 +222,11 @@ public class ExpenseServiceTest {
 	@Test
 	void deleteExpense_NonExistentId_ReturnsNotFound() {
 		String errorMessage = String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID);
+		
 		Mockito.when(expenseRepository.findById(ExpenseConstants.NonExistent.ID))
 				.thenReturn(Optional.empty());
+		Mockito.doNothing().when(expenseBudgetSynchronizer)
+				.retract(Mockito.any(Expense.class));
 		
 		ExpenseNotFoundException exception = assertThrows(
 				ExpenseNotFoundException.class,
@@ -235,6 +235,7 @@ public class ExpenseServiceTest {
 		);
 		
 		assertEquals(errorMessage, exception.getMessage());
+		
 		Mockito.verify(expenseBudgetSynchronizer, Mockito.never())
 				.retract(Mockito.any(Expense.class));
 		Mockito.verify(expenseRepository, Mockito.never())

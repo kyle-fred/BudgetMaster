@@ -10,17 +10,15 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.testsupport.assertions.dto.ExpenseDtoAssertions;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ExpenseRequestTest {
-    // -- Dependencies --
+
     private static Validator validator;
     
-    // -- Setup --
     @BeforeAll
     static void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -32,7 +30,9 @@ public class ExpenseRequestTest {
         ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-        assertTrue(violations.isEmpty());
+
+        ExpenseDtoAssertions.assertExpenseRequest(violations)
+            .hasNoViolations();
     }
     
     @Test
@@ -42,8 +42,9 @@ public class ExpenseRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Expense.NAME_REQUIRED, violations.iterator().next().getMessage());
+
+        ExpenseDtoAssertions.assertExpenseRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Expense.NAME_REQUIRED);
     }
 
     @Test
@@ -53,8 +54,9 @@ public class ExpenseRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Money.DETAILS_REQUIRED, violations.iterator().next().getMessage());
+
+        ExpenseDtoAssertions.assertExpenseRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Money.DETAILS_REQUIRED);
     }
 
     @Test
@@ -64,8 +66,9 @@ public class ExpenseRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Expense.CATEGORY_REQUIRED, violations.iterator().next().getMessage());
+
+        ExpenseDtoAssertions.assertExpenseRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Expense.CATEGORY_REQUIRED);
     }
 
     @Test
@@ -75,8 +78,9 @@ public class ExpenseRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Expense.TYPE_REQUIRED, violations.iterator().next().getMessage());
+
+        ExpenseDtoAssertions.assertExpenseRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Expense.TYPE_REQUIRED);
     }
 
     @Test
@@ -86,8 +90,9 @@ public class ExpenseRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Month.REQUIRED, violations.iterator().next().getMessage());
+
+        ExpenseDtoAssertions.assertExpenseRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Month.REQUIRED);
     }
 
     @Test
@@ -97,8 +102,9 @@ public class ExpenseRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Month.INVALID_FORMAT, violations.iterator().next().getMessage());
+
+        ExpenseDtoAssertions.assertExpenseRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Month.INVALID_FORMAT);
     }
 
     @Test
@@ -108,7 +114,8 @@ public class ExpenseRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Month.INVALID_FORMAT, violations.iterator().next().getMessage());
+
+        ExpenseDtoAssertions.assertExpenseRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Month.INVALID_FORMAT);
     }
 }

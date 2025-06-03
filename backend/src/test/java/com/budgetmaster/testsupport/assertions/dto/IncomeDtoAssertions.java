@@ -37,5 +37,5 @@ public class IncomeDtoAssertions {
     public IncomeDtoAssertions hasExactlyOneViolationMessage(String expectedMessage) {
         return hasExactlyOneViolation()
             .hasViolationMessage(expectedMessage);
-    }   
+    }
 }

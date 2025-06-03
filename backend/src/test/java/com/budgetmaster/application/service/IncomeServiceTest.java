@@ -92,7 +92,8 @@ public class IncomeServiceTest {
 		
 		Income retrievedIncome = incomeService.getIncomeById(IncomeConstants.Default.ID);
 		
-		IncomeModelAssertions.assertIncome(retrievedIncome);
+		IncomeModelAssertions.assertIncome(retrievedIncome)
+			.isDefaultIncome();
 		
 		Mockito.verify(incomeRepository, Mockito.times(1))
 				.findById(IncomeConstants.Default.ID);

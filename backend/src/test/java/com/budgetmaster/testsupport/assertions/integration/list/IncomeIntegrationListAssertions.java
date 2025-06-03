@@ -3,7 +3,7 @@ package com.budgetmaster.testsupport.assertions.integration.list;
 import java.util.List;
 
 import com.budgetmaster.application.model.Income;
-import com.budgetmaster.testsupport.assertions.integration.IncomeIntegrationAssertions;
+import com.budgetmaster.testsupport.constants.FieldConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,8 +25,12 @@ public class IncomeIntegrationListAssertions {
         return this;
     }
 
-    public IncomeIntegrationAssertions first() {
-        return new IncomeIntegrationAssertions(actualList.get(0));
+    public IncomeIntegrationListAssertions contains(Income... expectedIncomes) {
+        assertThat(actualList)
+            .usingRecursiveComparison()
+            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
+            .isEqualTo(List.of(expectedIncomes));
+        return this;
     }
     
 }

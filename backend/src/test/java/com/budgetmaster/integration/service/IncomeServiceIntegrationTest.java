@@ -10,8 +10,10 @@ import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.application.service.IncomeService;
 import com.budgetmaster.application.service.synchronization.IncomeBudgetSynchronizer;
 import com.budgetmaster.integration.config.TestContainersConfig;
+import com.budgetmaster.testsupport.assertions.integration.BudgetIntegrationAssertions;
+import com.budgetmaster.testsupport.assertions.integration.IncomeIntegrationAssertions;
+import com.budgetmaster.testsupport.assertions.integration.list.IncomeIntegrationListAssertions;
 import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
-import com.budgetmaster.testsupport.constants.FieldConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
@@ -25,7 +27,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -34,7 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 @Import(TestContainersConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class IncomeServiceIntegrationTest {
-    // -- Dependencies --
+
     @SuppressWarnings("removal")
     @SpyBean
     private IncomeBudgetSynchronizer incomeBudgetSynchronizer;
@@ -48,98 +49,74 @@ public class IncomeServiceIntegrationTest {
     @Autowired
     private BudgetRepository budgetRepository;
     
-    // -- Test Objects --
     private IncomeRequest defaultRequest;
     
     @BeforeEach
     void setUp() {
-        defaultRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
         incomeRepository.deleteAll();
         budgetRepository.deleteAll();
+        defaultRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
     }
-    
-    // -- Happy Path Tests --
     
     @Test
     void createIncome_ValidRequest_ProperlyPersistsAndSynchronizes() {
-        Income result = incomeService.createIncome(defaultRequest);
+        Income createdIncome = incomeService.createIncome(defaultRequest);
         
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getName()).isEqualTo(IncomeConstants.Default.NAME);
-        assertThat(result.getSource()).isEqualTo(IncomeConstants.Default.SOURCE);
-        assertThat(result.getMoney().getAmount()).isEqualByComparingTo(IncomeConstants.Default.AMOUNT);
-        assertThat(result.getMoney().getCurrency()).isEqualTo(IncomeConstants.Default.CURRENCY);
-        assertThat(result.getType()).isEqualTo(IncomeConstants.Default.TYPE);
-        assertThat(result.getMonth()).isEqualTo(IncomeConstants.Default.YEAR_MONTH);
+        IncomeIntegrationAssertions.assertIncome(createdIncome)
+            .isDefaultIncome();
         
-        Income persisted = incomeRepository.findById(result.getId()).orElse(null);
-        assertThat(persisted).isNotNull();
-        assertThat(persisted)
-            .usingRecursiveComparison()
-            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
-            .isEqualTo(result);
+        Income persisted = incomeRepository.findById(createdIncome.getId()).orElse(null);
+        IncomeIntegrationAssertions.assertIncome(persisted)
+            .isEqualTo(createdIncome);
         
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        assertThat(budget).isNotNull();
-        assertThat(budget.getTotalIncome()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_INCOME);
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .hasTotalIncome(BudgetConstants.Default.TOTAL_INCOME);
     }
     
     @Test
     void updateIncome_ValidRequest_ProperlyUpdatesAndSynchronizes() {
-        Income original = incomeService.createIncome(defaultRequest);
+        Income createdIncome = incomeService.createIncome(defaultRequest);
         IncomeRequest updateRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
         
-        Income result = incomeService.updateIncome(original.getId(), updateRequest);
+        Income updatedIncome = incomeService.updateIncome(createdIncome.getId(), updateRequest);
+        IncomeIntegrationAssertions.assertIncome(updatedIncome)
+            .hasId(createdIncome.getId())
+            .isUpdatedIncome();
         
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(original.getId());
-        assertThat(result.getName()).isEqualTo(IncomeConstants.Updated.NAME);
-        assertThat(result.getSource()).isEqualTo(IncomeConstants.Updated.SOURCE);
-        assertThat(result.getMoney().getAmount()).isEqualByComparingTo(IncomeConstants.Updated.AMOUNT);
-        assertThat(result.getMoney().getCurrency()).isEqualTo(IncomeConstants.Default.CURRENCY);
-        assertThat(result.getType()).isEqualTo(IncomeConstants.Updated.TYPE);
-        assertThat(result.getMonth()).isEqualTo(IncomeConstants.Updated.YEAR_MONTH);
-        
-        Income persisted = incomeRepository.findById(result.getId()).orElse(null);
-        assertThat(persisted).isNotNull();
-        assertThat(persisted)
-            .usingRecursiveComparison()
-            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
-            .isEqualTo(result);
+        Income persisted = incomeRepository.findById(createdIncome.getId()).orElse(null);
+        IncomeIntegrationAssertions.assertIncome(persisted)
+            .isEqualTo(updatedIncome);
         
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
-        assertThat(budget).isNotNull();
-        assertThat(budget.getTotalIncome()).isEqualByComparingTo(BudgetConstants.Updated.TOTAL_INCOME);
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .hasTotalIncome(BudgetConstants.Updated.TOTAL_INCOME);
     }
 
     @Test
     void updateIncome_ChangesMonth_ProperlySynchronizesBothBudgets() {
-        Income income = incomeService.createIncome(defaultRequest);
+        Income createdIncome = incomeService.createIncome(defaultRequest);
         IncomeRequest updateRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
-        
-        incomeService.updateIncome(income.getId(), updateRequest);
+        incomeService.updateIncome(createdIncome.getId(), updateRequest);
         
         Budget oldBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        assertThat(oldBudget).isNotNull();
-        assertThat(oldBudget.getTotalIncome()).isEqualByComparingTo(BudgetConstants.ZeroValues.TOTAL_INCOME);
+        BudgetIntegrationAssertions.assertBudget(oldBudget)
+            .hasTotalIncome(BudgetConstants.ZeroValues.TOTAL_INCOME);
         
         Budget newBudget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
-        assertThat(newBudget).isNotNull();
-        assertThat(newBudget.getTotalIncome()).isEqualByComparingTo(BudgetConstants.Updated.TOTAL_INCOME);
+        BudgetIntegrationAssertions.assertBudget(newBudget)
+            .hasTotalIncome(BudgetConstants.Updated.TOTAL_INCOME);
     }
     
     @Test
     void deleteIncome_ValidId_ProperlyDeletesAndSynchronizes() {
-        Income income = incomeService.createIncome(defaultRequest);
-        
-        incomeService.deleteIncome(income.getId());
-        
-        assertThat(incomeRepository.findById(income.getId())).isEmpty();
+        Income createdIncome = incomeService.createIncome(defaultRequest);
+        incomeService.deleteIncome(createdIncome.getId());
+        IncomeIntegrationAssertions.assertIncomeDeleted(createdIncome, incomeRepository);
         
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        assertThat(budget).isNotNull();
-        assertThat(budget.getTotalIncome()).isEqualByComparingTo(BudgetConstants.ZeroValues.TOTAL_INCOME);
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .hasTotalIncome(BudgetConstants.ZeroValues.TOTAL_INCOME);
     }
     
     // -- Transaction Rollback Tests --
@@ -153,50 +130,51 @@ public class IncomeServiceIntegrationTest {
             .isInstanceOf(RuntimeException.class)
             .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
-        assertThat(incomeRepository.findAll()).isEmpty();
+        IncomeIntegrationListAssertions.assertIncomes(incomeRepository.findAll())
+            .hasSize(0);
+
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        assertThat(budget).isNull();
+        BudgetIntegrationAssertions.assertBudgetNotInitialized(budget);
     }
 
     @Test
     void updateIncome_SynchronizationFails_RollsBackTransaction() {
-        Income original = incomeService.createIncome(defaultRequest);
+        Income createdIncome = incomeService.createIncome(defaultRequest);
         IncomeRequest updatedRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
         
         Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
             .when(incomeBudgetSynchronizer).reapply(any(Income.class), any(Income.class));
 
-        assertThatThrownBy(() -> incomeService.updateIncome(original.getId(), updatedRequest))
+        assertThatThrownBy(() -> incomeService.updateIncome(createdIncome.getId(), updatedRequest))
             .isInstanceOf(RuntimeException.class)
             .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
-        Income persisted = incomeRepository.findById(original.getId()).orElse(null);
-        assertThat(persisted).isNotNull();
-        assertThat(persisted)
-            .usingRecursiveComparison()
-            .ignoringFields(FieldConstants.Audit.CREATED_AT, FieldConstants.Audit.LAST_UPDATED_AT)
-            .isEqualTo(original);
+        Income persisted = incomeRepository.findById(createdIncome.getId()).orElse(null);
+        IncomeIntegrationAssertions.assertIncome(persisted)
+            .isEqualTo(createdIncome);
 
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        assertThat(budget).isNotNull();
-        assertThat(budget.getTotalIncome()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_INCOME);
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .hasTotalIncome(BudgetConstants.Default.TOTAL_INCOME);
     }
 
     @Test
     void deleteIncome_SynchronizationFails_RollsBackTransaction() {
-        Income income = incomeService.createIncome(defaultRequest);
+        Income createdIncome = incomeService.createIncome(defaultRequest);
         
         Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
             .when(incomeBudgetSynchronizer).retract(any(Income.class));
 
-        assertThatThrownBy(() -> incomeService.deleteIncome(income.getId()))
+        assertThatThrownBy(() -> incomeService.deleteIncome(createdIncome.getId()))
             .isInstanceOf(RuntimeException.class)
             .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
-        assertThat(incomeRepository.findById(income.getId())).isPresent();
+        IncomeIntegrationAssertions.assertIncome(createdIncome)
+            .isEqualTo(createdIncome);
+
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        assertThat(budget).isNotNull();
-        assertThat(budget.getTotalIncome()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_INCOME);
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .hasTotalIncome(BudgetConstants.Default.TOTAL_INCOME);
     }
     
     // -- Read and Exception Tests --

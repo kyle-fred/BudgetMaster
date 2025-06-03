@@ -1,4 +1,4 @@
-package com.budgetmaster.testsupport.mockentity;
+package com.budgetmaster.testsupport.dummyclasses.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

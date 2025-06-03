@@ -14,9 +14,8 @@ import com.budgetmaster.testsupport.builder.model.MoneyBuilder;
 import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 
 class MoneyConverterTest {
-    // -- Test Objects --
-    private MoneyConverter converter;
 
+    private MoneyConverter converter;
     private Money testMoney;
 
     @BeforeEach

@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Import(TestContainersConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class BudgetServiceIntegrationTest {
-    // -- Dependencies --
+    
     @Autowired
     private BudgetService budgetService;
 

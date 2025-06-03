@@ -131,6 +131,7 @@ public class BudgetServiceTest {
 		);
 		
 		assertEquals(errorMessage, exception.getMessage());
+		
 		Mockito.verify(budgetRepository, Mockito.never())
 				.deleteById(Mockito.anyLong());
 	}

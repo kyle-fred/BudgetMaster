@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @SuppressWarnings("null") // We are explicitly testing validation error handling which may involve nulls
 public class BudgetIntegrationTest {
-    // -- Dependencies --
+    
     @Autowired
     private BudgetController budgetController;
 

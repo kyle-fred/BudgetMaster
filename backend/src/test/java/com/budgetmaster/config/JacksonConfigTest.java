@@ -14,17 +14,15 @@ import org.springframework.context.annotation.Import;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.budgetmaster.testsupport.builder.model.DummyConfigEntityBuilder;
 import com.budgetmaster.testsupport.constants.domain.DummyConfigConstants;
-import com.budgetmaster.testsupport.mockentity.DummyConfigEntity;
+import com.budgetmaster.testsupport.dummyclasses.entity.DummyConfigEntity;
 
 @SpringBootTest
 @Import(JacksonConfig.class)
 class JacksonConfigTest {
 
-    // -- Dependencies --
     @Autowired
     private ObjectMapper objectMapper;
 
-    // -- Test Objects --
     private DummyConfigEntity dummyConfigEntity;
 
     @BeforeEach

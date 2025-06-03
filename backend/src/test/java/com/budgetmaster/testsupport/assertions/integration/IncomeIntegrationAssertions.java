@@ -34,6 +34,11 @@ public class IncomeIntegrationAssertions {
         return this;
     }
 
+    public IncomeIntegrationAssertions hasId(Long expectedId) {
+        assertThat(actual.getId()).isEqualTo(expectedId);
+        return this;
+    }
+
     public IncomeIntegrationAssertions hasName(String expectedName) {
         assertThat(actual.getName()).isEqualTo(expectedName);
         return this;
@@ -76,6 +81,17 @@ public class IncomeIntegrationAssertions {
             .hasMoney(MoneyBuilder.defaultIncome().build())
             .hasType(IncomeConstants.Default.TYPE)
             .hasMonth(IncomeConstants.Default.YEAR_MONTH)
+            .hasCreatedAt()
+            .hasUpdatedAt();
+    }
+
+    public IncomeIntegrationAssertions isUpdatedIncome() {
+        return hasId()
+            .hasName(IncomeConstants.Updated.NAME)
+            .hasSource(IncomeConstants.Updated.SOURCE)
+            .hasMoney(MoneyBuilder.updatedMoney().build())
+            .hasType(IncomeConstants.Updated.TYPE)
+            .hasMonth(IncomeConstants.Updated.YEAR_MONTH)
             .hasCreatedAt()
             .hasUpdatedAt();
     }

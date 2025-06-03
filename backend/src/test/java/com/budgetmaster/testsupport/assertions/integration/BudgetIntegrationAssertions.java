@@ -24,6 +24,10 @@ public class BudgetIntegrationAssertions {
         return new BudgetIntegrationAssertions(actual);
     }
 
+    public static void assertBudgetNotInitialized(Budget budget) {
+        assertThat(budget).isNull();
+    }
+
     public static void assertBudgetDeleted(Budget budget, BudgetRepository budgetRepository) {
         assertThat(budgetRepository.findById(budget.getId())).isEmpty();
     }
@@ -34,17 +38,17 @@ public class BudgetIntegrationAssertions {
     }
 
     public BudgetIntegrationAssertions hasTotalIncome(BigDecimal expectedTotalIncome) {
-        assertThat(actual.getTotalIncome()).isEqualTo(expectedTotalIncome);
+        assertThat(actual.getTotalIncome()).isEqualByComparingTo(expectedTotalIncome);
         return this;
     }
 
     public BudgetIntegrationAssertions hasTotalExpense(BigDecimal expectedTotalExpense) {
-        assertThat(actual.getTotalExpense()).isEqualTo(expectedTotalExpense);
+        assertThat(actual.getTotalExpense()).isEqualByComparingTo(expectedTotalExpense);
         return this;
     }
 
     public BudgetIntegrationAssertions hasSavings(BigDecimal expectedSavings) {
-        assertThat(actual.getSavings()).isEqualTo(expectedSavings);
+        assertThat(actual.getSavings()).isEqualByComparingTo(expectedSavings);
         return this;
     }
 

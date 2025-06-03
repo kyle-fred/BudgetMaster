@@ -56,8 +56,7 @@ public class IncomeRepositoryTest {
 
         IncomeIntegrationListAssertions.assertIncomes(foundIncomes)
             .hasSize(1)
-            .first()
-            .isEqualTo(savedIncome);
+            .contains(savedIncome);
     }
 
     @Test

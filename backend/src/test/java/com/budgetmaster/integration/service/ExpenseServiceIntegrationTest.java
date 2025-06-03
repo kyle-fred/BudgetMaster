@@ -14,7 +14,6 @@ import com.budgetmaster.testsupport.assertions.integration.BudgetIntegrationAsse
 import com.budgetmaster.testsupport.assertions.integration.ExpenseIntegrationAssertions;
 import com.budgetmaster.testsupport.assertions.integration.list.ExpenseIntegrationListAssertions;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
-import com.budgetmaster.testsupport.constants.FieldConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
@@ -28,7 +27,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 

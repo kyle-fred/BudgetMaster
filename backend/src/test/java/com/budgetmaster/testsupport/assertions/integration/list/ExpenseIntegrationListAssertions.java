@@ -3,7 +3,6 @@ package com.budgetmaster.testsupport.assertions.integration.list;
 import java.util.List;
 
 import com.budgetmaster.application.model.Expense;
-import com.budgetmaster.testsupport.assertions.integration.ExpenseIntegrationAssertions;
 import com.budgetmaster.testsupport.constants.FieldConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;

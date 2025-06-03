@@ -20,14 +20,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Testcontainers
 @SpringBootTest
 @Import(TestContainersConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@SuppressWarnings("null") // We are explicitly testing validation error handling which may involve nulls
 public class BudgetIntegrationTest {
     
     @Autowired
@@ -64,6 +62,7 @@ public class BudgetIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("null") // We are explicitly testing validation error handling which may involve nulls
     void deleteBudget_ValidId_DeletesBudget() {
         Budget budget = budgetController.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH_STRING).getBody();
 

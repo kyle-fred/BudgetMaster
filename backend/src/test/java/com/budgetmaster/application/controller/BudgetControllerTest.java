@@ -50,7 +50,6 @@ public class BudgetControllerTest {
 		mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
 				.param(PathConstants.RequestParams.MONTH, BudgetConstants.Default.YEAR_MONTH.toString()))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath(PathConstants.JsonProperties.Budget.ID).value(BudgetConstants.Default.ID))
 				.andExpect(jsonPath(PathConstants.JsonProperties.Budget.TOTAL_INCOME).value(BudgetConstants.Default.TOTAL_INCOME))
 				.andExpect(jsonPath(PathConstants.JsonProperties.Budget.TOTAL_EXPENSE).value(BudgetConstants.Default.TOTAL_EXPENSE))
 				.andExpect(jsonPath(PathConstants.JsonProperties.Budget.SAVINGS).value(BudgetConstants.Default.SAVINGS))

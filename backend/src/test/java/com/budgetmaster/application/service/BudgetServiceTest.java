@@ -7,6 +7,7 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.application.util.DateUtils;
 import com.budgetmaster.config.JacksonConfig;
+import com.budgetmaster.testsupport.assertions.model.BudgetModelAssertions;
 import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
@@ -23,11 +24,10 @@ import static org.mockito.Mockito.mockStatic;
 
 @Import(JacksonConfig.class)
 public class BudgetServiceTest {
-	// -- Dependencies --
+
 	private final BudgetRepository budgetRepository = mock(BudgetRepository.class);
 	private final BudgetService budgetService = new BudgetService(budgetRepository);
 
-	// -- Test Objects --
 	private Budget testBudget;
 	
 	@BeforeEach
@@ -45,12 +45,8 @@ public class BudgetServiceTest {
 
 			Budget retrievedBudget = budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
 
-			assertNotNull(retrievedBudget);
-			assertEquals(BudgetConstants.Default.TOTAL_INCOME, retrievedBudget.getTotalIncome());
-			assertEquals(BudgetConstants.Default.TOTAL_EXPENSE, retrievedBudget.getTotalExpense());
-			assertEquals(BudgetConstants.Default.SAVINGS, retrievedBudget.getSavings());
-			assertEquals(BudgetConstants.Default.CURRENCY, retrievedBudget.getCurrency());
-			assertEquals(BudgetConstants.Default.YEAR_MONTH, retrievedBudget.getMonth());
+			BudgetModelAssertions.assertBudget(retrievedBudget)
+				.isDefaultBudget();
 
 			Mockito.verify(budgetRepository, Mockito.times(1))
 					.findByMonth(BudgetConstants.Default.YEAR_MONTH);
@@ -64,12 +60,8 @@ public class BudgetServiceTest {
 		
 		Budget retrievedBudget = budgetService.getBudgetById(BudgetConstants.Default.ID);
 		
-		assertNotNull(retrievedBudget);
-		assertEquals(BudgetConstants.Default.TOTAL_INCOME, retrievedBudget.getTotalIncome());
-		assertEquals(BudgetConstants.Default.TOTAL_EXPENSE, retrievedBudget.getTotalExpense());
-		assertEquals(BudgetConstants.Default.SAVINGS, retrievedBudget.getSavings());
-		assertEquals(BudgetConstants.Default.CURRENCY, retrievedBudget.getCurrency());
-		assertEquals(BudgetConstants.Default.YEAR_MONTH, retrievedBudget.getMonth());
+		BudgetModelAssertions.assertBudget(retrievedBudget)
+			.isDefaultBudget();
 		
 		Mockito.verify(budgetRepository, Mockito.times(1))
 				.findById(BudgetConstants.Default.ID);

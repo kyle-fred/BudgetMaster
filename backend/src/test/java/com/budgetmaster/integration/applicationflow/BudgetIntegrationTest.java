@@ -7,6 +7,7 @@ import com.budgetmaster.application.exception.BudgetNotFoundException;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.integration.config.TestContainersConfig;
+import com.budgetmaster.testsupport.assertions.integration.BudgetIntegrationAssertions;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
@@ -51,11 +52,8 @@ public class BudgetIntegrationTest {
     @Test
     void getBudgetByMonth_FoundBudget_ReturnsBudget() {
         Budget budget = budgetController.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH_STRING).getBody();
-
-        assertThat(budget).isNotNull();
-        assertThat(budget.getTotalIncome()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_INCOME);
-        assertThat(budget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_EXPENSE);
-        assertThat(budget.getSavings()).isEqualByComparingTo(BudgetConstants.Default.SAVINGS);
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .isDefaultBudget();
     }
 
     @Test
@@ -68,9 +66,9 @@ public class BudgetIntegrationTest {
     @Test
     void deleteBudget_ValidId_DeletesBudget() {
         Budget budget = budgetController.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH_STRING).getBody();
-        budgetController.deleteBudget(budget.getId());
 
-        assertThat(budgetRepository.findById(budget.getId())).isEmpty();
+        budgetController.deleteBudget(budget.getId());
+        BudgetIntegrationAssertions.assertBudgetDeleted(budget, budgetRepository);
     }
 
     @Test

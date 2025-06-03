@@ -1,5 +1,6 @@
 package com.budgetmaster.integration.service;
 
+import com.budgetmaster.application.dto.IncomeRequest;
 import com.budgetmaster.application.exception.BudgetNotFoundException;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.repository.BudgetRepository;
@@ -7,6 +8,7 @@ import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.application.service.BudgetService;
 import com.budgetmaster.application.service.IncomeService;
 import com.budgetmaster.integration.config.TestContainersConfig;
+import com.budgetmaster.testsupport.assertions.integration.BudgetIntegrationAssertions;
 import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
@@ -18,7 +20,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Testcontainers
@@ -39,32 +40,29 @@ public class BudgetServiceIntegrationTest {
     @Autowired
     private IncomeRepository incomeRepository;
 
+    private IncomeRequest defaultIncomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
+
     @BeforeEach
     void setUp() {
         incomeRepository.deleteAll();
         budgetRepository.deleteAll();
-        incomeService.createIncome(IncomeRequestBuilder.defaultIncomeRequest().buildRequest());
+        incomeService.createIncome(defaultIncomeRequest);
     }
-
-    // -- Happy Path Tests --
 
     @Test
     void getBudgetById_ExistingBudget_ReturnsCorrectBudget() {
         Budget persistedBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElseThrow();
-        Budget result = budgetService.getBudgetById(persistedBudget.getId());
 
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(persistedBudget.getId());
-        assertThat(result.getMonth()).isEqualTo(BudgetConstants.Default.YEAR_MONTH);
+        Budget budget = budgetService.getBudgetById(persistedBudget.getId());
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .hasTotalIncome(BudgetConstants.Default.TOTAL_INCOME);
     }
 
     @Test
     void getBudgetByMonth_ExistingBudget_ReturnsCorrectBudget() {
         Budget budget = budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH_STRING);
-
-        assertThat(budget).isNotNull();
-        assertThat(budget.getMonth()).isEqualTo(BudgetConstants.Default.YEAR_MONTH);
-        assertThat(budget.getTotalIncome()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_INCOME);
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .hasTotalIncome(BudgetConstants.Default.TOTAL_INCOME);
     }
 
     @Test
@@ -72,11 +70,8 @@ public class BudgetServiceIntegrationTest {
         Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElseThrow();
 
         budgetService.deleteBudget(budget.getId());
-
-        assertThat(budgetRepository.findById(budget.getId())).isEmpty();
+        BudgetIntegrationAssertions.assertBudgetDeleted(budget, budgetRepository);
     }
-
-    // -- Exception Tests --
 
     @Test
     void getBudgetById_NonExistentId_ThrowsException() {

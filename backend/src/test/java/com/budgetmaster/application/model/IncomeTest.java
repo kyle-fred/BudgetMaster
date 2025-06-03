@@ -1,68 +1,56 @@
 package com.budgetmaster.application.model;
 
 import com.budgetmaster.application.dto.IncomeRequest;
+import com.budgetmaster.testsupport.assertions.model.IncomeModelAssertions;
 import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.builder.model.IncomeBuilder;
-import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 public class IncomeTest {
+
+    private Income income;
+    private IncomeRequest defaultIncomeRequest;
+
+    @BeforeEach
+    void setUp() {
+        income = new Income();
+        defaultIncomeRequest = IncomeRequestBuilder.defaultIncomeRequest()
+            .buildRequest();
+    }
     
     @Test
     void from_ValidRequest_ReturnsIncome() {
-        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
-        Income income = Income.from(incomeRequest);
-        
-        assertNotNull(income);
-        assertEquals(IncomeConstants.Default.NAME, income.getName());
-        assertEquals(IncomeConstants.Default.SOURCE, income.getSource());
-        assertEquals(IncomeConstants.Default.AMOUNT, income.getMoney().getAmount());
-        assertEquals(IncomeConstants.Default.CURRENCY, income.getMoney().getCurrency());
-        assertEquals(IncomeConstants.Default.TYPE, income.getType());
-        assertEquals(IncomeConstants.Default.YEAR_MONTH, income.getMonth());
+        income = Income.from(defaultIncomeRequest);
+
+        IncomeModelAssertions.assertIncome(income)
+            .isDefaultIncome();
     }
     
     @Test
     void updateFrom_ValidRequest_UpdatesIncome() {
-        Income income = new Income();
-        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
-        income.updateFrom(incomeRequest);
-        
-        assertEquals(IncomeConstants.Default.NAME, income.getName());
-        assertEquals(IncomeConstants.Default.SOURCE, income.getSource());
-        assertEquals(IncomeConstants.Default.AMOUNT, income.getMoney().getAmount());
-        assertEquals(IncomeConstants.Default.CURRENCY, income.getMoney().getCurrency());
-        assertEquals(IncomeConstants.Default.TYPE, income.getType());
-        assertEquals(IncomeConstants.Default.YEAR_MONTH, income.getMonth());
+        income.updateFrom(defaultIncomeRequest);
+
+        IncomeModelAssertions.assertIncome(income)
+            .isDefaultIncome();
     }
 
     @Test
     void deepCopy_ReturnsNewIncomeWithSameValues() {
-        Income income = IncomeBuilder.defaultIncome().build();
+        income = IncomeBuilder.defaultIncome().build();
         Income copy = income.deepCopy();
 
-        assertNotSame(income, copy);
-        assertEquals(income.getName(), copy.getName());
-        assertEquals(income.getSource(), copy.getSource());
-        assertEquals(income.getMoney().getAmount(), copy.getMoney().getAmount());
-        assertEquals(income.getMoney().getCurrency(), copy.getMoney().getCurrency());
-        assertEquals(income.getType(), copy.getType());
-        assertEquals(income.getMonth(), copy.getMonth());
+        IncomeModelAssertions.assertIncome(copy)
+            .isDefaultIncome();
     }
 
     @Test
     void of_WithValidParameters_CreatesIncomeWithCorrectValues() {
-        Income income = IncomeBuilder.defaultIncome().build();
+        income = IncomeBuilder.defaultIncome().build();
 
-        assertNotNull(income);
-        assertEquals(IncomeConstants.Default.NAME, income.getName());
-        assertEquals(IncomeConstants.Default.SOURCE, income.getSource());
-        assertEquals(IncomeConstants.Default.AMOUNT, income.getMoney().getAmount());
-        assertEquals(IncomeConstants.Default.CURRENCY, income.getMoney().getCurrency());
-        assertEquals(IncomeConstants.Default.TYPE, income.getType());
-        assertEquals(IncomeConstants.Default.YEAR_MONTH, income.getMonth());
+        IncomeModelAssertions.assertIncome(income)
+            .isDefaultIncome();
     }
 }

@@ -7,6 +7,7 @@ public final class MoneyConstants {
     private MoneyConstants() {}
 
     public static final Currency GBP = Currency.getInstance("GBP");
+    public static final int SCALE = 2;
 
     public static final class IncomeDefaults {
         private IncomeDefaults() {}

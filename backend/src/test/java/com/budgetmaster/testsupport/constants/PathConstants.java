@@ -52,7 +52,6 @@ public class PathConstants {
         public static class Budget {
             private Budget() {}
 
-            public static final String ID = "$.id";
             public static final String TOTAL_INCOME = "$.total-income";
             public static final String TOTAL_EXPENSE = "$.total-expense";
             public static final String SAVINGS = "$.savings";
@@ -65,7 +64,6 @@ public class PathConstants {
         public static class Expense {
             private Expense() {}
 
-            public static final String ID = "$.id";
             public static final String NAME = "$.name";
             public static final String MONEY = "$.money";
             public static final String MONEY_AMOUNT = "$.money.amount";
@@ -83,7 +81,6 @@ public class PathConstants {
         public static class Income {
             private Income() {}
 
-            public static final String ID = "$.id";
             public static final String NAME = "$.name";
             public static final String SOURCE = "$.source";
             public static final String MONEY = "$.money";

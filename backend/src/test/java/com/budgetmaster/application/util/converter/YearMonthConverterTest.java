@@ -12,9 +12,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 public class YearMonthConverterTest {
-    // -- Test Objects --
-    private YearMonthConverter converter;
 
+    private YearMonthConverter converter;
     private YearMonth testYearMonth;
 
     @BeforeEach

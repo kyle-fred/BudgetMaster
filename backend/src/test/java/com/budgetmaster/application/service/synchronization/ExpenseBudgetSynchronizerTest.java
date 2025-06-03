@@ -7,6 +7,7 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.config.JacksonConfig;
+import com.budgetmaster.testsupport.assertions.model.BudgetModelAssertions;
 import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
@@ -22,11 +23,10 @@ import static org.mockito.Mockito.*;
 
 @Import(JacksonConfig.class)
 public class ExpenseBudgetSynchronizerTest {
-    // -- Dependencies --
+
     private final BudgetRepository budgetRepository = mock(BudgetRepository.class);
     private final ExpenseBudgetSynchronizer expenseBudgetSynchronizer = new ExpenseBudgetSynchronizer(budgetRepository);
 
-    // -- Test Objects --
     private Expense testExpense;
     private Budget testBudget;
 
@@ -45,10 +45,12 @@ public class ExpenseBudgetSynchronizerTest {
 
         expenseBudgetSynchronizer.apply(testExpense);
 
+        BudgetModelAssertions.assertBudget(testBudget)
+            .hasTotalExpense(BudgetConstants.AfterAddExpense_WhenBudgetExists.TOTAL_EXPENSE)
+            .hasSavings(BudgetConstants.AfterAddExpense_WhenBudgetExists.SAVINGS);
+
         verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
         verify(budgetRepository).save(testBudget);
-        assertEquals(BudgetConstants.AfterAddExpense_WhenBudgetExists.TOTAL_EXPENSE, testBudget.getTotalExpense());
-        assertEquals(BudgetConstants.AfterAddExpense_WhenBudgetExists.SAVINGS, testBudget.getSavings());
     }
 
     @Test
@@ -64,9 +66,11 @@ public class ExpenseBudgetSynchronizerTest {
         verify(budgetRepository).save(captor.capture());
         Budget budget = captor.getValue();
 
+        BudgetModelAssertions.assertBudget(budget)
+            .hasTotalExpense(BudgetConstants.AfterAddExpense_WhenNoBudgetExists.TOTAL_EXPENSE)
+            .hasSavings(BudgetConstants.AfterAddExpense_WhenNoBudgetExists.SAVINGS);
+
         verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
-        assertEquals(BudgetConstants.AfterAddExpense_WhenNoBudgetExists.TOTAL_EXPENSE, budget.getTotalExpense());
-        assertEquals(BudgetConstants.AfterAddExpense_WhenNoBudgetExists.SAVINGS, budget.getSavings());
     }
 
     @Test
@@ -82,10 +86,12 @@ public class ExpenseBudgetSynchronizerTest {
 
         expenseBudgetSynchronizer.reapply(testExpense, updatedExpense);
 
+        BudgetModelAssertions.assertBudget(testBudget)
+            .hasTotalExpense(BudgetConstants.AfterReapplyExpense_SameMonth.TOTAL_EXPENSE)
+            .hasSavings(BudgetConstants.AfterReapplyExpense_SameMonth.SAVINGS);
+
         verify(budgetRepository, times(2)).findByMonth(BudgetConstants.Default.YEAR_MONTH);
         verify(budgetRepository).save(testBudget);
-        assertEquals(BudgetConstants.AfterReapplyExpense_SameMonth.TOTAL_EXPENSE, testBudget.getTotalExpense());
-        assertEquals(BudgetConstants.AfterReapplyExpense_SameMonth.SAVINGS, testBudget.getSavings());
     }
 
     @Test
@@ -102,20 +108,23 @@ public class ExpenseBudgetSynchronizerTest {
             .thenReturn(Optional.of(testBudget));
         when(budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH))
             .thenReturn(Optional.of(newBudget));
-
         when(budgetRepository.save(any(Budget.class)))
             .thenReturn(testBudget)
             .thenReturn(newBudget);
 
         expenseBudgetSynchronizer.reapply(testExpense, updatedExpense);
 
+        BudgetModelAssertions.assertBudget(testBudget)
+            .hasTotalExpense(BudgetConstants.AfterReapplyExpense_DifferentMonth.ExistingBudget.TOTAL_EXPENSE)
+            .hasSavings(BudgetConstants.AfterReapplyExpense_DifferentMonth.ExistingBudget.SAVINGS);
+
+        BudgetModelAssertions.assertBudget(newBudget)
+            .hasTotalExpense(BudgetConstants.AfterReapplyExpense_DifferentMonth.NewBudget.TOTAL_EXPENSE)
+            .hasSavings(BudgetConstants.AfterReapplyExpense_DifferentMonth.NewBudget.SAVINGS);
+
         verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
         verify(budgetRepository).findByMonth(BudgetConstants.Updated.YEAR_MONTH);
         verify(budgetRepository).save(newBudget);
-        assertEquals(BudgetConstants.AfterReapplyExpense_DifferentMonth.ExistingBudget.TOTAL_EXPENSE, testBudget.getTotalExpense());
-        assertEquals(BudgetConstants.AfterReapplyExpense_DifferentMonth.ExistingBudget.SAVINGS, testBudget.getSavings());
-        assertEquals(BudgetConstants.AfterReapplyExpense_DifferentMonth.NewBudget.TOTAL_EXPENSE, newBudget.getTotalExpense());
-        assertEquals(BudgetConstants.AfterReapplyExpense_DifferentMonth.NewBudget.SAVINGS, newBudget.getSavings());
     }
 
     @Test
@@ -144,10 +153,12 @@ public class ExpenseBudgetSynchronizerTest {
 
         expenseBudgetSynchronizer.retract(testExpense);
 
+        BudgetModelAssertions.assertBudget(testBudget)
+            .hasTotalExpense(BudgetConstants.AfterRetractExpense.TOTAL_EXPENSE)
+            .hasSavings(BudgetConstants.AfterRetractExpense.SAVINGS);
+
         verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
         verify(budgetRepository).save(testBudget);
-        assertEquals(BudgetConstants.AfterRetractExpense.TOTAL_EXPENSE, testBudget.getTotalExpense());
-        assertEquals(BudgetConstants.AfterRetractExpense.SAVINGS, testBudget.getSavings());
     }
 
     @Test

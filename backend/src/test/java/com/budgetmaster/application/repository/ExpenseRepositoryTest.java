@@ -2,6 +2,8 @@ package com.budgetmaster.application.repository;
 
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.integration.config.TestContainersConfig;
+import com.budgetmaster.testsupport.assertions.integration.ExpenseIntegrationAssertions;
+import com.budgetmaster.testsupport.assertions.integration.list.ExpenseIntegrationListAssertions;
 import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
@@ -14,8 +16,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.List;
 
 @Testcontainers
@@ -24,63 +24,53 @@ import java.util.List;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ExpenseRepositoryTest {
-   // -- Dependencies --
+
    @Autowired
    private ExpenseRepository expenseRepository;
 
-   // -- Test Objects --
-   private Expense testExpense;
+   private Expense savedExpense;
 
    @BeforeEach
    void setUp() {
-       testExpense = ExpenseBuilder.defaultExpense().build();
        expenseRepository.deleteAll();
+       savedExpense = expenseRepository.save(ExpenseBuilder.defaultExpense().build());
    }
 
    @Test
    void shouldSaveExpense() {
-       Expense savedExpense = expenseRepository.save(testExpense);
-
-       assertThat(savedExpense).isNotNull();
-       assertThat(savedExpense.getId()).isNotNull();
-       assertThat(savedExpense.getName()).isEqualTo(ExpenseConstants.Default.NAME);
-       assertThat(savedExpense.getCategory()).isEqualTo(ExpenseConstants.Default.CATEGORY);
-       assertThat(savedExpense.getMoney().getAmount()).isEqualByComparingTo(ExpenseConstants.Default.AMOUNT);
-       assertThat(savedExpense.getMoney().getCurrency()).isEqualTo(ExpenseConstants.Default.CURRENCY);
-       assertThat(savedExpense.getType()).isEqualTo(ExpenseConstants.Default.TYPE);
-       assertThat(savedExpense.getMonth()).isEqualTo(ExpenseConstants.Default.YEAR_MONTH);
-       assertThat(savedExpense.getCreatedAt()).isNotNull();
-       assertThat(savedExpense.getLastUpdatedAt()).isNotNull();
+       ExpenseIntegrationAssertions.assertExpense(savedExpense)
+            .isDefaultExpense();
    }
 
    @Test
    void shouldFindExpenseById() {
-       Expense savedExpense = expenseRepository.save(testExpense);
        Expense foundExpense = expenseRepository.findById(savedExpense.getId()).orElse(null);
-       assertThat(foundExpense).isNotNull();
-       assertThat(foundExpense.getId()).isEqualTo(savedExpense.getId());
+
+       ExpenseIntegrationAssertions.assertExpense(foundExpense)
+            .isEqualTo(savedExpense);
    }
 
    @Test
    void shouldFindExpenseByMonth() {
-       expenseRepository.save(testExpense);
-       List<Expense> foundExpenses = expenseRepository.findByMonth(testExpense.getMonth());
-       assertThat(foundExpenses).isNotNull();
-       assertThat(foundExpenses.size()).isEqualTo(1);
-       assertThat(foundExpenses.get(0).getId()).isEqualTo(testExpense.getId());
+       List<Expense> foundExpenses = expenseRepository.findByMonth(savedExpense.getMonth());
+
+       ExpenseIntegrationListAssertions.assertExpenses(foundExpenses)
+            .hasSize(1)
+            .contains(savedExpense);
    }
 
    @Test
    void shouldReturnEmptyListWhenNoExpensesFound() {
-       List<Expense> foundExpenses = expenseRepository.findByMonth(testExpense.getMonth());
-       assertThat(foundExpenses).isNotNull();
-       assertThat(foundExpenses.size()).isEqualTo(0);
+       List<Expense> foundExpenses = expenseRepository.findByMonth(ExpenseConstants.NonExistent.YEAR_MONTH);
+
+       ExpenseIntegrationListAssertions.assertExpenses(foundExpenses)
+            .hasSize(0);
    }
 
    @Test
    void shouldDeleteExpense() {
-       Expense savedExpense = expenseRepository.save(testExpense);
        expenseRepository.delete(savedExpense);
-       assertThat(expenseRepository.findById(savedExpense.getId())).isEmpty();
+
+       ExpenseIntegrationAssertions.assertExpenseDeleted(savedExpense, expenseRepository);
    }
 }

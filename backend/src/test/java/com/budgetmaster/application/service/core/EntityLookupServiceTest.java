@@ -9,7 +9,10 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.exception.BudgetNotFoundException;
 import com.budgetmaster.application.exception.IncomeNotFoundException;
 import com.budgetmaster.application.model.Income;
+import com.budgetmaster.testsupport.assertions.model.BudgetModelAssertions;
+import com.budgetmaster.testsupport.assertions.model.list.IncomeListAssertions;
 import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
+import com.budgetmaster.testsupport.builder.model.IncomeBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
@@ -25,19 +28,19 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EntityLookupServiceTest extends EntityLookupService {
-	// -- Dependencies --
+
 	@Mock
 	private JpaRepository<Budget, Long> mockRepository;
 
-	// -- Test Objects --
-	private Budget testBudget;
-	
 	@Mock
 	private Income testIncome;
+
+	private Budget testBudget;
 	
 	@BeforeEach
 	void setUp() {
 		testBudget = BudgetBuilder.defaultBudget().build();
+		testIncome = IncomeBuilder.defaultIncome().build();
 	}
 	
 	@Test
@@ -51,16 +54,19 @@ public class EntityLookupServiceTest extends EntityLookupService {
 				() -> new BudgetNotFoundException(ErrorConstants.Budget.NOT_FOUND_WITH_ID)
 		);
 		
-		assertEquals(testBudget, result);
+		BudgetModelAssertions.assertBudget(result)
+			.isDefaultBudget();
+
 		verify(mockRepository)
 				.findById(BudgetConstants.Default.ID);
 	}
 	
 	@Test
 	void findByIdOrThrow_WhenEntityDoesNotExist_ThrowsException() {
+		String errorMessage = String.format(ErrorConstants.Budget.NOT_FOUND_WITH_ID, BudgetConstants.Default.ID);
+
 		when(mockRepository.findById(BudgetConstants.Default.ID))
 				.thenReturn(Optional.empty());
-		String errorMessage = String.format(ErrorConstants.Budget.NOT_FOUND_WITH_ID, BudgetConstants.Default.ID);
 		
 		BudgetNotFoundException exception = assertThrows(
 				BudgetNotFoundException.class,
@@ -72,6 +78,7 @@ public class EntityLookupServiceTest extends EntityLookupService {
 		);
 		
 		assertEquals(errorMessage, exception.getMessage());
+
 		verify(mockRepository)
 				.findById(BudgetConstants.Default.ID);
 	}
@@ -86,7 +93,8 @@ public class EntityLookupServiceTest extends EntityLookupService {
 				() -> new BudgetNotFoundException(String.format(ErrorConstants.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.Default.YEAR_MONTH))
 		);
 		
-		assertEquals(testBudget, result);
+		BudgetModelAssertions.assertBudget(result)
+			.isDefaultBudget();
 	}
 	
 	@Test
@@ -115,8 +123,11 @@ public class EntityLookupServiceTest extends EntityLookupService {
 				BudgetConstants.Default.YEAR_MONTH,
 				() -> new IncomeNotFoundException(String.format(ErrorConstants.Income.NOT_FOUND_BY_MONTH, BudgetConstants.Default.YEAR_MONTH))
 		);
-		
-		assertEquals(List.of(testIncome), result);
+
+		IncomeListAssertions.assertIncomes(result)
+			.hasSize(1)
+			.first()
+			.isDefaultIncome();
 	}
 
 	@Test

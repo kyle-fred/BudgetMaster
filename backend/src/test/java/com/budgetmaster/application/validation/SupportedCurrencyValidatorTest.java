@@ -16,13 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class SupportedCurrencyValidatorTest {
 
-    // -- Dependencies
     private SupportedCurrencyValidator currencyValidator;
 
     @Mock
     private ConstraintValidatorContext context;
 
-    // -- Test Objects --
     private MoneyRequest request;
 
     @BeforeEach

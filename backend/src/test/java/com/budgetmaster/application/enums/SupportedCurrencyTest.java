@@ -9,11 +9,9 @@ import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SupportedCurrencyTest {
-    // -- Test Data --
+
     private static final Currency GBP = MoneyConstants.GBP;
     private static final Currency EUR = MoneyConstants.InvalidValues.EUR;
-
-    // -- Test Methods --
 
     @Test
     void testGetCurrency() {

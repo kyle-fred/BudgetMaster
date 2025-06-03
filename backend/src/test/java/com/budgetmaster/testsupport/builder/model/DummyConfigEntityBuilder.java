@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.budgetmaster.testsupport.constants.domain.DummyConfigConstants;
-import com.budgetmaster.testsupport.mockentity.DummyConfigEntity;
+import com.budgetmaster.testsupport.dummyclasses.entity.DummyConfigEntity;
 
 public class DummyConfigEntityBuilder {
     

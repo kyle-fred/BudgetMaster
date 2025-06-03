@@ -10,17 +10,15 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.testsupport.assertions.dto.IncomeDtoAssertions;
 import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class IncomeRequestTest {
-    // -- Dependencies --
+
     private static Validator validator;
 
-    // -- Setup --
     @BeforeAll
     static void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -32,7 +30,9 @@ public class IncomeRequestTest {
         IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
         
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertTrue(violations.isEmpty());
+
+        IncomeDtoAssertions.assertIncomeRequest(violations)
+            .hasNoViolations();
     }
 
     @Test
@@ -42,8 +42,9 @@ public class IncomeRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Income.NAME_REQUIRED, violations.iterator().next().getMessage());
+
+        IncomeDtoAssertions.assertIncomeRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Income.NAME_REQUIRED);
     }
 
     @Test
@@ -53,8 +54,9 @@ public class IncomeRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Income.SOURCE_REQUIRED, violations.iterator().next().getMessage());
+
+        IncomeDtoAssertions.assertIncomeRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Income.SOURCE_REQUIRED);
     }
 
     @Test
@@ -64,8 +66,9 @@ public class IncomeRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Money.DETAILS_REQUIRED, violations.iterator().next().getMessage());
+
+        IncomeDtoAssertions.assertIncomeRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Money.DETAILS_REQUIRED);
     }
 
     @Test
@@ -75,8 +78,9 @@ public class IncomeRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Income.TYPE_REQUIRED, violations.iterator().next().getMessage());
+
+        IncomeDtoAssertions.assertIncomeRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Income.TYPE_REQUIRED);
     }
 
     @Test
@@ -86,8 +90,9 @@ public class IncomeRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Month.REQUIRED, violations.iterator().next().getMessage());
+
+        IncomeDtoAssertions.assertIncomeRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Month.REQUIRED);
     }
 
     @Test
@@ -97,8 +102,9 @@ public class IncomeRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Month.INVALID_FORMAT, violations.iterator().next().getMessage());
+
+        IncomeDtoAssertions.assertIncomeRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Month.INVALID_FORMAT);
     }
 
     @Test
@@ -108,7 +114,8 @@ public class IncomeRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Month.INVALID_FORMAT, violations.iterator().next().getMessage());
+
+        IncomeDtoAssertions.assertIncomeRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Month.INVALID_FORMAT);
     }
 }

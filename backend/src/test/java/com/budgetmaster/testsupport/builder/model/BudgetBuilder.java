@@ -9,17 +9,11 @@ import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 public class BudgetBuilder {
     
-    private Long id = BudgetConstants.Default.ID;
     private BigDecimal totalIncome = BudgetConstants.Default.TOTAL_INCOME;
     private BigDecimal totalExpense = BudgetConstants.Default.TOTAL_EXPENSE;
     private BigDecimal savings = BudgetConstants.Default.SAVINGS;
     private Currency currency = BudgetConstants.Default.CURRENCY;
     private YearMonth month = BudgetConstants.Default.YEAR_MONTH;
-
-    public BudgetBuilder withId(Long id) {
-        this.id = id;
-        return this;
-    }
 
     public BudgetBuilder withTotalIncome(BigDecimal totalIncome) {
         this.totalIncome = totalIncome;
@@ -48,7 +42,7 @@ public class BudgetBuilder {
 
     public Budget build() {
         Budget budget = Budget.of(month, currency);
-        budget.setId(id);
+        // budget.setId(id);
         budget.setTotalIncome(totalIncome);
         budget.setTotalExpense(totalExpense);
         budget.setSavings(savings);

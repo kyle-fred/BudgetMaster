@@ -7,6 +7,7 @@ import com.budgetmaster.application.exception.BudgetNotFoundException;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.repository.BudgetRepository;
 import com.budgetmaster.integration.config.TestContainersConfig;
+import com.budgetmaster.testsupport.assertions.integration.BudgetIntegrationAssertions;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
@@ -19,16 +20,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Testcontainers
 @SpringBootTest
 @Import(TestContainersConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@SuppressWarnings("null") // We are explicitly testing validation error handling which may involve nulls
 public class BudgetIntegrationTest {
-    // -- Dependencies --
+    
     @Autowired
     private BudgetController budgetController;
 
@@ -51,11 +50,8 @@ public class BudgetIntegrationTest {
     @Test
     void getBudgetByMonth_FoundBudget_ReturnsBudget() {
         Budget budget = budgetController.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH_STRING).getBody();
-
-        assertThat(budget).isNotNull();
-        assertThat(budget.getTotalIncome()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_INCOME);
-        assertThat(budget.getTotalExpense()).isEqualByComparingTo(BudgetConstants.Default.TOTAL_EXPENSE);
-        assertThat(budget.getSavings()).isEqualByComparingTo(BudgetConstants.Default.SAVINGS);
+        BudgetIntegrationAssertions.assertBudget(budget)
+            .isDefaultBudget();
     }
 
     @Test
@@ -66,11 +62,12 @@ public class BudgetIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("null") // We are explicitly testing validation error handling which may involve nulls
     void deleteBudget_ValidId_DeletesBudget() {
         Budget budget = budgetController.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH_STRING).getBody();
-        budgetController.deleteBudget(budget.getId());
 
-        assertThat(budgetRepository.findById(budget.getId())).isEmpty();
+        budgetController.deleteBudget(budget.getId());
+        BudgetIntegrationAssertions.assertBudgetDeleted(budget, budgetRepository);
     }
 
     @Test

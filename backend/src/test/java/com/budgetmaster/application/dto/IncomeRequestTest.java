@@ -27,8 +27,7 @@ public class IncomeRequestTest {
 
     @Test
     void testValidIncomeRequest() {
-        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest()
-            .buildRequest();
+        IncomeRequest incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
         
         Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
 

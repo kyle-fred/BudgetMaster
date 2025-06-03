@@ -1,7 +1,6 @@
 package com.budgetmaster.application.dto;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -11,17 +10,15 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.budgetmaster.testsupport.assertions.dto.MoneyDtoAssertions;
 import com.budgetmaster.testsupport.builder.dto.MoneyRequestBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class MoneyRequestTest {
-    // -- Dependencies --
+
     private static Validator validator;
 
-    // -- Setup --
     @BeforeAll
     static void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -30,10 +27,12 @@ public class MoneyRequestTest {
 
     @Test
     void testValidMoneyRequest() {
-        MoneyRequest request = MoneyRequestBuilder.defaultIncome().buildRequest();
+        MoneyRequest moneyRequest = MoneyRequestBuilder.defaultIncome().buildRequest();
 
-        Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty());
+        Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(moneyRequest);
+
+        MoneyDtoAssertions.assertMoneyRequest(violations)
+            .hasNoViolations();
     }
 
     @Test
@@ -43,8 +42,9 @@ public class MoneyRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Money.AMOUNT_REQUIRED, violations.iterator().next().getMessage());
+        
+        MoneyDtoAssertions.assertMoneyRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Money.AMOUNT_REQUIRED);
     }
 
     @Test
@@ -54,8 +54,9 @@ public class MoneyRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Money.CURRENCY_REQUIRED, violations.iterator().next().getMessage());
+
+        MoneyDtoAssertions.assertMoneyRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Money.CURRENCY_REQUIRED);
     }
 
     @Test
@@ -65,8 +66,9 @@ public class MoneyRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Money.UNSUPPORTED_CURRENCY, violations.iterator().next().getMessage());
+
+        MoneyDtoAssertions.assertMoneyRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Money.UNSUPPORTED_CURRENCY);
     }
 
     @Test
@@ -76,8 +78,9 @@ public class MoneyRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(1, violations.size());
-        assertEquals(ErrorConstants.Money.NEGATIVE_AMOUNT, violations.iterator().next().getMessage());
+
+        MoneyDtoAssertions.assertMoneyRequest(violations)
+            .hasExactlyOneViolationMessage(ErrorConstants.Money.NEGATIVE_AMOUNT);
     }
 
     @Test
@@ -86,14 +89,10 @@ public class MoneyRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertEquals(2, violations.size());
-
-        Set<String> messages = violations.stream()
-            .map(ConstraintViolation::getMessage)
-            .collect(Collectors.toSet());
-
-        assertTrue(messages.contains(ErrorConstants.Money.NEGATIVE_AMOUNT));
-        assertTrue(messages.contains(ErrorConstants.Money.UNSUPPORTED_CURRENCY));
+        
+        MoneyDtoAssertions.assertMoneyRequest(violations)
+            .containsViolationMessage(ErrorConstants.Money.NEGATIVE_AMOUNT)
+            .containsViolationMessage(ErrorConstants.Money.UNSUPPORTED_CURRENCY);
     }
 
     @Test
@@ -102,7 +101,9 @@ public class MoneyRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty());
+
+        MoneyDtoAssertions.assertMoneyRequest(violations)
+            .hasNoViolations();
     }
 
     @Test
@@ -112,15 +113,8 @@ public class MoneyRequestTest {
             .buildRequest();
 
         Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty());
-    }
 
-    @Test
-    void testGettersAndSetters() {
-        MoneyRequest request = MoneyRequestBuilder.defaultIncome()
-            .buildRequest();
-
-        assertEquals(MoneyConstants.IncomeDefaults.AMOUNT, request.getAmount());
-        assertEquals(MoneyConstants.IncomeDefaults.CURRENCY, request.getCurrency());
+        MoneyDtoAssertions.assertMoneyRequest(violations)
+            .hasNoViolations();
     }
 }

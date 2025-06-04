@@ -8,6 +8,8 @@ import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,54 +25,70 @@ import java.util.List;
 @Import(TestContainersConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class ExpenseRepositoryTest {
+@DisplayName("Expense Repository Tests")
+class ExpenseRepositoryTest {
 
-   @Autowired
-   private ExpenseRepository expenseRepository;
+    @Autowired
+    private ExpenseRepository expenseRepository;
 
-   private Expense savedExpense;
+    private Expense savedExpense;
 
-   @BeforeEach
-   void setUp() {
-       expenseRepository.deleteAll();
-       savedExpense = expenseRepository.save(ExpenseBuilder.defaultExpense().build());
-   }
+    @BeforeEach
+    void setUp() {
+        expenseRepository.deleteAll();
+        savedExpense = expenseRepository.save(ExpenseBuilder.defaultExpense().build());
+    }
 
-   @Test
-   void shouldSaveExpense() {
-       ExpenseIntegrationAssertions.assertExpense(savedExpense)
-            .isDefaultExpense();
-   }
+    @Nested
+    @DisplayName("Expense Persistence")
+    class ExpensePersistence {
+        
+        @Test
+        @DisplayName("Should save expense to repository")
+        void save_withValidExpense_persistsExpense() {
+            ExpenseIntegrationAssertions.assertExpense(savedExpense)
+                .isDefaultExpense();
+        }
 
-   @Test
-   void shouldFindExpenseById() {
-       Expense foundExpense = expenseRepository.findById(savedExpense.getId()).orElse(null);
+        @Test
+        @DisplayName("Should delete expense from repository")
+        void delete_withExistingExpense_removesExpense() {
+            expenseRepository.delete(savedExpense);
 
-       ExpenseIntegrationAssertions.assertExpense(foundExpense)
-            .isEqualTo(savedExpense);
-   }
+            ExpenseIntegrationAssertions.assertExpenseDeleted(savedExpense, expenseRepository);
+        }
+    }
 
-   @Test
-   void shouldFindExpenseByMonth() {
-       List<Expense> foundExpenses = expenseRepository.findByMonth(savedExpense.getMonth());
+    @Nested
+    @DisplayName("Expense Retrieval")
+    class ExpenseRetrieval {
+        
+        @Test
+        @DisplayName("Should find expense by ID")
+        void findById_withExistingId_returnsExpense() {
+            Expense foundExpense = expenseRepository.findById(savedExpense.getId()).orElse(null);
 
-       ExpenseIntegrationListAssertions.assertExpenses(foundExpenses)
-            .hasSize(1)
-            .contains(savedExpense);
-   }
+            ExpenseIntegrationAssertions.assertExpense(foundExpense)
+                .isEqualTo(savedExpense);
+        }
 
-   @Test
-   void shouldReturnEmptyListWhenNoExpensesFound() {
-       List<Expense> foundExpenses = expenseRepository.findByMonth(ExpenseConstants.NonExistent.YEAR_MONTH);
+        @Test
+        @DisplayName("Should find expenses by month")
+        void findByMonth_withExistingMonth_returnsExpenses() {
+            List<Expense> foundExpenses = expenseRepository.findByMonth(savedExpense.getMonth());
 
-       ExpenseIntegrationListAssertions.assertExpenses(foundExpenses)
-            .hasSize(0);
-   }
+            ExpenseIntegrationListAssertions.assertExpenses(foundExpenses)
+                .hasSize(1)
+                .contains(savedExpense);
+        }
 
-   @Test
-   void shouldDeleteExpense() {
-       expenseRepository.delete(savedExpense);
+        @Test
+        @DisplayName("Should return empty list when no expenses found")
+        void findByMonth_withNonExistentMonth_returnsEmptyList() {
+            List<Expense> foundExpenses = expenseRepository.findByMonth(ExpenseConstants.NonExistent.YEAR_MONTH);
 
-       ExpenseIntegrationAssertions.assertExpenseDeleted(savedExpense, expenseRepository);
-   }
+            ExpenseIntegrationListAssertions.assertExpenses(foundExpenses)
+                .hasSize(0);
+        }
+    }
 }

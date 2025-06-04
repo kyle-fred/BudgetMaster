@@ -8,6 +8,8 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.budgetmaster.testsupport.assertions.dto.ExpenseDtoAssertions;
@@ -15,7 +17,8 @@ import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
-public class ExpenseRequestTest {
+@DisplayName("ExpenseRequest Validation Tests")
+class ExpenseRequestTest {
 
     private static Validator validator;
     
@@ -26,7 +29,8 @@ public class ExpenseRequestTest {
     }
 
     @Test
-    void testValidExpenseRequest() {
+    @DisplayName("Should validate a complete valid expense request")
+    void validateRequest_withValidData_hasNoViolations() {
         ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 
         Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
@@ -34,88 +38,105 @@ public class ExpenseRequestTest {
         ExpenseDtoAssertions.assertExpenseRequest(violations)
             .hasNoViolations();
     }
-    
-    @Test
-    void testNullName() {
-        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
-            .withName(null)
-            .buildRequest();
 
-        Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
+    @Nested
+    @DisplayName("Required Field Validations")
+    class RequiredFieldValidations {
+        
+        @Test
+        @DisplayName("Should reject when name is null")
+        void validateName_whenNull_hasNameRequiredViolation() {
+            ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+                .withName(null)
+                .buildRequest();
 
-        ExpenseDtoAssertions.assertExpenseRequest(violations)
-            .hasExactlyOneViolationMessage(ErrorConstants.Expense.NAME_REQUIRED);
+            Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
+
+            ExpenseDtoAssertions.assertExpenseRequest(violations)
+                .hasExactlyOneViolationMessage(ErrorConstants.Expense.NAME_REQUIRED);
+        }
+
+        @Test
+        @DisplayName("Should reject when money details are null")
+        void validateMoney_whenNull_hasMoneyRequiredViolation() {
+            ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+                .withMoney(null)
+                .buildRequest();
+
+            Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
+
+            ExpenseDtoAssertions.assertExpenseRequest(violations)
+                .hasExactlyOneViolationMessage(ErrorConstants.Money.DETAILS_REQUIRED);
+        }
+
+        @Test
+        @DisplayName("Should reject when category is null")
+        void validateCategory_whenNull_hasCategoryRequiredViolation() {
+            ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+                .withCategory(null)
+                .buildRequest();
+
+            Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
+
+            ExpenseDtoAssertions.assertExpenseRequest(violations)
+                .hasExactlyOneViolationMessage(ErrorConstants.Expense.CATEGORY_REQUIRED);
+        }
+
+        @Test
+        @DisplayName("Should reject when type is null")
+        void validateType_whenNull_hasTypeRequiredViolation() {
+            ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+                .withType(null)
+                .buildRequest();
+
+            Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
+
+            ExpenseDtoAssertions.assertExpenseRequest(violations)
+                .hasExactlyOneViolationMessage(ErrorConstants.Expense.TYPE_REQUIRED);
+        }
     }
 
-    @Test
-    void testNullMoney() {
-        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
-            .withMoney(null)
-            .buildRequest();
+    @Nested
+    @DisplayName("Month Field Validations")
+    class MonthFieldValidations {
+        
+        @Test
+        @DisplayName("Should reject when month is null")
+        void validateMonth_whenNull_hasMonthRequiredViolation() {
+            ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+                .withMonth(null)
+                .buildRequest();
 
-        Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
+            Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
 
-        ExpenseDtoAssertions.assertExpenseRequest(violations)
-            .hasExactlyOneViolationMessage(ErrorConstants.Money.DETAILS_REQUIRED);
-    }
+            ExpenseDtoAssertions.assertExpenseRequest(violations)
+                .hasExactlyOneViolationMessage(ErrorConstants.Month.REQUIRED);
+        }
 
-    @Test
-    void testNullCategory() {
-        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
-            .withCategory(null)
-            .buildRequest();
+        @Test
+        @DisplayName("Should reject when month is invalid")
+        void validateMonth_whenInvalid_hasInvalidFormatViolation() {
+            ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+                .withMonth(ExpenseConstants.Invalid.YEAR_MONTH.toString())
+                .buildRequest();
 
-        Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
+            Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
 
-        ExpenseDtoAssertions.assertExpenseRequest(violations)
-            .hasExactlyOneViolationMessage(ErrorConstants.Expense.CATEGORY_REQUIRED);
-    }
+            ExpenseDtoAssertions.assertExpenseRequest(violations)
+                .hasExactlyOneViolationMessage(ErrorConstants.Month.INVALID_FORMAT);
+        }
 
-    @Test
-    void testNullType() {
-        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
-            .withType(null)
-            .buildRequest();
+        @Test
+        @DisplayName("Should reject when month format is incorrect")
+        void validateMonth_whenFormatIncorrect_hasInvalidFormatViolation() {
+            ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
+                .withMonth(ExpenseConstants.Invalid.YEAR_MONTH_FORMAT)
+                .buildRequest();
 
-        Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
+            Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
 
-        ExpenseDtoAssertions.assertExpenseRequest(violations)
-            .hasExactlyOneViolationMessage(ErrorConstants.Expense.TYPE_REQUIRED);
-    }
-
-    @Test
-    void testNullMonth() {
-        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
-            .withMonth(null)
-            .buildRequest();
-
-        Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-
-        ExpenseDtoAssertions.assertExpenseRequest(violations)
-            .hasExactlyOneViolationMessage(ErrorConstants.Month.REQUIRED);
-    }
-
-    @Test
-    void testInvalidMonth() {
-        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
-            .withMonth(ExpenseConstants.Invalid.YEAR_MONTH.toString())
-            .buildRequest();
-
-        Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-
-        ExpenseDtoAssertions.assertExpenseRequest(violations)
-            .hasExactlyOneViolationMessage(ErrorConstants.Month.INVALID_FORMAT);
-    }
-
-    @Test
-    void testInvalidMonthFormat() {
-        ExpenseRequest expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest()
-            .withMonth(ExpenseConstants.Invalid.YEAR_MONTH_FORMAT)
-            .buildRequest();
-
-        Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
-
-        ExpenseDtoAssertions.assertExpenseRequest(violations)
-            .hasExactlyOneViolationMessage(ErrorConstants.Month.INVALID_FORMAT);
+            ExpenseDtoAssertions.assertExpenseRequest(violations)
+                .hasExactlyOneViolationMessage(ErrorConstants.Month.INVALID_FORMAT);
+        }
     }
 }

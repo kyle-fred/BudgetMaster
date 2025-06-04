@@ -7,6 +7,7 @@ import com.budgetmaster.application.enums.TransactionType;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 public class ExpenseRequestBuilder {
+    
     private String name = ExpenseConstants.Default.NAME;
     private ExpenseCategory category = ExpenseConstants.Default.CATEGORY;
     private MoneyRequest money = MoneyRequestBuilder.defaultExpense().buildRequest();

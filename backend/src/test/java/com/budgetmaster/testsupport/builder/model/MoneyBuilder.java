@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 public class MoneyBuilder {
+    
     private BigDecimal amount;
     private Currency currency = MoneyConstants.GBP;
 

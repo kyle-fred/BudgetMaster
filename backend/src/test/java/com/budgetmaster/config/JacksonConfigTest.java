@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +20,7 @@ import com.budgetmaster.testsupport.dummyclasses.entity.DummyConfigEntity;
 
 @SpringBootTest
 @Import(JacksonConfig.class)
+@DisplayName("Jackson Config Tests")
 class JacksonConfigTest {
 
     @Autowired
@@ -30,49 +33,69 @@ class JacksonConfigTest {
         dummyConfigEntity = DummyConfigEntityBuilder.defaultEntity().build();
     }
 
-    @Test
-    void shouldUseKebabCaseForPropertyNames() throws Exception {
-        String json = objectMapper.writeValueAsString(dummyConfigEntity);
+    @Nested
+    @DisplayName("Property Name Formatting Operations")
+    class PropertyNameFormattingOperations {
         
-        assertThat(json)
-            .contains(DummyConfigConstants.Json.KEBAB_CASE)
-            .doesNotContain(DummyConfigConstants.Json.CAMEL_CASE);
+        @Test
+        @DisplayName("Should use kebab case for property names")
+        void serialize_withEntity_usesKebabCaseForPropertyNames() throws Exception {
+            String json = objectMapper.writeValueAsString(dummyConfigEntity);
+            
+            assertThat(json)
+                .contains(DummyConfigConstants.Json.KEBAB_CASE)
+                .doesNotContain(DummyConfigConstants.Json.CAMEL_CASE);
+        }
     }
 
-    @Test
-    void shouldSerializeBigDecimalAsString() throws Exception {
-        String json = objectMapper.writeValueAsString(dummyConfigEntity);
+    @Nested
+    @DisplayName("Big Decimal Serialization Operations")
+    class BigDecimalSerializationOperations {
+        
+        @Test
+        @DisplayName("Should serialize big decimal as string")
+        void serialize_withBigDecimal_serializesAsString() throws Exception {
+            String json = objectMapper.writeValueAsString(dummyConfigEntity);
 
-        assertThat(json)
-            .contains(DummyConfigConstants.Json.BIG_DECIMAL_AS_STRING)
-            .doesNotContain(DummyConfigConstants.Json.BIG_DECIMAL_AS_NUMBER);
+            assertThat(json)
+                .contains(DummyConfigConstants.Json.BIG_DECIMAL_AS_STRING)
+                .doesNotContain(DummyConfigConstants.Json.BIG_DECIMAL_AS_NUMBER);
+        }
+
+        @Test
+        @DisplayName("Should deserialize string to big decimal")
+        void deserialize_withBigDecimalString_returnsBigDecimal() throws Exception {
+            String json = DummyConfigConstants.Json.BIG_DECIMAL_AS_STRING_JSON;
+
+            DummyConfigEntity dummyConfigEntity = objectMapper.readValue(json, DummyConfigEntity.class);
+
+            assertThat(dummyConfigEntity.getBigDecimal())
+                .isEqualTo(new BigDecimal(DummyConfigConstants.Default.BIG_DECIMAL));
+        }
     }
 
-    @Test
-    void shouldDeserializeStringToBigDecimal() throws Exception {
-        String json = DummyConfigConstants.Json.BIG_DECIMAL_AS_STRING_JSON;
+    @Nested
+    @DisplayName("Local Date Time Serialization Operations")
+    class LocalDateTimeSerializationOperations {
+        
+        @Test
+        @DisplayName("Should serialize local date time in standard format")
+        void serialize_withLocalDateTime_serializesInStandardFormat() throws Exception {
+            String json = objectMapper.writeValueAsString(dummyConfigEntity);
 
-        DummyConfigEntity dummyConfigEntity = objectMapper.readValue(json, DummyConfigEntity.class);
+            assertThat(json)
+                .contains(DummyConfigConstants.Json.TIME_AS_FORMATTED_STRING);
+        }
 
-        assertThat(dummyConfigEntity.getBigDecimal())
-            .isEqualTo(new BigDecimal(DummyConfigConstants.Default.BIG_DECIMAL));
-    }
+        @Test
+        @DisplayName("Should deserialize string to local date time")
+        void deserialize_withLocalDateTimeString_returnsLocalDateTime() throws Exception {
+            String json = DummyConfigConstants.Json.TIME_AS_STRING;
 
-    @Test
-    void shouldSerializeLocalDateTimeInStandardFormat() throws Exception {
-        String json = objectMapper.writeValueAsString(dummyConfigEntity);
+            LocalDateTime dateTime = objectMapper.readValue(json, LocalDateTime.class);
 
-        assertThat(json)
-            .contains(DummyConfigConstants.Json.TIME_AS_FORMATTED_STRING);
-    }
-
-    @Test
-    void shouldDeserializeStringToLocalDateTime() throws Exception {
-        String json = DummyConfigConstants.Json.TIME_AS_STRING;
-
-        LocalDateTime dateTime = objectMapper.readValue(json, LocalDateTime.class);
-
-        assertThat(dateTime)
-            .isEqualTo(dummyConfigEntity.getTime());
+            assertThat(dateTime)
+                .isEqualTo(dummyConfigEntity.getTime());
+        }
     }
 } 

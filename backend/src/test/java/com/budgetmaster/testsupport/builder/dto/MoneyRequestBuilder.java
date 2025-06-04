@@ -7,6 +7,7 @@ import com.budgetmaster.application.dto.MoneyRequest;
 import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 
 public class MoneyRequestBuilder {
+    
     private BigDecimal amount;
     private Currency currency = MoneyConstants.GBP;
 

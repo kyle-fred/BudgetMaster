@@ -7,7 +7,6 @@ import com.budgetmaster.application.model.Money;
 import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 
 import static org.assertj.core.api.Assertions.assertThat;
-// import static org.junit.jupiter.api.Assertions.*;
 
 public class MoneyModelAssertions {
 

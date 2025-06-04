@@ -6,6 +6,7 @@ import com.budgetmaster.application.enums.TransactionType;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 public class IncomeRequestBuilder {
+    
     private String name = IncomeConstants.Default.NAME;
     private String source = IncomeConstants.Default.SOURCE;
     private MoneyRequest money = MoneyRequestBuilder.defaultIncome().buildRequest();

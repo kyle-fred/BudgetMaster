@@ -18,6 +18,8 @@ import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,8 @@ import static org.mockito.ArgumentMatchers.any;
 @SpringBootTest
 @Import(TestContainersConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class ExpenseServiceIntegrationTest {
+@DisplayName("Expense Service Integration Tests")
+class ExpenseServiceIntegrationTest {
 
     @SuppressWarnings("removal")
     @SpyBean
@@ -58,138 +61,163 @@ public class ExpenseServiceIntegrationTest {
         defaultRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
     }
     
-    @Test
-    void createExpense_ValidRequest_ProperlyPersistsAndSynchronizes() {
-        Expense createdExpense = expenseService.createExpense(defaultRequest);
+    @Nested
+    @DisplayName("Create Expense Operations")
+    class CreateExpenseOperations {
         
-        ExpenseIntegrationAssertions.assertExpense(createdExpense)
-            .isDefaultExpense();
-        
-        Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
-        ExpenseIntegrationAssertions.assertExpense(persisted)
-            .isEqualTo(createdExpense);
-        
-        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(budget)
-            .hasTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE);
-    }
-    
-    @Test
-    void updateExpense_ValidRequest_ProperlyUpdatesAndSynchronizes() {
-        Expense createdExpense = expenseService.createExpense(defaultRequest);
-        ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
-        
-        Expense updatedExpense = expenseService.updateExpense(createdExpense.getId(), updateRequest);
-        ExpenseIntegrationAssertions.assertExpense(updatedExpense)
-            .hasId(createdExpense.getId())
-            .isUpdatedExpense();
-        
-        Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
-        ExpenseIntegrationAssertions.assertExpense(persisted)
-            .isEqualTo(updatedExpense);
-        
-        Budget budget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(budget)
-            .hasTotalExpense(BudgetConstants.Updated.TOTAL_EXPENSE);
-    }
+        @Test
+        @DisplayName("Should create expense and synchronize budget when request is valid")
+        void createExpense_withValidRequest_properlyPersistsAndSynchronizes() {
+            Expense createdExpense = expenseService.createExpense(defaultRequest);
+            
+            ExpenseIntegrationAssertions.assertExpense(createdExpense)
+                .isDefaultExpense();
+            
+            Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
+            ExpenseIntegrationAssertions.assertExpense(persisted)
+                .isEqualTo(createdExpense);
+            
+            Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(budget)
+                .hasTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE);
+        }
 
-    @Test
-    void updateExpense_ChangesMonth_ProperlySynchronizesBothBudgets() {
-        Expense createdExpense = expenseService.createExpense(defaultRequest);
-        ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
-        expenseService.updateExpense(createdExpense.getId(), updateRequest);
-        
-        Budget oldBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(oldBudget)
-            .hasTotalExpense(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
-        
-        Budget newBudget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(newBudget)
-            .hasTotalExpense(BudgetConstants.Updated.TOTAL_EXPENSE);
-    }
-    
-    @Test
-    void deleteExpense_ValidId_ProperlyDeletesAndSynchronizes() {
-        Expense createdExpense = expenseService.createExpense(defaultRequest);
-        expenseService.deleteExpense(createdExpense.getId());
-        ExpenseIntegrationAssertions.assertExpenseDeleted(createdExpense, expenseRepository);
-        
-        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(budget)
-            .hasTotalExpense(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
-    }
-    
-    // -- Transaction Rollback Tests --
-    
-    @Test
-    void createExpense_SynchronizationFails_RollsBackTransaction() {
-        Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
-                .when(expenseBudgetSynchronizer).apply(any(Expense.class));
+        @Test
+        @DisplayName("Should rollback transaction when synchronization fails")
+        void createExpense_withSynchronizationFailure_rollsBackTransaction() {
+            Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
+                    .when(expenseBudgetSynchronizer).apply(any(Expense.class));
 
-        assertThatThrownBy(() -> expenseService.createExpense(defaultRequest))
-            .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
+            assertThatThrownBy(() -> expenseService.createExpense(defaultRequest))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
-        ExpenseIntegrationListAssertions.assertExpenses(expenseRepository.findAll())
-            .hasSize(0);
+            ExpenseIntegrationListAssertions.assertExpenses(expenseRepository.findAll())
+                .hasSize(0);
 
-        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudgetNotInitialized(budget);
+            Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudgetNotInitialized(budget);
+        }
     }
 
-    @Test
-    void updateExpense_SynchronizationFails_RollsBackTransaction() {
-        Expense original = expenseService.createExpense(defaultRequest);
-        ExpenseRequest updatedRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
+    @Nested
+    @DisplayName("Update Expense Operations")
+    class UpdateExpenseOperations {
         
-        Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
-            .when(expenseBudgetSynchronizer).reapply(any(Expense.class), any(Expense.class));
+        @Test
+        @DisplayName("Should update expense and synchronize budget when request is valid")
+        void updateExpense_withValidRequest_properlyUpdatesAndSynchronizes() {
+            Expense createdExpense = expenseService.createExpense(defaultRequest);
+            ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
+            
+            Expense updatedExpense = expenseService.updateExpense(createdExpense.getId(), updateRequest);
+            ExpenseIntegrationAssertions.assertExpense(updatedExpense)
+                .hasId(createdExpense.getId())
+                .isUpdatedExpense();
+            
+            Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
+            ExpenseIntegrationAssertions.assertExpense(persisted)
+                .isEqualTo(updatedExpense);
+            
+            Budget budget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(budget)
+                .hasTotalExpense(BudgetConstants.Updated.TOTAL_EXPENSE);
+        }
 
-        assertThatThrownBy(() -> expenseService.updateExpense(original.getId(), updatedRequest))
-            .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
+        @Test
+        @DisplayName("Should synchronize both budgets when month changes")
+        void updateExpense_withMonthChange_properlySynchronizesBothBudgets() {
+            Expense createdExpense = expenseService.createExpense(defaultRequest);
+            ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
+            expenseService.updateExpense(createdExpense.getId(), updateRequest);
+            
+            Budget oldBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(oldBudget)
+                .hasTotalExpense(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
+            
+            Budget newBudget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(newBudget)
+                .hasTotalExpense(BudgetConstants.Updated.TOTAL_EXPENSE);
+        }
 
-        Expense persisted = expenseRepository.findById(original.getId()).orElse(null);
-        ExpenseIntegrationAssertions.assertExpense(persisted)
-            .isEqualTo(original);
+        @Test
+        @DisplayName("Should rollback transaction when synchronization fails")
+        void updateExpense_withSynchronizationFailure_rollsBackTransaction() {
+            Expense original = expenseService.createExpense(defaultRequest);
+            ExpenseRequest updatedRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
+            
+            Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
+                .when(expenseBudgetSynchronizer).reapply(any(Expense.class), any(Expense.class));
 
-        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(budget)
-            .hasTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE);
+            assertThatThrownBy(() -> expenseService.updateExpense(original.getId(), updatedRequest))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
+
+            Expense persisted = expenseRepository.findById(original.getId()).orElse(null);
+            ExpenseIntegrationAssertions.assertExpense(persisted)
+                .isEqualTo(original);
+
+            Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(budget)
+                .hasTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE);
+        }
     }
 
-    @Test
-    void deleteExpense_SynchronizationFails_RollsBackTransaction() {
-        Expense expense = expenseService.createExpense(defaultRequest);
+    @Nested
+    @DisplayName("Delete Expense Operations")
+    class DeleteExpenseOperations {
         
-        Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
-            .when(expenseBudgetSynchronizer).retract(any(Expense.class));
+        @Test
+        @DisplayName("Should delete expense and synchronize budget when ID is valid")
+        void deleteExpense_withValidId_properlyDeletesAndSynchronizes() {
+            Expense createdExpense = expenseService.createExpense(defaultRequest);
+            expenseService.deleteExpense(createdExpense.getId());
+            ExpenseIntegrationAssertions.assertExpenseDeleted(createdExpense, expenseRepository);
+            
+            Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(budget)
+                .hasTotalExpense(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
+        }
 
-        assertThatThrownBy(() -> expenseService.deleteExpense(expense.getId()))
-            .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
+        @Test
+        @DisplayName("Should rollback transaction when synchronization fails")
+        void deleteExpense_withSynchronizationFailure_rollsBackTransaction() {
+            Expense expense = expenseService.createExpense(defaultRequest);
+            
+            Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
+                .when(expenseBudgetSynchronizer).retract(any(Expense.class));
 
-        ExpenseIntegrationAssertions.assertExpense(expense)
-            .isEqualTo(expense);
+            assertThatThrownBy(() -> expenseService.deleteExpense(expense.getId()))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
-        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(budget)
-            .hasTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE);
+            ExpenseIntegrationAssertions.assertExpense(expense)
+                .isEqualTo(expense);
+
+            Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(budget)
+                .hasTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE);
+        }
     }
-    
-    // -- Read and Exception Tests --
-    
-    @Test
-    void getExpenseById_NonExistentId_ThrowsException() {
-        assertThatThrownBy(() -> expenseService.getExpenseById(ExpenseConstants.NonExistent.ID))
-            .isInstanceOf(ExpenseNotFoundException.class)
-            .hasMessageContaining(ExpenseConstants.NonExistent.ID.toString());
-    }
-    
-    @Test
-    void getAllExpensesForMonth_NoExpenses_ThrowsException() {
-        assertThatThrownBy(() -> expenseService.getAllExpensesForMonth(ExpenseConstants.NonExistent.YEAR_MONTH_STRING))
-            .isInstanceOf(ExpenseNotFoundException.class)
-            .hasMessageContaining(ExpenseConstants.NonExistent.YEAR_MONTH_STRING);
+
+    @Nested
+    @DisplayName("Get Expense Operations")
+    class GetExpenseOperations {
+        
+        @Test
+        @DisplayName("Should throw not found when ID does not exist")
+        void getExpense_withNonExistentId_throwsNotFoundException() {
+            assertThatThrownBy(() -> expenseService.getExpenseById(ExpenseConstants.NonExistent.ID))
+                .isInstanceOf(ExpenseNotFoundException.class)
+                .hasMessageContaining(ExpenseConstants.NonExistent.ID.toString());
+        }
+        
+        @Test
+        @DisplayName("Should throw not found when month has no expenses")
+        void getAllExpenses_withNonExistentMonth_throwsNotFoundException() {
+            assertThatThrownBy(() -> expenseService.getAllExpensesForMonth(ExpenseConstants.NonExistent.YEAR_MONTH_STRING))
+                .isInstanceOf(ExpenseNotFoundException.class)
+                .hasMessageContaining(ExpenseConstants.NonExistent.YEAR_MONTH_STRING);
+        }
     }
 }

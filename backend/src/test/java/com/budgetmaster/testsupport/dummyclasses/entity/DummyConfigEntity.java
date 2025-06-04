@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class DummyConfigEntity {
+    
     private String multiWordProperty;
     private BigDecimal bigDecimal;
     private LocalDateTime time;

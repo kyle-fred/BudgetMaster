@@ -7,6 +7,8 @@ import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -24,7 +26,8 @@ import java.util.Optional;
 @Import(TestContainersConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class BudgetRepositoryTest {
+@DisplayName("Budget Repository Tests")
+class BudgetRepositoryTest {
 
     @Autowired
     private BudgetRepository budgetRepository;
@@ -37,39 +40,54 @@ public class BudgetRepositoryTest {
         testBudget = budgetRepository.save(BudgetBuilder.defaultBudget().build());
     }
 
-    @Test
-    void shouldSaveBudget() {
-        BudgetIntegrationAssertions.assertBudget(testBudget)
-            .isDefaultBudget();
-    }
-
-    @Test
-    void shouldFindBudgetById() {
-        Budget foundBudget = budgetRepository.findById(testBudget.getId()).orElse(null);
-
-        BudgetIntegrationAssertions.assertBudget(foundBudget)
-            .isEqualTo(testBudget);
-    }
-
-    @Test
-    void shouldFindBudgetByMonth() {
-        Optional<Budget> foundBudget = budgetRepository.findByMonth(testBudget.getMonth());
+    @Nested
+    @DisplayName("Budget Persistence")
+    class BudgetPersistence {
         
-        BudgetIntegrationAssertions.assertBudget(foundBudget.get())
-            .isEqualTo(testBudget);
+        @Test
+        @DisplayName("Should save budget to repository")
+        void save_withValidBudget_persistsBudget() {
+            BudgetIntegrationAssertions.assertBudget(testBudget)
+                .isDefaultBudget();
+        }
+
+        @Test
+        @DisplayName("Should delete budget from repository")
+        void delete_withExistingBudget_removesBudget() {
+            budgetRepository.delete(testBudget);
+
+            BudgetIntegrationAssertions.assertBudgetDeleted(testBudget, budgetRepository);
+        }
     }
 
-    @Test
-    void shouldReturnEmptyOptionalWhenNoBudgetFound() {
-        Optional<Budget> foundBudget = budgetRepository.findByMonth(BudgetConstants.NonExistent.YEAR_MONTH);
+    @Nested
+    @DisplayName("Budget Retrieval")
+    class BudgetRetrieval {
+        
+        @Test
+        @DisplayName("Should find budget by ID")
+        void findById_withExistingId_returnsBudget() {
+            Budget foundBudget = budgetRepository.findById(testBudget.getId()).orElse(null);
 
-        assertThat(foundBudget).isEmpty();
-    }
+            BudgetIntegrationAssertions.assertBudget(foundBudget)
+                .isEqualTo(testBudget);
+        }
 
-    @Test
-    void shouldDeleteBudget() {
-        budgetRepository.delete(testBudget);
+        @Test
+        @DisplayName("Should find budget by month")
+        void findByMonth_withExistingMonth_returnsBudget() {
+            Optional<Budget> foundBudget = budgetRepository.findByMonth(testBudget.getMonth());
+            
+            BudgetIntegrationAssertions.assertBudget(foundBudget.get())
+                .isEqualTo(testBudget);
+        }
 
-        BudgetIntegrationAssertions.assertBudgetDeleted(testBudget, budgetRepository);
+        @Test
+        @DisplayName("Should return empty optional when budget not found")
+        void findByMonth_withNonExistentMonth_returnsEmptyOptional() {
+            Optional<Budget> foundBudget = budgetRepository.findByMonth(BudgetConstants.NonExistent.YEAR_MONTH);
+
+            assertThat(foundBudget).isEmpty();
+        }
     }
 }

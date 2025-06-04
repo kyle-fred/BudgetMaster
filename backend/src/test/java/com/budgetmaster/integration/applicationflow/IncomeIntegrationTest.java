@@ -16,6 +16,8 @@ import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +33,8 @@ import java.util.List;
 @SpringBootTest
 @Import(TestContainersConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class IncomeIntegrationTest {
+@DisplayName("Income Integration Tests")
+class IncomeIntegrationTest {
 
     @Autowired
     private IncomeController incomeController;
@@ -53,73 +56,99 @@ public class IncomeIntegrationTest {
         createdIncome = incomeController.createIncome(defaultIncomeRequest).getBody();
     }
 
-    @Test
-    void createIncome_ValidRequest_ProperlyPersistsAndSynchronizes() {
-        IncomeIntegrationAssertions.assertIncome(createdIncome)
-            .isDefaultIncome();
+    @Nested
+    @DisplayName("POST /income Operations")
+    class CreateIncomeOperations {
         
-        Income persisted = incomeRepository.findById(createdIncome.getId()).orElse(null);
-        IncomeIntegrationAssertions.assertIncome(persisted)
-            .isEqualTo(createdIncome);
+        @Test
+        @DisplayName("Should create income and synchronize budget when request is valid")
+        void createIncome_withValidRequest_properlyPersistsAndSynchronizes() {
+            IncomeIntegrationAssertions.assertIncome(createdIncome)
+                .isDefaultIncome();
+            
+            Income persisted = incomeRepository.findById(createdIncome.getId()).orElse(null);
+            IncomeIntegrationAssertions.assertIncome(persisted)
+                .isEqualTo(createdIncome);
 
-        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(budget)
-            .hasTotalIncome(BudgetConstants.Default.TOTAL_INCOME);
+            Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(budget)
+                .hasTotalIncome(BudgetConstants.Default.TOTAL_INCOME);
+        }
     }
 
-    @Test
-    void updateIncome_ValidRequest_ProperlyUpdatesAndSynchronizes() {
-        IncomeRequest updateRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
+    @Nested
+    @DisplayName("PUT /income/{id} Operations")
+    class UpdateIncomeOperations {
+        
+        @Test
+        @DisplayName("Should update income and synchronize budget when request is valid")
+        void updateIncome_withValidRequest_properlyUpdatesAndSynchronizes() {
+            IncomeRequest updateRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
 
-        Income updatedIncome = incomeController.updateIncome(createdIncome.getId(), updateRequest).getBody();
-        IncomeIntegrationAssertions.assertIncome(updatedIncome)
-            .hasId(createdIncome.getId())
-            .isUpdatedIncome();
+            Income updatedIncome = incomeController.updateIncome(createdIncome.getId(), updateRequest).getBody();
+            IncomeIntegrationAssertions.assertIncome(updatedIncome)
+                .hasId(createdIncome.getId())
+                .isUpdatedIncome();
 
-        Income persisted = incomeRepository.findById(createdIncome.getId()).orElse(null);
-        IncomeIntegrationAssertions.assertIncome(persisted)
-            .isEqualTo(updatedIncome);
+            Income persisted = incomeRepository.findById(createdIncome.getId()).orElse(null);
+            IncomeIntegrationAssertions.assertIncome(persisted)
+                .isEqualTo(updatedIncome);
 
-        Budget oldBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(oldBudget)
-            .hasTotalIncome(BudgetConstants.ZeroValues.TOTAL_INCOME);
+            Budget oldBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(oldBudget)
+                .hasTotalIncome(BudgetConstants.ZeroValues.TOTAL_INCOME);
 
-        Budget newBudget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(newBudget)
-            .hasTotalIncome(BudgetConstants.Updated.TOTAL_INCOME);
+            Budget newBudget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(newBudget)
+                .hasTotalIncome(BudgetConstants.Updated.TOTAL_INCOME);
+        }
     }
 
-    @Test
-    void deleteIncome_ValidId_ProperlyDeletesAndSynchronizes() {
-        incomeController.deleteIncome(createdIncome.getId());
-        IncomeIntegrationAssertions.assertIncomeDeleted(createdIncome, incomeRepository);
+    @Nested
+    @DisplayName("DELETE /income/{id} Operations")
+    class DeleteIncomeOperations {
+        
+        @Test
+        @DisplayName("Should delete income and synchronize budget when ID is valid")
+        void deleteIncome_withValidId_properlyDeletesAndSynchronizes() {
+            incomeController.deleteIncome(createdIncome.getId());
+            IncomeIntegrationAssertions.assertIncomeDeleted(createdIncome, incomeRepository);
 
-        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(budget)
-            .hasTotalIncome(BudgetConstants.ZeroValues.TOTAL_INCOME);
+            Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(budget)
+                .hasTotalIncome(BudgetConstants.ZeroValues.TOTAL_INCOME);
+        }
     }
 
-    @Test
-    void getAllIncomesForMonth_NoIncomes_ThrowsNotFoundException() {
-        assertThatThrownBy(() -> incomeController.getAllIncomesForMonth(IncomeConstants.NonExistent.YEAR_MONTH_STRING))
-            .isInstanceOf(IncomeNotFoundException.class)
-            .hasMessageContaining(IncomeConstants.NonExistent.YEAR_MONTH_STRING);
-    }
+    @Nested
+    @DisplayName("GET /income Operations")
+    class GetIncomeOperations {
+        
+        @Test
+        @DisplayName("Should throw not found when month has no incomes")
+        void getAllIncomes_withNonExistentMonth_throwsNotFoundException() {
+            assertThatThrownBy(() -> incomeController.getAllIncomesForMonth(IncomeConstants.NonExistent.YEAR_MONTH_STRING))
+                .isInstanceOf(IncomeNotFoundException.class)
+                .hasMessageContaining(IncomeConstants.NonExistent.YEAR_MONTH_STRING);
+        }
 
-    @Test
-    void getAllIncomesForMonth_WithIncomes_ReturnsCorrectList() {
-        Income secondIncome = incomeController.createIncome(defaultIncomeRequest).getBody();
-        List<Income> response = incomeController.getAllIncomesForMonth(IncomeConstants.Default.YEAR_MONTH_STRING).getBody();
+        @Test
+        @DisplayName("Should return list of incomes when month is valid")
+        void getAllIncomes_withValidMonth_returnsCorrectList() {
+            Income secondIncome = incomeController.createIncome(defaultIncomeRequest).getBody();
+            List<Income> response = incomeController.getAllIncomesForMonth(IncomeConstants.Default.YEAR_MONTH_STRING).getBody();
 
-        IncomeIntegrationListAssertions.assertIncomes(response)
-            .hasSize(2)
-            .contains(createdIncome, secondIncome);
-    }
+            IncomeIntegrationListAssertions.assertIncomes(response)
+                .hasSize(2)
+                .contains(createdIncome, secondIncome);
+        }
 
-    @Test
-    void getIncomeById_NonExistentId_ThrowsNotFoundException() {
-        assertThatThrownBy(() -> incomeController.getIncomeById(IncomeConstants.NonExistent.ID))
-            .isInstanceOf(IncomeNotFoundException.class)
-            .hasMessageContaining(IncomeConstants.NonExistent.ID.toString());
+        @Test
+        @DisplayName("Should throw not found when ID does not exist")
+        void getIncome_withNonExistentId_throwsNotFoundException() {
+            assertThatThrownBy(() -> incomeController.getIncomeById(IncomeConstants.NonExistent.ID))
+                .isInstanceOf(IncomeNotFoundException.class)
+                .hasMessageContaining(IncomeConstants.NonExistent.ID.toString());
+        }
     }
 } 

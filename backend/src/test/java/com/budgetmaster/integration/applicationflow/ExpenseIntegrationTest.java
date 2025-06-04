@@ -16,6 +16,8 @@ import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 import com.budgetmaster.testsupport.constants.domain.ExpenseConstants;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +33,8 @@ import java.util.List;
 @SpringBootTest
 @Import(TestContainersConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class ExpenseIntegrationTest {
+@DisplayName("Expense Integration Tests")
+class ExpenseIntegrationTest {
 
     @Autowired
     private ExpenseController expenseController;
@@ -53,73 +56,99 @@ public class ExpenseIntegrationTest {
         createdExpense = expenseController.createExpense(defaultExpenseRequest).getBody();
     }
 
-    @Test
-    void createExpense_ValidRequest_ProperlyPersistsAndSynchronizes() {
-        ExpenseIntegrationAssertions.assertExpense(createdExpense)
-            .isDefaultExpense();
+    @Nested
+    @DisplayName("POST /expense Operations")
+    class CreateExpenseOperations {
+        
+        @Test
+        @DisplayName("Should create expense and synchronize budget when request is valid")
+        void createExpense_withValidRequest_properlyPersistsAndSynchronizes() {
+            ExpenseIntegrationAssertions.assertExpense(createdExpense)
+                .isDefaultExpense();
 
-        Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
-        ExpenseIntegrationAssertions.assertExpense(persisted)
-            .isEqualTo(createdExpense);
+            Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
+            ExpenseIntegrationAssertions.assertExpense(persisted)
+                .isEqualTo(createdExpense);
 
-        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(budget)
-            .hasTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE);
+            Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(budget)
+                .hasTotalExpense(BudgetConstants.Default.TOTAL_EXPENSE);
+        }
     }
 
-    @Test
-    void updateExpense_ValidRequest_ProperlyUpdatesAndSynchronizes() {
-        ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
+    @Nested
+    @DisplayName("PUT /expense/{id} Operations")
+    class UpdateExpenseOperations {
+        
+        @Test
+        @DisplayName("Should update expense and synchronize budget when request is valid")
+        void updateExpense_withValidRequest_properlyUpdatesAndSynchronizes() {
+            ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
 
-        Expense updatedExpense = expenseController.updateExpense(createdExpense.getId(), updateRequest).getBody();
-        ExpenseIntegrationAssertions.assertExpense(updatedExpense)
-            .hasId(createdExpense.getId())
-            .isUpdatedExpense();
+            Expense updatedExpense = expenseController.updateExpense(createdExpense.getId(), updateRequest).getBody();
+            ExpenseIntegrationAssertions.assertExpense(updatedExpense)
+                .hasId(createdExpense.getId())
+                .isUpdatedExpense();
 
-        Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
-        ExpenseIntegrationAssertions.assertExpense(persisted)
-            .isEqualTo(updatedExpense);
+            Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
+            ExpenseIntegrationAssertions.assertExpense(persisted)
+                .isEqualTo(updatedExpense);
 
-        Budget oldBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(oldBudget)
-            .hasTotalExpense(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
+            Budget oldBudget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(oldBudget)
+                .hasTotalExpense(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
 
-        Budget newBudget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(newBudget)
-            .hasTotalExpense(BudgetConstants.Updated.TOTAL_EXPENSE);
+            Budget newBudget = budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(newBudget)
+                .hasTotalExpense(BudgetConstants.Updated.TOTAL_EXPENSE);
+        }
     }
 
-    @Test
-    void deleteExpense_ValidId_ProperlyDeletesAndSynchronizes() {
-        expenseController.deleteExpense(createdExpense.getId());
-        ExpenseIntegrationAssertions.assertExpenseDeleted(createdExpense, expenseRepository);
+    @Nested
+    @DisplayName("DELETE /expense/{id} Operations")
+    class DeleteExpenseOperations {
+        
+        @Test
+        @DisplayName("Should delete expense and synchronize budget when ID is valid")
+        void deleteExpense_withValidId_properlyDeletesAndSynchronizes() {
+            expenseController.deleteExpense(createdExpense.getId());
+            ExpenseIntegrationAssertions.assertExpenseDeleted(createdExpense, expenseRepository);
 
-        Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
-        BudgetIntegrationAssertions.assertBudget(budget)
-            .hasTotalExpense(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
+            Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
+            BudgetIntegrationAssertions.assertBudget(budget)
+                .hasTotalExpense(BudgetConstants.ZeroValues.TOTAL_EXPENSE);
+        }
     }
 
-    @Test
-    void getAllExpensesForMonth_NoExpenses_ThrowsNotFoundException() {
-        assertThatThrownBy(() -> expenseController.getAllExpensesForMonth(ExpenseConstants.NonExistent.YEAR_MONTH_STRING))
-            .isInstanceOf(ExpenseNotFoundException.class)
-            .hasMessageContaining(ExpenseConstants.NonExistent.YEAR_MONTH_STRING);
-    }
+    @Nested
+    @DisplayName("GET /expense Operations")
+    class GetExpenseOperations {
+        
+        @Test
+        @DisplayName("Should throw not found when month has no expenses")
+        void getAllExpenses_withNonExistentMonth_throwsNotFoundException() {
+            assertThatThrownBy(() -> expenseController.getAllExpensesForMonth(ExpenseConstants.NonExistent.YEAR_MONTH_STRING))
+                .isInstanceOf(ExpenseNotFoundException.class)
+                .hasMessageContaining(ExpenseConstants.NonExistent.YEAR_MONTH_STRING);
+        }
 
-    @Test
-    void getAllExpensesForMonth_WithExpenses_ReturnsCorrectList() {
-        Expense secondExpense = expenseController.createExpense(defaultExpenseRequest).getBody();
-        List<Expense> response = expenseController.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH_STRING).getBody();
+        @Test
+        @DisplayName("Should return list of expenses when month is valid")
+        void getAllExpenses_withValidMonth_returnsCorrectList() {
+            Expense secondExpense = expenseController.createExpense(defaultExpenseRequest).getBody();
+            List<Expense> response = expenseController.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH_STRING).getBody();
 
-        ExpenseIntegrationListAssertions.assertExpenses(response)
-            .hasSize(2)
-            .contains(createdExpense, secondExpense);
-    }
+            ExpenseIntegrationListAssertions.assertExpenses(response)
+                .hasSize(2)
+                .contains(createdExpense, secondExpense);
+        }
 
-    @Test
-    void getExpenseById_NonExistentId_ThrowsNotFoundException() {
-        assertThatThrownBy(() -> expenseController.getExpenseById(ExpenseConstants.NonExistent.ID))
-            .isInstanceOf(ExpenseNotFoundException.class)
-            .hasMessageContaining(ExpenseConstants.NonExistent.ID.toString());
+        @Test
+        @DisplayName("Should throw not found when ID does not exist")
+        void getExpense_withNonExistentId_throwsNotFoundException() {
+            assertThatThrownBy(() -> expenseController.getExpenseById(ExpenseConstants.NonExistent.ID))
+                .isInstanceOf(ExpenseNotFoundException.class)
+                .hasMessageContaining(ExpenseConstants.NonExistent.ID.toString());
+        }
     }
 } 

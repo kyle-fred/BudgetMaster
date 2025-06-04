@@ -5,52 +5,66 @@ import com.budgetmaster.testsupport.assertions.model.IncomeModelAssertions;
 import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.builder.model.IncomeBuilder;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.api.BeforeEach;
-
-public class IncomeTest {
+@DisplayName("Income Model Tests")
+class IncomeTest {
 
     private Income income;
-    private IncomeRequest defaultIncomeRequest;
+    private IncomeRequest defaultIncomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
 
     @BeforeEach
     void setUp() {
         income = new Income();
-        defaultIncomeRequest = IncomeRequestBuilder.defaultIncomeRequest()
-            .buildRequest();
-    }
-    
-    @Test
-    void from_ValidRequest_ReturnsIncome() {
-        income = Income.from(defaultIncomeRequest);
-
-        IncomeModelAssertions.assertIncome(income)
-            .isDefaultIncome();
-    }
-    
-    @Test
-    void updateFrom_ValidRequest_UpdatesIncome() {
-        income.updateFrom(defaultIncomeRequest);
-
-        IncomeModelAssertions.assertIncome(income)
-            .isDefaultIncome();
     }
 
-    @Test
-    void deepCopy_ReturnsNewIncomeWithSameValues() {
-        income = IncomeBuilder.defaultIncome().build();
-        Income copy = income.deepCopy();
+    @Nested
+    @DisplayName("Income Creation")
+    class IncomeCreation {
+        
+        @Test
+        @DisplayName("Should create income from valid request")
+        void from_withValidRequest_returnsIncome() {
+            income = Income.from(defaultIncomeRequest);
 
-        IncomeModelAssertions.assertIncome(copy)
-            .isDefaultIncome();
+            IncomeModelAssertions.assertIncome(income)
+                .isDefaultIncome();
+        }
+
+        @Test
+        @DisplayName("Should create income with valid parameters")
+        void of_withValidParameters_createsIncomeWithCorrectValues() {
+            income = IncomeBuilder.defaultIncome().build();
+
+            IncomeModelAssertions.assertIncome(income)
+                .isDefaultIncome();
+        }
     }
 
-    @Test
-    void of_WithValidParameters_CreatesIncomeWithCorrectValues() {
-        income = IncomeBuilder.defaultIncome().build();
+    @Nested
+    @DisplayName("Income Operations")
+    class IncomeOperations {
+        
+        @Test
+        @DisplayName("Should update income from valid request")
+        void updateFrom_withValidRequest_updatesIncome() {
+            income.updateFrom(defaultIncomeRequest);
 
-        IncomeModelAssertions.assertIncome(income)
-            .isDefaultIncome();
+            IncomeModelAssertions.assertIncome(income)
+                .isDefaultIncome();
+        }
+
+        @Test
+        @DisplayName("Should create deep copy with same values")
+        void deepCopy_returnsNewIncomeWithSameValues() {
+            income = IncomeBuilder.defaultIncome().build();
+            Income copy = income.deepCopy();
+
+            IncomeModelAssertions.assertIncome(copy)
+                .isDefaultIncome();
+        }
     }
 }

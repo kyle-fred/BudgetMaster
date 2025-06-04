@@ -5,51 +5,66 @@ import com.budgetmaster.testsupport.assertions.model.ExpenseModelAssertions;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.api.BeforeEach;
-
-public class ExpenseTest {
+@DisplayName("Expense Model Tests")
+class ExpenseTest {
 
 	private Expense expense;
-	private ExpenseRequest defaultExpenseRequest;
+	private ExpenseRequest defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 
 	@BeforeEach
 	void setUp() {
 		expense = new Expense();
-		defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 	}
-	
-	@Test
-	void from_ValidRequest_ReturnsExpense() {
-		expense = Expense.from(defaultExpenseRequest);
+
+	@Nested
+	@DisplayName("Expense Creation")
+	class ExpenseCreation {
 		
-		ExpenseModelAssertions.assertExpense(expense)
-			.isDefaultExpense();
+		@Test
+		@DisplayName("Should create expense from valid request")
+		void from_withValidRequest_returnsExpense() {
+			expense = Expense.from(defaultExpenseRequest);
+			
+			ExpenseModelAssertions.assertExpense(expense)
+				.isDefaultExpense();
+		}
+
+		@Test
+		@DisplayName("Should create expense with valid parameters")
+		void of_withValidParameters_createsExpenseWithCorrectValues() {
+			expense = ExpenseBuilder.defaultExpense().build();
+
+			ExpenseModelAssertions.assertExpense(expense)
+				.isDefaultExpense();
+		}
 	}
-	
-	@Test
-	void updateFrom_ValidRequest_UpdatesExpense() {
-		expense.updateFrom(defaultExpenseRequest);
+
+	@Nested
+	@DisplayName("Expense Operations")
+	class ExpenseOperations {
 		
-		ExpenseModelAssertions.assertExpense(expense)
-			.isDefaultExpense();
-	}
+		@Test
+		@DisplayName("Should update expense from valid request")
+		void updateFrom_withValidRequest_updatesExpense() {
+			expense.updateFrom(defaultExpenseRequest);
+			
+			ExpenseModelAssertions.assertExpense(expense)
+				.isDefaultExpense();
+		}
 
-	@Test
-	void deepCopy_ReturnsNewExpenseWithSameValues() {
-		expense = ExpenseBuilder.defaultExpense().build();
-		Expense copy = expense.deepCopy();
+		@Test
+		@DisplayName("Should create deep copy with same values")
+		void deepCopy_returnsNewExpenseWithSameValues() {
+			expense = ExpenseBuilder.defaultExpense().build();
+			Expense copy = expense.deepCopy();
 
-		ExpenseModelAssertions.assertExpense(copy)
-			.isDefaultExpense();
-	}
-
-	@Test
-	void of_WithValidParameters_CreatesExpenseWithCorrectValues() {
-		expense = ExpenseBuilder.defaultExpense().build();
-
-		ExpenseModelAssertions.assertExpense(expense)
-			.isDefaultExpense();
+			ExpenseModelAssertions.assertExpense(copy)
+				.isDefaultExpense();
+		}
 	}
 }

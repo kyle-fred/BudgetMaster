@@ -46,14 +46,14 @@ assertThat(expected).isEqualTo(actual); // Confusing failure messages
 <br>
 
 ### **2.2 Assertion Helpers**
-✅ Create assertion helper classes for each domain in testsupport/assertions/  
+✅ Create assertion helper classes for each domain in `testsupport/assertions/`  
 ❌ Avoid repeating long assertion chains.
 
 <br>
 
 ### **2.3 Controller `.andExpect()` chains**
-✅ Move long repetitive mockMvc.perform(...) chains into ControllerTestHelper.java files in testsupport/controller  
-❌ Avoid repeating long .andExpect(...) chains.
+✅ Move long repetitive `mockMvc.perform(...)` chains into `ControllerTestHelper.java` files in `testsupport/controller`  
+❌ Avoid repeating long `.andExpect(...)` chains.
 
 <br>
 

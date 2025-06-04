@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ExpenseController.class)
 @Import(JacksonConfig.class)
 public class ExpenseControllerTest {
-	// -- Dependencies --
+
 	@Autowired
 	private MockMvc mockMvc;
 	
@@ -44,11 +44,9 @@ public class ExpenseControllerTest {
 	@MockBean
     private ExpenseService expenseService;
 
-	// -- Test Objects --
 	private Expense testExpense;
 	private ExpenseRequest testExpenseRequest;
 
-	// -- Setup --
 	@BeforeEach
 	void setUp() {
 		testExpense = ExpenseBuilder.defaultExpense().build();

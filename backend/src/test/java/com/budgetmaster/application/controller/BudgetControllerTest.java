@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BudgetController.class)
 @Import(JacksonConfig.class)
 public class BudgetControllerTest {
-	// -- Dependencies --
+
 	@Autowired
 	private MockMvc mockMvc;
 	
@@ -34,7 +34,6 @@ public class BudgetControllerTest {
 	@MockBean
     private BudgetService budgetService;
 
-	// -- Test Objects --
 	private Budget testBudget;
 	
 	@BeforeEach

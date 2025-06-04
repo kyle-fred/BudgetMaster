@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(IncomeController.class)
 @Import(JacksonConfig.class)
 public class IncomeControllerTest {
-	// -- Dependencies --
 	@Autowired
 	private MockMvc mockMvc;
 	
@@ -44,7 +43,6 @@ public class IncomeControllerTest {
 	@MockBean
 	private IncomeService incomeService;
 	
-	// -- Test Objects --
 	private Income testIncome;
 	private IncomeRequest incomeRequest;
 	

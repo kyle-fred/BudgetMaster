@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,6 +21,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,7 +51,7 @@ class BudgetControllerTest {
 		@Test
 		@DisplayName("Should return budget when month is valid")
 		void getBudget_withValidMonth_returnsOk() throws Exception {
-			Mockito.when(budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
+			when(budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
 					.thenReturn(testBudget);
 
 			mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
@@ -65,13 +65,13 @@ class BudgetControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Budget.YEAR).value(BudgetConstants.Default.YEAR))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Budget.MONTH).value(BudgetConstants.Default.MONTH));
 
-			Mockito.verify(budgetService).getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
+			verify(budgetService).getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
 		}
 
 		@Test
 		@DisplayName("Should return not found when month does not exist")
 		void getBudget_withNonExistentMonth_returnsNotFound() throws Exception {
-			Mockito.when(budgetService.getBudgetByMonth(BudgetConstants.NonExistent.YEAR_MONTH.toString()))
+			when(budgetService.getBudgetByMonth(BudgetConstants.NonExistent.YEAR_MONTH.toString()))
 					.thenThrow(new BudgetNotFoundException(String.format(ErrorConstants.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.NonExistent.YEAR_MONTH)));
 
 			mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
@@ -84,13 +84,13 @@ class BudgetControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(PathConstants.Error.Budget.URI))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 
-			Mockito.verify(budgetService).getBudgetByMonth(BudgetConstants.NonExistent.YEAR_MONTH.toString());
+			verify(budgetService).getBudgetByMonth(BudgetConstants.NonExistent.YEAR_MONTH.toString());
 		}
 
 		@Test
 		@DisplayName("Should return internal server error when service error occurs")
 		void getBudget_withServiceError_returnsInternalServerError() throws Exception {
-			Mockito.when(budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
+			when(budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
 					.thenThrow(new RuntimeException(ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
 					
 			mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
@@ -103,7 +103,7 @@ class BudgetControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(PathConstants.Error.Budget.URI))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 
-			Mockito.verify(budgetService).getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
+			verify(budgetService).getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
 		}
 	}
 
@@ -114,20 +114,20 @@ class BudgetControllerTest {
 		@Test
 		@DisplayName("Should delete budget when ID is valid")
 		void deleteBudget_withValidId_returnsNoContent() throws Exception {
-			Mockito.doNothing()
+			doNothing()
 					.when(budgetService)
 					.deleteBudget(BudgetConstants.Default.ID);
 			
 			mockMvc.perform(delete(PathConstants.Endpoints.BUDGET_WITH_ID, BudgetConstants.Default.ID))
 					.andExpect(status().isNoContent());
 
-			Mockito.verify(budgetService).deleteBudget(BudgetConstants.Default.ID);
+			verify(budgetService).deleteBudget(BudgetConstants.Default.ID);
 		}
 
 		@Test
 		@DisplayName("Should return not found when ID does not exist")
 		void deleteBudget_withNonExistentId_returnsNotFound() throws Exception {
-			Mockito.doThrow(new BudgetNotFoundException(String.format(ErrorConstants.Budget.NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID)))
+			doThrow(new BudgetNotFoundException(String.format(ErrorConstants.Budget.NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID)))
 					.when(budgetService)
 					.deleteBudget(BudgetConstants.NonExistent.ID);
 
@@ -140,7 +140,7 @@ class BudgetControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Budget.URI_WITH_ID, BudgetConstants.NonExistent.ID)))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 
-			Mockito.verify(budgetService).deleteBudget(BudgetConstants.NonExistent.ID);
+			verify(budgetService).deleteBudget(BudgetConstants.NonExistent.ID);
 		}
 	}
 }

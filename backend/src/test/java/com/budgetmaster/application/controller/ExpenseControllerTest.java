@@ -19,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -63,7 +63,7 @@ class ExpenseControllerTest {
 		@Test
 		@DisplayName("Should create expense when request is valid")
 		void createExpense_withValidRequest_returnsCreated() throws Exception {
-			Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
+			when(expenseService.createExpense(any(ExpenseRequest.class)))
 					.thenReturn(testExpense);	
 					
 			mockMvc.perform(post(PathConstants.Endpoints.EXPENSE)
@@ -79,13 +79,13 @@ class ExpenseControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.YEAR).value(ExpenseConstants.Default.YEAR))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH).value(ExpenseConstants.Default.MONTH));
 					
-			Mockito.verify(expenseService).createExpense(Mockito.any(ExpenseRequest.class));
+			verify(expenseService).createExpense(any(ExpenseRequest.class));
 		}
 
 		@Test
 		@DisplayName("Should return internal server error when service error occurs")
 		void createExpense_withServiceError_returnsInternalServerError() throws Exception {
-			Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
+			when(expenseService.createExpense(any(ExpenseRequest.class)))
 					.thenThrow(new RuntimeException(ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
 					
 			mockMvc.perform(post(PathConstants.Endpoints.EXPENSE)
@@ -99,13 +99,13 @@ class ExpenseControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(PathConstants.Error.Expense.URI))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 					
-			Mockito.verify(expenseService).createExpense(Mockito.any(ExpenseRequest.class));
+			verify(expenseService).createExpense(any(ExpenseRequest.class));
 		}
 
 		@Test
 		@DisplayName("Should return conflict when data integrity violation occurs")
 		void createExpense_withDataIntegrityViolation_returnsConflict() throws Exception {
-			Mockito.when(expenseService.createExpense(Mockito.any(ExpenseRequest.class)))
+			when(expenseService.createExpense(any(ExpenseRequest.class)))
 					.thenThrow(new DataIntegrityViolationException(ErrorCode.DATABASE_ERROR.getMessage()));
 					
 			mockMvc.perform(post(PathConstants.Endpoints.EXPENSE)
@@ -119,7 +119,7 @@ class ExpenseControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(PathConstants.Error.Expense.URI))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 					
-			Mockito.verify(expenseService).createExpense(Mockito.any(ExpenseRequest.class));
+			verify(expenseService).createExpense(any(ExpenseRequest.class));
 		}
 	}
 
@@ -130,7 +130,7 @@ class ExpenseControllerTest {
 		@Test
 		@DisplayName("Should return expense when ID is valid")
 		void getExpense_withValidId_returnsOk() throws Exception {
-			Mockito.when(expenseService.getExpenseById(ExpenseConstants.Default.ID))
+			when(expenseService.getExpenseById(ExpenseConstants.Default.ID))
 					.thenReturn(testExpense);
 					
 			mockMvc.perform(get(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.Default.ID)
@@ -145,13 +145,13 @@ class ExpenseControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.YEAR).value(ExpenseConstants.Default.YEAR))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH).value(ExpenseConstants.Default.MONTH));
 					
-			Mockito.verify(expenseService).getExpenseById(ExpenseConstants.Default.ID);
+			verify(expenseService).getExpenseById(ExpenseConstants.Default.ID);
 		}
 
 		@Test
 		@DisplayName("Should return not found when ID does not exist")
 		void getExpense_withNonExistentId_returnsNotFound() throws Exception {
-			Mockito.when(expenseService.getExpenseById(ExpenseConstants.NonExistent.ID))
+			when(expenseService.getExpenseById(ExpenseConstants.NonExistent.ID))
 					.thenThrow(new ExpenseNotFoundException(String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)));
 					
 			mockMvc.perform(get(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID)
@@ -164,7 +164,7 @@ class ExpenseControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Expense.URI_WITH_ID, ExpenseConstants.NonExistent.ID)))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 					
-			Mockito.verify(expenseService).getExpenseById(ExpenseConstants.NonExistent.ID);
+			verify(expenseService).getExpenseById(ExpenseConstants.NonExistent.ID);
 		}
 
 		@Test
@@ -172,7 +172,7 @@ class ExpenseControllerTest {
 		void getAllExpenses_withValidMonth_returnsOk() throws Exception {
 			List<Expense> expenseList = List.of(testExpense, testExpense);
 			
-			Mockito.when(expenseService.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString()))
+			when(expenseService.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString()))
 					.thenReturn(expenseList);
 					
 			mockMvc.perform(get(PathConstants.Endpoints.EXPENSE)
@@ -182,7 +182,7 @@ class ExpenseControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.FIRST_NAME).value(ExpenseConstants.Default.NAME))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.SECOND_NAME).value(ExpenseConstants.Default.NAME));
 					
-			Mockito.verify(expenseService).getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString());
+			verify(expenseService).getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString());
 		}
 	}
 
@@ -193,7 +193,7 @@ class ExpenseControllerTest {
 		@Test
 		@DisplayName("Should update expense when request is valid")
 		void updateExpense_withValidRequest_returnsOk() throws Exception {
-			Mockito.when(expenseService.updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class)))
+			when(expenseService.updateExpense(any(Long.class), any(ExpenseRequest.class)))
 					.thenReturn(testExpense);
 					
 			mockMvc.perform(put(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.Default.ID)
@@ -209,13 +209,13 @@ class ExpenseControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.YEAR).value(ExpenseConstants.Default.YEAR))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH).value(ExpenseConstants.Default.MONTH));
 					
-			Mockito.verify(expenseService).updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class));
+			verify(expenseService).updateExpense(any(Long.class), any(ExpenseRequest.class));
 		}
 
 		@Test
 		@DisplayName("Should return not found when ID does not exist")
 		void updateExpense_withNonExistentId_returnsNotFound() throws Exception {
-			Mockito.when(expenseService.updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class)))
+			when(expenseService.updateExpense(any(Long.class), any(ExpenseRequest.class)))
 					.thenThrow(new ExpenseNotFoundException(String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)));
 					
 			mockMvc.perform(put(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID)
@@ -229,7 +229,7 @@ class ExpenseControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Expense.URI_WITH_ID, ExpenseConstants.NonExistent.ID)))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 					
-			Mockito.verify(expenseService).updateExpense(Mockito.any(Long.class), Mockito.any(ExpenseRequest.class));
+			verify(expenseService).updateExpense(any(Long.class), any(ExpenseRequest.class));
 		}
 	}
 
@@ -240,20 +240,20 @@ class ExpenseControllerTest {
 		@Test
 		@DisplayName("Should delete expense when ID is valid")
 		void deleteExpense_withValidId_returnsNoContent() throws Exception {
-			Mockito.doNothing()
+			doNothing()
 					.when(expenseService)
 					.deleteExpense(ExpenseConstants.Default.ID);
 					
 			mockMvc.perform(delete(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.Default.ID))
 					.andExpect(status().isNoContent());
 					
-			Mockito.verify(expenseService).deleteExpense(ExpenseConstants.Default.ID);
+			verify(expenseService).deleteExpense(ExpenseConstants.Default.ID);
 		}
 
 		@Test
 		@DisplayName("Should return not found when ID does not exist")
 		void deleteExpense_withNonExistentId_returnsNotFound() throws Exception {
-			Mockito.doThrow(new ExpenseNotFoundException(String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)))
+			doThrow(new ExpenseNotFoundException(String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)))
 					.when(expenseService)
 					.deleteExpense(ExpenseConstants.NonExistent.ID);
 					
@@ -266,7 +266,7 @@ class ExpenseControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Expense.URI_WITH_ID, ExpenseConstants.NonExistent.ID)))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 					
-			Mockito.verify(expenseService).deleteExpense(ExpenseConstants.NonExistent.ID);
+			verify(expenseService).deleteExpense(ExpenseConstants.NonExistent.ID);
 		}
 	}
 }

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.springframework.context.annotation.Import;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,7 +46,7 @@ class BudgetServiceTest {
 			try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 				mockedDateUtils.when(() -> DateUtils.getValidYearMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
 						.thenReturn(BudgetConstants.Default.YEAR_MONTH);
-				Mockito.when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
+				when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
 						.thenReturn(Optional.of(testBudget));
 
 				Budget retrievedBudget = budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
@@ -55,7 +54,7 @@ class BudgetServiceTest {
 				BudgetModelAssertions.assertBudget(retrievedBudget)
 					.isDefaultBudget();
 
-				Mockito.verify(budgetRepository, Mockito.times(1))
+				verify(budgetRepository, times(1))
 						.findByMonth(BudgetConstants.Default.YEAR_MONTH);
 			}
 		}
@@ -63,7 +62,7 @@ class BudgetServiceTest {
 		@Test
 		@DisplayName("Should return budget when found by ID")
 		void getBudgetById_withValidId_returnsBudget() {
-			Mockito.when(budgetRepository.findById(BudgetConstants.Default.ID))
+			when(budgetRepository.findById(BudgetConstants.Default.ID))
 					.thenReturn(Optional.of(testBudget));
 			
 			Budget retrievedBudget = budgetService.getBudgetById(BudgetConstants.Default.ID);
@@ -71,7 +70,7 @@ class BudgetServiceTest {
 			BudgetModelAssertions.assertBudget(retrievedBudget)
 				.isDefaultBudget();
 			
-			Mockito.verify(budgetRepository, Mockito.times(1))
+			verify(budgetRepository, times(1))
 					.findById(BudgetConstants.Default.ID);
 		}
 
@@ -83,7 +82,7 @@ class BudgetServiceTest {
 			try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 				mockedDateUtils.when(() -> DateUtils.getValidYearMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
 						.thenReturn(BudgetConstants.Default.YEAR_MONTH);
-				Mockito.when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
+				when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
 						.thenReturn(Optional.empty());
 
 				BudgetNotFoundException exception = assertThrows(
@@ -100,7 +99,7 @@ class BudgetServiceTest {
 		@DisplayName("Should throw exception when budget not found by ID")
 		void getBudgetById_withNonExistentId_throwsException() {
 			String errorMessage = String.format(ErrorConstants.Budget.NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID);
-			Mockito.when(budgetRepository.findById(BudgetConstants.NonExistent.ID))
+			when(budgetRepository.findById(BudgetConstants.NonExistent.ID))
 					.thenReturn(Optional.empty());
 			
 			BudgetNotFoundException exception = assertThrows(
@@ -120,17 +119,17 @@ class BudgetServiceTest {
 		@Test
 		@DisplayName("Should delete budget when found by ID")
 		void deleteBudget_withValidId_deletesBudget() {
-			Mockito.when(budgetRepository.findById(BudgetConstants.Default.ID))
+			when(budgetRepository.findById(BudgetConstants.Default.ID))
 					.thenReturn(Optional.of(testBudget));
-			Mockito.doNothing()
+			doNothing()
 					.when(budgetRepository)
 					.deleteById(BudgetConstants.Default.ID);
 			
 			budgetService.deleteBudget(BudgetConstants.Default.ID);
 
-			Mockito.verify(budgetRepository, Mockito.times(1))
+			verify(budgetRepository, times(1))
 					.findById(BudgetConstants.Default.ID);
-			Mockito.verify(budgetRepository, Mockito.times(1))
+			verify(budgetRepository, times(1))
 					.deleteById(BudgetConstants.Default.ID);
 		}
 
@@ -138,7 +137,7 @@ class BudgetServiceTest {
 		@DisplayName("Should throw exception when budget not found during delete")
 		void deleteBudget_withNonExistentId_throwsException() {
 			String errorMessage = String.format(ErrorConstants.Budget.NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID);
-			Mockito.when(budgetRepository.findById(BudgetConstants.NonExistent.ID))
+			when(budgetRepository.findById(BudgetConstants.NonExistent.ID))
 					.thenReturn(Optional.empty());
 			
 			BudgetNotFoundException exception = assertThrows(
@@ -149,8 +148,8 @@ class BudgetServiceTest {
 			
 			assertEquals(errorMessage, exception.getMessage());
 			
-			Mockito.verify(budgetRepository, Mockito.never())
-					.deleteById(Mockito.anyLong());
+			verify(budgetRepository, never())
+					.deleteById(anyLong());
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package com.budgetmaster.application.exception;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Set;

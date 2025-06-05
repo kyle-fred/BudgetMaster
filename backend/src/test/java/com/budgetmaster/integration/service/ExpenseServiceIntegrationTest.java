@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -31,6 +30,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 
 @Testcontainers
 @SpringBootTest
@@ -85,7 +85,7 @@ class ExpenseServiceIntegrationTest {
         @Test
         @DisplayName("Should rollback transaction when synchronization fails")
         void createExpense_withSynchronizationFailure_rollsBackTransaction() {
-            Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
+            doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                     .when(expenseBudgetSynchronizer).apply(any(Expense.class));
 
             assertThatThrownBy(() -> expenseService.createExpense(defaultRequest))
@@ -146,7 +146,7 @@ class ExpenseServiceIntegrationTest {
             Expense original = expenseService.createExpense(defaultRequest);
             ExpenseRequest updatedRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
             
-            Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
+            doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                 .when(expenseBudgetSynchronizer).reapply(any(Expense.class), any(Expense.class));
 
             assertThatThrownBy(() -> expenseService.updateExpense(original.getId(), updatedRequest))
@@ -184,7 +184,7 @@ class ExpenseServiceIntegrationTest {
         void deleteExpense_withSynchronizationFailure_rollsBackTransaction() {
             Expense expense = expenseService.createExpense(defaultRequest);
             
-            Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
+            doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                 .when(expenseBudgetSynchronizer).retract(any(Expense.class));
 
             assertThatThrownBy(() -> expenseService.deleteExpense(expense.getId()))

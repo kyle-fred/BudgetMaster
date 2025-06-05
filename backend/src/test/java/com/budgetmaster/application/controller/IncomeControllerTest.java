@@ -19,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,6 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -63,7 +63,7 @@ class IncomeControllerTest {
 		@Test
 		@DisplayName("Should create income when request is valid")
 		void createIncome_withValidRequest_returnsCreated() throws Exception {
-			Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
+			when(incomeService.createIncome(any(IncomeRequest.class)))
 					.thenReturn(testIncome);
 			
 			mockMvc.perform(post(PathConstants.Endpoints.INCOME)
@@ -79,13 +79,13 @@ class IncomeControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Income.YEAR).value(IncomeConstants.Default.YEAR))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Income.MONTH).value(IncomeConstants.Default.MONTH));
 			
-			Mockito.verify(incomeService).createIncome(Mockito.any(IncomeRequest.class));
+			verify(incomeService).createIncome(any(IncomeRequest.class));
 		}
 
 		@Test
 		@DisplayName("Should return internal server error when service error occurs")
 		void createIncome_withServiceError_returnsInternalServerError() throws Exception {
-			Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
+			when(incomeService.createIncome(any(IncomeRequest.class)))
 					.thenThrow(new RuntimeException(ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
 
 			mockMvc.perform(post(PathConstants.Endpoints.INCOME)
@@ -99,13 +99,13 @@ class IncomeControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(PathConstants.Error.Income.URI))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 
-			Mockito.verify(incomeService).createIncome(Mockito.any(IncomeRequest.class));
+			verify(incomeService).createIncome(any(IncomeRequest.class));
 		}
 
 		@Test
 		@DisplayName("Should return conflict when data integrity violation occurs")
 		void createIncome_withDataIntegrityViolation_returnsConflict() throws Exception {
-			Mockito.when(incomeService.createIncome(Mockito.any(IncomeRequest.class)))
+			when(incomeService.createIncome(any(IncomeRequest.class)))
 					.thenThrow(new DataIntegrityViolationException(ErrorCode.DATABASE_ERROR.getMessage()));
 			
 			mockMvc.perform(post(PathConstants.Endpoints.INCOME)
@@ -119,7 +119,7 @@ class IncomeControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(PathConstants.Error.Income.URI))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 			
-			Mockito.verify(incomeService).createIncome(Mockito.any(IncomeRequest.class));
+			verify(incomeService).createIncome(any(IncomeRequest.class));
 		}
 	}
 
@@ -130,7 +130,7 @@ class IncomeControllerTest {
 		@Test
 		@DisplayName("Should return income when ID is valid")
 		void getIncome_withValidId_returnsOk() throws Exception {
-			Mockito.when(incomeService.getIncomeById(IncomeConstants.Default.ID))
+			when(incomeService.getIncomeById(IncomeConstants.Default.ID))
 					.thenReturn(testIncome);
 			
 			mockMvc.perform(get(PathConstants.Endpoints.INCOME_WITH_ID, IncomeConstants.Default.ID)
@@ -145,13 +145,13 @@ class IncomeControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Income.YEAR).value(IncomeConstants.Default.YEAR))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Income.MONTH).value(IncomeConstants.Default.MONTH));
 			
-			Mockito.verify(incomeService).getIncomeById(IncomeConstants.Default.ID);
+			verify(incomeService).getIncomeById(IncomeConstants.Default.ID);
 		}
 
 		@Test
 		@DisplayName("Should return not found when ID does not exist")
 		void getIncome_withNonExistentId_returnsNotFound() throws Exception {
-			Mockito.when(incomeService.getIncomeById(IncomeConstants.NonExistent.ID))
+			when(incomeService.getIncomeById(IncomeConstants.NonExistent.ID))
 					.thenThrow(new IncomeNotFoundException(String.format(ErrorConstants.Income.NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)));
 
 			mockMvc.perform(get(PathConstants.Endpoints.INCOME_WITH_ID, IncomeConstants.NonExistent.ID)
@@ -164,7 +164,7 @@ class IncomeControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Income.URI_WITH_ID, IncomeConstants.NonExistent.ID)))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 
-			Mockito.verify(incomeService).getIncomeById(IncomeConstants.NonExistent.ID);
+			verify(incomeService).getIncomeById(IncomeConstants.NonExistent.ID);
 		}
 
 		@Test
@@ -172,7 +172,7 @@ class IncomeControllerTest {
 		void getAllIncomes_withValidMonth_returnsOk() throws Exception {
 			List<Income> incomeList = List.of(testIncome, testIncome);
 			
-			Mockito.when(incomeService.getAllIncomesForMonth(IncomeConstants.Default.YEAR_MONTH.toString()))
+			when(incomeService.getAllIncomesForMonth(IncomeConstants.Default.YEAR_MONTH.toString()))
 					.thenReturn(incomeList);
 			
 			mockMvc.perform(get(PathConstants.Endpoints.INCOME)
@@ -182,7 +182,7 @@ class IncomeControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Income.FIRST_NAME).value(IncomeConstants.Default.NAME))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Income.SECOND_NAME).value(IncomeConstants.Default.NAME));
 					
-			Mockito.verify(incomeService).getAllIncomesForMonth(IncomeConstants.Default.YEAR_MONTH.toString());
+			verify(incomeService).getAllIncomesForMonth(IncomeConstants.Default.YEAR_MONTH.toString());
 		}
 	}
 
@@ -193,7 +193,7 @@ class IncomeControllerTest {
 		@Test
 		@DisplayName("Should update income when request is valid")
 		void updateIncome_withValidRequest_returnsOk() throws Exception {
-			Mockito.when(incomeService.updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class)))
+			when(incomeService.updateIncome(any(Long.class), any(IncomeRequest.class)))
 					.thenReturn(testIncome);
 			
 			mockMvc.perform(put(PathConstants.Endpoints.INCOME_WITH_ID, IncomeConstants.Default.ID)
@@ -209,13 +209,13 @@ class IncomeControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Income.YEAR).value(IncomeConstants.Default.YEAR))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Income.MONTH).value(IncomeConstants.Default.MONTH));
 			
-			Mockito.verify(incomeService).updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class));
+			verify(incomeService).updateIncome(any(Long.class), any(IncomeRequest.class));
 		}
 
 		@Test
 		@DisplayName("Should return not found when ID does not exist")
 		void updateIncome_withNonExistentId_returnsNotFound() throws Exception {
-			Mockito.when(incomeService.updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class)))
+			when(incomeService.updateIncome(any(Long.class), any(IncomeRequest.class)))
 					.thenThrow(new IncomeNotFoundException(String.format(ErrorConstants.Income.NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)));
 			
 			mockMvc.perform(put(PathConstants.Endpoints.INCOME_WITH_ID, IncomeConstants.NonExistent.ID)
@@ -229,7 +229,7 @@ class IncomeControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Income.URI_WITH_ID, IncomeConstants.NonExistent.ID)))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 			
-			Mockito.verify(incomeService).updateIncome(Mockito.any(Long.class), Mockito.any(IncomeRequest.class));
+			verify(incomeService).updateIncome(any(Long.class), any(IncomeRequest.class));
 		}
 	}
 
@@ -240,20 +240,20 @@ class IncomeControllerTest {
 		@Test
 		@DisplayName("Should delete income when ID is valid")
 		void deleteIncome_withValidId_returnsNoContent() throws Exception {
-			Mockito.doNothing()
+			doNothing()
 					.when(incomeService)
 					.deleteIncome(IncomeConstants.Default.ID);
 			
 			mockMvc.perform(delete(PathConstants.Endpoints.INCOME_WITH_ID, IncomeConstants.Default.ID))
 					.andExpect(status().isNoContent());
 			
-			Mockito.verify(incomeService).deleteIncome(IncomeConstants.Default.ID);
+			verify(incomeService).deleteIncome(IncomeConstants.Default.ID);
 		}
 
 		@Test
 		@DisplayName("Should return not found when ID does not exist")
 		void deleteIncome_withNonExistentId_returnsNotFound() throws Exception {
-			Mockito.doThrow(new IncomeNotFoundException(String.format(ErrorConstants.Income.NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)))
+			doThrow(new IncomeNotFoundException(String.format(ErrorConstants.Income.NOT_FOUND_WITH_ID, IncomeConstants.NonExistent.ID)))
 					.when(incomeService)
 					.deleteIncome(IncomeConstants.NonExistent.ID);
 			
@@ -266,7 +266,7 @@ class IncomeControllerTest {
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Income.URI_WITH_ID, IncomeConstants.NonExistent.ID)))
 					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
 			
-			Mockito.verify(incomeService).deleteIncome(IncomeConstants.NonExistent.ID);
+			verify(incomeService).deleteIncome(IncomeConstants.NonExistent.ID);
 		}
 	}
 }

@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -31,7 +30,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-
+import static org.mockito.Mockito.doThrow;
 @Testcontainers
 @SpringBootTest
 @Import(TestContainersConfig.class)
@@ -85,7 +84,7 @@ class IncomeServiceIntegrationTest {
         @Test
         @DisplayName("Should rollback transaction when synchronization fails")
         void createIncome_withSynchronizationFailure_rollsBackTransaction() {
-            Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
+            doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                     .when(incomeBudgetSynchronizer).apply(any(Income.class));
 
             assertThatThrownBy(() -> incomeService.createIncome(defaultRequest))
@@ -146,7 +145,7 @@ class IncomeServiceIntegrationTest {
             Income original = incomeService.createIncome(defaultRequest);
             IncomeRequest updatedRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
             
-            Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
+            doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                 .when(incomeBudgetSynchronizer).reapply(any(Income.class), any(Income.class));
 
             assertThatThrownBy(() -> incomeService.updateIncome(original.getId(), updatedRequest))
@@ -184,7 +183,7 @@ class IncomeServiceIntegrationTest {
         void deleteIncome_withSynchronizationFailure_rollsBackTransaction() {
             Income income = incomeService.createIncome(defaultRequest);
             
-            Mockito.doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
+            doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                 .when(incomeBudgetSynchronizer).retract(any(Income.class));
 
             assertThatThrownBy(() -> incomeService.deleteIncome(income.getId()))

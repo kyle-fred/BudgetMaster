@@ -29,11 +29,11 @@ class BudgetServiceTest {
 	private final BudgetRepository budgetRepository = mock(BudgetRepository.class);
 	private final BudgetService budgetService = new BudgetService(budgetRepository);
 
-	private Budget testBudget;
+	private Budget defaultBudget;
 	
 	@BeforeEach
 	void setUp() {
-		testBudget = BudgetBuilder.defaultBudget().build();
+		defaultBudget = BudgetBuilder.defaultBudget().build();
 	}
 
 	@Nested
@@ -47,7 +47,7 @@ class BudgetServiceTest {
 				mockedDateUtils.when(() -> DateUtils.getValidYearMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
 						.thenReturn(BudgetConstants.Default.YEAR_MONTH);
 				when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
-						.thenReturn(Optional.of(testBudget));
+						.thenReturn(Optional.of(defaultBudget));
 
 				Budget retrievedBudget = budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
 
@@ -63,7 +63,7 @@ class BudgetServiceTest {
 		@DisplayName("Should return budget when found by ID")
 		void getBudgetById_withValidId_returnsBudget() {
 			when(budgetRepository.findById(BudgetConstants.Default.ID))
-					.thenReturn(Optional.of(testBudget));
+					.thenReturn(Optional.of(defaultBudget));
 			
 			Budget retrievedBudget = budgetService.getBudgetById(BudgetConstants.Default.ID);
 			
@@ -120,7 +120,7 @@ class BudgetServiceTest {
 		@DisplayName("Should delete budget when found by ID")
 		void deleteBudget_withValidId_deletesBudget() {
 			when(budgetRepository.findById(BudgetConstants.Default.ID))
-					.thenReturn(Optional.of(testBudget));
+					.thenReturn(Optional.of(defaultBudget));
 			doNothing()
 					.when(budgetRepository)
 					.deleteById(BudgetConstants.Default.ID);

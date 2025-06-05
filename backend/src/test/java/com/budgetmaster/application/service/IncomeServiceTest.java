@@ -37,12 +37,12 @@ class IncomeServiceTest {
 	private final IncomeBudgetSynchronizer incomeBudgetSynchronizer = mock(IncomeBudgetSynchronizer.class);
 	private final IncomeService incomeService = new IncomeService(incomeRepository, incomeBudgetSynchronizer);
 	
-	private Income testIncome;
+	private Income defaultIncome;
 	private IncomeRequest incomeRequest;
 	
 	@BeforeEach
 	void setUp() {
-		testIncome = IncomeBuilder.defaultIncome().build();
+		defaultIncome = IncomeBuilder.defaultIncome().build();
 		incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
 	}
 
@@ -54,7 +54,7 @@ class IncomeServiceTest {
 		@DisplayName("Should create income when request is valid")
 		void createIncome_withValidRequest_returnsCreated() {
 			when(incomeRepository.saveAndFlush(any(Income.class)))
-					.thenReturn(testIncome);
+					.thenReturn(defaultIncome);
 			doNothing().when(incomeBudgetSynchronizer)
 					.apply(any(Income.class));
 			
@@ -63,7 +63,7 @@ class IncomeServiceTest {
 			IncomeModelAssertions.assertIncome(savedIncome)
 				.isDefaultIncome();
 
-			verify(incomeBudgetSynchronizer).apply(testIncome);
+			verify(incomeBudgetSynchronizer).apply(defaultIncome);
 			verify(incomeRepository).saveAndFlush(any(Income.class));
 		}
 
@@ -93,7 +93,7 @@ class IncomeServiceTest {
 		@Test
 		@DisplayName("Should return all incomes for valid month")
 		void getAllIncomesForMonth_withValidMonth_returnsIncomes() {
-			List<Income> incomes = List.of(testIncome, testIncome);
+			List<Income> incomes = List.of(defaultIncome, defaultIncome);
 			
 			try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 				mockedDateUtils.when(() -> DateUtils.getValidYearMonth(IncomeConstants.Default.YEAR_MONTH.toString()))
@@ -116,7 +116,7 @@ class IncomeServiceTest {
 		@DisplayName("Should return income when found by ID")
 		void getIncomeById_withValidId_returnsIncome() {
 			when(incomeRepository.findById(IncomeConstants.Default.ID))
-					.thenReturn(Optional.of(testIncome));
+					.thenReturn(Optional.of(defaultIncome));
 			
 			Income retrievedIncome = incomeService.getIncomeById(IncomeConstants.Default.ID);
 			
@@ -173,11 +173,11 @@ class IncomeServiceTest {
 			IncomeRequest updatedRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
 
 			when(incomeRepository.findById(IncomeConstants.Default.ID))
-					.thenReturn(Optional.of(testIncome));
+					.thenReturn(Optional.of(defaultIncome));
 			doNothing().when(incomeBudgetSynchronizer)
 					.reapply(any(Income.class), any(Income.class));
 			when(incomeRepository.saveAndFlush(any(Income.class)))
-					.thenReturn(testIncome);
+					.thenReturn(defaultIncome);
 
 			Income updatedIncome = incomeService.updateIncome(IncomeConstants.Default.ID, updatedRequest);
 
@@ -216,7 +216,7 @@ class IncomeServiceTest {
 		@DisplayName("Should delete income when found by ID")
 		void deleteIncome_withValidId_deletesIncome() {
 			when(incomeRepository.findById(IncomeConstants.Default.ID))
-					.thenReturn(Optional.of(testIncome));
+					.thenReturn(Optional.of(defaultIncome));
 			doNothing().when(incomeBudgetSynchronizer)
 					.retract(any(Income.class));
 			doNothing()

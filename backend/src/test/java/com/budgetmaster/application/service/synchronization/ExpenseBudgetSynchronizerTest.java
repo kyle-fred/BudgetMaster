@@ -30,13 +30,13 @@ class ExpenseBudgetSynchronizerTest {
     private final BudgetRepository budgetRepository = mock(BudgetRepository.class);
     private final ExpenseBudgetSynchronizer expenseBudgetSynchronizer = new ExpenseBudgetSynchronizer(budgetRepository);
 
-    private Expense testExpense;
-    private Budget testBudget;
+    private Expense defaultExpense;
+    private Budget defaultBudget;
 
     @BeforeEach
     void setUp() {
-        testExpense = ExpenseBuilder.defaultExpense().build();
-        testBudget = BudgetBuilder.defaultBudget().build();
+        defaultExpense = ExpenseBuilder.defaultExpense().build();
+        defaultBudget = BudgetBuilder.defaultBudget().build();
     }
 
     @Nested
@@ -47,18 +47,18 @@ class ExpenseBudgetSynchronizerTest {
         @DisplayName("Should update existing budget when applying expense")
         void apply_withExistingBudget_updatesBudget() {
             when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
-                .thenReturn(Optional.of(testBudget));
+                .thenReturn(Optional.of(defaultBudget));
             when(budgetRepository.save(any(Budget.class)))
-                .thenReturn(testBudget);
+                .thenReturn(defaultBudget);
 
-            expenseBudgetSynchronizer.apply(testExpense);
+            expenseBudgetSynchronizer.apply(defaultExpense);
 
-            BudgetModelAssertions.assertBudget(testBudget)
+            BudgetModelAssertions.assertBudget(defaultBudget)
                 .hasTotalExpense(BudgetConstants.AfterAddExpense_WhenBudgetExists.TOTAL_EXPENSE)
                 .hasSavings(BudgetConstants.AfterAddExpense_WhenBudgetExists.SAVINGS);
 
             verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
-            verify(budgetRepository).save(testBudget);
+            verify(budgetRepository).save(defaultBudget);
         }
 
         @Test
@@ -69,7 +69,7 @@ class ExpenseBudgetSynchronizerTest {
             when(budgetRepository.save(any(Budget.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-            expenseBudgetSynchronizer.apply(testExpense);
+            expenseBudgetSynchronizer.apply(defaultExpense);
 
             ArgumentCaptor<Budget> captor = ArgumentCaptor.forClass(Budget.class);
             verify(budgetRepository).save(captor.capture());
@@ -95,18 +95,18 @@ class ExpenseBudgetSynchronizerTest {
                 .build();
 
             when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
-                .thenReturn(Optional.of(testBudget));
+                .thenReturn(Optional.of(defaultBudget));
             when(budgetRepository.save(any(Budget.class)))
-                .thenReturn(testBudget);
+                .thenReturn(defaultBudget);
 
-            expenseBudgetSynchronizer.reapply(testExpense, updatedExpense);
+            expenseBudgetSynchronizer.reapply(defaultExpense, updatedExpense);
 
-            BudgetModelAssertions.assertBudget(testBudget)
+            BudgetModelAssertions.assertBudget(defaultBudget)
                 .hasTotalExpense(BudgetConstants.AfterReapplyExpense_SameMonth.TOTAL_EXPENSE)
                 .hasSavings(BudgetConstants.AfterReapplyExpense_SameMonth.SAVINGS);
 
             verify(budgetRepository, times(2)).findByMonth(BudgetConstants.Default.YEAR_MONTH);
-            verify(budgetRepository).save(testBudget);
+            verify(budgetRepository).save(defaultBudget);
         }
 
         @Test
@@ -121,16 +121,16 @@ class ExpenseBudgetSynchronizerTest {
                 .build();
 
             when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
-                .thenReturn(Optional.of(testBudget));
+                .thenReturn(Optional.of(defaultBudget));
             when(budgetRepository.findByMonth(BudgetConstants.Updated.YEAR_MONTH))
                 .thenReturn(Optional.of(newBudget));
             when(budgetRepository.save(any(Budget.class)))
-                .thenReturn(testBudget)
+                .thenReturn(defaultBudget)
                 .thenReturn(newBudget);
 
-            expenseBudgetSynchronizer.reapply(testExpense, updatedExpense);
+            expenseBudgetSynchronizer.reapply(defaultExpense, updatedExpense);
 
-            BudgetModelAssertions.assertBudget(testBudget)
+            BudgetModelAssertions.assertBudget(defaultBudget)
                 .hasTotalExpense(BudgetConstants.AfterReapplyExpense_DifferentMonth.ExistingBudget.TOTAL_EXPENSE)
                 .hasSavings(BudgetConstants.AfterReapplyExpense_DifferentMonth.ExistingBudget.SAVINGS);
 
@@ -154,7 +154,7 @@ class ExpenseBudgetSynchronizerTest {
                 .thenReturn(Optional.empty());
 
             assertThrows(BudgetNotFoundException.class, () -> 
-                expenseBudgetSynchronizer.reapply(testExpense, updatedExpense)
+                expenseBudgetSynchronizer.reapply(defaultExpense, updatedExpense)
             );
 
             verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
@@ -170,18 +170,18 @@ class ExpenseBudgetSynchronizerTest {
         @DisplayName("Should update budget when retracting expense")
         void retract_withExistingBudget_updatesBudget() {
             when(budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH))
-                .thenReturn(Optional.of(testBudget));
+                .thenReturn(Optional.of(defaultBudget));
             when(budgetRepository.save(any(Budget.class)))
-                .thenReturn(testBudget);
+                .thenReturn(defaultBudget);
 
-            expenseBudgetSynchronizer.retract(testExpense);
+            expenseBudgetSynchronizer.retract(defaultExpense);
 
-            BudgetModelAssertions.assertBudget(testBudget)
+            BudgetModelAssertions.assertBudget(defaultBudget)
                 .hasTotalExpense(BudgetConstants.AfterRetractExpense.TOTAL_EXPENSE)
                 .hasSavings(BudgetConstants.AfterRetractExpense.SAVINGS);
 
             verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);
-            verify(budgetRepository).save(testBudget);
+            verify(budgetRepository).save(defaultBudget);
         }
 
         @Test
@@ -191,7 +191,7 @@ class ExpenseBudgetSynchronizerTest {
                 .thenReturn(Optional.empty());
 
             assertThrows(BudgetNotFoundException.class, () -> 
-                expenseBudgetSynchronizer.retract(testExpense)
+                expenseBudgetSynchronizer.retract(defaultExpense)
             );
 
             verify(budgetRepository).findByMonth(BudgetConstants.Default.YEAR_MONTH);

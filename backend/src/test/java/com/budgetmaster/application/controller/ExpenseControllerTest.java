@@ -8,6 +8,7 @@ import com.budgetmaster.application.exception.codes.ErrorCode;
 import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.config.JacksonConfig;
+import com.budgetmaster.testsupport.assertions.controller.ExpenseControllerAssertions;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
@@ -24,9 +25,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -47,13 +48,15 @@ class ExpenseControllerTest {
 	@MockBean
     private ExpenseService expenseService;
 
-	private Expense testExpense;
-	private ExpenseRequest testExpenseRequest;
+	private Expense defaultExpense;
+	private Expense updatedExpense;
+	private ExpenseRequest defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
+	private ExpenseRequest updatedExpenseRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
 
 	@BeforeEach
 	void setUp() {
-		testExpense = ExpenseBuilder.defaultExpense().build();
-		testExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
+		defaultExpense = ExpenseBuilder.defaultExpense().build();
+		updatedExpense = ExpenseBuilder.updatedExpense().build();
 	}
 
 	@Nested
@@ -64,20 +67,14 @@ class ExpenseControllerTest {
 		@DisplayName("Should create expense when request is valid")
 		void createExpense_withValidRequest_returnsCreated() throws Exception {
 			when(expenseService.createExpense(any(ExpenseRequest.class)))
-					.thenReturn(testExpense);	
-					
-			mockMvc.perform(post(PathConstants.Endpoints.EXPENSE)
+					.thenReturn(defaultExpense);	
+			
+			ResultActions validPostRequest = mockMvc.perform(post(PathConstants.Endpoints.EXPENSE)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(testExpenseRequest)))
-					.andExpect(status().isOk())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.NAME).value(ExpenseConstants.Default.NAME))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONEY_AMOUNT).value(ExpenseConstants.Default.AMOUNT.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONEY_CURRENCY).value(ExpenseConstants.Default.CURRENCY.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.CATEGORY).value(ExpenseConstants.Default.CATEGORY.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.TYPE).value(ExpenseConstants.Default.TYPE.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH_YEAR).isArray())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.YEAR).value(ExpenseConstants.Default.YEAR))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH).value(ExpenseConstants.Default.MONTH));
+					.content(objectMapper.writeValueAsString(defaultExpenseRequest)));
+
+			ExpenseControllerAssertions.assertThat(validPostRequest)
+				.isDefaultExpenseResponse();
 					
 			verify(expenseService).createExpense(any(ExpenseRequest.class));
 		}
@@ -87,18 +84,14 @@ class ExpenseControllerTest {
 		void createExpense_withServiceError_returnsInternalServerError() throws Exception {
 			when(expenseService.createExpense(any(ExpenseRequest.class)))
 					.thenThrow(new RuntimeException(ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
-					
-			mockMvc.perform(post(PathConstants.Endpoints.EXPENSE)
+			
+			ResultActions serviceErrorRequest = mockMvc.perform(post(PathConstants.Endpoints.EXPENSE)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(testExpenseRequest)))
-					.andExpect(status().isInternalServerError())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.TIMESTAMP).exists())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.STATUS).value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERROR_CODE).value(ErrorCode.INTERNAL_SERVER_ERROR.name()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.MESSAGE).value(ErrorCode.INTERNAL_SERVER_ERROR.getMessage()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(PathConstants.Error.Expense.URI))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
-					
+					.content(objectMapper.writeValueAsString(defaultExpenseRequest)));
+			
+			ExpenseControllerAssertions.assertThat(serviceErrorRequest)
+				.isInternalServerError();
+			
 			verify(expenseService).createExpense(any(ExpenseRequest.class));
 		}
 
@@ -108,17 +101,13 @@ class ExpenseControllerTest {
 			when(expenseService.createExpense(any(ExpenseRequest.class)))
 					.thenThrow(new DataIntegrityViolationException(ErrorCode.DATABASE_ERROR.getMessage()));
 					
-			mockMvc.perform(post(PathConstants.Endpoints.EXPENSE)
+			ResultActions conflictRequest = mockMvc.perform(post(PathConstants.Endpoints.EXPENSE)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(testExpenseRequest)))
-					.andExpect(status().isConflict())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.TIMESTAMP).exists())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.STATUS).value(HttpStatus.CONFLICT.value()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERROR_CODE).value(ErrorCode.DATABASE_ERROR.name()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.MESSAGE).value(ErrorCode.DATABASE_ERROR.getMessage()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(PathConstants.Error.Expense.URI))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
-					
+					.content(objectMapper.writeValueAsString(defaultExpenseRequest)));
+
+			ExpenseControllerAssertions.assertThat(conflictRequest)
+				.isConflict();
+			
 			verify(expenseService).createExpense(any(ExpenseRequest.class));
 		}
 	}
@@ -131,19 +120,13 @@ class ExpenseControllerTest {
 		@DisplayName("Should return expense when ID is valid")
 		void getExpense_withValidId_returnsOk() throws Exception {
 			when(expenseService.getExpenseById(ExpenseConstants.Default.ID))
-					.thenReturn(testExpense);
-					
-			mockMvc.perform(get(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.Default.ID)
-					.contentType(MediaType.APPLICATION_JSON))
-					.andExpect(status().isOk())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.NAME).value(ExpenseConstants.Default.NAME))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONEY_AMOUNT).value(ExpenseConstants.Default.AMOUNT.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONEY_CURRENCY).value(ExpenseConstants.Default.CURRENCY.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.CATEGORY).value(ExpenseConstants.Default.CATEGORY.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.TYPE).value(ExpenseConstants.Default.TYPE.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH_YEAR).isArray())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.YEAR).value(ExpenseConstants.Default.YEAR))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH).value(ExpenseConstants.Default.MONTH));
+					.thenReturn(defaultExpense);
+			
+			ResultActions validGetRequest = mockMvc.perform(get(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.Default.ID)
+					.contentType(MediaType.APPLICATION_JSON));
+
+			ExpenseControllerAssertions.assertThat(validGetRequest)
+				.isDefaultExpenseResponse();
 					
 			verify(expenseService).getExpenseById(ExpenseConstants.Default.ID);
 		}
@@ -153,16 +136,12 @@ class ExpenseControllerTest {
 		void getExpense_withNonExistentId_returnsNotFound() throws Exception {
 			when(expenseService.getExpenseById(ExpenseConstants.NonExistent.ID))
 					.thenThrow(new ExpenseNotFoundException(String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)));
-					
-			mockMvc.perform(get(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID)
-					.contentType(MediaType.APPLICATION_JSON))
-					.andExpect(status().isNotFound())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.TIMESTAMP).exists())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.STATUS).value(HttpStatus.NOT_FOUND.value()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERROR_CODE).value(ErrorCode.RESOURCE_NOT_FOUND.name()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.MESSAGE).value(String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Expense.URI_WITH_ID, ExpenseConstants.NonExistent.ID)))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
+			
+			ResultActions nonExistentIdGetRequest = mockMvc.perform(get(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID)
+					.contentType(MediaType.APPLICATION_JSON));
+			
+			ExpenseControllerAssertions.assertThat(nonExistentIdGetRequest)
+				.isNotFoundForId(ExpenseConstants.NonExistent.ID);
 					
 			verify(expenseService).getExpenseById(ExpenseConstants.NonExistent.ID);
 		}
@@ -170,7 +149,7 @@ class ExpenseControllerTest {
 		@Test
 		@DisplayName("Should return all expenses when month is valid")
 		void getAllExpenses_withValidMonth_returnsOk() throws Exception {
-			List<Expense> expenseList = List.of(testExpense, testExpense);
+			List<Expense> expenseList = List.of(defaultExpense, defaultExpense);
 			
 			when(expenseService.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString()))
 					.thenReturn(expenseList);
@@ -192,23 +171,17 @@ class ExpenseControllerTest {
 		
 		@Test
 		@DisplayName("Should update expense when request is valid")
-		void updateExpense_withValidRequest_returnsOk() throws Exception {
+		void updateExpense_withValidRequest_returnsOk() throws Exception {			
 			when(expenseService.updateExpense(any(Long.class), any(ExpenseRequest.class)))
-					.thenReturn(testExpense);
-					
-			mockMvc.perform(put(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.Default.ID)
+					.thenReturn(updatedExpense);
+			
+			ResultActions validPutRequest = mockMvc.perform(put(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.Default.ID)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(testExpenseRequest)))
-					.andExpect(status().isOk())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.NAME).value(ExpenseConstants.Default.NAME))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONEY_AMOUNT).value(ExpenseConstants.Default.AMOUNT.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONEY_CURRENCY).value(ExpenseConstants.Default.CURRENCY.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.CATEGORY).value(ExpenseConstants.Default.CATEGORY.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.TYPE).value(ExpenseConstants.Default.TYPE.toString()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH_YEAR).isArray())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.YEAR).value(ExpenseConstants.Default.YEAR))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH).value(ExpenseConstants.Default.MONTH));
-					
+					.content(objectMapper.writeValueAsString(updatedExpenseRequest)));
+
+			ExpenseControllerAssertions.assertThat(validPutRequest)
+				.isUpdatedExpenseResponse();
+			
 			verify(expenseService).updateExpense(any(Long.class), any(ExpenseRequest.class));
 		}
 
@@ -218,16 +191,12 @@ class ExpenseControllerTest {
 			when(expenseService.updateExpense(any(Long.class), any(ExpenseRequest.class)))
 					.thenThrow(new ExpenseNotFoundException(String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)));
 					
-			mockMvc.perform(put(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID)
+			ResultActions nonExistentIdPutRequest = mockMvc.perform(put(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(testExpenseRequest)))
-					.andExpect(status().isNotFound())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.TIMESTAMP).exists())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.STATUS).value(HttpStatus.NOT_FOUND.value()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERROR_CODE).value(ErrorCode.RESOURCE_NOT_FOUND.name()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.MESSAGE).value(String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Expense.URI_WITH_ID, ExpenseConstants.NonExistent.ID)))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
+					.content(objectMapper.writeValueAsString(updatedExpenseRequest)));
+
+			ExpenseControllerAssertions.assertThat(nonExistentIdPutRequest)
+				.isNotFoundForId(ExpenseConstants.NonExistent.ID);
 					
 			verify(expenseService).updateExpense(any(Long.class), any(ExpenseRequest.class));
 		}
@@ -243,9 +212,11 @@ class ExpenseControllerTest {
 			doNothing()
 					.when(expenseService)
 					.deleteExpense(ExpenseConstants.Default.ID);
-					
-			mockMvc.perform(delete(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.Default.ID))
-					.andExpect(status().isNoContent());
+			
+			ResultActions validDeleteRequest = mockMvc.perform(delete(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.Default.ID));
+
+			ExpenseControllerAssertions.assertThat(validDeleteRequest)
+				.isNoContent();
 					
 			verify(expenseService).deleteExpense(ExpenseConstants.Default.ID);
 		}
@@ -257,14 +228,10 @@ class ExpenseControllerTest {
 					.when(expenseService)
 					.deleteExpense(ExpenseConstants.NonExistent.ID);
 					
-			mockMvc.perform(delete(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID))
-					.andExpect(status().isNotFound())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.TIMESTAMP).exists())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.STATUS).value(HttpStatus.NOT_FOUND.value()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERROR_CODE).value(ErrorCode.RESOURCE_NOT_FOUND.name()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.MESSAGE).value(String.format(ErrorConstants.Expense.NOT_FOUND_WITH_ID, ExpenseConstants.NonExistent.ID)))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Expense.URI_WITH_ID, ExpenseConstants.NonExistent.ID)))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
+			ResultActions nonExistentIdDeleteRequest = mockMvc.perform(delete(PathConstants.Endpoints.EXPENSE_WITH_ID, ExpenseConstants.NonExistent.ID));
+
+			ExpenseControllerAssertions.assertThat(nonExistentIdDeleteRequest)
+				.isNotFoundForId(ExpenseConstants.NonExistent.ID);
 					
 			verify(expenseService).deleteExpense(ExpenseConstants.NonExistent.ID);
 		}

@@ -30,6 +30,11 @@ public class ErrorControllerAssertions {
         return this;
     }
 
+    public ErrorControllerAssertions isConflict() throws Exception {
+        resultActions.andExpect(status().isConflict());
+        return this;
+    }
+
     public ErrorControllerAssertions hasTimestamp() throws Exception {
         resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Error.TIMESTAMP).exists());
         return this;
@@ -76,6 +81,16 @@ public class ErrorControllerAssertions {
             .hasStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .hasErrorCode(ErrorCode.INTERNAL_SERVER_ERROR.name())
             .hasMessage(ErrorCode.INTERNAL_SERVER_ERROR.getMessage())
+            .hasPath(path)
+            .hasNoValidationErrors();
+    }
+
+    public ErrorControllerAssertions isConflictResponse(String path) throws Exception {
+        return isConflict()
+            .hasTimestamp()
+            .hasStatus(HttpStatus.CONFLICT.value())
+            .hasErrorCode(ErrorCode.DATABASE_ERROR.name())
+            .hasMessage(ErrorCode.DATABASE_ERROR.getMessage())
             .hasPath(path)
             .hasNoValidationErrors();
     }

@@ -37,11 +37,11 @@ class BudgetControllerTest {
 	@MockBean
     private BudgetService budgetService;
 
-	private Budget testBudget;
+	private Budget defaultBudget;
 	
 	@BeforeEach
 	void setUp() {
-		testBudget = BudgetBuilder.defaultBudget().build();
+		defaultBudget = BudgetBuilder.defaultBudget().build();
 	}
 
 	@Nested
@@ -52,7 +52,7 @@ class BudgetControllerTest {
 		@DisplayName("Should return budget when month is valid")
 		void getBudget_withValidMonth_returnsOk() throws Exception {
 			when(budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
-					.thenReturn(testBudget);
+					.thenReturn(defaultBudget);
 			
 			ResultActions validGetRequest = mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
 					.param(PathConstants.RequestParams.MONTH, BudgetConstants.Default.YEAR_MONTH.toString()));

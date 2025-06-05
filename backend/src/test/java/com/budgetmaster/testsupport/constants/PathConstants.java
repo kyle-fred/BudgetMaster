@@ -65,9 +65,9 @@ public class PathConstants {
             private Expense() {}
 
             public static final String NAME = "$.name";
-            public static final String MONEY = "$.money";
-            public static final String MONEY_AMOUNT = "$.money.amount";
-            public static final String MONEY_CURRENCY = "$.money.currency";
+            // public static final String MONEY = "$.money";
+            // public static final String MONEY_AMOUNT = "$.money.amount";
+            // public static final String MONEY_CURRENCY = "$.money.currency";
             public static final String CATEGORY = "$.category";
             public static final String TYPE = "$.type";
             public static final String MONTH_YEAR = "$.month";
@@ -93,6 +93,14 @@ public class PathConstants {
 
             public static final String FIRST_NAME = "$[0].name";
             public static final String SECOND_NAME = "$[1].name";
+        }
+
+        public static class Money {
+            private Money() {}
+
+            public static final String BASE = "$.money";
+            public static final String AMOUNT = BASE + ".amount";
+            public static final String CURRENCY = BASE + ".currency";
         }
 
         public static class Error {

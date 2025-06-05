@@ -5,6 +5,8 @@ import com.budgetmaster.application.exception.codes.ErrorCode;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.service.BudgetService;
 import com.budgetmaster.config.JacksonConfig;
+import com.budgetmaster.testsupport.assertions.controller.BudgetControllerAssertions;
+import com.budgetmaster.testsupport.assertions.controller.error.ErrorControllerAssertions;
 import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.PathConstants;
@@ -18,12 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BudgetController.class)
 @Import(JacksonConfig.class)
@@ -53,17 +54,12 @@ class BudgetControllerTest {
 		void getBudget_withValidMonth_returnsOk() throws Exception {
 			when(budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
 					.thenReturn(testBudget);
+			
+			ResultActions validGetRequest = mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
+					.param(PathConstants.RequestParams.MONTH, BudgetConstants.Default.YEAR_MONTH.toString()));
 
-			mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
-					.param(PathConstants.RequestParams.MONTH, BudgetConstants.Default.YEAR_MONTH.toString()))
-					.andExpect(status().isOk())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Budget.TOTAL_INCOME).value(BudgetConstants.Default.TOTAL_INCOME))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Budget.TOTAL_EXPENSE).value(BudgetConstants.Default.TOTAL_EXPENSE))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Budget.SAVINGS).value(BudgetConstants.Default.SAVINGS))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Budget.CURRENCY).value(BudgetConstants.Default.CURRENCY.getCurrencyCode()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Budget.MONTH_YEAR).isArray())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Budget.YEAR).value(BudgetConstants.Default.YEAR))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Budget.MONTH).value(BudgetConstants.Default.MONTH));
+			BudgetControllerAssertions.assertThat(validGetRequest)
+				.isDefaultBudgetResponse();
 
 			verify(budgetService).getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
 		}
@@ -73,16 +69,12 @@ class BudgetControllerTest {
 		void getBudget_withNonExistentMonth_returnsNotFound() throws Exception {
 			when(budgetService.getBudgetByMonth(BudgetConstants.NonExistent.YEAR_MONTH.toString()))
 					.thenThrow(new BudgetNotFoundException(String.format(ErrorConstants.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.NonExistent.YEAR_MONTH)));
+			
+			ResultActions nonExistentMonthRequest = mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
+					.param(PathConstants.RequestParams.MONTH, BudgetConstants.NonExistent.YEAR_MONTH.toString()));
 
-			mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
-					.param(PathConstants.RequestParams.MONTH, BudgetConstants.NonExistent.YEAR_MONTH.toString()))
-					.andExpect(status().isNotFound())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.TIMESTAMP).exists())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.STATUS).value(HttpStatus.NOT_FOUND.value()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERROR_CODE).value(ErrorCode.RESOURCE_NOT_FOUND.name()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.MESSAGE).value(String.format(ErrorConstants.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.NonExistent.YEAR_MONTH)))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(PathConstants.Error.Budget.URI))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
+			ErrorControllerAssertions.assertThat(nonExistentMonthRequest)
+				.isBudgetNotFoundForMonthResponse();
 
 			verify(budgetService).getBudgetByMonth(BudgetConstants.NonExistent.YEAR_MONTH.toString());
 		}
@@ -92,16 +84,12 @@ class BudgetControllerTest {
 		void getBudget_withServiceError_returnsInternalServerError() throws Exception {
 			when(budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString()))
 					.thenThrow(new RuntimeException(ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
-					
-			mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
-					.param(PathConstants.RequestParams.MONTH, BudgetConstants.Default.YEAR_MONTH.toString()))
-					.andExpect(status().isInternalServerError())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.TIMESTAMP).exists())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.STATUS).value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERROR_CODE).value(ErrorCode.INTERNAL_SERVER_ERROR.name()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.MESSAGE).value(ErrorCode.INTERNAL_SERVER_ERROR.getMessage()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(PathConstants.Error.Budget.URI))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
+			
+			ResultActions serviceErrorRequest = mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
+					.param(PathConstants.RequestParams.MONTH, BudgetConstants.Default.YEAR_MONTH.toString()));
+
+			ErrorControllerAssertions.assertThat(serviceErrorRequest)
+				.isInternalServerErrorResponse();
 
 			verify(budgetService).getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
 		}
@@ -118,8 +106,10 @@ class BudgetControllerTest {
 					.when(budgetService)
 					.deleteBudget(BudgetConstants.Default.ID);
 			
-			mockMvc.perform(delete(PathConstants.Endpoints.BUDGET_WITH_ID, BudgetConstants.Default.ID))
-					.andExpect(status().isNoContent());
+			ResultActions validDeleteRequest = mockMvc.perform(delete(PathConstants.Endpoints.BUDGET_WITH_ID, BudgetConstants.Default.ID));
+			
+			BudgetControllerAssertions.assertThat(validDeleteRequest)
+				.isNoContent();
 
 			verify(budgetService).deleteBudget(BudgetConstants.Default.ID);
 		}
@@ -131,14 +121,10 @@ class BudgetControllerTest {
 					.when(budgetService)
 					.deleteBudget(BudgetConstants.NonExistent.ID);
 
-			mockMvc.perform(delete(PathConstants.Endpoints.BUDGET_WITH_ID, BudgetConstants.NonExistent.ID))
-					.andExpect(status().isNotFound())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.TIMESTAMP).exists())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.STATUS).value(HttpStatus.NOT_FOUND.value()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERROR_CODE).value(ErrorCode.RESOURCE_NOT_FOUND.name()))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.MESSAGE).value(String.format(ErrorConstants.Budget.NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID)))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.PATH).value(String.format(PathConstants.Error.Budget.URI_WITH_ID, BudgetConstants.NonExistent.ID)))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
+			ResultActions nonExistentIdRequest = mockMvc.perform(delete(PathConstants.Endpoints.BUDGET_WITH_ID, BudgetConstants.NonExistent.ID));
+			
+			ErrorControllerAssertions.assertThat(nonExistentIdRequest)
+				.isBudgetNotFoundForIdResponse();
 
 			verify(budgetService).deleteBudget(BudgetConstants.NonExistent.ID);
 		}

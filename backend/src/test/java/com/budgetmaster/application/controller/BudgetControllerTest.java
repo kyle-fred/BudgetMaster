@@ -6,7 +6,6 @@ import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.service.BudgetService;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.testsupport.assertions.controller.BudgetControllerAssertions;
-import com.budgetmaster.testsupport.assertions.controller.error.ErrorControllerAssertions;
 import com.budgetmaster.testsupport.builder.model.BudgetBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.PathConstants;
@@ -73,8 +72,8 @@ class BudgetControllerTest {
 			ResultActions nonExistentMonthRequest = mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
 					.param(PathConstants.RequestParams.MONTH, BudgetConstants.NonExistent.YEAR_MONTH.toString()));
 
-			ErrorControllerAssertions.assertThat(nonExistentMonthRequest)
-				.isBudgetNotFoundForMonthResponse();
+			BudgetControllerAssertions.assertThat(nonExistentMonthRequest)
+				.isNotFoundForMonth(BudgetConstants.NonExistent.YEAR_MONTH);
 
 			verify(budgetService).getBudgetByMonth(BudgetConstants.NonExistent.YEAR_MONTH.toString());
 		}
@@ -88,8 +87,8 @@ class BudgetControllerTest {
 			ResultActions serviceErrorRequest = mockMvc.perform(get(PathConstants.Endpoints.BUDGET)
 					.param(PathConstants.RequestParams.MONTH, BudgetConstants.Default.YEAR_MONTH.toString()));
 
-			ErrorControllerAssertions.assertThat(serviceErrorRequest)
-				.isInternalServerErrorResponse();
+			BudgetControllerAssertions.assertThat(serviceErrorRequest)
+				.isInternalServerError();
 
 			verify(budgetService).getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH.toString());
 		}
@@ -123,8 +122,8 @@ class BudgetControllerTest {
 
 			ResultActions nonExistentIdRequest = mockMvc.perform(delete(PathConstants.Endpoints.BUDGET_WITH_ID, BudgetConstants.NonExistent.ID));
 			
-			ErrorControllerAssertions.assertThat(nonExistentIdRequest)
-				.isBudgetNotFoundForIdResponse();
+			BudgetControllerAssertions.assertThat(nonExistentIdRequest)
+				.isNotFoundForId(BudgetConstants.NonExistent.ID);
 
 			verify(budgetService).deleteBudget(BudgetConstants.NonExistent.ID);
 		}

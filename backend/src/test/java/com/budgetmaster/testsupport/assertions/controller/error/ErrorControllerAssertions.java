@@ -1,9 +1,7 @@
 package com.budgetmaster.testsupport.assertions.controller.error;
 
 import com.budgetmaster.application.exception.codes.ErrorCode;
-import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.PathConstants;
-import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.ResultActions;
@@ -62,33 +60,23 @@ public class ErrorControllerAssertions {
         return this;
     }
 
-    public ErrorControllerAssertions isBudgetNotFoundForMonthResponse() throws Exception {
+    public ErrorControllerAssertions isNotFoundResponse(String message, String path) throws Exception {
         return isNotFound()
             .hasTimestamp()
             .hasStatus(HttpStatus.NOT_FOUND.value())
             .hasErrorCode(ErrorCode.RESOURCE_NOT_FOUND.name())
-            .hasMessage(String.format(ErrorConstants.Budget.NOT_FOUND_FOR_MONTH, BudgetConstants.NonExistent.YEAR_MONTH))
-            .hasPath(PathConstants.Error.Budget.URI)
+            .hasMessage(message)
+            .hasPath(path)
             .hasNoValidationErrors();
     }
 
-    public ErrorControllerAssertions isBudgetNotFoundForIdResponse() throws Exception {
-        return isNotFound()
-            .hasTimestamp()
-            .hasStatus(HttpStatus.NOT_FOUND.value())
-            .hasErrorCode(ErrorCode.RESOURCE_NOT_FOUND.name())
-            .hasMessage(String.format(ErrorConstants.Budget.NOT_FOUND_WITH_ID, BudgetConstants.NonExistent.ID))
-            .hasPath(String.format(PathConstants.Error.Budget.URI_WITH_ID, BudgetConstants.NonExistent.ID))
-            .hasNoValidationErrors();
-    }
-
-    public ErrorControllerAssertions isInternalServerErrorResponse() throws Exception {
+    public ErrorControllerAssertions isInternalServerErrorResponse(String path) throws Exception {
         return isInternalServerError()
             .hasTimestamp()
             .hasStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .hasErrorCode(ErrorCode.INTERNAL_SERVER_ERROR.name())
             .hasMessage(ErrorCode.INTERNAL_SERVER_ERROR.getMessage())
-            .hasPath(PathConstants.Error.Budget.URI)
+            .hasPath(path)
             .hasNoValidationErrors();
     }
 }

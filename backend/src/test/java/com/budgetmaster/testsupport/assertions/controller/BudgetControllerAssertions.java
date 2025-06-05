@@ -1,5 +1,7 @@
 package com.budgetmaster.testsupport.assertions.controller;
 
+import com.budgetmaster.testsupport.assertions.controller.error.ErrorControllerAssertions;
+import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.PathConstants;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
@@ -68,5 +70,26 @@ public class BudgetControllerAssertions {
             .hasSavings(BudgetConstants.Default.SAVINGS)
             .hasCurrency(BudgetConstants.Default.CURRENCY)
             .hasMonth(BudgetConstants.Default.YEAR_MONTH);
+    }
+
+    public ErrorControllerAssertions isNotFoundForMonth(YearMonth month) throws Exception {
+        return ErrorControllerAssertions.assertThat(resultActions)
+            .isNotFoundResponse(
+                String.format(ErrorConstants.Budget.NOT_FOUND_FOR_MONTH, month),
+                PathConstants.Error.Budget.URI
+            );
+    }
+
+    public ErrorControllerAssertions isNotFoundForId(Long id) throws Exception {
+        return ErrorControllerAssertions.assertThat(resultActions)
+            .isNotFoundResponse(
+                String.format(ErrorConstants.Budget.NOT_FOUND_WITH_ID, id),
+                String.format(PathConstants.Error.Budget.URI_WITH_ID, id)
+            );
+    }
+
+    public ErrorControllerAssertions isInternalServerError() throws Exception {
+        return ErrorControllerAssertions.assertThat(resultActions)
+            .isInternalServerErrorResponse(PathConstants.Error.Budget.URI);
     }
 } 

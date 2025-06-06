@@ -43,7 +43,6 @@ public class PathConstants {
             public static final String URI = URI_BASE + Endpoints.INCOME;
             public static final String URI_WITH_ID = URI + "/%s";
         }
-        
     }
 
     public static class JsonProperties {

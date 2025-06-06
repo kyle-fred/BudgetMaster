@@ -4,7 +4,6 @@ import com.budgetmaster.application.enums.ExpenseCategory;
 import com.budgetmaster.application.enums.TransactionType;
 import com.budgetmaster.application.model.Money;
 import com.budgetmaster.testsupport.assertions.controller.error.ErrorControllerAssertions;
-import com.budgetmaster.testsupport.assertions.model.MoneyAssertions;
 import com.budgetmaster.testsupport.builder.model.MoneyBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
 import com.budgetmaster.testsupport.constants.PathConstants;
@@ -50,7 +49,7 @@ public class ExpenseControllerAssertions {
     }
 
     public ExpenseControllerAssertions hasMoney(Money expectedMoney) throws Exception {
-        MoneyAssertions.assertThat(resultActions, basePath + PathConstants.JsonProperties.Expense.MONEY)
+        MoneyControllerAssertions.assertThat(resultActions, basePath + PathConstants.JsonProperties.Expense.MONEY)
             .hasMoney(expectedMoney);
         return this;
     }

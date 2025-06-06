@@ -1,4 +1,4 @@
-package com.budgetmaster.testsupport.assertions.model;
+package com.budgetmaster.testsupport.assertions.controller;
 
 import com.budgetmaster.application.model.Money;
 import com.budgetmaster.testsupport.constants.PathConstants;
@@ -10,35 +10,35 @@ import java.util.Currency;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class MoneyAssertions {
+public class MoneyControllerAssertions {
 
     private final ResultActions resultActions;
     private final String basePath;
 
-    private MoneyAssertions(ResultActions resultActions, String basePath) {
+    private MoneyControllerAssertions(ResultActions resultActions, String basePath) {
         this.resultActions = resultActions;
         this.basePath = basePath;
     }
 
-    public static MoneyAssertions assertThat(ResultActions resultActions) {
-        return new MoneyAssertions(resultActions, PathConstants.JsonProperties.BASE);
+    public static MoneyControllerAssertions assertThat(ResultActions resultActions) {
+        return new MoneyControllerAssertions(resultActions, PathConstants.JsonProperties.BASE);
     }
 
-    public static MoneyAssertions assertThat(ResultActions resultActions, String basePath) {
-        return new MoneyAssertions(resultActions, basePath);
+    public static MoneyControllerAssertions assertThat(ResultActions resultActions, String basePath) {
+        return new MoneyControllerAssertions(resultActions, basePath);
     }
 
-    public MoneyAssertions hasAmount(BigDecimal expectedAmount) throws Exception {
+    public MoneyControllerAssertions hasAmount(BigDecimal expectedAmount) throws Exception {
         resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Money.AMOUNT).value(expectedAmount.toString()));
         return this;
     }
 
-    public MoneyAssertions hasCurrency(Currency expectedCurrency) throws Exception {
+    public MoneyControllerAssertions hasCurrency(Currency expectedCurrency) throws Exception {
         resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Money.CURRENCY).value(expectedCurrency.getCurrencyCode()));
         return this;
     }
 
-    public MoneyAssertions hasMoney(Money expectedMoney) throws Exception {
+    public MoneyControllerAssertions hasMoney(Money expectedMoney) throws Exception {
         return hasAmount(expectedMoney.getAmount())
             .hasCurrency(expectedMoney.getCurrency());
     }

@@ -9,7 +9,7 @@ import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.testsupport.assertions.controller.ExpenseControllerAssertions;
-import com.budgetmaster.testsupport.assertions.controller.ExpenseControllerListAssertions;
+import com.budgetmaster.testsupport.assertions.controller.list.ExpenseControllerListAssertions;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;

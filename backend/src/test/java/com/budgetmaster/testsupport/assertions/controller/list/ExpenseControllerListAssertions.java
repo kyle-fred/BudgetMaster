@@ -1,7 +1,8 @@
-package com.budgetmaster.testsupport.assertions.controller;
+package com.budgetmaster.testsupport.assertions.controller.list;
 
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.budgetmaster.testsupport.assertions.controller.ExpenseControllerAssertions;
 import com.budgetmaster.testsupport.constants.PathConstants;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

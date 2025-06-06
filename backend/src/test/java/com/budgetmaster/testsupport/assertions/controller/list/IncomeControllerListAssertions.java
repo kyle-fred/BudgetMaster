@@ -28,23 +28,23 @@ public class IncomeControllerListAssertions {
     }
 
     public IncomeControllerListAssertions next() throws Exception {
-        resultActions.andExpect(jsonPath(nextObject(objectIndex++)).exists());
+        resultActions.andExpect(jsonPath(nextIncome(objectIndex++)).exists());
         return this;
     }
 
     public IncomeControllerListAssertions isDefaultIncome() throws Exception {
-        IncomeControllerAssertions.assertThat(resultActions, nextObject(objectIndex - 1))
+        IncomeControllerAssertions.assertThat(resultActions, nextIncome(objectIndex - 1))
             .isDefaultIncomeResponse();
         return this;
     }
 
     public IncomeControllerListAssertions isUpdatedIncome() throws Exception {
-        IncomeControllerAssertions.assertThat(resultActions, nextObject(objectIndex - 1))
+        IncomeControllerAssertions.assertThat(resultActions, nextIncome(objectIndex - 1))
             .isUpdatedIncomeResponse();
         return this;
     }
 
-    private String nextObject(int index) {
+    private String nextIncome(int index) {
         return String.format(PathConstants.JsonProperties.SINGLE_OBJECT, index);
     }
 }

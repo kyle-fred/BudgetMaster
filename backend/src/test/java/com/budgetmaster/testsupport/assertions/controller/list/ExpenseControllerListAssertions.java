@@ -28,23 +28,23 @@ public class ExpenseControllerListAssertions {
     }
 
     public ExpenseControllerListAssertions next() throws Exception {
-        resultActions.andExpect(jsonPath(nextObject(objectIndex++)).exists());
+        resultActions.andExpect(jsonPath(nextExpense(objectIndex++)).exists());
         return this;
     }
 
     public ExpenseControllerListAssertions isDefaultExpense() throws Exception {
-        ExpenseControllerAssertions.assertThat(resultActions, nextObject(objectIndex - 1))
+        ExpenseControllerAssertions.assertThat(resultActions, nextExpense(objectIndex - 1))
             .isDefaultExpenseResponse();
         return this;
     }
 
     public ExpenseControllerListAssertions isUpdatedExpense() throws Exception {
-        ExpenseControllerAssertions.assertThat(resultActions, nextObject(objectIndex - 1))
+        ExpenseControllerAssertions.assertThat(resultActions, nextExpense(objectIndex - 1))
             .isUpdatedExpenseResponse();
         return this;
     }
 
-    private String nextObject(int index) {
+    private String nextExpense(int index) {
         return String.format(PathConstants.JsonProperties.SINGLE_OBJECT, index);
     }
 }

@@ -49,7 +49,7 @@ public class ExpenseControllerAssertions {
     }
 
     public ExpenseControllerAssertions hasMoney(Money expectedMoney) throws Exception {
-        MoneyControllerAssertions.assertThat(resultActions, basePath + PathConstants.JsonProperties.Expense.MONEY)
+        MoneyControllerAssertions.assertThat(resultActions, basePath + PathConstants.JsonProperties.MONEY)
             .hasMoney(expectedMoney);
         return this;
     }
@@ -66,9 +66,9 @@ public class ExpenseControllerAssertions {
 
     public ExpenseControllerAssertions hasMonth(YearMonth expectedMonth) throws Exception {
         resultActions
-            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Expense.MONTH_YEAR).isArray())
-            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Expense.YEAR).value(expectedMonth.getYear()))
-            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Expense.MONTH).value(expectedMonth.getMonthValue()));
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.MONTH_YEAR).isArray())
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.YEAR).value(expectedMonth.getYear()))
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.MONTH).value(expectedMonth.getMonthValue()));
         return this;
     }
 

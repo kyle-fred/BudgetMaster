@@ -51,15 +51,15 @@ public class BudgetControllerAssertions {
     }
 
     public BudgetControllerAssertions hasCurrency(Currency expectedCurrency) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Budget.CURRENCY).value(expectedCurrency.getCurrencyCode()));
+        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Money.CURRENCY).value(expectedCurrency.getCurrencyCode()));
         return this;
     }
 
     public BudgetControllerAssertions hasMonth(YearMonth expectedMonth) throws Exception {
         resultActions
-            .andExpect(jsonPath(PathConstants.JsonProperties.Budget.MONTH_YEAR).isArray())
-            .andExpect(jsonPath(PathConstants.JsonProperties.Budget.MONTH).value(expectedMonth.getMonthValue()))
-            .andExpect(jsonPath(PathConstants.JsonProperties.Budget.YEAR).value(expectedMonth.getYear()));
+            .andExpect(jsonPath(PathConstants.JsonProperties.MONTH_YEAR).isArray())
+            .andExpect(jsonPath(PathConstants.JsonProperties.MONTH).value(expectedMonth.getMonthValue()))
+            .andExpect(jsonPath(PathConstants.JsonProperties.YEAR).value(expectedMonth.getYear()));
         return this;
     }
 

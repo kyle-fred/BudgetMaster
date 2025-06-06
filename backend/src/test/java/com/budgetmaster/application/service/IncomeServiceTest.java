@@ -38,12 +38,11 @@ class IncomeServiceTest {
 	private final IncomeService incomeService = new IncomeService(incomeRepository, incomeBudgetSynchronizer);
 	
 	private Income defaultIncome;
-	private IncomeRequest incomeRequest;
+	private IncomeRequest defaultIncomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
 	
 	@BeforeEach
 	void setUp() {
 		defaultIncome = IncomeBuilder.defaultIncome().build();
-		incomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
 	}
 
 	@Nested
@@ -58,7 +57,7 @@ class IncomeServiceTest {
 			doNothing().when(incomeBudgetSynchronizer)
 					.apply(any(Income.class));
 			
-			Income savedIncome = incomeService.createIncome(incomeRequest);
+			Income savedIncome = incomeService.createIncome(defaultIncomeRequest);
 
 			IncomeModelAssertions.assertIncome(savedIncome)
 				.isDefaultIncome();
@@ -77,7 +76,7 @@ class IncomeServiceTest {
 			
 			DataIntegrityViolationException exception = assertThrows(
 					DataIntegrityViolationException.class,
-					() -> incomeService.createIncome(incomeRequest)
+					() -> incomeService.createIncome(defaultIncomeRequest)
 			);
 			
 			assertEquals(errorMessage, exception.getMessage());
@@ -198,7 +197,7 @@ class IncomeServiceTest {
 
 			IncomeNotFoundException exception = assertThrows(
 					IncomeNotFoundException.class,
-					() -> incomeService.updateIncome(IncomeConstants.NonExistent.ID, incomeRequest)
+					() -> incomeService.updateIncome(IncomeConstants.NonExistent.ID, defaultIncomeRequest)
 			);
 			
 			assertEquals(errorMessage, exception.getMessage());

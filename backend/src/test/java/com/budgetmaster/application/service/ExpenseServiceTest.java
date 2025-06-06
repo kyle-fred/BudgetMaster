@@ -38,12 +38,11 @@ class ExpenseServiceTest {
 	private final ExpenseService expenseService = new ExpenseService(expenseRepository, expenseBudgetSynchronizer);
 	
 	private Expense defaultExpense;
-	private ExpenseRequest expenseRequest;
+	private ExpenseRequest defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 	
 	@BeforeEach
 	void setUp() {
 		defaultExpense = ExpenseBuilder.defaultExpense().build();
-		expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 	}
 
 	@Nested
@@ -58,7 +57,7 @@ class ExpenseServiceTest {
 			doNothing().when(expenseBudgetSynchronizer)
 					.apply(any(Expense.class));
 			
-			Expense savedExpense = expenseService.createExpense(expenseRequest);
+			Expense savedExpense = expenseService.createExpense(defaultExpenseRequest);
 
 			ExpenseModelAssertions.assertExpense(savedExpense)
 				.isDefaultExpense();
@@ -77,7 +76,7 @@ class ExpenseServiceTest {
 			
 			DataIntegrityViolationException exception = assertThrows(
 					DataIntegrityViolationException.class,
-					() -> expenseService.createExpense(expenseRequest)
+					() -> expenseService.createExpense(defaultExpenseRequest)
 			);
 			
 			assertEquals(errorMessage, exception.getMessage());
@@ -198,7 +197,7 @@ class ExpenseServiceTest {
 
 			ExpenseNotFoundException exception = assertThrows(
 					ExpenseNotFoundException.class,
-					() -> expenseService.updateExpense(ExpenseConstants.NonExistent.ID, expenseRequest)
+					() -> expenseService.updateExpense(ExpenseConstants.NonExistent.ID, defaultExpenseRequest)
 			);
 			
 			assertEquals(errorMessage, exception.getMessage());

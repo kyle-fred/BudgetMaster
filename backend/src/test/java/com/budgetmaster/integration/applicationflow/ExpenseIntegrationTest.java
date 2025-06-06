@@ -45,15 +45,14 @@ class ExpenseIntegrationTest {
     @Autowired
     private BudgetRepository budgetRepository;
 
-    private Expense createdExpense;
-    private ExpenseRequest defaultExpenseRequest;
+    private Expense savedExpense;
+    private ExpenseRequest defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 
     @BeforeEach
     void setUp() {
         expenseRepository.deleteAll();
         budgetRepository.deleteAll();
-        defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
-        createdExpense = expenseController.createExpense(defaultExpenseRequest).getBody();
+        savedExpense = expenseController.createExpense(defaultExpenseRequest).getBody();
     }
 
     @Nested
@@ -63,12 +62,12 @@ class ExpenseIntegrationTest {
         @Test
         @DisplayName("Should create expense and synchronize budget when request is valid")
         void createExpense_withValidRequest_properlyPersistsAndSynchronizes() {
-            ExpenseIntegrationAssertions.assertExpense(createdExpense)
+            ExpenseIntegrationAssertions.assertExpense(savedExpense)
                 .isDefaultExpense();
 
-            Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
+            Expense persisted = expenseRepository.findById(savedExpense.getId()).orElse(null);
             ExpenseIntegrationAssertions.assertExpense(persisted)
-                .isEqualTo(createdExpense);
+                .isEqualTo(savedExpense);
 
             Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
             BudgetIntegrationAssertions.assertBudget(budget)
@@ -85,12 +84,12 @@ class ExpenseIntegrationTest {
         void updateExpense_withValidRequest_properlyUpdatesAndSynchronizes() {
             ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
 
-            Expense updatedExpense = expenseController.updateExpense(createdExpense.getId(), updateRequest).getBody();
+            Expense updatedExpense = expenseController.updateExpense(savedExpense.getId(), updateRequest).getBody();
             ExpenseIntegrationAssertions.assertExpense(updatedExpense)
-                .hasId(createdExpense.getId())
+                .hasId(savedExpense.getId())
                 .isUpdatedExpense();
 
-            Expense persisted = expenseRepository.findById(createdExpense.getId()).orElse(null);
+            Expense persisted = expenseRepository.findById(savedExpense.getId()).orElse(null);
             ExpenseIntegrationAssertions.assertExpense(persisted)
                 .isEqualTo(updatedExpense);
 
@@ -111,8 +110,8 @@ class ExpenseIntegrationTest {
         @Test
         @DisplayName("Should delete expense and synchronize budget when ID is valid")
         void deleteExpense_withValidId_properlyDeletesAndSynchronizes() {
-            expenseController.deleteExpense(createdExpense.getId());
-            ExpenseIntegrationAssertions.assertExpenseDeleted(createdExpense, expenseRepository);
+            expenseController.deleteExpense(savedExpense.getId());
+            ExpenseIntegrationAssertions.assertExpenseDeleted(savedExpense, expenseRepository);
 
             Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
             BudgetIntegrationAssertions.assertBudget(budget)
@@ -140,7 +139,7 @@ class ExpenseIntegrationTest {
 
             ExpenseIntegrationListAssertions.assertExpenses(response)
                 .hasSize(2)
-                .contains(createdExpense, secondExpense);
+                .contains(savedExpense, secondExpense);
         }
 
         @Test

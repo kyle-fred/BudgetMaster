@@ -52,13 +52,12 @@ class ExpenseServiceIntegrationTest {
     @Autowired
     private BudgetRepository budgetRepository;
     
-    private ExpenseRequest defaultRequest;
+    private ExpenseRequest defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
     
     @BeforeEach
     void setUp() {
         expenseRepository.deleteAll();
         budgetRepository.deleteAll();
-        defaultRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
     }
     
     @Nested
@@ -68,7 +67,7 @@ class ExpenseServiceIntegrationTest {
         @Test
         @DisplayName("Should create expense and synchronize budget when request is valid")
         void createExpense_withValidRequest_properlyPersistsAndSynchronizes() {
-            Expense createdExpense = expenseService.createExpense(defaultRequest);
+            Expense createdExpense = expenseService.createExpense(defaultExpenseRequest);
             
             ExpenseIntegrationAssertions.assertExpense(createdExpense)
                 .isDefaultExpense();
@@ -88,7 +87,7 @@ class ExpenseServiceIntegrationTest {
             doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                     .when(expenseBudgetSynchronizer).apply(any(Expense.class));
 
-            assertThatThrownBy(() -> expenseService.createExpense(defaultRequest))
+            assertThatThrownBy(() -> expenseService.createExpense(defaultExpenseRequest))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
@@ -107,7 +106,7 @@ class ExpenseServiceIntegrationTest {
         @Test
         @DisplayName("Should update expense and synchronize budget when request is valid")
         void updateExpense_withValidRequest_properlyUpdatesAndSynchronizes() {
-            Expense createdExpense = expenseService.createExpense(defaultRequest);
+            Expense createdExpense = expenseService.createExpense(defaultExpenseRequest);
             ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
             
             Expense updatedExpense = expenseService.updateExpense(createdExpense.getId(), updateRequest);
@@ -127,7 +126,7 @@ class ExpenseServiceIntegrationTest {
         @Test
         @DisplayName("Should synchronize both budgets when month changes")
         void updateExpense_withMonthChange_properlySynchronizesBothBudgets() {
-            Expense createdExpense = expenseService.createExpense(defaultRequest);
+            Expense createdExpense = expenseService.createExpense(defaultExpenseRequest);
             ExpenseRequest updateRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
             expenseService.updateExpense(createdExpense.getId(), updateRequest);
             
@@ -143,7 +142,7 @@ class ExpenseServiceIntegrationTest {
         @Test
         @DisplayName("Should rollback transaction when synchronization fails")
         void updateExpense_withSynchronizationFailure_rollsBackTransaction() {
-            Expense original = expenseService.createExpense(defaultRequest);
+            Expense original = expenseService.createExpense(defaultExpenseRequest);
             ExpenseRequest updatedRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
             
             doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
@@ -170,7 +169,7 @@ class ExpenseServiceIntegrationTest {
         @Test
         @DisplayName("Should delete expense and synchronize budget when ID is valid")
         void deleteExpense_withValidId_properlyDeletesAndSynchronizes() {
-            Expense createdExpense = expenseService.createExpense(defaultRequest);
+            Expense createdExpense = expenseService.createExpense(defaultExpenseRequest);
             expenseService.deleteExpense(createdExpense.getId());
             ExpenseIntegrationAssertions.assertExpenseDeleted(createdExpense, expenseRepository);
             
@@ -182,7 +181,7 @@ class ExpenseServiceIntegrationTest {
         @Test
         @DisplayName("Should rollback transaction when synchronization fails")
         void deleteExpense_withSynchronizationFailure_rollsBackTransaction() {
-            Expense expense = expenseService.createExpense(defaultRequest);
+            Expense expense = expenseService.createExpense(defaultExpenseRequest);
             
             doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                 .when(expenseBudgetSynchronizer).retract(any(Expense.class));

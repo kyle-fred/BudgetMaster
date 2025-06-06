@@ -17,13 +17,19 @@ import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 public class IncomeControllerAssertions {
 
     private final ResultActions resultActions;
+    private final String basePath;
 
-    private IncomeControllerAssertions(ResultActions resultActions) {
+    private IncomeControllerAssertions(ResultActions resultActions, String basePath) {
         this.resultActions = resultActions;
+        this.basePath = basePath;
     }
 
     public static IncomeControllerAssertions assertThat(ResultActions resultActions) {
-        return new IncomeControllerAssertions(resultActions);
+        return new IncomeControllerAssertions(resultActions, PathConstants.JsonProperties.BASE);
+    }
+
+    public static IncomeControllerAssertions assertThat(ResultActions resultActions, String basePath) {
+        return new IncomeControllerAssertions(resultActions, basePath);
     }
 
     public IncomeControllerAssertions isOk() throws Exception {
@@ -37,31 +43,31 @@ public class IncomeControllerAssertions {
     }
 
     public IncomeControllerAssertions hasName(String expectedName) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Income.NAME).value(expectedName));
+        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Income.NAME).value(expectedName));
         return this;
     }
 
     public IncomeControllerAssertions hasSource(String expectedSource) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Income.SOURCE).value(expectedSource));
+        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Income.SOURCE).value(expectedSource));
         return this;
     }
 
     public IncomeControllerAssertions hasMoney(Money expectedMoney) throws Exception {
-        MoneyControllerAssertions.assertThat(resultActions)
+        MoneyControllerAssertions.assertThat(resultActions, basePath + PathConstants.JsonProperties.Income.MONEY)
             .hasMoney(expectedMoney);
         return this;
     }
 
     public IncomeControllerAssertions hasType(TransactionType expectedType) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Income.TYPE).value(expectedType.toString()));
+        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Income.TYPE).value(expectedType.toString()));
         return this;
     }
 
     public IncomeControllerAssertions hasMonth(YearMonth expectedMonth) throws Exception {
         resultActions
-            .andExpect(jsonPath(PathConstants.JsonProperties.Income.MONTH_YEAR).isArray())
-            .andExpect(jsonPath(PathConstants.JsonProperties.Income.MONTH).value(expectedMonth.getMonthValue()))
-            .andExpect(jsonPath(PathConstants.JsonProperties.Income.YEAR).value(expectedMonth.getYear()));
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Income.MONTH_YEAR).isArray())
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Income.MONTH).value(expectedMonth.getMonthValue()))
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Income.YEAR).value(expectedMonth.getYear()));
         return this;
     }
 

@@ -9,6 +9,7 @@ import com.budgetmaster.application.model.Income;
 import com.budgetmaster.application.service.IncomeService;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.testsupport.assertions.controller.IncomeControllerAssertions;
+import com.budgetmaster.testsupport.assertions.controller.list.IncomeControllerListAssertions;
 import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.builder.model.IncomeBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
@@ -149,17 +150,20 @@ class IncomeControllerTest {
 		@Test
 		@DisplayName("Should return all incomes when month is valid")
 		void getAllIncomes_withValidMonth_returnsOk() throws Exception {
-			List<Income> incomeList = List.of(defaultIncome, defaultIncome);
+			Income updatedIncome = IncomeBuilder.updatedIncome().build();
+			List<Income> incomeList = List.of(defaultIncome, updatedIncome);
 			
 			when(incomeService.getAllIncomesForMonth(IncomeConstants.Default.YEAR_MONTH.toString()))
 					.thenReturn(incomeList);
 			
-			mockMvc.perform(get(PathConstants.Endpoints.INCOME)
+			ResultActions validGetRequest = mockMvc.perform(get(PathConstants.Endpoints.INCOME)
 					.param(PathConstants.RequestParams.MONTH, IncomeConstants.Default.YEAR_MONTH.toString())
-					.contentType(MediaType.APPLICATION_JSON))
-					.andExpect(status().isOk())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Income.FIRST_NAME).value(IncomeConstants.Default.NAME))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Income.SECOND_NAME).value(IncomeConstants.Default.NAME));
+					.contentType(MediaType.APPLICATION_JSON));
+
+			IncomeControllerListAssertions.assertThat(validGetRequest)
+				.hasSize(2)
+				.next().isDefaultIncome()
+				.next().isUpdatedIncome();
 					
 			verify(incomeService).getAllIncomesForMonth(IncomeConstants.Default.YEAR_MONTH.toString());
 		}

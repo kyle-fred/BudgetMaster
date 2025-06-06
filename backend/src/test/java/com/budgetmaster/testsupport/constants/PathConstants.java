@@ -79,15 +79,16 @@ public class PathConstants {
         public static class Income {
             private Income() {}
 
-            public static final String NAME = BASE + ".name";
-            public static final String SOURCE = BASE + ".source";
-            public static final String TYPE = BASE + ".type";
-            public static final String MONTH_YEAR = BASE + ".month";
-            public static final String YEAR = BASE + ".month[0]";
-            public static final String MONTH = BASE + ".month[1]";
+            public static final String NAME = ".name";
+            public static final String MONEY = ".money";
+            public static final String SOURCE = ".source";
+            public static final String TYPE = ".type";
+            public static final String MONTH_YEAR = ".month";
+            public static final String YEAR = ".month[0]";
+            public static final String MONTH = ".month[1]";
 
-            public static final String FIRST_NAME = "$[0].name";
-            public static final String SECOND_NAME = "$[1].name";
+            // public static final String FIRST_NAME = "$[0].name";
+            // public static final String SECOND_NAME = "$[1].name";
         }
 
         public static class Money {

@@ -37,13 +37,12 @@ class ExpenseServiceTest {
 	private final ExpenseBudgetSynchronizer expenseBudgetSynchronizer = mock(ExpenseBudgetSynchronizer.class);
 	private final ExpenseService expenseService = new ExpenseService(expenseRepository, expenseBudgetSynchronizer);
 	
-	private Expense testExpense;
-	private ExpenseRequest expenseRequest;
+	private Expense defaultExpense;
+	private ExpenseRequest defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 	
 	@BeforeEach
 	void setUp() {
-		testExpense = ExpenseBuilder.defaultExpense().build();
-		expenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
+		defaultExpense = ExpenseBuilder.defaultExpense().build();
 	}
 
 	@Nested
@@ -54,11 +53,11 @@ class ExpenseServiceTest {
 		@DisplayName("Should create expense when request is valid")
 		void createExpense_withValidRequest_returnsCreated() {
 			when(expenseRepository.saveAndFlush(any(Expense.class)))
-					.thenReturn(testExpense);
+					.thenReturn(defaultExpense);
 			doNothing().when(expenseBudgetSynchronizer)
 					.apply(any(Expense.class));
 			
-			Expense savedExpense = expenseService.createExpense(expenseRequest);
+			Expense savedExpense = expenseService.createExpense(defaultExpenseRequest);
 
 			ExpenseModelAssertions.assertExpense(savedExpense)
 				.isDefaultExpense();
@@ -77,7 +76,7 @@ class ExpenseServiceTest {
 			
 			DataIntegrityViolationException exception = assertThrows(
 					DataIntegrityViolationException.class,
-					() -> expenseService.createExpense(expenseRequest)
+					() -> expenseService.createExpense(defaultExpenseRequest)
 			);
 			
 			assertEquals(errorMessage, exception.getMessage());
@@ -93,7 +92,7 @@ class ExpenseServiceTest {
 		@Test
 		@DisplayName("Should return all expenses for valid month")
 		void getAllExpensesForMonth_withValidMonth_returnsExpenses() {
-			List<Expense> expenses = List.of(testExpense, testExpense);
+			List<Expense> expenses = List.of(defaultExpense, defaultExpense);
 			
 			try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 				mockedDateUtils.when(() -> DateUtils.getValidYearMonth(ExpenseConstants.Default.YEAR_MONTH.toString()))
@@ -116,7 +115,7 @@ class ExpenseServiceTest {
 		@DisplayName("Should return expense when found by ID")
 		void getExpenseById_withValidId_returnsExpense() {
 			when(expenseRepository.findById(ExpenseConstants.Default.ID))
-					.thenReturn(Optional.of(testExpense));
+					.thenReturn(Optional.of(defaultExpense));
 			
 			Expense retrievedExpense = expenseService.getExpenseById(ExpenseConstants.Default.ID);
 			
@@ -173,11 +172,11 @@ class ExpenseServiceTest {
 			ExpenseRequest updatedExpenseRequest = ExpenseRequestBuilder.updatedExpenseRequest().buildRequest();
 
 			when(expenseRepository.findById(ExpenseConstants.Default.ID))
-					.thenReturn(Optional.of(testExpense));
+					.thenReturn(Optional.of(defaultExpense));
 			doNothing().when(expenseBudgetSynchronizer)
 					.reapply(any(Expense.class), any(Expense.class));
 			when(expenseRepository.saveAndFlush(any(Expense.class)))
-					.thenReturn(testExpense);
+					.thenReturn(defaultExpense);
 
 			Expense updatedExpense = expenseService.updateExpense(ExpenseConstants.Default.ID, updatedExpenseRequest);
 
@@ -198,7 +197,7 @@ class ExpenseServiceTest {
 
 			ExpenseNotFoundException exception = assertThrows(
 					ExpenseNotFoundException.class,
-					() -> expenseService.updateExpense(ExpenseConstants.NonExistent.ID, expenseRequest)
+					() -> expenseService.updateExpense(ExpenseConstants.NonExistent.ID, defaultExpenseRequest)
 			);
 			
 			assertEquals(errorMessage, exception.getMessage());
@@ -216,7 +215,7 @@ class ExpenseServiceTest {
 		@DisplayName("Should delete expense when found by ID")
 		void deleteExpense_withValidId_deletesExpense() {
 			when(expenseRepository.findById(ExpenseConstants.Default.ID))
-					.thenReturn(Optional.of(testExpense));
+					.thenReturn(Optional.of(defaultExpense));
 			doNothing().when(expenseBudgetSynchronizer)
 					.retract(any(Expense.class));
 			doNothing()

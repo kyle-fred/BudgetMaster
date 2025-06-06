@@ -36,14 +36,14 @@ class EntityLookupServiceTest extends EntityLookupService {
 	private JpaRepository<Budget, Long> mockRepository;
 
 	@Mock
-	private Income testIncome;
+	private Income defaultIncome;
 
-	private Budget testBudget;
+	private Budget defaultBudget;
 	
 	@BeforeEach
 	void setUp() {
-		testBudget = BudgetBuilder.defaultBudget().build();
-		testIncome = IncomeBuilder.defaultIncome().build();
+		defaultBudget = BudgetBuilder.defaultBudget().build();
+		defaultIncome = IncomeBuilder.defaultIncome().build();
 	}
 
 	@Nested
@@ -54,7 +54,7 @@ class EntityLookupServiceTest extends EntityLookupService {
 		@DisplayName("Should return entity when found by ID")
 		void findByIdOrThrow_withExistingEntity_returnsEntity() {
 			when(mockRepository.findById(BudgetConstants.Default.ID))
-					.thenReturn(Optional.of(testBudget));
+					.thenReturn(Optional.of(defaultBudget));
 			
 			Budget result = findByIdOrThrow(
 					mockRepository,
@@ -100,7 +100,7 @@ class EntityLookupServiceTest extends EntityLookupService {
 		@Test
 		@DisplayName("Should return entity when found by custom finder")
 		void findByCustomFinderOrThrow_withExistingEntity_returnsEntity() {
-			Function<YearMonth, Optional<Budget>> finder = month -> Optional.of(testBudget);
+			Function<YearMonth, Optional<Budget>> finder = month -> Optional.of(defaultBudget);
 			
 			Budget result = findByCustomFinderOrThrow(
 					finder,
@@ -138,7 +138,7 @@ class EntityLookupServiceTest extends EntityLookupService {
 		@Test
 		@DisplayName("Should return list of entities when found by custom finder")
 		void findListByCustomFinderOrThrow_withExistingEntities_returnsListOfEntities() {
-			Function<YearMonth, List<Income>> finder = month -> List.of(testIncome);
+			Function<YearMonth, List<Income>> finder = month -> List.of(defaultIncome);
 			
 			List<Income> result = findListByCustomFinderOrThrow(
 					finder,

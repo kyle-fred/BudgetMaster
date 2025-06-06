@@ -17,12 +17,12 @@ import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 class YearMonthConverterTest {
 
     private YearMonthConverter converter;
-    private YearMonth testYearMonth;
+    private YearMonth defaultYearMonth;
 
     @BeforeEach
     void setUp() {
         converter = new YearMonthConverter();
-        testYearMonth = IncomeConstants.Default.YEAR_MONTH;
+        defaultYearMonth = IncomeConstants.Default.YEAR_MONTH;
     }
 
     @Nested
@@ -32,7 +32,7 @@ class YearMonthConverterTest {
         @Test
         @DisplayName("Should convert year month to string when year month is not null")
         void convertToDatabaseColumn_withNotNullYearMonth_returnsString() {
-            String result = converter.convertToDatabaseColumn(testYearMonth);
+            String result = converter.convertToDatabaseColumn(defaultYearMonth);
 
             assertThat(result).isEqualTo(IncomeConstants.Default.YEAR_MONTH_STRING);
         }

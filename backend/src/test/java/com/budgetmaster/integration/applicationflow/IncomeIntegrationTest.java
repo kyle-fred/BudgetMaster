@@ -45,15 +45,14 @@ class IncomeIntegrationTest {
     @Autowired
     private BudgetRepository budgetRepository;
 
-    private Income createdIncome;
-    private IncomeRequest defaultIncomeRequest;
+    private Income savedIncome;
+    private IncomeRequest defaultIncomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
 
     @BeforeEach
     void setUp() {
         incomeRepository.deleteAll();
         budgetRepository.deleteAll();
-        defaultIncomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
-        createdIncome = incomeController.createIncome(defaultIncomeRequest).getBody();
+        savedIncome = incomeController.createIncome(defaultIncomeRequest).getBody();
     }
 
     @Nested
@@ -63,12 +62,12 @@ class IncomeIntegrationTest {
         @Test
         @DisplayName("Should create income and synchronize budget when request is valid")
         void createIncome_withValidRequest_properlyPersistsAndSynchronizes() {
-            IncomeIntegrationAssertions.assertIncome(createdIncome)
+            IncomeIntegrationAssertions.assertIncome(savedIncome)
                 .isDefaultIncome();
             
-            Income persisted = incomeRepository.findById(createdIncome.getId()).orElse(null);
+            Income persisted = incomeRepository.findById(savedIncome.getId()).orElse(null);
             IncomeIntegrationAssertions.assertIncome(persisted)
-                .isEqualTo(createdIncome);
+                .isEqualTo(savedIncome);
 
             Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
             BudgetIntegrationAssertions.assertBudget(budget)
@@ -85,12 +84,12 @@ class IncomeIntegrationTest {
         void updateIncome_withValidRequest_properlyUpdatesAndSynchronizes() {
             IncomeRequest updateRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
 
-            Income updatedIncome = incomeController.updateIncome(createdIncome.getId(), updateRequest).getBody();
+            Income updatedIncome = incomeController.updateIncome(savedIncome.getId(), updateRequest).getBody();
             IncomeIntegrationAssertions.assertIncome(updatedIncome)
-                .hasId(createdIncome.getId())
+                .hasId(savedIncome.getId())
                 .isUpdatedIncome();
 
-            Income persisted = incomeRepository.findById(createdIncome.getId()).orElse(null);
+            Income persisted = incomeRepository.findById(savedIncome.getId()).orElse(null);
             IncomeIntegrationAssertions.assertIncome(persisted)
                 .isEqualTo(updatedIncome);
 
@@ -111,8 +110,8 @@ class IncomeIntegrationTest {
         @Test
         @DisplayName("Should delete income and synchronize budget when ID is valid")
         void deleteIncome_withValidId_properlyDeletesAndSynchronizes() {
-            incomeController.deleteIncome(createdIncome.getId());
-            IncomeIntegrationAssertions.assertIncomeDeleted(createdIncome, incomeRepository);
+            incomeController.deleteIncome(savedIncome.getId());
+            IncomeIntegrationAssertions.assertIncomeDeleted(savedIncome, incomeRepository);
 
             Budget budget = budgetRepository.findByMonth(BudgetConstants.Default.YEAR_MONTH).orElse(null);
             BudgetIntegrationAssertions.assertBudget(budget)
@@ -140,7 +139,7 @@ class IncomeIntegrationTest {
 
             IncomeIntegrationListAssertions.assertIncomes(response)
                 .hasSize(2)
-                .contains(createdIncome, secondIncome);
+                .contains(savedIncome, secondIncome);
         }
 
         @Test

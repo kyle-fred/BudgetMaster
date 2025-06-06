@@ -1,14 +1,18 @@
 package com.budgetmaster.integration.service;
 
+import com.budgetmaster.application.dto.ExpenseRequest;
 import com.budgetmaster.application.dto.IncomeRequest;
 import com.budgetmaster.application.exception.BudgetNotFoundException;
 import com.budgetmaster.application.model.Budget;
 import com.budgetmaster.application.repository.BudgetRepository;
+import com.budgetmaster.application.repository.ExpenseRepository;
 import com.budgetmaster.application.repository.IncomeRepository;
 import com.budgetmaster.application.service.BudgetService;
+import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.application.service.IncomeService;
 import com.budgetmaster.integration.config.TestContainersConfig;
 import com.budgetmaster.testsupport.assertions.integration.BudgetIntegrationAssertions;
+import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.builder.dto.IncomeRequestBuilder;
 import com.budgetmaster.testsupport.constants.domain.BudgetConstants;
 
@@ -32,24 +36,30 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class BudgetServiceIntegrationTest {
     
     @Autowired
-    private BudgetService budgetService;
-
-    @Autowired
-    private IncomeService incomeService;
-
+    private BudgetService budgetService;    
     @Autowired
     private BudgetRepository budgetRepository;
 
     @Autowired
+    private IncomeService incomeService;
+    @Autowired
     private IncomeRepository incomeRepository;
 
+    @Autowired
+    private ExpenseService expenseService;
+    @Autowired
+    private ExpenseRepository expenseRepository;
+
     private IncomeRequest defaultIncomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
+    private ExpenseRequest defaultExpenseRequest = ExpenseRequestBuilder.defaultExpenseRequest().buildRequest();
 
     @BeforeEach
     void setUp() {
-        incomeRepository.deleteAll();
         budgetRepository.deleteAll();
+        incomeRepository.deleteAll();
+        expenseRepository.deleteAll();
         incomeService.createIncome(defaultIncomeRequest);
+        expenseService.createExpense(defaultExpenseRequest);
     }
 
     @Nested
@@ -63,7 +73,7 @@ class BudgetServiceIntegrationTest {
 
             Budget budget = budgetService.getBudgetById(persistedBudget.getId());
             BudgetIntegrationAssertions.assertBudget(budget)
-                .hasTotalIncome(BudgetConstants.Default.TOTAL_INCOME);
+                .isDefaultBudget();
         }
 
         @Test
@@ -71,7 +81,7 @@ class BudgetServiceIntegrationTest {
         void getBudget_withValidMonth_returnsBudget() {
             Budget budget = budgetService.getBudgetByMonth(BudgetConstants.Default.YEAR_MONTH_STRING);
             BudgetIntegrationAssertions.assertBudget(budget)
-                .hasTotalIncome(BudgetConstants.Default.TOTAL_INCOME);
+                .isDefaultBudget();
         }
 
         @Test

@@ -19,12 +19,12 @@ import com.budgetmaster.testsupport.constants.domain.MoneyConstants;
 class MoneyConverterTest {
 
     private MoneyConverter converter;
-    private Money testMoney;
+    private Money defaultMoney;
 
     @BeforeEach
     void setUp() {
         converter = new MoneyConverter();
-        testMoney = MoneyBuilder.defaultIncome().build();
+        defaultMoney = MoneyBuilder.defaultIncome().build();
     }
 
     @Nested
@@ -34,7 +34,7 @@ class MoneyConverterTest {
         @Test
         @DisplayName("Should convert money to big decimal when money is not null")
         void convertToDatabaseColumn_withNotNullMoney_returnsBigDecimal() {
-            BigDecimal result = converter.convertToDatabaseColumn(testMoney);
+            BigDecimal result = converter.convertToDatabaseColumn(defaultMoney);
 
             assertThat(result).isEqualTo(MoneyConstants.IncomeDefaults.AMOUNT);
         }

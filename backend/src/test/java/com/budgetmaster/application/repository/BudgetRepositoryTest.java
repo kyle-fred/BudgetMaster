@@ -32,12 +32,12 @@ class BudgetRepositoryTest {
     @Autowired
     private BudgetRepository budgetRepository;
 
-    private Budget testBudget;
+    private Budget savedBudget;
 
     @BeforeEach
     void setUp() {
         budgetRepository.deleteAll();
-        testBudget = budgetRepository.save(BudgetBuilder.defaultBudget().build());
+        savedBudget = budgetRepository.save(BudgetBuilder.defaultBudget().build());
     }
 
     @Nested
@@ -47,16 +47,16 @@ class BudgetRepositoryTest {
         @Test
         @DisplayName("Should save budget to repository")
         void save_withValidBudget_persistsBudget() {
-            BudgetIntegrationAssertions.assertBudget(testBudget)
+            BudgetIntegrationAssertions.assertBudget(savedBudget)
                 .isDefaultBudget();
         }
 
         @Test
         @DisplayName("Should delete budget from repository")
         void delete_withExistingBudget_removesBudget() {
-            budgetRepository.delete(testBudget);
+            budgetRepository.delete(savedBudget);
 
-            BudgetIntegrationAssertions.assertBudgetDeleted(testBudget, budgetRepository);
+            BudgetIntegrationAssertions.assertBudgetDeleted(savedBudget, budgetRepository);
         }
     }
 
@@ -67,19 +67,19 @@ class BudgetRepositoryTest {
         @Test
         @DisplayName("Should find budget by ID")
         void findById_withExistingId_returnsBudget() {
-            Budget foundBudget = budgetRepository.findById(testBudget.getId()).orElse(null);
+            Budget foundBudget = budgetRepository.findById(savedBudget.getId()).orElse(null);
 
             BudgetIntegrationAssertions.assertBudget(foundBudget)
-                .isEqualTo(testBudget);
+                .isEqualTo(savedBudget);
         }
 
         @Test
         @DisplayName("Should find budget by month")
         void findByMonth_withExistingMonth_returnsBudget() {
-            Optional<Budget> foundBudget = budgetRepository.findByMonth(testBudget.getMonth());
+            Optional<Budget> foundBudget = budgetRepository.findByMonth(savedBudget.getMonth());
             
             BudgetIntegrationAssertions.assertBudget(foundBudget.get())
-                .isEqualTo(testBudget);
+                .isEqualTo(savedBudget);
         }
 
         @Test

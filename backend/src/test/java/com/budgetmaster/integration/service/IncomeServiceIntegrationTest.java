@@ -51,13 +51,12 @@ class IncomeServiceIntegrationTest {
     @Autowired
     private BudgetRepository budgetRepository;
     
-    private IncomeRequest defaultRequest;
+    private IncomeRequest defaultIncomeRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
     
     @BeforeEach
     void setUp() {
         incomeRepository.deleteAll();
         budgetRepository.deleteAll();
-        defaultRequest = IncomeRequestBuilder.defaultIncomeRequest().buildRequest();
     }
     
     @Nested
@@ -67,7 +66,7 @@ class IncomeServiceIntegrationTest {
         @Test
         @DisplayName("Should create income and synchronize budget when request is valid")
         void createIncome_withValidRequest_properlyPersistsAndSynchronizes() {
-            Income createdIncome = incomeService.createIncome(defaultRequest);
+            Income createdIncome = incomeService.createIncome(defaultIncomeRequest);
             
             IncomeIntegrationAssertions.assertIncome(createdIncome)
                 .isDefaultIncome();
@@ -87,7 +86,7 @@ class IncomeServiceIntegrationTest {
             doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                     .when(incomeBudgetSynchronizer).apply(any(Income.class));
 
-            assertThatThrownBy(() -> incomeService.createIncome(defaultRequest))
+            assertThatThrownBy(() -> incomeService.createIncome(defaultIncomeRequest))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining(ErrorCode.SYNCHRONIZATION_FAILED.getMessage());
 
@@ -106,7 +105,7 @@ class IncomeServiceIntegrationTest {
         @Test
         @DisplayName("Should update income and synchronize budget when request is valid")
         void updateIncome_withValidRequest_properlyUpdatesAndSynchronizes() {
-            Income createdIncome = incomeService.createIncome(defaultRequest);
+            Income createdIncome = incomeService.createIncome(defaultIncomeRequest);
             IncomeRequest updateRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
             
             Income updatedIncome = incomeService.updateIncome(createdIncome.getId(), updateRequest);
@@ -126,7 +125,7 @@ class IncomeServiceIntegrationTest {
         @Test
         @DisplayName("Should synchronize both budgets when month changes")
         void updateIncome_withMonthChange_properlySynchronizesBothBudgets() {
-            Income createdIncome = incomeService.createIncome(defaultRequest);
+            Income createdIncome = incomeService.createIncome(defaultIncomeRequest);
             IncomeRequest updateRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
             incomeService.updateIncome(createdIncome.getId(), updateRequest);
             
@@ -142,7 +141,7 @@ class IncomeServiceIntegrationTest {
         @Test
         @DisplayName("Should rollback transaction when synchronization fails")
         void updateIncome_withSynchronizationFailure_rollsBackTransaction() {
-            Income original = incomeService.createIncome(defaultRequest);
+            Income original = incomeService.createIncome(defaultIncomeRequest);
             IncomeRequest updatedRequest = IncomeRequestBuilder.updatedIncomeRequest().buildRequest();
             
             doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
@@ -169,7 +168,7 @@ class IncomeServiceIntegrationTest {
         @Test
         @DisplayName("Should delete income and synchronize budget when ID is valid")
         void deleteIncome_withValidId_properlyDeletesAndSynchronizes() {
-            Income createdIncome = incomeService.createIncome(defaultRequest);
+            Income createdIncome = incomeService.createIncome(defaultIncomeRequest);
             incomeService.deleteIncome(createdIncome.getId());
             IncomeIntegrationAssertions.assertIncomeDeleted(createdIncome, incomeRepository);
             
@@ -181,7 +180,7 @@ class IncomeServiceIntegrationTest {
         @Test
         @DisplayName("Should rollback transaction when synchronization fails")
         void deleteIncome_withSynchronizationFailure_rollsBackTransaction() {
-            Income income = incomeService.createIncome(defaultRequest);
+            Income income = incomeService.createIncome(defaultIncomeRequest);
             
             doThrow(new RuntimeException(ErrorCode.SYNCHRONIZATION_FAILED.getMessage()))
                 .when(incomeBudgetSynchronizer).retract(any(Income.class));

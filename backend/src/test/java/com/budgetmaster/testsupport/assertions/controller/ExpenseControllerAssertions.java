@@ -19,13 +19,19 @@ import java.time.YearMonth;
 public class ExpenseControllerAssertions {
 
     private final ResultActions resultActions;
+    private final String basePath;
 
-    private ExpenseControllerAssertions(ResultActions resultActions) {
+    private ExpenseControllerAssertions(ResultActions resultActions, String basePath) {
         this.resultActions = resultActions;
+        this.basePath = basePath;
     }
 
     public static ExpenseControllerAssertions assertThat(ResultActions resultActions) {
-        return new ExpenseControllerAssertions(resultActions);
+        return new ExpenseControllerAssertions(resultActions, PathConstants.JsonProperties.BASE);
+    }
+
+    public static ExpenseControllerAssertions assertThat(ResultActions resultActions, String basePath) {
+        return new ExpenseControllerAssertions(resultActions, basePath);
     }
 
     public ExpenseControllerAssertions isOk() throws Exception {
@@ -39,31 +45,31 @@ public class ExpenseControllerAssertions {
     }
 
     public ExpenseControllerAssertions hasName(String expectedName) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Expense.NAME).value(expectedName));
+        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Expense.NAME).value(expectedName));
         return this;
     }
 
     public ExpenseControllerAssertions hasMoney(Money expectedMoney) throws Exception {
-        MoneyAssertions.assertThat(resultActions)
+        MoneyAssertions.assertThat(resultActions, basePath + PathConstants.JsonProperties.Expense.MONEY)
             .hasMoney(expectedMoney);
         return this;
     }
 
     public ExpenseControllerAssertions hasCategory(ExpenseCategory expectedCategory) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Expense.CATEGORY).value(expectedCategory.toString()));
+        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Expense.CATEGORY).value(expectedCategory.toString()));
         return this;
     }
 
     public ExpenseControllerAssertions hasType(TransactionType expectedType) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Expense.TYPE).value(expectedType.toString()));
+        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Expense.TYPE).value(expectedType.toString()));
         return this;
     }
 
     public ExpenseControllerAssertions hasMonth(YearMonth expectedMonth) throws Exception {
         resultActions
-            .andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH_YEAR).isArray())
-            .andExpect(jsonPath(PathConstants.JsonProperties.Expense.MONTH).value(expectedMonth.getMonthValue()))
-            .andExpect(jsonPath(PathConstants.JsonProperties.Expense.YEAR).value(expectedMonth.getYear()));
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Expense.MONTH_YEAR).isArray())
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Expense.YEAR).value(expectedMonth.getYear()))
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Expense.MONTH).value(expectedMonth.getMonthValue()));
         return this;
     }
 

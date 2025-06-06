@@ -9,6 +9,7 @@ import com.budgetmaster.application.model.Expense;
 import com.budgetmaster.application.service.ExpenseService;
 import com.budgetmaster.config.JacksonConfig;
 import com.budgetmaster.testsupport.assertions.controller.ExpenseControllerAssertions;
+import com.budgetmaster.testsupport.assertions.controller.ExpenseControllerListAssertions;
 import com.budgetmaster.testsupport.builder.dto.ExpenseRequestBuilder;
 import com.budgetmaster.testsupport.builder.model.ExpenseBuilder;
 import com.budgetmaster.testsupport.constants.ErrorConstants;
@@ -31,7 +32,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ExpenseController.class)
 @Import(JacksonConfig.class)
@@ -149,17 +149,20 @@ class ExpenseControllerTest {
 		@Test
 		@DisplayName("Should return all expenses when month is valid")
 		void getAllExpenses_withValidMonth_returnsOk() throws Exception {
-			List<Expense> expenseList = List.of(defaultExpense, defaultExpense);
+			Expense updatedExpense = ExpenseBuilder.updatedExpense().build();
+			List<Expense> expenseList = List.of(defaultExpense, updatedExpense);
 			
 			when(expenseService.getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString()))
 					.thenReturn(expenseList);
 					
-			mockMvc.perform(get(PathConstants.Endpoints.EXPENSE)
+			ResultActions validGetRequest = mockMvc.perform(get(PathConstants.Endpoints.EXPENSE)
 					.param(PathConstants.RequestParams.MONTH, ExpenseConstants.Default.YEAR_MONTH.toString())
-					.contentType(MediaType.APPLICATION_JSON))
-					.andExpect(status().isOk())
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.FIRST_NAME).value(ExpenseConstants.Default.NAME))
-					.andExpect(jsonPath(PathConstants.JsonProperties.Expense.SECOND_NAME).value(ExpenseConstants.Default.NAME));
+					.contentType(MediaType.APPLICATION_JSON));
+
+			ExpenseControllerListAssertions.assertThat(validGetRequest)
+				.hasSize(2)
+				.next().isDefaultExpense()
+				.next().isUpdatedExpense();
 					
 			verify(expenseService).getAllExpensesForMonth(ExpenseConstants.Default.YEAR_MONTH.toString());
 		}

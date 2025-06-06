@@ -49,6 +49,10 @@ public class PathConstants {
     public static class JsonProperties {
         private JsonProperties() {}
 
+        public static final String BASE = "$";
+        public static final String LENGTH = BASE + ".length()";
+        public static final String SINGLE_OBJECT = BASE + "[%s]";
+
         public static class Budget {
             private Budget() {}
 
@@ -64,32 +68,24 @@ public class PathConstants {
         public static class Expense {
             private Expense() {}
 
-            public static final String NAME = "$.name";
-            // public static final String MONEY = "$.money";
-            // public static final String MONEY_AMOUNT = "$.money.amount";
-            // public static final String MONEY_CURRENCY = "$.money.currency";
-            public static final String CATEGORY = "$.category";
-            public static final String TYPE = "$.type";
-            public static final String MONTH_YEAR = "$.month";
-            public static final String YEAR = "$.month[0]";
-            public static final String MONTH = "$.month[1]";
-
-            public static final String FIRST_NAME = "$[0].name";
-            public static final String SECOND_NAME = "$[1].name";
+            public static final String NAME = ".name";
+            public static final String MONEY = ".money";
+            public static final String CATEGORY = ".category";
+            public static final String TYPE = ".type";
+            public static final String MONTH_YEAR = ".month";
+            public static final String YEAR = ".month[0]";
+            public static final String MONTH = ".month[1]";
         }
 
         public static class Income {
             private Income() {}
 
-            public static final String NAME = "$.name";
-            public static final String SOURCE = "$.source";
-            public static final String MONEY = "$.money";
-            public static final String MONEY_AMOUNT = "$.money.amount";
-            public static final String MONEY_CURRENCY = "$.money.currency";
-            public static final String TYPE = "$.type";
-            public static final String MONTH_YEAR = "$.month";
-            public static final String YEAR = "$.month[0]";
-            public static final String MONTH = "$.month[1]";
+            public static final String NAME = BASE + ".name";
+            public static final String SOURCE = BASE + ".source";
+            public static final String TYPE = BASE + ".type";
+            public static final String MONTH_YEAR = BASE + ".month";
+            public static final String YEAR = BASE + ".month[0]";
+            public static final String MONTH = BASE + ".month[1]";
 
             public static final String FIRST_NAME = "$[0].name";
             public static final String SECOND_NAME = "$[1].name";
@@ -98,9 +94,8 @@ public class PathConstants {
         public static class Money {
             private Money() {}
 
-            public static final String BASE = "$.money";
-            public static final String AMOUNT = BASE + ".amount";
-            public static final String CURRENCY = BASE + ".currency";
+            public static final String AMOUNT = ".amount";
+            public static final String CURRENCY = ".currency";
         }
 
         public static class Error {

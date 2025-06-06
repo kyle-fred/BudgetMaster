@@ -44,5 +44,4 @@ public class ErrorMessages {
         
         public static final String INVALID_BIG_DECIMAL_VALUE = "Invalid BigDecimal value: '%s'. Must be a valid decimal number.";
     }
-    
 }

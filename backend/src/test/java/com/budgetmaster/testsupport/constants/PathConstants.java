@@ -105,5 +105,4 @@ public class PathConstants {
         
         public static final String MONTH = "month";
     }
-    
 }

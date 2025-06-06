@@ -32,6 +32,4 @@ public class ValidationMessages {
         public static final String INVALID_MONTH_FORMAT = "Invalid month format. Please use the format YYYY-MM.";
         public static final String REQUIRED_TYPE = "The transaction type is required.";
     }
-    
 }
-

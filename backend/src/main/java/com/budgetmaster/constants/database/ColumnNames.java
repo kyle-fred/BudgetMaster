@@ -44,5 +44,4 @@ public class ColumnNames {
         public static final String AMOUNT = "AMOUNT";
         public static final String CURRENCY = "CURRENCY";
     }
-    
 }

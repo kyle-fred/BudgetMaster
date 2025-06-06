@@ -7,5 +7,4 @@ public class CurrencyConstants {
         
         public static final String GBP = "GBP";
     }
-    
 }

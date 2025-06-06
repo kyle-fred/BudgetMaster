@@ -17,4 +17,4 @@ public final class ExceptionConstants {
 
         public static final String INVALID_VALUE_MESSAGE = "Invalid enum value: INVALID";
     }
-} 
+}

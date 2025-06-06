@@ -7,6 +7,5 @@ public class FieldConstants {
 
         public static final String CREATED_AT = "createdAt";
         public static final String LAST_UPDATED_AT = "lastUpdatedAt";
-    }
-    
+    }   
 }

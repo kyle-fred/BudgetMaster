@@ -22,5 +22,4 @@ public class ApiPaths {
         
         public static final String ROOT = BASE + "/expenses";
     }
-    
 }

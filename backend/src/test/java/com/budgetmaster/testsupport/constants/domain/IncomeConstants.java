@@ -53,4 +53,4 @@ public final class IncomeConstants {
         public static final YearMonth YEAR_MONTH = YearMonth.of(YEAR, MONTH);
         public static final String YEAR_MONTH_STRING = YEAR_MONTH.toString();
     }
-} 
+}

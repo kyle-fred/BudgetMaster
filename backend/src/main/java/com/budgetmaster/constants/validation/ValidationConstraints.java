@@ -7,5 +7,4 @@ public class ValidationConstraints {
         
         public static final String MIN_AMOUNT = "0.00";
     }
-    
 }

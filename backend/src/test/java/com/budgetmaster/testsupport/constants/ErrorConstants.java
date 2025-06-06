@@ -58,5 +58,4 @@ public class ErrorConstants {
         public static final String ENUM_PART = "com.example.Color.BLUEE";
         public static final String ENUM_CONSTANT = "BLUEE";
     }
-
 }

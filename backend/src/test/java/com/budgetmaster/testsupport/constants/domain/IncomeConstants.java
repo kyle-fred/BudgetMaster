@@ -39,7 +39,6 @@ public final class IncomeConstants {
     public static final class Invalid {
         private Invalid() {}
         
-        public static final BigDecimal AMOUNT = new BigDecimal("1000.00").negate();
         public static final String YEAR_MONTH = "1999-13";
         public static final String YEAR_MONTH_FORMAT = "1999/12";
     }
@@ -53,4 +52,4 @@ public final class IncomeConstants {
         public static final YearMonth YEAR_MONTH = YearMonth.of(YEAR, MONTH);
         public static final String YEAR_MONTH_STRING = YEAR_MONTH.toString();
     }
-} 
+}

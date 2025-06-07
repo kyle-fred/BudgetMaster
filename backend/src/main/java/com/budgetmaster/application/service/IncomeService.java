@@ -74,13 +74,13 @@ public class IncomeService extends EntityLookupService {
 	 * Creates a supplier for IncomeNotFoundException when entity is not found by ID.
 	 */
 	private Supplier<IncomeNotFoundException> createIdNotFoundException(Long id) {
-		return () -> new IncomeNotFoundException(String.format(ErrorMessages.Income.NOT_FOUND_BY_ID, id));
+		return () -> new IncomeNotFoundException(String.format(ErrorMessages.Income.NOT_FOUND_WITH_ID, id));
 	}
 	
 	/**
 	 * Creates a supplier for IncomeNotFoundException when no entities are found for a given month value.
 	 */
 	private Supplier<IncomeNotFoundException> createMonthNotFoundException(YearMonth month) {
-		return () -> new IncomeNotFoundException(String.format(ErrorMessages.Income.NOT_FOUND_BY_MONTH, month));
+		return () -> new IncomeNotFoundException(String.format(ErrorMessages.Income.NOT_FOUND_FOR_MONTH, month));
 	}
 }

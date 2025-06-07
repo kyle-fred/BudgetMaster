@@ -12,13 +12,13 @@ import jakarta.validation.constraints.NotNull;
 
 @SupportedCurrencyConstraint
 public class MoneyRequest {
-    @NotNull(message = ValidationMessages.Money.REQUIRED_AMOUNT)
+    @NotNull(message = ValidationMessages.Money.AMOUNT_IS_REQUIRED)
     @DecimalMin(value = ValidationConstraints.Monetary.MIN_AMOUNT, 
                 inclusive = true, 
-                message = ValidationMessages.Money.NON_NEGATIVE_AMOUNT)
+                message = ValidationMessages.Money.AMOUNT_MUST_BE_NON_NEGATIVE)
     private BigDecimal amount;
 
-    @NotNull(message = ValidationMessages.Money.REQUIRED_CURRENCY)
+    @NotNull(message = ValidationMessages.Money.CURRENCY_IS_REQUIRED)
     private Currency currency;
 
     public BigDecimal getAmount() {

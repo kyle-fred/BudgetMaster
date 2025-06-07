@@ -29,4 +29,4 @@ public final class DummyConfigConstants {
         public static final String TIME_AS_FORMATTED_STRING = "\"time\":\"2000-01-01 00:00:00\"";
         public static final String TIME_AS_STRING = "\"2000-01-01 00:00:00\"";
     }
-} 
+}

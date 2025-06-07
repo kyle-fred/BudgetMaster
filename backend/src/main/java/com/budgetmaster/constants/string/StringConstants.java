@@ -18,6 +18,4 @@ public class StringConstants {
         
         public static final String NO_ENUM_CONSTANT_PREFIX = "No enum constant ";
     }
-    
 }
-

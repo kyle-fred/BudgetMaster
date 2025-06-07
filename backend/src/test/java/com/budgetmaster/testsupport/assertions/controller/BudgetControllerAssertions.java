@@ -36,17 +36,17 @@ public class BudgetControllerAssertions {
     }
 
     public BudgetControllerAssertions hasTotalIncome(BigDecimal expectedTotalIncome) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Budget.TOTAL_INCOME).value(expectedTotalIncome));
+        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.TOTAL_INCOME).value(expectedTotalIncome.toString()));
         return this;
     }
 
     public BudgetControllerAssertions hasTotalExpense(BigDecimal expectedTotalExpense) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Budget.TOTAL_EXPENSE).value(expectedTotalExpense));
+        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.TOTAL_EXPENSE).value(expectedTotalExpense.toString()));
         return this;
     }
 
     public BudgetControllerAssertions hasSavings(BigDecimal expectedSavings) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Budget.SAVINGS).value(expectedSavings));
+        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.SAVINGS).value(expectedSavings.toString()));
         return this;
     }
 
@@ -58,8 +58,8 @@ public class BudgetControllerAssertions {
     public BudgetControllerAssertions hasMonth(YearMonth expectedMonth) throws Exception {
         resultActions
             .andExpect(jsonPath(PathConstants.JsonProperties.MONTH_YEAR).isArray())
-            .andExpect(jsonPath(PathConstants.JsonProperties.MONTH).value(expectedMonth.getMonthValue()))
-            .andExpect(jsonPath(PathConstants.JsonProperties.YEAR).value(expectedMonth.getYear()));
+            .andExpect(jsonPath(PathConstants.JsonProperties.Month.YEAR_VALUE).value(expectedMonth.getYear()))
+            .andExpect(jsonPath(PathConstants.JsonProperties.Month.MONTH_VALUE).value(expectedMonth.getMonthValue()));
         return this;
     }
 

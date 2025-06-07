@@ -128,7 +128,7 @@ class ExpenseServiceTest {
 		@Test
 		@DisplayName("Should throw exception when no expenses found for month")
 		void getAllExpensesForMonth_withNoExpenses_throwsException() {
-			String errorMessage = String.format(ErrorConstants.Expense.NOT_FOUND_BY_MONTH, ExpenseConstants.Default.YEAR_MONTH.toString());
+			String errorMessage = String.format(ErrorConstants.Expense.NOT_FOUND_FOR_MONTH, ExpenseConstants.Default.YEAR_MONTH.toString());
 			
 			try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 				mockedDateUtils.when(() -> DateUtils.getValidYearMonth(ExpenseConstants.Default.YEAR_MONTH.toString()))

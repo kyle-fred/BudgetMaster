@@ -8,5 +8,4 @@ public class ColumnConstraints {
         public static final int SCALE = 2;
         public static final int PRECISION = 19;
     }
-    
 }

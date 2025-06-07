@@ -1,7 +1,8 @@
 package com.budgetmaster.testsupport.constants;
 
-public class PathConstants {
-    
+public final class PathConstants {
+    private PathConstants() {}
+
     public static class Endpoints {
         private Endpoints() {}
 
@@ -52,33 +53,24 @@ public class PathConstants {
         public static final String LENGTH = BASE + ".length()";
         public static final String SINGLE_OBJECT = BASE + "[%s]";
 
+        // -- Budget --
+        public static final String TOTAL_INCOME = ".total-income";
+        public static final String TOTAL_EXPENSE = ".total-expense";
+        public static final String SAVINGS = ".savings";
+
+        // -- Income & Expense --
+        public static final String NAME = ".name";
+        public static final String SOURCE = ".source";
         public static final String MONEY = ".money";
+        public static final String CATEGORY = ".category";
+        public static final String TYPE = ".type";
         public static final String MONTH_YEAR = ".month";
-        public static final String YEAR = ".month[0]";
-        public static final String MONTH = ".month[1]";
 
-        public static class Budget {
-            private Budget() {}
+        public static class Month {
+            private Month() {}
 
-            public static final String TOTAL_INCOME = "$.total-income";
-            public static final String TOTAL_EXPENSE = "$.total-expense";
-            public static final String SAVINGS = "$.savings";
-        }
-
-        public static class Expense {
-            private Expense() {}
-
-            public static final String NAME = ".name";
-            public static final String CATEGORY = ".category";
-            public static final String TYPE = ".type";
-        }
-
-        public static class Income {
-            private Income() {}
-
-            public static final String NAME = ".name";
-            public static final String SOURCE = ".source";
-            public static final String TYPE = ".type";
+            public static final String YEAR_VALUE = MONTH_YEAR + "[0]";
+            public static final String MONTH_VALUE = MONTH_YEAR + "[1]";
         }
 
         public static class Money {
@@ -93,10 +85,10 @@ public class PathConstants {
 
             public static final String TIMESTAMP = "$.timestamp";
             public static final String STATUS = "$.status";
-            public static final String ERROR_CODE = "$.error-code";
+            public static final String CODE = "$.error-code";
             public static final String MESSAGE = "$.message";
             public static final String PATH = "$.path";
-            public static final String ERRORS = "$.errors";
+            public static final String VALIDATION_ERRORS = "$.errors";
         }
     }
 
@@ -105,5 +97,4 @@ public class PathConstants {
         
         public static final String MONTH = "month";
     }
-    
 }

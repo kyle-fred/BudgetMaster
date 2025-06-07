@@ -10,22 +10,22 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public class IncomeRequest {
-	@NotBlank(message = ValidationMessages.Income.REQUIRED_NAME)
+	@NotBlank(message = ValidationMessages.Income.NAME_IS_REQUIRED)
 	private String name;
 	
-	@NotBlank(message = ValidationMessages.Income.REQUIRED_SOURCE)
+	@NotBlank(message = ValidationMessages.Income.SOURCE_IS_REQUIRED)
 	private String source;
 
-	@NotNull(message = ValidationMessages.Common.REQUIRED_MONEY)
+	@NotNull(message = ValidationMessages.MONEY_DETAILS_ARE_REQUIRED)
 	@Valid
 	private MoneyRequest money;
 	
-	@NotNull(message = ValidationMessages.Common.REQUIRED_TYPE)
+	@NotNull(message = ValidationMessages.TYPE_IS_REQUIRED)
 	private TransactionType type;
 	
-	@NotNull(message = ValidationMessages.Common.REQUIRED_MONTH)
+	@NotNull(message = ValidationMessages.MONTH_IS_REQUIRED)
 	@Pattern(regexp = ValidationPatterns.Date.YEAR_MONTH_REGEX, 
-			message = ValidationMessages.Common.INVALID_MONTH_FORMAT)
+			message = ValidationMessages.INVALID_MONTH_FORMAT)
 	private String month;
 	
 	public String getName() {

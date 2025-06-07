@@ -26,16 +26,16 @@ class EnumExceptionUtilsTest {
         @Test
         @DisplayName("Should extract enum constant from valid exception message")
         void extractInvalidEnumValue_withValidExceptionMessage_returnsEnumConstant() {
-            String message = ErrorConstants.Enum.FULL_EXCEPTION_INVALID_ENUM;
+            String message = ErrorConstants.Enum.EXAMPLE_ENUM_EXCEPTION;
             String extracted = EnumExceptionUtils.extractInvalidEnumValue(message);
 
-            assertThat(extracted).isEqualTo(ErrorConstants.Enum.ENUM_CONSTANT);
+            assertThat(extracted).isEqualTo(ErrorConstants.Enum.EXTRACTED_ENUM_VALUE);
         }
 
         @Test
         @DisplayName("Should return null when message has no enum prefix")
         void extractInvalidEnumValue_withNoEnumPrefix_returnsNull() {
-            String message = ErrorConstants.Enum.FULL_EXCEPTION_OTHER;
+            String message = ErrorConstants.Enum.EXAMPLE_NON_ENUM_EXCEPTION;
             String extracted = EnumExceptionUtils.extractInvalidEnumValue(message);
 
             assertThat(extracted).isNull();
@@ -49,10 +49,10 @@ class EnumExceptionUtilsTest {
         @Test
         @DisplayName("Should extract enum part from valid message")
         void extractEnumPart_withValidMessage_returnsEnumPart() {
-            String message = ErrorConstants.Enum.NO_ENUM_PREFIX;
+            String message = ErrorConstants.Enum.EXTRACTED_ENUM_PREFIX;
             String extracted = EnumExceptionUtils.extractEnumPart(message, 17);
 
-            assertThat(extracted).isEqualTo(ErrorConstants.Enum.ENUM_PART);
+            assertThat(extracted).isEqualTo(ErrorConstants.Enum.EXTRACTED_ENUM_CLASS);
         }
     }
 
@@ -63,19 +63,19 @@ class EnumExceptionUtilsTest {
         @Test
         @DisplayName("Should extract enum constant from valid enum part")
         void extractEnumConstant_withValidEnumPart_returnsConstant() {
-            String enumPart = ErrorConstants.Enum.ENUM_PART;
+            String enumPart = ErrorConstants.Enum.EXTRACTED_ENUM_CLASS;
             String extracted = EnumExceptionUtils.extractEnumConstant(enumPart);
 
-            assertThat(extracted).isEqualTo(ErrorConstants.Enum.ENUM_CONSTANT);
+            assertThat(extracted).isEqualTo(ErrorConstants.Enum.EXTRACTED_ENUM_VALUE);
         }
 
         @Test
         @DisplayName("Should return same string when no dot is present")
         void extractEnumConstant_withNoDot_returnsSameString() {
-            String enumPart = ErrorConstants.Enum.ENUM_CONSTANT;
+            String enumPart = ErrorConstants.Enum.EXTRACTED_ENUM_VALUE;
             String extracted = EnumExceptionUtils.extractEnumConstant(enumPart);
 
-            assertThat(extracted).isEqualTo(ErrorConstants.Enum.ENUM_CONSTANT);
+            assertThat(extracted).isEqualTo(ErrorConstants.Enum.EXTRACTED_ENUM_VALUE);
         }
     }
 

@@ -53,7 +53,7 @@ class ExpenseRequestTest {
             Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
 
             ExpenseDtoAssertions.assertExpenseRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Expense.NAME_REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Expense.NAME_IS_REQUIRED);
         }
 
         @Test
@@ -66,7 +66,7 @@ class ExpenseRequestTest {
             Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
 
             ExpenseDtoAssertions.assertExpenseRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Money.DETAILS_REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Money.DETAILS_ARE_REQUIRED);
         }
 
         @Test
@@ -79,7 +79,7 @@ class ExpenseRequestTest {
             Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
 
             ExpenseDtoAssertions.assertExpenseRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Expense.CATEGORY_REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Expense.CATEGORY_IS_REQUIRED);
         }
 
         @Test
@@ -92,7 +92,7 @@ class ExpenseRequestTest {
             Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
 
             ExpenseDtoAssertions.assertExpenseRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Expense.TYPE_REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Expense.TYPE_IS_REQUIRED);
         }
     }
 
@@ -110,7 +110,7 @@ class ExpenseRequestTest {
             Set<ConstraintViolation<ExpenseRequest>> violations = validator.validate(expenseRequest);
 
             ExpenseDtoAssertions.assertExpenseRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Month.REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Month.IS_REQUIRED);
         }
 
         @Test

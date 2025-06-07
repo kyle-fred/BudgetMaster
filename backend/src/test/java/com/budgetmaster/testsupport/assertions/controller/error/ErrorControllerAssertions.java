@@ -46,7 +46,7 @@ public class ErrorControllerAssertions {
     }
 
     public ErrorControllerAssertions hasErrorCode(String expectedErrorCode) throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERROR_CODE).value(expectedErrorCode));
+        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Error.CODE).value(expectedErrorCode));
         return this;
     }
 
@@ -61,7 +61,7 @@ public class ErrorControllerAssertions {
     }
 
     public ErrorControllerAssertions hasNoValidationErrors() throws Exception {
-        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Error.ERRORS).isEmpty());
+        resultActions.andExpect(jsonPath(PathConstants.JsonProperties.Error.VALIDATION_ERRORS).isEmpty());
         return this;
     }
 

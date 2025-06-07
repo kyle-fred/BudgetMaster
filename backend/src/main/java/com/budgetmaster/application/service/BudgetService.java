@@ -49,13 +49,13 @@ public class BudgetService extends EntityLookupService {
 	 * Creates a supplier for BudgetNotFoundException when entity is not found by ID.
 	 */
 	private Supplier<BudgetNotFoundException> createIdNotFoundException(Long id) {
-		return () -> new BudgetNotFoundException(String.format(ErrorMessages.Budget.NOT_FOUND_BY_ID, id));
+		return () -> new BudgetNotFoundException(String.format(ErrorMessages.Budget.NOT_FOUND_WITH_ID, id));
 	}
 	
 	/**
 	 * Creates a supplier for BudgetNotFoundException when entity is not found by month.
 	 */
 	private Supplier<BudgetNotFoundException> createMonthNotFoundException(YearMonth month) {
-		return () -> new BudgetNotFoundException(String.format(ErrorMessages.Budget.NOT_FOUND_BY_MONTH, month));
+		return () -> new BudgetNotFoundException(String.format(ErrorMessages.Budget.NOT_FOUND_FOR_MONTH, month));
 	}
 }

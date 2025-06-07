@@ -128,7 +128,7 @@ class IncomeServiceTest {
 		@Test
 		@DisplayName("Should throw exception when no incomes found for month")
 		void getAllIncomesForMonth_withNoIncomes_throwsException() {
-			String errorMessage = String.format(ErrorConstants.Income.NOT_FOUND_BY_MONTH, IncomeConstants.NonExistent.YEAR_MONTH);
+			String errorMessage = String.format(ErrorConstants.Income.NOT_FOUND_FOR_MONTH, IncomeConstants.NonExistent.YEAR_MONTH);
 			
 			try (MockedStatic<DateUtils> mockedDateUtils = mockStatic(DateUtils.class)) {
 				mockedDateUtils.when(() -> DateUtils.getValidYearMonth(IncomeConstants.NonExistent.YEAR_MONTH.toString()))

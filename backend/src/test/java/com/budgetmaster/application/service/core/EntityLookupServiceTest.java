@@ -143,7 +143,7 @@ class EntityLookupServiceTest extends EntityLookupService {
 			List<Income> result = findListByCustomFinderOrThrow(
 					finder,
 					BudgetConstants.Default.YEAR_MONTH,
-					() -> new IncomeNotFoundException(String.format(ErrorConstants.Income.NOT_FOUND_BY_MONTH, BudgetConstants.Default.YEAR_MONTH))
+					() -> new IncomeNotFoundException(String.format(ErrorConstants.Income.NOT_FOUND_FOR_MONTH, BudgetConstants.Default.YEAR_MONTH))
 			);
 
 			IncomeListAssertions.assertIncomes(result)
@@ -156,7 +156,7 @@ class EntityLookupServiceTest extends EntityLookupService {
 		@DisplayName("Should throw exception when no entities found by custom finder")
 		void findListByCustomFinderOrThrow_withNonExistentEntities_throwsException() {
 			Function<YearMonth, List<Income>> finder = month -> List.of();
-			String errorMessage = String.format(ErrorConstants.Income.NOT_FOUND_BY_MONTH, BudgetConstants.Default.YEAR_MONTH);
+			String errorMessage = String.format(ErrorConstants.Income.NOT_FOUND_FOR_MONTH, BudgetConstants.Default.YEAR_MONTH);
 
 			IncomeNotFoundException exception = assertThrows(
 					IncomeNotFoundException.class,

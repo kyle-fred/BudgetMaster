@@ -53,7 +53,7 @@ class IncomeRequestTest {
             Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
 
             IncomeDtoAssertions.assertIncomeRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Income.NAME_REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Income.NAME_IS_REQUIRED);
         }
 
         @Test
@@ -66,7 +66,7 @@ class IncomeRequestTest {
             Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
 
             IncomeDtoAssertions.assertIncomeRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Income.SOURCE_REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Income.SOURCE_IS_REQUIRED);
         }
 
         @Test
@@ -79,7 +79,7 @@ class IncomeRequestTest {
             Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
 
             IncomeDtoAssertions.assertIncomeRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Money.DETAILS_REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Money.DETAILS_ARE_REQUIRED);
         }
 
         @Test
@@ -92,7 +92,7 @@ class IncomeRequestTest {
             Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
 
             IncomeDtoAssertions.assertIncomeRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Income.TYPE_REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Income.TYPE_IS_REQUIRED);
         }
     }
 
@@ -110,7 +110,7 @@ class IncomeRequestTest {
             Set<ConstraintViolation<IncomeRequest>> violations = validator.validate(incomeRequest);
 
             IncomeDtoAssertions.assertIncomeRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Month.REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Month.IS_REQUIRED);
         }
 
         @Test

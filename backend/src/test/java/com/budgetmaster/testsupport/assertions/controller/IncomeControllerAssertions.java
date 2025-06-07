@@ -43,12 +43,12 @@ public class IncomeControllerAssertions {
     }
 
     public IncomeControllerAssertions hasName(String expectedName) throws Exception {
-        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Income.NAME).value(expectedName));
+        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.NAME).value(expectedName));
         return this;
     }
 
     public IncomeControllerAssertions hasSource(String expectedSource) throws Exception {
-        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Income.SOURCE).value(expectedSource));
+        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.SOURCE).value(expectedSource));
         return this;
     }
 
@@ -59,15 +59,15 @@ public class IncomeControllerAssertions {
     }
 
     public IncomeControllerAssertions hasType(TransactionType expectedType) throws Exception {
-        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.Income.TYPE).value(expectedType.toString()));
+        resultActions.andExpect(jsonPath(basePath + PathConstants.JsonProperties.TYPE).value(expectedType.toString()));
         return this;
     }
 
     public IncomeControllerAssertions hasMonth(YearMonth expectedMonth) throws Exception {
         resultActions
             .andExpect(jsonPath(basePath + PathConstants.JsonProperties.MONTH_YEAR).isArray())
-            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.MONTH).value(expectedMonth.getMonthValue()))
-            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.YEAR).value(expectedMonth.getYear()));
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Month.YEAR_VALUE).value(expectedMonth.getYear()))
+            .andExpect(jsonPath(basePath + PathConstants.JsonProperties.Month.MONTH_VALUE).value(expectedMonth.getMonthValue()));
         return this;
     }
 
@@ -92,7 +92,7 @@ public class IncomeControllerAssertions {
     public ErrorControllerAssertions isNotFoundForMonth(YearMonth month) throws Exception {
         return ErrorControllerAssertions.assertThat(resultActions)
             .isNotFoundResponse(
-                String.format(ErrorConstants.Income.NOT_FOUND_BY_MONTH, month),
+                String.format(ErrorConstants.Income.NOT_FOUND_FOR_MONTH, month),
                 PathConstants.Error.Income.URI
             );
     }

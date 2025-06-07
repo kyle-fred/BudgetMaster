@@ -53,7 +53,7 @@ class MoneyRequestTest {
             Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
             
             MoneyDtoAssertions.assertMoneyRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Money.AMOUNT_REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Money.AMOUNT_IS_REQUIRED);
         }
 
         @Test
@@ -66,7 +66,7 @@ class MoneyRequestTest {
             Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
 
             MoneyDtoAssertions.assertMoneyRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Money.CURRENCY_REQUIRED);
+                .hasExactlyOneViolationMessage(ErrorConstants.Money.CURRENCY_IS_REQUIRED);
         }
     }
 
@@ -84,7 +84,7 @@ class MoneyRequestTest {
             Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
 
             MoneyDtoAssertions.assertMoneyRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Money.UNSUPPORTED_CURRENCY);
+                .hasExactlyOneViolationMessage(ErrorConstants.Money.CURRENCY_IS_NOT_SUPPORTED);
         }
     }
 
@@ -102,7 +102,7 @@ class MoneyRequestTest {
             Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
 
             MoneyDtoAssertions.assertMoneyRequest(violations)
-                .hasExactlyOneViolationMessage(ErrorConstants.Money.NEGATIVE_AMOUNT);
+                .hasExactlyOneViolationMessage(ErrorConstants.Money.AMOUNT_MUST_BE_NON_NEGATIVE);
         }
 
         @Test
@@ -144,8 +144,8 @@ class MoneyRequestTest {
             Set<ConstraintViolation<MoneyRequest>> violations = validator.validate(request);
             
             MoneyDtoAssertions.assertMoneyRequest(violations)
-                .containsViolationMessage(ErrorConstants.Money.NEGATIVE_AMOUNT)
-                .containsViolationMessage(ErrorConstants.Money.UNSUPPORTED_CURRENCY);
+                .containsViolationMessage(ErrorConstants.Money.AMOUNT_MUST_BE_NON_NEGATIVE)
+                .containsViolationMessage(ErrorConstants.Money.CURRENCY_IS_NOT_SUPPORTED);
         }
     }
 }

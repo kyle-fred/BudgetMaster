@@ -5,19 +5,19 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
 public class ValidationError {
-    private final String field;
-    private final String message;
+  private final String field;
+  private final String message;
 
-    public ValidationError(String field, String message) {
-        this.field = field;
-        this.message = message;
-    }
+  public ValidationError(String field, String message) {
+    this.field = field;
+    this.message = message;
+  }
 
-    public String getField() {
-        return field;
-    }
+  public String getField() {
+    return field;
+  }
 
-    public String getMessage() {
-        return message;
-    }
+  public String getMessage() {
+    return message;
+  }
 }

@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.budgetmaster.application.model.Budget;
 
 public interface BudgetRepository extends JpaRepository<Budget, Long> {
-	Optional<Budget> findByMonth(YearMonth month);
+  Optional<Budget> findByMonth(YearMonth month);
 }

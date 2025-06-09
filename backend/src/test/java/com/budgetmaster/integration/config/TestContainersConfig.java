@@ -10,29 +10,30 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @TestConfiguration
 public class TestContainersConfig {
 
-    @SuppressWarnings("resource")
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test")
-            .withReuse(true);
+  @SuppressWarnings("resource")
+  private static final PostgreSQLContainer<?> postgres =
+      new PostgreSQLContainer<>("postgres:16-alpine")
+          .withDatabaseName("testdb")
+          .withUsername("test")
+          .withPassword("test")
+          .withReuse(true);
 
-    @Bean
-    @ServiceConnection
-    public PostgreSQLContainer<?> postgreSQLContainer() {
-        return postgres;
-    }
+  @Bean
+  @ServiceConnection
+  public PostgreSQLContainer<?> postgreSQLContainer() {
+    return postgres;
+  }
 
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        // Let Flyway handle schema creation
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
-        // Enable Flyway
-        registry.add("spring.flyway.enabled", () -> "true");
-        registry.add("spring.flyway.baseline-on-migrate", () -> "true");
-        registry.add("spring.flyway.locations", () -> "classpath:db/migration");
-    }
+  @DynamicPropertySource
+  static void configureProperties(DynamicPropertyRegistry registry) {
+    registry.add("spring.datasource.url", postgres::getJdbcUrl);
+    registry.add("spring.datasource.username", postgres::getUsername);
+    registry.add("spring.datasource.password", postgres::getPassword);
+    // Let Flyway handle schema creation
+    registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
+    // Enable Flyway
+    registry.add("spring.flyway.enabled", () -> "true");
+    registry.add("spring.flyway.baseline-on-migrate", () -> "true");
+    registry.add("spring.flyway.locations", () -> "classpath:db/migration");
+  }
 }

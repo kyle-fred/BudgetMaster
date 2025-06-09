@@ -16,59 +16,56 @@ import com.budgetmaster.testsupport.constants.domain.IncomeConstants;
 @DisplayName("Year Month Converter Tests")
 class YearMonthConverterTest {
 
-    private YearMonthConverter converter;
-    private YearMonth defaultYearMonth;
+  private YearMonthConverter converter;
+  private YearMonth defaultYearMonth;
 
-    @BeforeEach
-    void setUp() {
-        converter = new YearMonthConverter();
-        defaultYearMonth = IncomeConstants.Default.YEAR_MONTH;
+  @BeforeEach
+  void setUp() {
+    converter = new YearMonthConverter();
+    defaultYearMonth = IncomeConstants.Default.YEAR_MONTH;
+  }
+
+  @Nested
+  @DisplayName("Convert To Database Column Operations")
+  class ConvertToDatabaseColumnOperations {
+
+    @Test
+    @DisplayName("Should convert year month to string when year month is not null")
+    void convertToDatabaseColumn_withNotNullYearMonth_returnsString() {
+      String result = converter.convertToDatabaseColumn(defaultYearMonth);
+
+      assertThat(result).isEqualTo(IncomeConstants.Default.YEAR_MONTH_STRING);
     }
 
-    @Nested
-    @DisplayName("Convert To Database Column Operations")
-    class ConvertToDatabaseColumnOperations {
-        
-        @Test
-        @DisplayName("Should convert year month to string when year month is not null")
-        void convertToDatabaseColumn_withNotNullYearMonth_returnsString() {
-            String result = converter.convertToDatabaseColumn(defaultYearMonth);
+    @Test
+    @DisplayName("Should return null when year month is null")
+    void convertToDatabaseColumn_withNullYearMonth_returnsNull() {
+      String result = converter.convertToDatabaseColumn(null);
 
-            assertThat(result).isEqualTo(IncomeConstants.Default.YEAR_MONTH_STRING);
-        }
+      assertThat(result).isNull();
+    }
+  }
 
-        @Test
-        @DisplayName("Should return null when year month is null")
-        void convertToDatabaseColumn_withNullYearMonth_returnsNull() {
-            String result = converter.convertToDatabaseColumn(null);
+  @Nested
+  @DisplayName("Convert To Entity Attribute Operations")
+  class ConvertToEntityAttributeOperations {
 
-            assertThat(result).isNull();
-        }
+    @ParameterizedTest(name = "Should convert {0} to year month {1}")
+    @CsvSource({"2000-01, 2000-01", "1999-12, 1999-12", "2001-01, 2001-01"})
+    @DisplayName("Should convert string to year month when string is not null")
+    void convertToEntityAttribute_withNotNullString_returnsYearMonth(
+        String input, String expected) {
+      YearMonth result = converter.convertToEntityAttribute(input);
+
+      assertThat(result).isEqualTo(YearMonth.parse(expected));
     }
 
-    @Nested
-    @DisplayName("Convert To Entity Attribute Operations")
-    class ConvertToEntityAttributeOperations {
-        
-        @ParameterizedTest(name = "Should convert {0} to year month {1}")
-        @CsvSource({
-            "2000-01, 2000-01",
-            "1999-12, 1999-12",
-            "2001-01, 2001-01"
-        })
-        @DisplayName("Should convert string to year month when string is not null")
-        void convertToEntityAttribute_withNotNullString_returnsYearMonth(String input, String expected) {
-            YearMonth result = converter.convertToEntityAttribute(input);
+    @Test
+    @DisplayName("Should return null when string is null")
+    void convertToEntityAttribute_withNullString_returnsNull() {
+      YearMonth result = converter.convertToEntityAttribute(null);
 
-            assertThat(result).isEqualTo(YearMonth.parse(expected));
-        }
-
-        @Test
-        @DisplayName("Should return null when string is null")
-        void convertToEntityAttribute_withNullString_returnsNull() {
-            YearMonth result = converter.convertToEntityAttribute(null);
-
-            assertThat(result).isNull();
-        }
+      assertThat(result).isNull();
     }
+  }
 }

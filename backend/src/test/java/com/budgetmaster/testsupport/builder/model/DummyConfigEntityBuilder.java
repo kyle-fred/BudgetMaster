@@ -7,35 +7,35 @@ import com.budgetmaster.testsupport.constants.domain.DummyConfigConstants;
 import com.budgetmaster.testsupport.dummyclasses.entity.DummyConfigEntity;
 
 public class DummyConfigEntityBuilder {
-    
-    private String multiWordProperty = DummyConfigConstants.Default.MULTI_WORD_PROPERTY;
-    private BigDecimal bigDecimal = new BigDecimal(DummyConfigConstants.Default.BIG_DECIMAL);
-    private LocalDateTime time = DummyConfigConstants.Default.TIME;
 
-    public DummyConfigEntityBuilder withMultiWordProperty(String multiWordProperty) {
-        this.multiWordProperty = multiWordProperty;
-        return this;
-    }
+  private String multiWordProperty = DummyConfigConstants.Default.MULTI_WORD_PROPERTY;
+  private BigDecimal bigDecimal = new BigDecimal(DummyConfigConstants.Default.BIG_DECIMAL);
+  private LocalDateTime time = DummyConfigConstants.Default.TIME;
 
-    public DummyConfigEntityBuilder withBigDecimal(BigDecimal bigDecimal) {
-        this.bigDecimal = bigDecimal;
-        return this;
-    }
+  public DummyConfigEntityBuilder withMultiWordProperty(String multiWordProperty) {
+    this.multiWordProperty = multiWordProperty;
+    return this;
+  }
 
-    public DummyConfigEntityBuilder withTime(LocalDateTime time) {
-        this.time = time;
-        return this;
-    }
+  public DummyConfigEntityBuilder withBigDecimal(BigDecimal bigDecimal) {
+    this.bigDecimal = bigDecimal;
+    return this;
+  }
 
-    public DummyConfigEntity build() {
-        DummyConfigEntity entity = new DummyConfigEntity();
-        entity.setMultiWordProperty(multiWordProperty);
-        entity.setBigDecimal(bigDecimal);
-        entity.setTime(time);
-        return entity;
-    }
+  public DummyConfigEntityBuilder withTime(LocalDateTime time) {
+    this.time = time;
+    return this;
+  }
 
-    public static DummyConfigEntityBuilder defaultEntity() {
-        return new DummyConfigEntityBuilder();
-    }
-} 
+  public DummyConfigEntity build() {
+    DummyConfigEntity entity = new DummyConfigEntity();
+    entity.setMultiWordProperty(multiWordProperty);
+    entity.setBigDecimal(bigDecimal);
+    entity.setTime(time);
+    return entity;
+  }
+
+  public static DummyConfigEntityBuilder defaultEntity() {
+    return new DummyConfigEntityBuilder();
+  }
+}

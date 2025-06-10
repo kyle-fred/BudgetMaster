@@ -1,155 +1,186 @@
 # **BudgetMaster: A Personal Finance Management Application**
 
 ## **📌 Overview**
-Welcome to **BudgetMaster** – a personal finance application designed to help track monthly expenses, savings, and income.  
-This app enables users to **create budgets**, **categorize expenses/income**, and **gain financial insights**.  
+**BudgetMaster** is a robust personal finance management application built with Spring Boot that helps users track their monthly finances. The application automatically calculates and maintains budget summaries based on income and expense entries, providing a clear view of your financial health.
 
 ### **🚀 Features**
-✅ **Track Monthly Budgets** – Define a monthly budget by calculating total income and expenses.  
-✅ **Manage Incomes & Expenses** – Categorize incomes (e.g., Salary, Investments) and expenses (e.g., Rent, Bills).  
-✅ **Recurring & One-Time Transactions** – Distinguish between fixed and variable financial transactions.  
-✅ **RESTful API** – Well-structured API endpoints to interact with the system programmatically.  
+✅ **Monthly Budget Tracking** - Automatic calculation of total income, expenses, and savings for each month
+✅ **Transaction Management** - Track various income / expenses with support for recurring and one-time transactions
+✅ **RESTful API** - Well-structured, documented API endpoints
 
 ---
 
 ## **🛠️ Technologies Used**
-| Stack | Technology |
-|--------|----------------|
+| Component | Technology |
+|-----------|------------|
 | **Backend** | Java, Spring Boot |
-| **Database** | PostgreSQL, JPA (Hibernate) |
-| **Testing** | JUnit, Mockito, SpringBootTest |
-| **API Docs (Planned)** | SpringDoc OpenAPI (Swagger) |
-| **Frontend (Planned)** | React (Vite) |
+| **Database** | PostgreSQL & JPA/Hibernate |
+| **Testing** | JUnit, Mockito & Test Containers |
+| **API Documentation** | SpringDoc OpenAPI (Swagger) |
+| **Frontend** | React |
 
 ---
 
 ## **📡 API Endpoints**
-BudgetMaster currently has **three main API endpoints**:  
+BudgetMaster has **three endpoints**:  
 
 | Endpoint | Description |
 |----------|-------------|
-| `/api/budget` | Manage overall budgeting (income, expenses, savings). |
-| `/api/income` | Manage income sources (salary, investments, side hustles). |
-| `/api/expense` | Manage expenses (bills, subscriptions, purchases). |
+| `/api/budgets` | Retrieve overall budgeting health (income, expenses, savings). |
+| `/api/incomes` | Manage income sources (salary, investments, side hustles). |
+| `/api/expenses` | Manage expenses (bills, subscriptions, purchases). |
 
-Each API has full **CRUD functionality**.  
-Here’s how you can test them with **cURL commands**.
+### Budget API (`/api/budgets`)
+The budget endpoint provides a summary of your financial status for a given month.
 
 ---
 
-## **📊 Budget API (`/api/budget`)**
-### **📌 Model**
-```json
+## **📊 Budget API (`/api/budget`)**  
+### Budget API (`/api/budgets`)
+
+```http
+GET /api/budgets?month=YYYY-MM
+```
+Returns the budget summary for the specified month, including:
+- Total income
+- Total expenses
+- Savings
+
+### Income API (`/api/incomes`)
+Manage your income sources with full CRUD operations.
+
+#### Create Income
+```http
+POST /api/incomes
+Content-Type: application/json
+
 {
-    "id": 1,
-    "income": 5000,
-    "expenses": 2000,
-    "savings": 3000
+    "name": "SALARY",
+    "source": "COMPANY XYZ",
+    "money": {
+        "amount": 5000.00,
+        "currency": "USD"
+    },
+    "type": "RECURRING",
+    "month": "2025-06"
 }
 ```
 
-### **📌 Example Usage**
-### **✅ Create Budget (POST)**
-```bash
-curl -X POST http://localhost:8080/api/budget \
-     -H "Content-Type: application/json" \
-     -d '{"income": 5000, "expenses": 2000}'
-```
-### **✅ Get Budget by ID (GET)**
-```bash
-curl -X GET http://localhost:8080/api/budget/1
-```
-### **✅ Update Budget (PUT)**
-```bash
-curl -X PUT http://localhost:8080/api/budget/1 \
-     -H "Content-Type: application/json" \
-     -d '{"income": 5500, "expenses": 2100}'
-```
-### **✅ Delete Budget (DELETE)**
-```bash
-curl -X DELETE http://localhost:8080/api/budget/1
+#### Get Incomes for Month
+```http
+GET /api/incomes?month=YYYY-MM
 ```
 
----
+#### Update Income
+```http
+PUT /api/incomes/{id}
+Content-Type: application/json
 
-## **💰 Income API (`/api/income`)**
-### **📌 Model**
-```json
 {
-    "id": 1,
-    "name": "Salary",
-    "source": "Company XYZ",
-    "amount": 5000,
-    "type": "RECURRING"
+    "name": "FREELANCE WORK",
+    "source": "CLIENT XYZ",
+    "money": {
+        "amount": 2000.00,
+        "currency": "USD"
+    },
+    "type": "ONE_TIME",
+    "month": "2025-05"
 }
 ```
 
-### **📌 Example Usage**
-### **✅ Create Income (POST)**
-```bash
-curl -X POST http://localhost:8080/api/income \
-     -H "Content-Type: application/json" \
-     -d '{"name": "Salary", "source": "Company XYZ", "amount": 5000, "type": "RECURRING"}'
-```
-### **✅ Get Income by ID (GET)**
-```bash
-curl -X GET http://localhost:8080/api/income/1
-```
-### **✅ Update Income (PUT)**
-```bash
-curl -X PUT http://localhost:8080/api/income/1 \
-     -H "Content-Type: application/json" \
-     -d '{"name": "Freelance Work", "source": "Client XYZ", "amount": 2000, "type": "ONE_TIME"}'
-```
-### **✅ Delete Income (DELETE)**
-```bash
-curl -X DELETE http://localhost:8080/api/income/1
+#### Delete Income
+```http
+DELETE /api/incomes/{id}
 ```
 
 ---
 
-## **💳 Expense API (`/api/expense`)**
-### **📌 Model**
-```json
+### Expense API (`/api/expenses`)
+Manage your expenses with full CRUD operations.
+
+#### Create Expense
+```http
+POST /api/expenses
+Content-Type: application/json
+
 {
-    "id": 1,
-    "name": "Rent",
-    "amount": 1000,
+    "name": "RENT",
+    "money": {
+        "amount": 1500.00,
+        "currency": "USD"
+    },
     "category": "HOUSING",
-    "type": "RECURRING"
+    "type": "RECURRING",
+    "month": "2024-03"
 }
 ```
 
-### **📌 Example Usage**
-### **✅ Create Expense (POST)**
-```bash
-curl -X POST http://localhost:8080/api/expense \
-     -H "Content-Type: application/json" \
-     -d '{"name": "Rent", "amount": 1000, "category": "HOUSING", "type": "RECURRING"}'
+#### Get Expenses for Month
+```http
+GET /api/expenses?month=YYYY-MM
 ```
-### **✅ Get Expense by ID (GET)**
-```bash
-curl -X GET http://localhost:8080/api/expense/1
+
+#### Update Expense
+```http
+PUT /api/expenses/{id}
+Content-Type: application/json
+
+{
+    "name": "UTILITIES",
+    "money": {
+        "amount": 200.00,
+        "currency": "USD"
+    },
+    "category": "UTILITIES",
+    "type": "RECURRING",
+    "month": "2024-03"
+}
 ```
-### **✅ Update Expense (PUT)**
-```bash
-curl -X PUT http://localhost:8080/api/expense/1 \
-     -H "Content-Type: application/json" \
-     -d '{"name": "Gas & Electricity", "amount": 115, "category": "UTILITIES", "type": "RECURRING"}'
-```
-### **✅ Delete Expense (DELETE)**
-```bash
-curl -X DELETE http://localhost:8080/api/expense/1
+
+#### Delete Expense
+```http
+DELETE /api/expenses/{id}
 ```
 
 ---
 
-### **🛠️ Running the Application**
+## **🏗️ Architecture**
+The application follows a clean, layered architecture:
+- **Controllers** - Handle HTTP requests and responses
+- **Services** - Implement business logic and transaction management
+- **Repositories** - Manage data persistence
+- **Models** - Define the domain entities
+- **DTOs** - Handle data transfer between layers
+- **Synchronizers** - Maintain consistency between budgets and transactions
+
+## **🚀 Getting Started**
+
+### Prerequisites
+- Java 17 or higher
+- Maven
+- PostgreSQL
+
+### Running the Application
+1. Clone the repository
+2. Configure your database connection in `application.properties`
+3. Run the application:
 ```bash
 mvn spring-boot:run
 ```
 
-### **🧪 Running Tests**
+### **🧪 Running Tests**  
+
+#### Prerequisites
+- Docker Engine (Integration Tests use Test Containers)
+
 ```bash
 mvn test
 ```
+
+## 🔜 Future Enhancements
+- Frontend implementation with React
+- API documentation with Swagger/OpenAPI
+- User authentication and authorization
+- Calendar Integration
+- Data visualization and reporting
+- Export functionality

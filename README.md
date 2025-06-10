@@ -4,8 +4,8 @@
 **BudgetMaster** is a robust personal finance management application built with Spring Boot that helps users track their monthly finances. The application automatically calculates and maintains budget summaries based on income and expense entries, providing a clear view of your financial health.
 
 ### **🚀 Features**
-✅ **Monthly Budget Tracking** - Automatic calculation of total income, expenses, and savings for each month
-✅ **Transaction Management** - Track various income / expenses with support for recurring and one-time transactions
+✅ **Monthly Budget Tracking** - Automatic calculation of total income, expenses, and savings for each month  
+✅ **Transaction Management** - Track various income / expenses with support for recurring and one-time transactions  
 ✅ **RESTful API** - Well-structured, documented API endpoints
 
 ---
@@ -30,13 +30,11 @@ BudgetMaster has **three endpoints**:
 | `/api/incomes` | Manage income sources (salary, investments, side hustles). |
 | `/api/expenses` | Manage expenses (bills, subscriptions, purchases). |
 
-### Budget API (`/api/budgets`)
-The budget endpoint provides a summary of your financial status for a given month.
-
 ---
 
-## **📊 Budget API (`/api/budget`)**  
-### Budget API (`/api/budgets`)
+## **📊 Budget API (`/api/budgets`)**  
+  
+### Get Budget by Month
 
 ```http
 GET /api/budgets?month=YYYY-MM
@@ -46,10 +44,17 @@ Returns the budget summary for the specified month, including:
 - Total expenses
 - Savings
 
-### Income API (`/api/incomes`)
+### Delete Budget
+```http
+DELETE /api/budgets/{id}
+```
+
+---
+
+## **💸 Income API (`/api/incomes`)**  
 Manage your income sources with full CRUD operations.
 
-#### Create Income
+### Create Income
 ```http
 POST /api/incomes
 Content-Type: application/json
@@ -66,12 +71,12 @@ Content-Type: application/json
 }
 ```
 
-#### Get Incomes for Month
+### Get Incomes for Month
 ```http
 GET /api/incomes?month=YYYY-MM
 ```
 
-#### Update Income
+### Update Income
 ```http
 PUT /api/incomes/{id}
 Content-Type: application/json
@@ -88,17 +93,17 @@ Content-Type: application/json
 }
 ```
 
-#### Delete Income
+### Delete Income
 ```http
 DELETE /api/incomes/{id}
 ```
 
 ---
 
-### Expense API (`/api/expenses`)
+## **💰 Expense API (`/api/expenses`)**  
 Manage your expenses with full CRUD operations.
 
-#### Create Expense
+### Create Expense
 ```http
 POST /api/expenses
 Content-Type: application/json
@@ -115,12 +120,12 @@ Content-Type: application/json
 }
 ```
 
-#### Get Expenses for Month
+### Get Expenses for Month
 ```http
 GET /api/expenses?month=YYYY-MM
 ```
 
-#### Update Expense
+### Update Expense
 ```http
 PUT /api/expenses/{id}
 Content-Type: application/json
@@ -137,7 +142,7 @@ Content-Type: application/json
 }
 ```
 
-#### Delete Expense
+### Delete Expense
 ```http
 DELETE /api/expenses/{id}
 ```
@@ -152,6 +157,8 @@ The application follows a clean, layered architecture:
 - **Models** - Define the domain entities
 - **DTOs** - Handle data transfer between layers
 - **Synchronizers** - Maintain consistency between budgets and transactions
+
+---
 
 ## **🚀 Getting Started**
 

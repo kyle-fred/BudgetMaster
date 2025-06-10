@@ -34,7 +34,7 @@ BudgetMaster has **three endpoints**:
 
 ## **📊 Budget API (`/api/budgets`)**  
   
-### Get Budget by Month
+### <ins>Get Budget by Month</ins>
 
 ```http
 GET /api/budgets?month=YYYY-MM
@@ -44,7 +44,7 @@ Returns the budget summary for the specified month, including:
 - Total expenses
 - Savings
 
-### Delete Budget
+### <ins>Delete Budget</ins>
 ```http
 DELETE /api/budgets/{id}
 ```
@@ -54,7 +54,7 @@ DELETE /api/budgets/{id}
 ## **💸 Income API (`/api/incomes`)**  
 Manage your income sources with full CRUD operations.
 
-### Create Income
+### <ins>Create Income</ins>
 ```http
 POST /api/incomes
 Content-Type: application/json
@@ -71,12 +71,12 @@ Content-Type: application/json
 }
 ```
 
-### Get Incomes for Month
+### <ins>Get Incomes for Month</ins>
 ```http
 GET /api/incomes?month=YYYY-MM
 ```
 
-### Update Income
+### <ins>Update Income</ins>
 ```http
 PUT /api/incomes/{id}
 Content-Type: application/json
@@ -93,7 +93,7 @@ Content-Type: application/json
 }
 ```
 
-### Delete Income
+### <ins>Delete Income</ins>
 ```http
 DELETE /api/incomes/{id}
 ```
@@ -103,7 +103,7 @@ DELETE /api/incomes/{id}
 ## **💰 Expense API (`/api/expenses`)**  
 Manage your expenses with full CRUD operations.
 
-### Create Expense
+### <ins>Create Expense</ins>
 ```http
 POST /api/expenses
 Content-Type: application/json
@@ -120,12 +120,12 @@ Content-Type: application/json
 }
 ```
 
-### Get Expenses for Month
+### <ins>Get Expenses for Month</ins>
 ```http
 GET /api/expenses?month=YYYY-MM
 ```
 
-### Update Expense
+### <ins>Update Expense</ins>
 ```http
 PUT /api/expenses/{id}
 Content-Type: application/json
@@ -142,7 +142,7 @@ Content-Type: application/json
 }
 ```
 
-### Delete Expense
+### <ins>Delete Expense</ins>
 ```http
 DELETE /api/expenses/{id}
 ```

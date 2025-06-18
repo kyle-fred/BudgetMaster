@@ -34,7 +34,8 @@ public class BudgetService extends EntityLookupService {
 
   @Transactional
   public void deleteBudget(Long id) {
-    // TODO: Fix cascade delete - orphaned income/expense records remain when budget is deleted causing data inconsistency on recreation
+    // TODO: Fix cascade delete - orphaned income/expense records remain when budget
+    // is deleted causing data inconsistency on recreation
     getBudgetById(id);
     budgetRepository.deleteById(id);
   }
